@@ -33,7 +33,7 @@ public class RevlibFileReader {
 	}
 	
 	private static void readLine(String line) {
-		if (line.startsWith("t3")) {
+		if (line.startsWith("t")) {
 			currentCircuit.addGate(readT3GateFromLine(line));
 		}
 	}
@@ -41,9 +41,10 @@ public class RevlibFileReader {
 	private static ToffoliGate readT3GateFromLine(String line){
 		String[] elements = line.split(" ");
 		ToffoliGate result = new ToffoliGate();
-		result.inputA = elements[1];
-		result.inputB = elements[2];
-		result.output = elements[3];
+		for (int i = 1; i < elements.length - 1; i++) {
+			result.addInput(elements[i]);
+		}
+		result.output = elements[elements.length - 1];
 		return result;
 	}
 	

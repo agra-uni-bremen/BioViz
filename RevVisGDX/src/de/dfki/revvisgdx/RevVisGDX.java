@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import de.dfki.revlibReader.ReversibleCircuit;
 import de.dfki.revlibReader.RevlibFileReader;
+import de.dfki.revlibReader.optimization.OrderOptimizer;
 
 public class RevVisGDX implements ApplicationListener {
 	public OrthographicCamera camera;
@@ -33,9 +34,15 @@ public class RevVisGDX implements ApplicationListener {
 		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
 		
-		ReversibleCircuit c = RevlibFileReader.readRealFile("bin/examples/urf4_187.real");
+		ReversibleCircuit c = RevlibFileReader.readRealFile("bin/examples/cm85a_209.real");
 		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
+		
+		System.out.println("Total distance: " + c.totalDistance());
+		
+		OrderOptimizer.optimizeNN(c);
+		
+		System.out.println("Total distance NN: " + c.totalDistance());
 		
 		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);

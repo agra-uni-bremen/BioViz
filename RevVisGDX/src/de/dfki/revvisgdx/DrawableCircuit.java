@@ -2,6 +2,7 @@ package de.dfki.revvisgdx;
 
 import java.util.HashMap;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.dfki.revlibReader.ReversibleCircuit;
@@ -13,7 +14,7 @@ public class DrawableCircuit implements Drawable {
 	DrawableSprite gate01;
 	DrawableSprite gate02;
 
-	public float scaleX = 1000;
+	public float scaleX = 1;
 	public float offsetX = 0;
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
@@ -31,9 +32,15 @@ public class DrawableCircuit implements Drawable {
 
 		for (int i = 0; i < data.getAmountOfVars(); i++) {
 			line.scaleX = RevVisGDX.singleton.camera.viewportWidth;
-			line.scaleY = 1;
+			line.scaleY = 2;
 			line.x = 0;
 			line.y = (i - (data.getAmountOfVars() / 2)) * distanceV; //+ RevVisGDX.singleton.camera.viewportHeight;
+			if (data.isInputOnly(data.getVars().get(i)))
+				line.color = Color.GREEN.cpy();
+			else if (data.isTargetOnly(data.getVars().get(i)))
+				line.color = Color.RED.cpy();
+			else
+				line.color = Color.BLACK.cpy();
 			line.draw();
 
 			signalsToCoords.put(data.getVars().get(i), line.y);
@@ -51,29 +58,32 @@ public class DrawableCircuit implements Drawable {
 
 				float maxDim = Math.min(distanceH * scaleX, distanceV);
 
-				gate01.y = signalsToCoords.get(data.getGate(i).output);
-				gate01.x = xCoord;
-				gate01.setDimensions(maxDim, maxDim);
-				gate01.draw();
-
-				gate02.y = signalsToCoords.get(data.getGate(i).inputA);
-				gate02.x = xCoord;
-				gate02.setDimensions(maxDim, maxDim);
-				gate02.draw();
-
-				gate02.y = signalsToCoords.get(data.getGate(i).inputB);
-				gate02.x = xCoord;
-				gate02.setDimensions(maxDim, maxDim);
-				gate02.draw();
-
-				minY = Math.min(Math.min(gate01.y, gate02.y), signalsToCoords.get(data.getGate(i).inputA));
-				maxY = Math.max(Math.max(gate01.y, gate02.y), signalsToCoords.get(data.getGate(i).inputA));
-
+				minY = signalsToCoords.get(data.getGate(i).output);
+				maxY = minY;
+				
+				for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
+					minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
+					maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
+				}
+				line.color = Color.GRAY.cpy();
 				line.scaleX = 1; //RevVisGDX.singleton.camera.viewportWidth;
 				line.scaleY = maxY - minY;
 				line.x = xCoord;
 				line.y = (maxY + minY) / 2; //+ RevVisGDX.singleton.camera.viewportHeight;
 				line.draw();
+				
+				gate01.y = signalsToCoords.get(data.getGate(i).output);
+				gate01.x = xCoord;
+				gate01.setDimensions(maxDim, maxDim);
+				gate01.draw();
+				
+
+				for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
+					gate02.y = signalsToCoords.get(data.getGate(i).getInputs().get(j));
+					gate02.x = xCoord;
+					gate02.setDimensions(maxDim, maxDim);
+					gate02.draw();
+				}
 			}
 		}
 	}

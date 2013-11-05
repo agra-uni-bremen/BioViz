@@ -10,7 +10,7 @@ public class RevlibFileReaderTest {
 	public void test_urf4_187() {
 		ReversibleCircuit rc = RevlibFileReader.readRealFile("examples/urf4_187.real");
 		ToffoliGate tg = rc.getGate(0);
-		assertEquals(tg.inputA, "k");
+		assertEquals(tg.getInputs().get(0), "k");
 	}
 
 }
