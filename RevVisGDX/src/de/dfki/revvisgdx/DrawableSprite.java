@@ -1,6 +1,7 @@
 package de.dfki.revvisgdx;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -10,6 +11,7 @@ public class DrawableSprite implements Drawable {
 
 	private Sprite sprite;
 	private Texture texture;
+	public Color color = Color.BLACK.cpy();
 	
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1;
 	
@@ -26,6 +28,12 @@ public class DrawableSprite implements Drawable {
 	public void draw() {
 		this.sprite.setPosition(x-sprite.getWidth()/2f, y-sprite.getHeight()/2f);
 		this.sprite.setScale(scaleX, scaleY);
+		this.sprite.setColor(color);
 		this.sprite.draw(RevVisGDX.singleton.batch);
+	}
+	
+	public void setDimensions(float dimX, float dimY) {
+		this.scaleX = dimX / this.sprite.getWidth();
+		this.scaleY = dimY / this.sprite.getHeight();
 	}
 }

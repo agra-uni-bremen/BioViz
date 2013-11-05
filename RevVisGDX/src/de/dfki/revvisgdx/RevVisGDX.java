@@ -20,7 +20,7 @@ public class RevVisGDX implements ApplicationListener {
 	public SpriteBatch batch;
 	
 	
-	private ReversibleCircuit currentCircuit;
+	public DrawableCircuit currentCircuit;
 	public static RevVisGDX singleton;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 	
@@ -33,8 +33,12 @@ public class RevVisGDX implements ApplicationListener {
 		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
 		
-		currentCircuit = RevlibFileReader.readRealFile("bin/examples/urf4_187.real");
-		drawables.add(new DrawableCircuit(currentCircuit));
+		ReversibleCircuit c = RevlibFileReader.readRealFile("bin/examples/urf4_187.real");
+		currentCircuit = new DrawableCircuit(c);
+		drawables.add(currentCircuit);
+		
+		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
+		Gdx.input.setInputProcessor(inputProcessor);
 	}
 
 	@Override
