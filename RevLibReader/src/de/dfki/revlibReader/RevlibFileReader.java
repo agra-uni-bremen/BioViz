@@ -35,6 +35,10 @@ public class RevlibFileReader {
 	private static void readLine(String line) {
 		if (line.startsWith("t")) {
 			currentCircuit.addGate(readT3GateFromLine(line));
+		} else if (line.startsWith(".variables")) {
+			readVariablesLine(line);
+		} else if (line.startsWith(".garbage")) {
+			readGarbageLine(line);
 		}
 	}
 	
@@ -48,6 +52,27 @@ public class RevlibFileReader {
 		return result;
 	}
 	
+	private static void readVariablesLine(String line) {
+		String[] elements = line.split(" ");
+		for (int i = 1; i < elements.length; i++) {
+			currentCircuit.addLine(elements[i]);
+		}
+	}
 	
+	private static void readGarbageLine(String line) {
+		String[] elements = line.split(" ");
+		String garbageInfo = elements[1];
+		for (int j = 0; j < garbageInfo.length(); j++) {
+			if (garbageInfo.charAt(j) != '-')
+				currentCircuit.addGarbageLine(currentCircuit.getVars().elementAt(j));
+		}
+	}
+	
+	private static void readFunctionLine(String line) {
+		String[] elements = line.split(" ");
+		for (int i = 1; i < elements.length - 1; i++) {
+			currentCircuit.addFunctionLine(elements[i]);
+		}
+	}
 
 }

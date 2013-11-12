@@ -34,13 +34,13 @@ public class RevVisGDX implements ApplicationListener {
 		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
 		
-		ReversibleCircuit c = RevlibFileReader.readRealFile("bin/examples/cm85a_209.real");
+		ReversibleCircuit c = RevlibFileReader.readRealFile("bin/examples/cpu.real");
 		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
 		
 		System.out.println("Total distance: " + c.totalDistance());
 		
-		OrderOptimizer.optimizeNN(c);
+		//OrderOptimizer.optimizeNN(c);
 		
 		System.out.println("Total distance NN: " + c.totalDistance());
 		
