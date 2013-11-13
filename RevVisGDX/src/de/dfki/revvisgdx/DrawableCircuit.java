@@ -112,6 +112,8 @@ public class DrawableCircuit implements Drawable {
 
 						float maxDim = Math.min(distanceH * scaleX, distanceV * scaleY);
 
+
+
 						minY = signalsToCoords.get(data.getGate(i).output);
 						maxY = minY;
 
@@ -126,18 +128,19 @@ public class DrawableCircuit implements Drawable {
 						line.x = xCoord;
 						line.y = (maxY + minY) / 2; //+ RevVisGDX.singleton.camera.viewportHeight;
 						line.draw();
+						if (maxDim >= 1) {
+							gate01.y = signalsToCoords.get(data.getGate(i).output);
+							gate01.x = xCoord;
+							gate01.setDimensions(maxDim, maxDim);
+							gate01.draw();
 
-						gate01.y = signalsToCoords.get(data.getGate(i).output);
-						gate01.x = xCoord;
-						gate01.setDimensions(maxDim, maxDim);
-						gate01.draw();
 
-
-						for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-							gate02.y = signalsToCoords.get(data.getGate(i).getInputs().get(j));
-							gate02.x = xCoord;
-							gate02.setDimensions(maxDim, maxDim);
-							gate02.draw();
+							for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
+								gate02.y = signalsToCoords.get(data.getGate(i).getInputs().get(j));
+								gate02.x = xCoord;
+								gate02.setDimensions(maxDim, maxDim);
+								gate02.draw();
+							}
 						}
 					}
 				} else {

@@ -10,6 +10,7 @@ public class ReversibleCircuit {
 	private Vector<ToffoliGate> gates = new Vector<ToffoliGate>();
 
 	private Vector<String> vars = new Vector<String>();
+	private HashMap<ToffoliGate, Integer> indicesOfGates = new HashMap<ToffoliGate, Integer>();
 	private HashSet<String> garbageLines = new HashSet<String>();
 	private HashSet<String> functionLines = new HashSet<String>();
 	private HashMap<String, ToffoliGate> firstGates = new HashMap<String, ToffoliGate>();
@@ -111,7 +112,9 @@ public class ReversibleCircuit {
 	}
 
 	public int getCoordOfGate(ToffoliGate gate) {
-		return gates.indexOf(gate);
+		if (!indicesOfGates.containsKey(gate))
+			indicesOfGates.put(gate, gates.indexOf(gate));
+		return indicesOfGates.get(gate);
 	}
 
 	public void addLine(String varName) {
