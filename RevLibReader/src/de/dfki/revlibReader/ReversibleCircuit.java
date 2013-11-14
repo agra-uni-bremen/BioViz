@@ -33,6 +33,7 @@ public class ReversibleCircuit {
 			} if (outputOnly.contains(g.getInputs().get(i))) {
 				mixedInputOutput.add(g.getInputs().get(i));
 				outputOnly.remove(g.getInputs().get(i));
+				inputOnly.remove(g.getInputs().get(i));
 			}
 			lastGates.put(g.getInputs().get(i), g);
 		}
@@ -47,6 +48,7 @@ public class ReversibleCircuit {
 		} if (inputOnly.contains(g.output)) {
 			mixedInputOutput.add(g.output);
 			inputOnly.remove(g.output);
+			outputOnly.remove(g.output);
 		}
 		lastGates.put(g.output, g);
 	}
@@ -120,5 +122,9 @@ public class ReversibleCircuit {
 	public void addLine(String varName) {
 		if (!this.vars.contains(varName))
 			this.vars.add(varName);
+	}
+	
+	public int getAmountOfGarbageLines() {
+		return this.garbageLines.size();
 	}
 }
