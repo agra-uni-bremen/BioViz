@@ -25,6 +25,21 @@ public class RevVisGDX implements ApplicationListener {
 	public static RevVisGDX singleton;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 	
+	MessageCenter mc = new MessageCenter();
+	
+	public static String helpText = "p: pixel wide lines\ng: garbage lines color\nn: neighbouring targets as groups\nh: hide gates\nc: group colors\ns: square alignment\nmouse wheel: zoom horizontally\nmouse wheel + ctrl: zoom vertically\nleft drag: move viewport";
+	
+	private String filename;
+	
+	public RevVisGDX() {
+		super();
+	}
+	
+	public RevVisGDX(String filename) {
+		this();
+		this.filename = filename;
+	}
+	
 	@Override
 	public void create() {		
 		singleton = this;
@@ -34,7 +49,12 @@ public class RevVisGDX implements ApplicationListener {
 		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
 		
-		ReversibleCircuit c = RevlibFileReader.readRealFile("bin/examples/cpu.real");
+		ReversibleCircuit c;
+		if (this.filename != null && this.filename != "") {
+			c = RevlibFileReader.readRealFile(filename);
+		} else {
+			c = RevlibFileReader.readRealFile("bin/examples/apex2_289.real");	
+		}
 		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
 		
@@ -46,6 +66,9 @@ public class RevVisGDX implements ApplicationListener {
 		
 		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
+		
+		mc.addMessage("RevVisGDX started");
+		mc.addMessage(helpText);
 	}
 
 	@Override
@@ -70,6 +93,8 @@ public class RevVisGDX implements ApplicationListener {
 		for (int i = 0; i < drawables.size(); i++) {
 			drawables.get(i).draw();
 		}
+		
+		mc.render();
 		
 		batch.end();
 	}

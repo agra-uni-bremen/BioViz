@@ -10,7 +10,10 @@ public class Main {
 		cfg.useGL20 = false;
 		cfg.width = 480;
 		cfg.height = 320;
-		
-		new LwjglApplication(new RevVisGDX(), cfg);
+		if (args.length <= 0) {
+			new LwjglApplication(new RevVisGDX(), cfg);
+		} else {
+			new LwjglApplication(new RevVisGDX(args[0]), cfg);
+		}
 	}
 }

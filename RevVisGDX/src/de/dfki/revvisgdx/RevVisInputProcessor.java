@@ -34,6 +34,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'c':
 			RevVisGDX.singleton.currentCircuit.countGatesForGroupColor = !RevVisGDX.singleton.currentCircuit.countGatesForGroupColor;
 			break;
+		case 's':
+			RevVisGDX.singleton.currentCircuit.shrinkToSquareAlignment();
+			break;
 		}
 		return false;
 	}

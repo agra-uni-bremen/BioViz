@@ -199,6 +199,14 @@ public class DrawableCircuit implements Drawable {
 		xCoord *= scaleX;
 		return xCoord;
 	}
+	
+	public void shrinkToSquareAlignment() {
+		float aspectRatio = ((RevVisGDX.singleton.camera.viewportWidth / (data.getGates().size() + 2)) / (RevVisGDX.singleton.camera.viewportHeight / (data.getAmountOfVars() + 2)));
+		if (scaleY / aspectRatio < scaleX)
+			scaleX = scaleY / aspectRatio;
+		else
+			scaleY = scaleX * aspectRatio;
+	}
 
 	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
 	private static Color hsvToRgb(float hue, float saturation, float value) {
