@@ -8,6 +8,15 @@ import java.io.IOException;
 public class RevlibFileReader {
 	private static ReversibleCircuit currentCircuit;
 	
+	public static ReversibleCircuit readRealFileContents(String fileContents) {
+		currentCircuit = new ReversibleCircuit();
+		String[] lines = fileContents.split("\n");
+		for (int i = 0; i < lines.length; i++) {
+			readLine(lines[i]);
+		}
+		return currentCircuit;
+	}
+	
 	public static ReversibleCircuit readRealFile(String filename) {
 		BufferedReader br = null;
 		currentCircuit = new ReversibleCircuit();
@@ -46,7 +55,10 @@ public class RevlibFileReader {
 		String[] elements = line.split(" ");
 		ToffoliGate result = new ToffoliGate();
 		for (int i = 1; i < elements.length - 1; i++) {
-			result.addInput(elements[i]);
+			if (!elements[i].startsWith("#"))
+				result.addInput(elements[i]);
+			else
+				break;
 		}
 		result.output = elements[elements.length - 1];
 		return result;
@@ -55,7 +67,10 @@ public class RevlibFileReader {
 	private static void readVariablesLine(String line) {
 		String[] elements = line.split(" ");
 		for (int i = 1; i < elements.length; i++) {
-			currentCircuit.addLine(elements[i]);
+			if (!elements[i].startsWith("#"))
+				currentCircuit.addLine(elements[i]);
+			else
+				break;
 		}
 	}
 	
@@ -71,7 +86,10 @@ public class RevlibFileReader {
 	private static void readFunctionLine(String line) {
 		String[] elements = line.split(" ");
 		for (int i = 1; i < elements.length - 1; i++) {
-			currentCircuit.addFunctionLine(elements[i]);
+			if (!elements[i].startsWith("#"))
+				currentCircuit.addFunctionLine(elements[i]);
+			else
+				break;
 		}
 	}
 

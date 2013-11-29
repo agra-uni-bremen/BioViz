@@ -5,6 +5,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
 public class RevVisInputProcessor implements InputProcessor {
+	boolean isMoving = false;
+	boolean multiTouchZoom = false;
+	private int oldX, oldY, oldX2, oldY2, oldDistanceX, oldDistanceY;
+	
 	@Override
 	public boolean keyDown (int keycode) {
 		return false;
@@ -43,21 +47,62 @@ public class RevVisInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDown (int x, int y, int pointer, int button) {
+		if (pointer == 0) {
+			oldX = x;
+			oldY = y;
+			isMoving = true;
+		} else if (pointer == 1) {
+			isMoving = false;
+			multiTouchZoom = true;
+			oldX2 = x;
+			oldY2 = y;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean touchUp (int x, int y, int pointer, int button) {
+		if (pointer == 0) {
+			isMoving = false;
+		} else if (pointer == 1) {
+			isMoving = true;
+			multiTouchZoom = false;
+		}
 		return false;
 	}
 
-	private int oldX, oldY;
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
-		RevVisGDX.singleton.currentCircuit.offsetX += (x - oldX) / RevVisGDX.singleton.currentCircuit.scaleX;
-		RevVisGDX.singleton.currentCircuit.offsetY += (y - oldY) / RevVisGDX.singleton.currentCircuit.scaleY;
-		oldX = x;
-		oldY = y;
+		if (isMoving) {
+			RevVisGDX.singleton.currentCircuit.offsetX += (x - oldX) / RevVisGDX.singleton.currentCircuit.scaleX;
+			RevVisGDX.singleton.currentCircuit.offsetY += (y - oldY) / RevVisGDX.singleton.currentCircuit.scaleY;
+			oldX = x;
+			oldY = y;
+		} else if (multiTouchZoom) {
+			if (pointer == 0) {
+				
+				oldDistanceX = Math.abs(oldX - oldX2);
+				oldDistanceY = Math.abs(oldY - oldY2);
+				
+				oldX = x;
+				oldY = y;
+			} else if (pointer == 1) {
+				oldX2 = x;
+				oldY2 = y;
+				
+				int zoomX = oldDistanceX - Math.abs(oldX - oldX2);
+				int zoomY = oldDistanceY - Math.abs(oldY - oldY2);
+				
+				if (oldX - oldX2 != 0) {
+					float zoomFactorX = (float)zoomX / Math.abs(oldX - oldX2);
+					RevVisGDX.singleton.currentCircuit.scaleX *= Math.max(1 - (zoomFactorX), 0.01f);
+				}
+				if (oldY - oldY2 != 0) {
+					float zoomFactorY = (float)zoomY / Math.abs(oldY - oldY2);
+					RevVisGDX.singleton.currentCircuit.scaleY *= Math.max(1 - (zoomFactorY), 0.01f);
+				}
+			}
+		}
 		return false;
 	}
 

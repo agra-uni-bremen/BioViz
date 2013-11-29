@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -53,7 +54,10 @@ public class RevVisGDX implements ApplicationListener {
 		if (this.filename != null && this.filename != "") {
 			c = RevlibFileReader.readRealFile(filename);
 		} else {
-			c = RevlibFileReader.readRealFile("bin/examples/apex2_289.real");	
+			FileHandle handle = Gdx.files.internal("examples/apex2_289.real");
+			String fileContents = handle.readString();
+			c = RevlibFileReader.readRealFileContents(fileContents);
+			//c = RevlibFileReader.readRealFile("bin/examples/apex2_289.real");	
 		}
 		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);

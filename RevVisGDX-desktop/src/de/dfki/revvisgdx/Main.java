@@ -1,5 +1,6 @@
 package de.dfki.revvisgdx;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -10,6 +11,7 @@ public class Main {
 		cfg.useGL20 = false;
 		cfg.width = 480;
 		cfg.height = 320;
+		cfg.addIcon("data/icon.png", Files.FileType.Internal);
 		if (args.length <= 0) {
 			new LwjglApplication(new RevVisGDX(), cfg);
 		} else {
