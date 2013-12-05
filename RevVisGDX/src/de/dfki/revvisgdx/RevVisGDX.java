@@ -28,7 +28,17 @@ public class RevVisGDX implements ApplicationListener {
 	
 	MessageCenter mc = new MessageCenter();
 	
-	public static String helpText = "p: pixel wide lines\ng: garbage lines color\nn: neighbouring targets as groups\nh: hide gates\nc: colorize constant inputs\ns: square alignment\nmouse wheel: zoom horizontally\nmouse wheel + ctrl: zoom vertically\nleft drag: move viewport";
+	public static String helpText =
+			"p: pixel wide lines\n"
+			+ "g: garbage lines color\n"
+			+ "n: neighbouring targets as groups\n"
+			+ "h: hide gates\nc: colorize constant inputs\n"
+			+ "s: square alignment\n"
+			+ "v: draw vertical gate connectors\n"
+			+ "d: draw dark lines when used"
+			+ "mouse wheel: zoom horizontally\n"
+			+ "mouse wheel + ctrl: zoom vertically\n"
+			+ "left drag: move viewport";
 	
 	private String filename;
 	
