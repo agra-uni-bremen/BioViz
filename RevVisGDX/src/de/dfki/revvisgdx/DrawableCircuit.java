@@ -24,6 +24,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean drawGroups = false;
 	public boolean hideGates = false;
 	public boolean countGatesForGroupColor = false;
+	public boolean colorizeConstants = false;
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -59,6 +60,10 @@ public class DrawableCircuit implements Drawable {
 					float right = xCoordOnScreen(distanceH, firstGateCoord);
 					line.x = (left + right) / 2;
 					line.scaleX = left - right;
+					
+					if (colorizeConstants && data.constValue(data.getVars().get(i)) >= 0) {
+						col.add(0, 0, 0.75f, 0);
+					}
 
 					col.add(0.25f, 0.25f, 0.25f, 0);
 				} else if (j == 1) {
@@ -71,7 +76,11 @@ public class DrawableCircuit implements Drawable {
 					float right = RevVisGDX.singleton.camera.viewportWidth;;
 					line.x = (left + right) / 2;
 					line.scaleX = left - right;
-					//					
+					
+					if (colorizeGarbageLine && data.isGarbageLine(data.getVars().get(i))) {
+						col.add(0, 0, 0.75f, 0);
+					}
+					
 					col.add(0.25f, 0.25f, 0.25f, 0);
 				}
 
@@ -84,10 +93,6 @@ public class DrawableCircuit implements Drawable {
 
 				if (!data.isFunctionLine(data.getVars().get(i))) {
 					//					line.color.mul(0.5f);
-				}
-
-				if (colorizeGarbageLine && data.isGarbageLine(data.getVars().get(i))) {
-					col.add(0.5f, 0, 0, 0);
 				}
 				if (line.scaleX < 0) {
 					line.draw();

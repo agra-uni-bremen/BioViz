@@ -48,6 +48,8 @@ public class RevlibFileReader {
 			readVariablesLine(line);
 		} else if (line.startsWith(".garbage")) {
 			readGarbageLine(line);
+		} else if (line.startsWith(".constants")) {
+			readConstLine(line);
 		}
 	}
 	
@@ -80,6 +82,15 @@ public class RevlibFileReader {
 		for (int j = 0; j < garbageInfo.length(); j++) {
 			if (garbageInfo.charAt(j) != '-')
 				currentCircuit.addGarbageLine(currentCircuit.getVars().elementAt(j));
+		}
+	}
+	
+	private static void readConstLine(String line) {
+		String[] elements = line.split(" ");
+		String constInfo = elements[1];
+		for (int j = 0; j < constInfo.length(); j++) {
+			if (constInfo.charAt(j) != '-')
+				currentCircuit.addConstLine(currentCircuit.getVars().elementAt(j), Integer.parseInt(new String(new char[]{constInfo.charAt(j)})));
 		}
 	}
 	

@@ -18,6 +18,7 @@ public class ReversibleCircuit {
 	HashSet<String> inputOnly = new HashSet<String>();
 	HashSet<String> outputOnly = new HashSet<String>();
 	HashSet<String> mixedInputOutput = new HashSet<String>();
+	HashMap<String, Integer> constOnly = new HashMap<String, Integer>();
 
 	public void addGate(ToffoliGate g) {
 		this.gates.add(g);
@@ -126,5 +127,22 @@ public class ReversibleCircuit {
 	
 	public int getAmountOfGarbageLines() {
 		return this.garbageLines.size();
+	}
+	
+	/**
+	 * Checks whether or not a line is a designated constant input line
+	 * @param line the name of the line to check
+	 * @return the const value if the line is a const, -1 else
+	 */
+	public int constValue(String line) {
+		if (constOnly.containsKey(line)) {
+			return constOnly.get(line);
+		} else {
+			return -1;
+		}
+	}
+	
+	public void addConstLine(String line, int value) {
+		this.constOnly.put(line, value);
 	}
 }
