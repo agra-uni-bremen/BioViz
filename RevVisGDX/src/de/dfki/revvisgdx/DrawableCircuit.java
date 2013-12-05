@@ -25,6 +25,9 @@ public class DrawableCircuit implements Drawable {
 	public boolean hideGates = false;
 	public boolean countGatesForGroupColor = false;
 	public boolean colorizeConstants = false;
+	public boolean drawVerticalLines = true;
+	public boolean drawLinesDarkWhenUsed = true;
+	public float reduceGatesToBlocksWhenSmallerThanPixels = 8f;
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -71,6 +74,8 @@ public class DrawableCircuit implements Drawable {
 					float right = xCoordOnScreen(distanceH, lastGateCoord);
 					line.x = (left + right) / 2;
 					line.scaleX = left - right;
+					if (!drawLinesDarkWhenUsed)
+						col.add(0.25f, 0.25f, 0.25f, 0);
 				} else {
 					float left = xCoordOnScreen(distanceH, lastGateCoord);
 					float right = RevVisGDX.singleton.camera.viewportWidth;;
@@ -118,34 +123,49 @@ public class DrawableCircuit implements Drawable {
 						float maxDim = Math.min(distanceH * scaleX, distanceV * scaleY);
 
 
-
-						minY = signalsToCoords.get(data.getGate(i).output);
-						maxY = minY;
-
-						for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-							minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
-							maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
-						}
-
-						line.color = Color.BLACK.cpy();
-						line.scaleX = 1; //RevVisGDX.singleton.camera.viewportWidth;
-						line.scaleY = maxY - minY;
-						line.x = xCoord;
-						line.y = (maxY + minY) / 2; //+ RevVisGDX.singleton.camera.viewportHeight;
-						line.draw();
-						if (maxDim >= 1) {
-							gate01.y = signalsToCoords.get(data.getGate(i).output);
-							gate01.x = xCoord;
-							gate01.setDimensions(maxDim, maxDim);
-							gate01.draw();
-
+						if (drawVerticalLines) {
+							minY = signalsToCoords.get(data.getGate(i).output);
+							maxY = minY;
 
 							for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-								gate02.y = signalsToCoords.get(data.getGate(i).getInputs().get(j));
-								gate02.x = xCoord;
-								gate02.setDimensions(maxDim, maxDim);
-								gate02.draw();
+								minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
+								maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
 							}
+
+							line.color = Color.BLACK.cpy();
+							line.scaleX = 1; //RevVisGDX.singleton.camera.viewportWidth;
+							line.scaleY = maxY - minY;
+							line.x = xCoord;
+							line.y = (maxY + minY) / 2; //+ RevVisGDX.singleton.camera.viewportHeight;
+							line.draw();
+						}
+
+						DrawableSprite targetGate;
+						DrawableSprite controlGate;
+
+						if (maxDim >= reduceGatesToBlocksWhenSmallerThanPixels) {
+							targetGate = gate01;
+							controlGate = gate02;
+							targetGate.setDimensions(maxDim, maxDim);
+							controlGate.setDimensions(maxDim, maxDim);
+						} else {
+							targetGate = line;
+							controlGate = line;
+							targetGate.setDimensions(distanceH * scaleX, distanceV * scaleY);
+							controlGate.setDimensions(distanceH * scaleX, distanceV * scaleY);
+						}
+						targetGate.color = Color.BLACK.cpy();
+						targetGate.y = signalsToCoords.get(data.getGate(i).output);
+						targetGate.x = xCoord;
+						
+						targetGate.draw();
+
+						controlGate.color = Color.BLACK.cpy();
+						for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
+							controlGate.y = signalsToCoords.get(data.getGate(i).getInputs().get(j));
+							controlGate.x = xCoord;
+							
+							controlGate.draw();
 						}
 					}
 				} else {
