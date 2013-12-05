@@ -28,6 +28,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean drawVerticalLines = true;
 	public boolean drawLinesDarkWhenUsed = true;
 	public float reduceGatesToBlocksWhenSmallerThanPixels = 8f;
+	public float groupColorAmount = 16f;
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -112,8 +113,8 @@ public class DrawableCircuit implements Drawable {
 			Color groupCol = Color.RED.cpy();
 			float currentHue = 0;
 			float currentSaturation = 1;
-			int gateCount = 0;
 			String currentGroup = "";
+			int groupCount = 0;
 			for (int i = 0; i < data.getGates().size(); i++) {
 				float xCoord = xCoordOnScreen(distanceH, i);
 
@@ -177,27 +178,21 @@ public class DrawableCircuit implements Drawable {
 
 						if (!currentGroup.equals("")) {
 							
-							if (!countGatesForGroupColor) {
-								currentHue += 1f / 36f;
-								currentSaturation = 1f;
-							}
-							else {
-								currentHue = gateCount / 10f;
-								currentSaturation = 1f;//(gateCount % 36) / 10f;
-							}
+							currentHue += 1f / groupColorAmount;
+							float usedHue = currentHue;
+							if (groupCount % 2 == 0)
+								usedHue += 0.5f;
+							currentSaturation = 1f;
 							
 							//actually draw group
-							line.color = hsvToRgb(currentHue, currentSaturation, 0.5f);
+							line.color = hsvToRgb(usedHue, currentSaturation, 0.5f);
 							line.scaleX = maxX - minX; //RevVisGDX.singleton.camera.viewportWidth;
 							line.scaleY = maxY - minY;
 							line.x = (maxX + minX) / 2;
 							line.y = (maxY + minY) / 2; //+ RevVisGDX.singleton.camera.viewportHeight;
 							line.draw();
-							
-							gateCount = 0;
+							groupCount++;
 						}
-						
-						gateCount += data.getGate(i).getInputs().size(); 
 
 						//set current group to output in order to collect all gates and reset variables.
 						currentGroup = data.getGate(i).output;
