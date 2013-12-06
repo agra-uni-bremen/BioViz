@@ -122,8 +122,12 @@ public class RevVisInputProcessor implements InputProcessor {
 	public boolean scrolled (int amount) {
 		if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
 			RevVisGDX.singleton.currentCircuit.scaleY *= 1 - (amount * 0.2f);
-		else
+		else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
 			RevVisGDX.singleton.currentCircuit.scaleX *= 1 - (amount * 0.2f);
+		else {
+			RevVisGDX.singleton.currentCircuit.scaleY *= 1 - (amount * 0.2f);
+			RevVisGDX.singleton.currentCircuit.scaleX *= 1 - (amount * 0.2f);
+		}
 		return false;
 	}
 

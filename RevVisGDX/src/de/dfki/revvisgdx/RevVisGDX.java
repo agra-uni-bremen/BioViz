@@ -36,7 +36,8 @@ public class RevVisGDX implements ApplicationListener {
 			+ "s: square alignment\n"
 			+ "v: draw vertical gate connectors\n"
 			+ "d: draw dark lines when used"
-			+ "mouse wheel: zoom horizontally\n"
+			+ "mouse wheel: zoom\n"
+			+ "mouse wheel + shift: zoom horizontally\n"
 			+ "mouse wheel + ctrl: zoom vertically\n"
 			+ "left drag: move viewport";
 	
