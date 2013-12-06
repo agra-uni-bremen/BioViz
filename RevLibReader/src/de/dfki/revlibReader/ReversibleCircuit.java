@@ -145,4 +145,53 @@ public class ReversibleCircuit {
 	public void addConstLine(String line, int value) {
 		this.constOnly.put(line, value);
 	}
+	
+	public int calculateGateMobilityLeft(int gate) {
+		return calculateGateMobility(gate, false);
+	}
+	
+	public int calculateGateMobilityRight(int gate) {
+		return calculateGateMobility(gate, true);
+	}
+	
+	private int calculateGateMobility(int gate, boolean goRight) {
+		int direction = 0;
+		if (goRight)
+			direction = 1;
+		else
+			direction = -1;
+		
+		HashSet<String> controlVars = new HashSet<String>();
+		String target = this.gates.get(gate).output;
+		for (int i = 0; i < this.gates.get(gate).getInputs().size(); i++) {
+			controlVars.add(this.gates.get(gate).getInputs().get(i));
+		}
+		
+		int movement = 0;
+		//boolean blocked = false;
+		while(true) {
+			movement += direction;
+			
+			if (gate + movement >= 0 && gate + movement < this.gates.size()) {  
+				ToffoliGate g = this.gates.get(gate + movement);
+				
+				//First rule: The given gate's CONTROL gates may not cross any other
+				// TARGET gate.
+				if (this.gates.get(gate).getInputs().contains(g.output)) {
+					break;
+				}
+				
+				//Second rule: The given gate's TARGET gate may not cross any other
+				// CONTROL gate.
+				if (g.getInputs().contains(this.gates.get(gate).output)) {
+					break;
+				}
+				
+			} else {
+				break;
+			}
+		}
+		
+		return Math.abs(movement - direction);
+	}
 }

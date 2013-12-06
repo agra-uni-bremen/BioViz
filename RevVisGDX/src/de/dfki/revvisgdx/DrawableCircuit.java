@@ -29,6 +29,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean drawLinesDarkWhenUsed = true;
 	public float reduceGatesToBlocksWhenSmallerThanPixels = 8f;
 	public float groupColorAmount = 16f;
+	public boolean colourizeGatesByMobility = false;
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -115,6 +116,7 @@ public class DrawableCircuit implements Drawable {
 			float currentSaturation = 1;
 			String currentGroup = "";
 			int groupCount = 0;
+			
 			for (int i = 0; i < data.getGates().size(); i++) {
 				float xCoord = xCoordOnScreen(distanceH, i);
 
@@ -123,6 +125,13 @@ public class DrawableCircuit implements Drawable {
 
 						float maxDim = Math.min(distanceH * scaleX, distanceV * scaleY);
 
+						Color gateColor = new Color(Color.BLACK);
+						if(this.colourizeGatesByMobility) {
+							int leftRange = data.calculateGateMobilityLeft(i);
+							int rightRange = data.calculateGateMobilityRight(i);
+							gateColor.r = Math.min(1, leftRange / 256f);
+							gateColor.g = Math.min(1, rightRange / 256f);
+						}
 
 						if (drawVerticalLines) {
 							minY = signalsToCoords.get(data.getGate(i).output);
@@ -132,8 +141,8 @@ public class DrawableCircuit implements Drawable {
 								minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
 								maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
 							}
-
-							line.color = Color.BLACK.cpy();
+															
+							line.color = gateColor;
 							line.scaleX = 1; //RevVisGDX.singleton.camera.viewportWidth;
 							line.scaleY = maxY - minY;
 							line.x = xCoord;
@@ -155,13 +164,13 @@ public class DrawableCircuit implements Drawable {
 							targetGate.setDimensions(distanceH * scaleX, distanceV * scaleY);
 							controlGate.setDimensions(distanceH * scaleX, distanceV * scaleY);
 						}
-						targetGate.color = Color.BLACK.cpy();
+						targetGate.color = gateColor;
 						targetGate.y = signalsToCoords.get(data.getGate(i).output);
 						targetGate.x = xCoord;
 						
 						targetGate.draw();
 
-						controlGate.color = Color.BLACK.cpy();
+						controlGate.color = gateColor;
 						for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
 							controlGate.y = signalsToCoords.get(data.getGate(i).getInputs().get(j));
 							controlGate.x = xCoord;
