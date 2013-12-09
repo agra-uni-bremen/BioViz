@@ -33,7 +33,7 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'n':
 			RevVisGDX.singleton.currentCircuit.drawGroups = !RevVisGDX.singleton.currentCircuit.drawGroups;
 			break;
-		case 'h':
+		case 'S':
 			RevVisGDX.singleton.currentCircuit.hideGates = !RevVisGDX.singleton.currentCircuit.hideGates;
 			break;
 //		case 'c':
@@ -56,6 +56,12 @@ public class RevVisInputProcessor implements InputProcessor {
 			break;
 		case 'M':
 			RevVisGDX.singleton.currentCircuit.drawAccumulatedMovingRule = !RevVisGDX.singleton.currentCircuit.drawAccumulatedMovingRule;
+			break;
+		case 'h':
+			RevVisGDX.singleton.currentCircuit.highlightHoveredGate = !RevVisGDX.singleton.currentCircuit.highlightHoveredGate;
+			break;
+		case 'H':
+			RevVisGDX.singleton.currentCircuit.highlightHoveredGateMovingRule = !RevVisGDX.singleton.currentCircuit.highlightHoveredGateMovingRule;
 			break;
 		}
 		return false;
