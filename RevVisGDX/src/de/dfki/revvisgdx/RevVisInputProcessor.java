@@ -141,6 +141,7 @@ public class RevVisInputProcessor implements InputProcessor {
 		oldX = screenX;
 		oldY = screenY;
 		RevVisGDX.singleton.mc.addHUDMessage(this.hashCode(), "Mouse now at " + oldX + ",  " + oldY, 32, 32);
+		RevVisGDX.singleton.currentCircuit.highlightAt(screenX, screenY);
 		return false;
 	}
 }

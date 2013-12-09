@@ -31,6 +31,10 @@ public class DrawableCircuit implements Drawable {
 	public float groupColorAmount = 16f;
 	public boolean colourizeGatesByMobility = false;
 	public boolean drawAccumulatedMovingRule = true;
+	public boolean highlightHoveredGate = true;
+	public boolean highlightHoveredGateMovingRule = true;
+	
+	private int highlitGate = 0;
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -43,7 +47,7 @@ public class DrawableCircuit implements Drawable {
 	public void draw() {
 
 		float distanceV = (RevVisGDX.singleton.camera.viewportHeight / (data.getAmountOfVars() + 2));
-		float distanceH = RevVisGDX.singleton.camera.viewportWidth / (data.getGates().size() + 2);
+//		float distanceH = RevVisGDX.singleton.camera.viewportWidth / (data.getGates().size() + 2);
 		HashMap<String, Float> signalsToCoords = new HashMap<String, Float>();
 
 		for (int i = 0; i < data.getAmountOfVars(); i++) {
@@ -63,7 +67,7 @@ public class DrawableCircuit implements Drawable {
 
 				if (j == 0) {
 					float left = -RevVisGDX.singleton.camera.viewportWidth;
-					float right = xCoordOnScreen(distanceH, firstGateCoord);
+					float right = xCoordOnScreen(firstGateCoord);
 					line.x = (left + right) / 2;
 					line.scaleX = left - right;
 					
@@ -73,14 +77,14 @@ public class DrawableCircuit implements Drawable {
 
 					col.add(0.25f, 0.25f, 0.25f, 0);
 				} else if (j == 1) {
-					float left = xCoordOnScreen(distanceH, firstGateCoord);
-					float right = xCoordOnScreen(distanceH, lastGateCoord);
+					float left = xCoordOnScreen(firstGateCoord);
+					float right = xCoordOnScreen(lastGateCoord);
 					line.x = (left + right) / 2;
 					line.scaleX = left - right;
 					if (!drawLinesDarkWhenUsed)
 						col.add(0.25f, 0.25f, 0.25f, 0);
 				} else {
-					float left = xCoordOnScreen(distanceH, lastGateCoord);
+					float left = xCoordOnScreen(lastGateCoord);
 					float right = RevVisGDX.singleton.camera.viewportWidth;;
 					line.x = (left + right) / 2;
 					line.scaleX = left - right;
@@ -119,12 +123,12 @@ public class DrawableCircuit implements Drawable {
 			int groupCount = 0;
 			
 			for (int i = 0; i < data.getGates().size(); i++) {
-				float xCoord = xCoordOnScreen(distanceH, i);
+				float xCoord = xCoordOnScreen(i);
 
 				if (!drawGroups) {
 					if (xCoord > -RevVisGDX.singleton.camera.viewportWidth / 2 && xCoord < RevVisGDX.singleton.camera.viewportWidth / 2) {
 
-						float maxDim = Math.min(distanceH * scaleX, distanceV * scaleY);
+						float maxDim = Math.min(scaleX, scaleY);
 
 						Color gateColor = new Color(Color.BLACK);
 						if(this.colourizeGatesByMobility) {
@@ -132,6 +136,10 @@ public class DrawableCircuit implements Drawable {
 							int rightRange = data.calculateGateMobilityRight(i);
 							gateColor.r = Math.min(1, leftRange / 256f);
 							gateColor.g = Math.min(1, rightRange / 256f);
+						}
+						
+						if (i == highlitGate && highlightHoveredGate) {
+							gateColor.add(new Color(0.25f, 0.25f, 1f, 0f));
 						}
 
 						if (drawVerticalLines) {
@@ -150,6 +158,21 @@ public class DrawableCircuit implements Drawable {
 							line.y = (maxY + minY) / 2; //+ RevVisGDX.singleton.camera.viewportHeight;
 							line.draw();
 						}
+						
+						if (highlightHoveredGateMovingRule && i == highlitGate) {
+							line.color = new Color(Color.WHITE);
+							line.scaleX = 1; //RevVisGDX.singleton.camera.viewportWidth;
+							line.scaleY = RevVisGDX.singleton.camera.viewportHeight;
+							float movementLeft = data.calculateGateMobilityLeft(i);
+							float movementRight = data.calculateGateMobilityRight(i);
+							line.y = 0;
+							
+							line.x = xCoord + ((movementRight * scaleX) + ((movementRight + 1) * scaleX)) / 2f;
+							line.draw();
+							
+							line.x = xCoord - ((movementLeft * scaleX) + ((movementLeft + 1) * scaleX)) / 2f;
+							line.draw();
+						}
 
 						DrawableSprite targetGate;
 						DrawableSprite controlGate;
@@ -162,8 +185,8 @@ public class DrawableCircuit implements Drawable {
 						} else {
 							targetGate = line;
 							controlGate = line;
-							targetGate.setDimensions(distanceH * scaleX, distanceV * scaleY);
-							controlGate.setDimensions(distanceH * scaleX, distanceV * scaleY);
+							targetGate.setDimensions(scaleX, scaleY);
+							controlGate.setDimensions(scaleX, scaleY);
 						}
 						targetGate.color = gateColor;
 						targetGate.y = signalsToCoords.get(data.getGate(i).output);
@@ -181,7 +204,7 @@ public class DrawableCircuit implements Drawable {
 					}
 				} else {
 					if (!(data.getGate(i).output.equals(currentGroup))) {
-						maxX = xCoord - (distanceH / 2f) * scaleX;
+						maxX = xCoord - (0.5f) * scaleX;
 
 						minY -= (distanceV / 2f) * scaleY;
 						maxY += (distanceV / 2f) * scaleY;
@@ -206,7 +229,7 @@ public class DrawableCircuit implements Drawable {
 
 						//set current group to output in order to collect all gates and reset variables.
 						currentGroup = data.getGate(i).output;
-						minX = xCoord - (distanceH / 2f) * scaleX;
+						minX = xCoord - 0.5f * scaleX;
 						minY = signalsToCoords.get(data.getGate(i).output);
 						maxY = minY;
 						//groupCol.
@@ -227,7 +250,7 @@ public class DrawableCircuit implements Drawable {
 			
 			for (int j = 0; j < movingRuleTargets.length; j++) {
 				
-				float xCoord = (xCoordOnScreen(distanceH, j) + xCoordOnScreen(distanceH, j - 1)) / 2f;
+				float xCoord = (xCoordOnScreen(j) + xCoordOnScreen(j - 1)) / 2f;
 				
 				line.color = new Color(Color.WHITE);
 				line.color.a = (float)(Math.log(movingRuleTargets[j]) / Math.log((float)this.data.getMaximumMovingRuleTargetValue()));
@@ -240,8 +263,8 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	private float xCoordOnScreen(float distanceH, int i) {
-		float xCoord = (i - (data.getGates().size() / 2)) * distanceH;
+	private float xCoordOnScreen(int i) {
+		float xCoord = i;
 		xCoord += offsetX;
 		xCoord *= scaleX;
 		return xCoord;
@@ -253,6 +276,19 @@ public class DrawableCircuit implements Drawable {
 			scaleX = scaleY / aspectRatio;
 		else
 			scaleY = scaleX * aspectRatio;
+	}
+	
+	private int gateAt(int x) {
+		float xResult = x - RevVisGDX.singleton.camera.viewportWidth / 2;
+		
+		xResult /= scaleX;
+		xResult -= offsetX;
+		
+		return (int)xResult;
+	}
+	
+	public void highlightAt(int x, int y) {
+		highlitGate = gateAt(x);
 	}
 
 	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
@@ -278,7 +314,4 @@ public class DrawableCircuit implements Drawable {
 		default: throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
 		}
 	}
-
-
-
 }
