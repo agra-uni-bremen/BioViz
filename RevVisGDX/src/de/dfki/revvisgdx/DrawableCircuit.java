@@ -30,6 +30,7 @@ public class DrawableCircuit implements Drawable {
 	public float reduceGatesToBlocksWhenSmallerThanPixels = 8f;
 	public float groupColorAmount = 16f;
 	public boolean colourizeGatesByMobility = false;
+	public boolean drawAccumulatedMovingRule = true;
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -218,6 +219,23 @@ public class DrawableCircuit implements Drawable {
 					minY = Math.min(minY, signalsToCoords.get(data.getGate(i).output));
 					maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).output));
 				}
+			}
+		}
+		
+		if (drawAccumulatedMovingRule) {
+			int[] movingRuleTargets = this.data.getMovingRuleAccumulations();
+			
+			for (int j = 0; j < movingRuleTargets.length; j++) {
+				
+				float xCoord = (xCoordOnScreen(distanceH, j) + xCoordOnScreen(distanceH, j - 1)) / 2f;
+				
+				line.color = new Color(Color.WHITE);
+				line.color.a = (float)(Math.log(movingRuleTargets[j]) / Math.log((float)this.data.getMaximumMovingRuleTargetValue()));
+				line.scaleX = 1; //RevVisGDX.singleton.camera.viewportWidth;
+				line.scaleY = RevVisGDX.singleton.camera.viewportHeight;
+				line.x = xCoord;
+				line.y = 0; //+ RevVisGDX.singleton.camera.viewportHeight;
+				line.draw();
 			}
 		}
 	}

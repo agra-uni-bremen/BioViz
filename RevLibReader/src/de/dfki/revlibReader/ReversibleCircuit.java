@@ -19,6 +19,8 @@ public class ReversibleCircuit {
 	HashSet<String> outputOnly = new HashSet<String>();
 	HashSet<String> mixedInputOutput = new HashSet<String>();
 	HashMap<String, Integer> constOnly = new HashMap<String, Integer>();
+	private int[] movingRuleAccumulations;
+	private int maximumMovingRuleAccumulation = 0;
 
 	public void addGate(ToffoliGate g) {
 		this.gates.add(g);
@@ -193,5 +195,39 @@ public class ReversibleCircuit {
 		}
 		
 		return Math.abs(movement - direction);
+	}
+	
+	public int[] getMovingRuleAccumulations() {
+		if (this.movingRuleAccumulations == null)
+			this.recalculateMovingRuleAccumulations();
+		return this.movingRuleAccumulations;
+	}
+	
+	public int getMaximumMovingRuleTargetValue() {
+		return maximumMovingRuleAccumulation;
+	}
+	
+	/**
+	 * Recalculates the accumulated moving rule target values.
+	 * The movingRuleAccumulations array afterwards contains values
+	 * describing how many gates can move to a certain position.
+	 */
+	private void recalculateMovingRuleAccumulations() {
+		int[] result = new int[this.gates.size() + 1];
+		
+		for (int i = 0; i < this.gates.size(); i++) {
+			int valueRight = this.calculateGateMobility(i, true);
+			int valueLeft = this.calculateGateMobility(i, false);
+			
+			result[i + valueRight] += 1;
+			if (result[i + valueRight] > maximumMovingRuleAccumulation)
+				maximumMovingRuleAccumulation = result[i + valueRight];
+			
+			result[i - valueLeft] += 1;
+			if (result[i - valueLeft] > maximumMovingRuleAccumulation)
+				maximumMovingRuleAccumulation = result[i - valueLeft];
+		}
+		
+		this.movingRuleAccumulations = result;
 	}
 }

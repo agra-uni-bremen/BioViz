@@ -2,6 +2,7 @@ package de.dfki.revvisgdx;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 
 public class RevVisInputProcessor implements InputProcessor {
@@ -52,6 +53,9 @@ public class RevVisInputProcessor implements InputProcessor {
 			break;
 		case 'm':
 			RevVisGDX.singleton.currentCircuit.colourizeGatesByMobility = !RevVisGDX.singleton.currentCircuit.colourizeGatesByMobility;
+			break;
+		case 'M':
+			RevVisGDX.singleton.currentCircuit.drawAccumulatedMovingRule = !RevVisGDX.singleton.currentCircuit.drawAccumulatedMovingRule;
 			break;
 		}
 		return false;
@@ -115,6 +119,7 @@ public class RevVisInputProcessor implements InputProcessor {
 				}
 			}
 		}
+		RevVisGDX.singleton.mc.addHUDMessage(this.hashCode(), "Mouse now at " + oldX + ",  " + oldY, 32, 32);
 		return false;
 	}
 
@@ -135,6 +140,7 @@ public class RevVisInputProcessor implements InputProcessor {
 	public boolean mouseMoved(int screenX, int screenY) {
 		oldX = screenX;
 		oldY = screenY;
+		RevVisGDX.singleton.mc.addHUDMessage(this.hashCode(), "Mouse now at " + oldX + ",  " + oldY, 32, 32);
 		return false;
 	}
 }
