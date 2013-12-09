@@ -66,6 +66,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'u':
 			RevVisGDX.singleton.currentCircuit.colorizeLineUsage = !RevVisGDX.singleton.currentCircuit.colorizeLineUsage;
 			break;
+		case 'U':
+			RevVisGDX.singleton.currentCircuit.lineWidthByUsage = !RevVisGDX.singleton.currentCircuit.lineWidthByUsage;
+			break;
 		}
 		return false;
 	}
