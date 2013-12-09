@@ -33,6 +33,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean drawAccumulatedMovingRule = true;
 	public boolean highlightHoveredGate = true;
 	public boolean highlightHoveredGateMovingRule = true;
+	public boolean colorizeLineUsage = true;
 	
 	private int highlitGate = 0;
 
@@ -97,11 +98,17 @@ public class DrawableCircuit implements Drawable {
 				}
 
 				if (pixelWideLines)
-					line.scaleY = 2;
+					line.scaleY = 1;
 				else
 					line.scaleY = distanceV * scaleY;
 				line.y = (i - (data.getAmountOfVars() / 2)) * distanceV - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
 				line.y *= scaleY;
+				
+				if (colorizeLineUsage) {
+					float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
+					line.color = new Color(1f - usagePercent, 1f - usagePercent, 1f- usagePercent, 1);
+//					col.a = 1;
+				}
 
 				if (!data.isFunctionLine(data.getVars().get(i))) {
 					//					line.color.mul(0.5f);

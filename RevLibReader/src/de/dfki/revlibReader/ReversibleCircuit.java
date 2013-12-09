@@ -15,12 +15,14 @@ public class ReversibleCircuit {
 	private HashSet<String> functionLines = new HashSet<String>();
 	private HashMap<String, ToffoliGate> firstGates = new HashMap<String, ToffoliGate>();
 	private HashMap<String, ToffoliGate> lastGates = new HashMap<String, ToffoliGate>();
+	private HashMap<String, Integer> lineUsage;
 	HashSet<String> inputOnly = new HashSet<String>();
 	HashSet<String> outputOnly = new HashSet<String>();
 	HashSet<String> mixedInputOutput = new HashSet<String>();
 	HashMap<String, Integer> constOnly = new HashMap<String, Integer>();
 	private int[] movingRuleAccumulations;
 	private int maximumMovingRuleAccumulation = 0;
+	private int maximumLineUsage = 0;
 
 	public void addGate(ToffoliGate g) {
 		this.gates.add(g);
@@ -205,6 +207,38 @@ public class ReversibleCircuit {
 	
 	public int getMaximumMovingRuleTargetValue() {
 		return maximumMovingRuleAccumulation;
+	}
+	
+	private void calculateLineUsage() {
+
+		for (int i = 0; i < this.vars.size(); i++) {
+			String line = this.vars.get(i);
+			int result = 0;
+			for (int j = 0; j < this.gates.size(); j++) {
+				if (this.gates.get(j).getInputs().contains(line))
+					result++;
+				if (this.gates.get(j).output.equals(line))
+					result++;
+			}
+			
+			if (result > maximumLineUsage)
+				maximumLineUsage = result;
+			this.lineUsage.put(line, result);
+		}
+	}
+	
+	public int getLineUsage(String line) {
+		if (this.lineUsage == null) {
+			lineUsage = new HashMap<String, Integer>();
+			calculateLineUsage();
+		}
+		
+		// TODO: Check if usage contains string?
+		return this.lineUsage.get(line);
+	}
+	
+	public int getMaximumLineUsage() {
+		return maximumLineUsage;
 	}
 	
 	/**
