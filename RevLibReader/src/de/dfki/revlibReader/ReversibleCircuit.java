@@ -219,7 +219,7 @@ public class ReversibleCircuit {
 			int valueRight = this.calculateGateMobility(i, true);
 			int valueLeft = this.calculateGateMobility(i, false);
 			
-			result[i + valueRight] += 1;
+			result[i + valueRight + 1] += 1;
 			if (result[i + valueRight] > maximumMovingRuleAccumulation)
 				maximumMovingRuleAccumulation = result[i + valueRight];
 			
