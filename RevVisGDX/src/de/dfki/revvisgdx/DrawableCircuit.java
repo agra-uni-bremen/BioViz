@@ -295,9 +295,9 @@ public class DrawableCircuit implements Drawable {
 	public void shrinkToSquareAlignment() {
 		float aspectRatio = (RevVisGDX.singleton.camera.viewportWidth / RevVisGDX.singleton.camera.viewportHeight);
 		if (scaleY / aspectRatio < scaleX)
-			scaleX = scaleY / aspectRatio;
+			scaleX = scaleY;// * aspectRatio;
 		else
-			scaleY = scaleX * aspectRatio;
+			scaleY = scaleX; // * aspectRatio;
 	}
 	
 	private int gateAt(int x) {
