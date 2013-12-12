@@ -35,6 +35,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean highlightHoveredGateMovingRule = true;
 	public boolean colorizeLineUsage = false;
 	public boolean lineWidthByUsage = true;
+	public boolean showLineNames = true;
 	
 	private int highlitGate = 0;
 
@@ -48,7 +49,7 @@ public class DrawableCircuit implements Drawable {
 	@Override
 	public void draw() {
 
-		float distanceV = (RevVisGDX.singleton.camera.viewportHeight / (data.getAmountOfVars() + 2));
+//		float distanceV = (RevVisGDX.singleton.camera.viewportHeight / (data.getAmountOfVars() + 2));
 //		float distanceH = RevVisGDX.singleton.camera.viewportWidth / (data.getGates().size() + 2);
 		HashMap<String, Float> signalsToCoords = new HashMap<String, Float>();
 
@@ -100,16 +101,16 @@ public class DrawableCircuit implements Drawable {
 				
 				float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
 				if (lineWidthByUsage) {
-					line.scaleY = distanceV * scaleY;
+					line.scaleY = scaleY;
 					line.scaleY *= usagePercent;
 					line.scaleY = Math.max(1, line.scaleY);
 				} else {
 					if (pixelWideLines)
 						line.scaleY = 1;
 					else
-						line.scaleY = distanceV * scaleY;
+						line.scaleY = scaleY;
 				}
-				line.y = (i - (data.getAmountOfVars() / 2)) * distanceV - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
+				line.y = (i - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
 				line.y *= scaleY;
 				
 				if (colorizeLineUsage) {
@@ -125,6 +126,14 @@ public class DrawableCircuit implements Drawable {
 			}
 
 			signalsToCoords.put(data.getVars().get(i), line.y);
+			
+			if (showLineNames && scaleY > 10) {
+				Color lineNameColor = new Color(Color.WHITE);
+				lineNameColor.a = Math.max(0, Math.min(1, (scaleY - 10f) / 5f));
+				RevVisGDX.singleton.mc.addHUDMessage(data.getVars().get(i).hashCode(), data.getVars().get(i), RevVisGDX.singleton.camera.viewportWidth - 64, (line.y + RevVisGDX.singleton.camera.viewportHeight / 2f), lineNameColor);
+			} else {
+				RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(i).hashCode());
+			}
 		}
 
 		if (!hideGates) {
@@ -219,8 +228,8 @@ public class DrawableCircuit implements Drawable {
 					if (!(data.getGate(i).output.equals(currentGroup))) {
 						maxX = xCoord - (0.5f) * scaleX;
 
-						minY -= (distanceV / 2f) * scaleY;
-						maxY += (distanceV / 2f) * scaleY;
+						minY -= 0.5f * scaleY;
+						maxY += 0.5f * scaleY;
 
 						if (!currentGroup.equals("")) {
 							
@@ -284,7 +293,7 @@ public class DrawableCircuit implements Drawable {
 	}
 	
 	public void shrinkToSquareAlignment() {
-		float aspectRatio = ((RevVisGDX.singleton.camera.viewportWidth / (data.getGates().size() + 2)) / (RevVisGDX.singleton.camera.viewportHeight / (data.getAmountOfVars() + 2)));
+		float aspectRatio = (RevVisGDX.singleton.camera.viewportWidth / RevVisGDX.singleton.camera.viewportHeight);
 		if (scaleY / aspectRatio < scaleX)
 			scaleX = scaleY / aspectRatio;
 		else

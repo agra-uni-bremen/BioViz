@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
@@ -18,11 +19,13 @@ public class MessageCenter {
 		public String message;
 		public float x;
 		public float y;
+		public Color color;
 		
 		public HUDMessage(String message, float x, float y) {
 			this.message = message;
 			this.x = x;
 			this.y = y;
+			this.color = Color.WHITE;
 		}
 	}
 	public HashMap<Integer, HUDMessage> HUDMessages = new HashMap<Integer, HUDMessage>();
@@ -59,7 +62,8 @@ public class MessageCenter {
 		
 		int yCoord = Gdx.graphics.getHeight() - spacing;
 		for (Message m : this.messages) {
-			font.setColor(1f,1f, 1f, 1.0f);
+			if (m.color != null)
+				font.setColor(m.color);
 			int start_x = spacing;
 			int start_y = yCoord;
 			font.draw(RevVisGDX.singleton.batch, m.message, start_x, start_y); // TODO name of closestHit
@@ -85,6 +89,10 @@ public class MessageCenter {
 	}
 	
 	public void addHUDMessage(int key, String message, float x, float y) {
+		addHUDMessage(key, message, x, y, null);
+	}
+	
+	public void addHUDMessage(int key, String message, float x, float y, Color col) {
 		HUDMessage hm ;
 		if (!this.HUDMessages.containsKey(key)) {
 			hm = new HUDMessage(message, x, y);
@@ -95,6 +103,8 @@ public class MessageCenter {
 			hm.x = x;
 			hm.y = y;
 		}
+		if(col != null)
+			hm.color = col;
 	}
 	
 	public void removeHUDMessage(int key) {
