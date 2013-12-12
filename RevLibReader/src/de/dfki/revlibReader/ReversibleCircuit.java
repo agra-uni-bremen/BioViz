@@ -23,6 +23,7 @@ public class ReversibleCircuit {
 	private int[] movingRuleAccumulations;
 	private int maximumMovingRuleAccumulation = 0;
 	private int maximumLineUsage = 0;
+	private int amountOfVars = -1;
 
 	public void addGate(ToffoliGate g) {
 		this.gates.add(g);
@@ -76,6 +77,22 @@ public class ReversibleCircuit {
 
 	public void setVars(Vector<String> allVars) {
 		this.vars = allVars;
+	}
+	
+	public void setVarAmount(int varCount) {
+		this.amountOfVars = varCount;
+	}
+	
+	public int getVarAmount() {
+		if (this.amountOfVars >= 0) {
+			return amountOfVars;
+		} else {
+			if (this.vars != null) {
+				return this.vars.size();
+			} else {
+				throw new RuntimeException("The amount of variables needs to be either set explicitly or implicitly by having added variables before it can be retrieved.");
+			}
+		}
 	}
 
 	public long totalDistance() {

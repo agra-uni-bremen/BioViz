@@ -74,13 +74,15 @@ public class RevlibFileReader {
 			else
 				break;
 		}
+		if (currentCircuit.getAmountOfVars() >= 0)
+			assert(currentCircuit.getVars().size() == currentCircuit.getVarAmount());
 	}
 	
 	private static void readGarbageLine(String line) {
 		String[] elements = line.split(" ");
 		String garbageInfo = elements[1];
 		for (int j = 0; j < garbageInfo.length(); j++) {
-			if (garbageInfo.charAt(j) != '-')
+			if (garbageInfo.charAt(j) != '-' && j < currentCircuit.getVars().size())
 				currentCircuit.addGarbageLine(currentCircuit.getVars().elementAt(j));
 		}
 	}
@@ -89,10 +91,20 @@ public class RevlibFileReader {
 		String[] elements = line.split(" ");
 		String constInfo = elements[1];
 		for (int j = 0; j < constInfo.length(); j++) {
-			if (constInfo.charAt(j) != '-')
-				currentCircuit.addConstLine(currentCircuit.getVars().elementAt(j), Integer.parseInt(new String(new char[]{constInfo.charAt(j)})));
+			if (constInfo.charAt(j) != '-') {
+				String toParse = new String(new char[]{constInfo.charAt(j)});
+				int value;
+				try {
+					value = Integer.parseInt(toParse);
+					currentCircuit.addConstLine(currentCircuit.getVars().elementAt(j), value);
+				} catch(Exception e) {
+					System.out.println("Could not parse const value " + toParse);
+				}
+			
+				
+			}
 		}
-	}
+	}	
 	
 	private static void readFunctionLine(String line) {
 		String[] elements = line.split(" ");
