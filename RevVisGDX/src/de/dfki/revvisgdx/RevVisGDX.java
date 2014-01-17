@@ -72,7 +72,7 @@ public class RevVisGDX implements ApplicationListener {
 		if (this.filename != null && this.filename != "") {
 			c = RevlibFileReader.readRealFile(filename);
 		} else {
-			FileHandle handle = Gdx.files.internal("examples/apex2_289.real");
+			FileHandle handle = Gdx.files.internal("examples/cm85a_209.real");
 			String fileContents = handle.readString();
 			c = RevlibFileReader.readRealFileContents(fileContents);
 			//c = RevlibFileReader.readRealFile("bin/examples/apex2_289.real");	

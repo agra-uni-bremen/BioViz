@@ -3,14 +3,41 @@ package de.dfki.revlibReader;
 import java.util.List;
 import java.util.Vector;
 
-public class ToffoliGate {
-//	public String inputA;
-//	public String inputB;
-	
+public class ToffoliGate {	
 	public String output;
+	private int mobilityLeft = -1;
+	private int mobilityRight = -1;
+	
+	/**
+	 * The cached value for the gate mobility to the left
+	 * @return the gate mobility to the left
+	 */
+	public int getMobilityLeft() {return mobilityLeft;}
+	
+	/**
+	 * The cached value for the gate mobility to the right
+	 * @return the gate mobility to the right
+	 */
+	public int getMobilityRight() {return mobilityRight;}
+	
+	/**
+	 * Sets the cached value for the gate mobility to the left
+	 * @param mobilityValue this gate's mobility to the left
+	 */
+	public void setMobilityLeft(int mobilityValue) {this.mobilityLeft = mobilityValue;}
+	
+	/**
+	 * Sets the cached value for the gate mobility to the right
+	 * @param mobilityValue this gate's mobility to the right
+	 */
+	public void setMobilityRight(int mobilityValue) {this.mobilityRight = mobilityValue;}
 	
 	private Vector<String> inputs = new Vector<String>();
 	
+	/**
+	 * Gives you access to this gate's control lines
+	 * @return this gate's control lines
+	 */
 	public List<String> getInputs() {
 		return inputs;
 	}
@@ -22,6 +49,13 @@ public class ToffoliGate {
 	
 	boolean putTargetsOnTop = true;
 	
+	/**
+	 * Calculates the height of this gate. Basically this is the maximum
+	 * distance between any two target/control lines addressed by this gate.
+	 * @param orderOfVars the current order of lines (which is of course needed
+	 * to provide a distance between addressed lines)
+	 * @return the distance this gate covers
+	 */
 	public long calculateDistance(List<String> orderOfVars) {
 		
 		int minIndex = 0, maxIndex = 0;

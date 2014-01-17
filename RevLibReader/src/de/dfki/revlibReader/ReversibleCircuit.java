@@ -24,6 +24,7 @@ public class ReversibleCircuit {
 	private int maximumMovingRuleAccumulation = 0;
 	private int maximumLineUsage = 0;
 	private int amountOfVars = -1;
+	private HashMap<String, HashSet<String>> buses = new HashMap<String, HashSet<String>>();
 
 	public void addGate(ToffoliGate g) {
 		this.gates.add(g);
@@ -174,46 +175,81 @@ public class ReversibleCircuit {
 	public int calculateGateMobilityRight(int gate) {
 		return calculateGateMobility(gate, true);
 	}
-	
+
 	private int calculateGateMobility(int gate, boolean goRight) {
+
 		int direction = 0;
 		if (goRight)
 			direction = 1;
 		else
 			direction = -1;
-		
-		HashSet<String> controlVars = new HashSet<String>();
-		String target = this.gates.get(gate).output;
-		for (int i = 0; i < this.gates.get(gate).getInputs().size(); i++) {
-			controlVars.add(this.gates.get(gate).getInputs().get(i));
-		}
-		
-		int movement = 0;
-		//boolean blocked = false;
-		while(true) {
-			movement += direction;
+
+		// Only calculate mobility once for each direction!
+		if (!(
+				(this.gates.get(gate).getMobilityLeft() >= 0 && !goRight) ||
+				(this.gates.get(gate).getMobilityRight() >= 0 && goRight)
+			)) {
 			
-			if (gate + movement >= 0 && gate + movement < this.gates.size()) {  
-				ToffoliGate g = this.gates.get(gate + movement);
-				
-				//First rule: The given gate's CONTROL gates may not cross any other
-				// TARGET gate.
-				if (this.gates.get(gate).getInputs().contains(g.output)) {
-					break;
+			//Special case: Target/Control-ONLY lines
+			boolean fullMovement = true;
+			if (this.isTargetOnly(this.gates.get(gate).output)) {
+				for (int i = 0; i < this.gates.get(gate).getInputs().size(); i++) {
+					if (!(this.isInputOnly(this.gates.get(gate).getInputs().get(i)))) {
+						fullMovement = false;
+					}
 				}
-				
-				//Second rule: The given gate's TARGET gate may not cross any other
-				// CONTROL gate.
-				if (g.getInputs().contains(this.gates.get(gate).output)) {
-					break;
-				}
-				
 			} else {
-				break;
+				fullMovement = false;
+			}
+
+			if (fullMovement) {
+				this.gates.get(gate).setMobilityRight(this.gates.size() - gate - 1);
+				this.gates.get(gate).setMobilityLeft(gate);
+			} else {
+
+				HashSet<String> controlVars = new HashSet<String>();
+				String target = this.gates.get(gate).output;
+				for (int i = 0; i < this.gates.get(gate).getInputs().size(); i++) {
+					controlVars.add(this.gates.get(gate).getInputs().get(i));
+				}
+
+				int movement = 0;
+				//boolean blocked = false;
+				while(true) {
+					movement += direction;
+
+					if (gate + movement >= 0 && gate + movement < this.gates.size()) {  
+						ToffoliGate g = this.gates.get(gate + movement);
+
+						//First rule: The given gate's CONTROL gates may not cross any other
+						// TARGET gate.
+						if (this.gates.get(gate).getInputs().contains(g.output)) {
+							break;
+						}
+
+						//Second rule: The given gate's TARGET gate may not cross any other
+						// CONTROL gate.
+						if (g.getInputs().contains(this.gates.get(gate).output)) {
+							break;
+						}
+
+					} else {
+						break;
+					}
+				}
+
+				int value = Math.abs(movement - direction);
+				if (goRight)
+					this.gates.get(gate).setMobilityRight(value);
+				else
+					this.gates.get(gate).setMobilityLeft(value);
 			}
 		}
 		
-		return Math.abs(movement - direction);
+		if (goRight)
+			return this.gates.get(gate).getMobilityRight();
+		else
+			return this.gates.get(gate).getMobilityLeft();
 	}
 	
 	public int[] getMovingRuleAccumulations() {
@@ -280,5 +316,15 @@ public class ReversibleCircuit {
 		}
 		
 		this.movingRuleAccumulations = result;
+	}
+	
+	public void addToBus(String variable, String bus) {
+		if (this.vars.contains(variable)) {
+			if (!this.buses.containsKey(bus)) {
+				this.buses.put(bus, new HashSet<String>());
+			}
+			
+			this.buses.get(bus).add(variable);
+		}
 	}
 }
