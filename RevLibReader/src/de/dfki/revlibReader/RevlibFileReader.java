@@ -62,17 +62,21 @@ public class RevlibFileReader {
 			else
 				break;
 		}
-		result.output = elements[elements.length - 1];
+		result.output = elements[elements.length - 1].trim();
 		return result;
 	}
 	
 	private static void readVariablesLine(String line) {
 		String[] elements = line.split(" ");
 		for (int i = 1; i < elements.length; i++) {
-			if (!elements[i].startsWith("#"))
-				currentCircuit.addLine(elements[i]);
-			else
+			if (!elements[i].startsWith("#")) {
+				if (elements[i].length() > 0) {
+					currentCircuit.addLine(elements[i]);
+				}
+			}
+			else {
 				break;
+			}
 		}
 		if (currentCircuit.getAmountOfVars() >= 0)
 			assert(currentCircuit.getVars().size() == currentCircuit.getVarAmount());

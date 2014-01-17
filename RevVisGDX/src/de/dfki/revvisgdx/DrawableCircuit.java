@@ -183,7 +183,7 @@ public class DrawableCircuit implements Drawable {
 						
 						if (highlightHoveredGateMovingRule && i == highlitGate) {
 							line.color = new Color(Color.WHITE);
-							line.scaleX = 1; //RevVisGDX.singleton.camera.viewportWidth;
+							line.scaleX = 3; //RevVisGDX.singleton.camera.viewportWidth;
 							line.scaleY = RevVisGDX.singleton.camera.viewportHeight;
 							float movementLeft = data.calculateGateMobilityLeft(i);
 							float movementRight = data.calculateGateMobilityRight(i);
