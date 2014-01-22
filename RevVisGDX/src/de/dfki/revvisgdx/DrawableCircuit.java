@@ -34,7 +34,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean highlightHoveredGate = true;
 	public boolean highlightHoveredGateMovingRule = true;
 	public boolean colorizeLineUsage = false;
-	public boolean lineWidthByUsage = true;
+	public boolean lineWidthByUsage = false;
 	public boolean showLineNames = true;
 	
 	private int highlitGate = 0;
@@ -225,7 +225,21 @@ public class DrawableCircuit implements Drawable {
 						}
 					}
 				} else {
-					if (!(data.getGate(i).output.equals(currentGroup))) {
+					
+					boolean drawGroup = !(data.getGate(i).output.equals(currentGroup));
+					
+					if (i >= data.getGates().size() - 1) {
+						for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
+							minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
+							maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
+						}
+						minY = Math.min(minY, signalsToCoords.get(data.getGate(i).output));
+						maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).output));
+						 xCoord = xCoordOnScreen(i + 1);
+						drawGroup = true;
+					}
+					
+					if (drawGroup) {
 						maxX = xCoord - (0.5f) * scaleX;
 
 						minY -= 0.5f * scaleY;
