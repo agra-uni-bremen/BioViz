@@ -11,7 +11,7 @@ public class Main {
 		cfg.useGL20 = false;
 		cfg.width = 480;
 		cfg.height = 320;
-		cfg.addIcon("data/icon.png", Files.FileType.Internal);
+		cfg.addIcon("data/icon_win_linux.png", Files.FileType.Internal);
 		if (args.length <= 0) {
 			new LwjglApplication(new RevVisGDX(), cfg);
 		} else {
