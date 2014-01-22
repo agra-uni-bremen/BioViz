@@ -114,7 +114,7 @@ public class DrawableCircuit implements Drawable {
 				line.y *= scaleY;
 				
 				if (colorizeLineUsage) {
-					line.color = new Color(1f - usagePercent, 1f - usagePercent, 1f- usagePercent, 1);
+					line.color = line.color.mul(usagePercent, usagePercent, usagePercent, 1);
 				}
 
 				if (!data.isFunctionLine(data.getVars().get(i))) {
@@ -348,5 +348,10 @@ public class DrawableCircuit implements Drawable {
 		case 5: return new Color(value, p, q, 1);
 		default: throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
 		}
+	}
+	
+	//TODO
+	public void toggleLineWidth() {
+		
 	}
 }
