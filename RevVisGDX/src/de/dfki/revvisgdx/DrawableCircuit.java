@@ -156,8 +156,8 @@ public class DrawableCircuit implements Drawable {
 						if(this.colourizeGatesByMobility) {
 							int leftRange = data.calculateGateMobilityLeft(i);
 							int rightRange = data.calculateGateMobilityRight(i);
-							gateColor.r = Math.min(1, leftRange / 256f);
-							gateColor.g = Math.min(1, rightRange / 256f);
+							gateColor.r = Math.min(1, leftRange / 32f);
+							gateColor.g = Math.min(1, rightRange / 32f);
 						}
 						
 						if (i == highlitGate && highlightHoveredGate) {
