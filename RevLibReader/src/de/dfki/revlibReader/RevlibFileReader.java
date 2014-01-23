@@ -58,13 +58,18 @@ public class RevlibFileReader {
 	private static ToffoliGate readT3GateFromLine(String line){
 		String[] elements = line.split(" ");
 		ToffoliGate result = new ToffoliGate();
+		int lastElement = 0;
 		for (int i = 1; i < elements.length - 1; i++) {
-			if (!elements[i].startsWith("#"))
+			if (!elements[i+1].trim().startsWith("#")) {
 				result.addInput(elements[i]);
-			else
+				lastElement++;
+			}
+			else {
+				//lastElement++;
 				break;
+			}
 		}
-		result.output = elements[elements.length - 1].trim();
+		result.output = elements[lastElement + 1].trim();
 		return result;
 	}
 	

@@ -1,5 +1,7 @@
 package de.dfki.revvisgdx;
 
+import java.sql.Date;
+import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
@@ -66,7 +68,7 @@ public class MessageCenter {
 				font.setColor(m.color);
 			int start_x = spacing;
 			int start_y = yCoord;
-			font.draw(RevVisGDX.singleton.batch, m.message, start_x, start_y); // TODO name of closestHit
+			font.draw(RevVisGDX.singleton.batch, new Date(m.createdOn).toLocaleString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
 			//SystemViewMain.Singleton.myBatch.disableBlending();
 
 			
@@ -75,7 +77,7 @@ public class MessageCenter {
 		}
 		
 		for (HUDMessage s: this.HUDMessages.values()) {
-			font.setColor(1f,1f, 1f, 1.0f);
+			font.setColor(s.color);
 			int x = (int) s.x;
 			int y = (int) s.y;
 			font.draw(RevVisGDX.singleton.batch, s.message, x, y);

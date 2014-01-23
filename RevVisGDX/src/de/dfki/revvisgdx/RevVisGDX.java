@@ -28,25 +28,6 @@ public class RevVisGDX implements ApplicationListener {
 	
 	MessageCenter mc = new MessageCenter();
 	
-	public static String helpText =
-			"c: colorize constant inputs\n"
-			+ "d: draw dark lines when used\n"
-			+ "g: garbage lines color\n"
-			+ "h: highlight hovered gate\n"
-			+ "H: highlight hovered gate's moving rule\n"
-			+ "m: show moving rule by gate color (red: left, green: right)\n"
-			+ "M: show moving rule by line overlay\n"
-			+ "n: neighbouring targets as groups\n"
-			+ "s: square alignment\n"
-			+ "S: show/hide gates\n"
-			+ "u: colorize lines by usage\n"
-			+ "v: draw vertical gate connectors\n"
-			+ "w: toggle line width (full/usage/pixel)\n"
-			+ "mouse wheel: zoom\n"
-			+ "mouse wheel + shift: zoom horizontally\n"
-			+ "mouse wheel + ctrl: zoom vertically\n"
-			+ "left drag: move viewport";
-	
 	private String filename;
 	
 	public RevVisGDX() {
@@ -90,7 +71,7 @@ public class RevVisGDX implements ApplicationListener {
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		mc.addMessage("RevVisGDX started");
-		mc.addMessage(helpText);
+		mc.addMessage(Messages.helpText);
 	}
 
 	@Override
