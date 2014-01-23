@@ -338,4 +338,19 @@ public class ReversibleCircuit {
 	public boolean isMemberOfBus(String variableName, String busName) {
 		return (this.buses.get(busName).contains(variableName));
 	}
+	
+	/**
+	 * Calculates a variables bus.
+	 * Notice that atm a variable does not hold that information, so it needs to
+	 * be retrieved from the list of buses and might therefore be expensive.
+	 * @param variable the variable to get the bus it belongs to from
+	 * @return this variable's bus or null if there is none
+	 */
+	public String getBus(String variable) {
+		for (String busname : this.buses.keySet()) {
+			if (this.buses.get(busname).contains(variable))
+				return busname;
+		}
+		return null;
+	}
 }

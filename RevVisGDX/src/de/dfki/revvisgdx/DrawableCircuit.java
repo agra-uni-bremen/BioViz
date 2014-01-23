@@ -26,7 +26,7 @@ public class DrawableCircuit implements Drawable {
 
 	public boolean colorizeGarbageLine = false;
 //	public boolean pixelWideLines = false;
-	public boolean drawGroups = false;
+//	public boolean drawGroups = false;
 	public boolean hideGates = false;
 	public boolean countGatesForGroupColor = false;
 	public boolean colorizeConstants = false;
@@ -111,7 +111,7 @@ public class DrawableCircuit implements Drawable {
 			for (int i = 0; i < data.getGates().size(); i++) {
 				float xCoord = xCoordOnScreen(i);
 
-				if (!drawGroups) {
+				if (this.neighbourhoodGrouping == lineGrouping.none) {
 					if (xCoord > -RevVisGDX.singleton.camera.viewportWidth / 2 && xCoord < RevVisGDX.singleton.camera.viewportWidth / 2) {
 
 						float maxDim = Math.min(smoothScaleX, smoothScaleY);
@@ -190,7 +190,16 @@ public class DrawableCircuit implements Drawable {
 					}
 				} else {
 					
-					boolean drawGroup = !(data.getGate(i).output.equals(currentGroup));
+					boolean drawGroup;
+					if (this.neighbourhoodGrouping == lineGrouping.single) {
+						drawGroup = !(data.getGate(i).output.equals(currentGroup));
+					} else {
+						if (data.getBus(data.getGate(i).output) != null) {
+							drawGroup = !(data.getBus(data.getGate(i).output).equals(currentGroup));
+						} else {
+							drawGroup = !(data.getGate(i).output.equals(currentGroup));
+						}
+					}
 					
 					if (i >= data.getGates().size() - 1) {
 						for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
@@ -228,7 +237,11 @@ public class DrawableCircuit implements Drawable {
 						}
 
 						//set current group to output in order to collect all gates and reset variables.
-						currentGroup = data.getGate(i).output;
+						if (this.neighbourhoodGrouping == lineGrouping.single || data.getBus(data.getGate(i).output) == null) {
+							currentGroup = data.getGate(i).output;
+						} else {
+							currentGroup = data.getBus(data.getGate(i).output);
+						}
 						minX = xCoord - 0.5f * smoothScaleX;
 						minY = signalsToCoords.get(data.getGate(i).output);
 						maxY = minY;
@@ -419,6 +432,23 @@ public class DrawableCircuit implements Drawable {
 			break;
 		}
 	}
+	
+	public void toggleNeighbourGrouping() {
+		switch(this.neighbourhoodGrouping) {
+		case none:
+			this.neighbourhoodGrouping = lineGrouping.single;
+			break;
+		case single:
+			this.neighbourhoodGrouping = lineGrouping.bus;
+			break;
+		case bus:
+			this.neighbourhoodGrouping = lineGrouping.none;
+			break;
+		default:
+			this.neighbourhoodGrouping = lineGrouping.none;
+				
+		}
+	}
 
 	public float getScaleX() {
 		return scaleX;
@@ -453,6 +483,10 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 		
-		System.out.println("Bus drawn toggled to " + drawnBus);
+		if (drawnBus.equals("")) {
+			RevVisGDX.singleton.mc.addMessage(Messages.highlightNoBus);
+		} else {
+			RevVisGDX.singleton.mc.addMessage(Messages.highlightBus.replace("$1", this.drawnBus));
+		}
 	}
 }

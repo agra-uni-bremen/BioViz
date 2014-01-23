@@ -28,7 +28,7 @@ public class RevVisInputProcessor implements InputProcessor {
 			RevVisGDX.singleton.currentCircuit.colorizeGarbageLine = !RevVisGDX.singleton.currentCircuit.colorizeGarbageLine;
 			break;
 		case 'n':
-			RevVisGDX.singleton.currentCircuit.drawGroups = !RevVisGDX.singleton.currentCircuit.drawGroups;
+			RevVisGDX.singleton.currentCircuit.toggleNeighbourGrouping();
 			break;
 		case 'S':
 			RevVisGDX.singleton.currentCircuit.hideGates = !RevVisGDX.singleton.currentCircuit.hideGates;
