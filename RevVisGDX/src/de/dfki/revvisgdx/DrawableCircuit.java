@@ -20,7 +20,7 @@ public class DrawableCircuit implements Drawable {
 	public float offsetY = 0;
 
 	public boolean colorizeGarbageLine = false;
-	public boolean pixelWideLines = false;
+//	public boolean pixelWideLines = false;
 	public boolean drawGroups = false;
 	public boolean hideGates = false;
 	public boolean countGatesForGroupColor = false;
@@ -34,10 +34,13 @@ public class DrawableCircuit implements Drawable {
 	public boolean highlightHoveredGate = true;
 	public boolean highlightHoveredGateMovingRule = true;
 	public boolean colorizeLineUsage = false;
-	public boolean lineWidthByUsage = false;
+//	public boolean lineWidthByUsage = false;
 	public boolean showLineNames = true;
+	private lineWidth lineType = lineWidth.full;
 	
 	private int highlitGate = 0;
+	
+	private enum lineWidth {pixelWide, usageWide, full}
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -100,15 +103,21 @@ public class DrawableCircuit implements Drawable {
 				}
 				
 				float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
-				if (lineWidthByUsage) {
+				switch(this.lineType) {
+				case full:
+					line.scaleY = scaleY;
+					break;
+				case usageWide:
 					line.scaleY = scaleY;
 					line.scaleY *= usagePercent;
 					line.scaleY = Math.max(1, line.scaleY);
-				} else {
-					if (pixelWideLines)
-						line.scaleY = 1;
-					else
-						line.scaleY = scaleY;
+					break;
+				case pixelWide:
+					line.scaleY = 1;
+					break;
+				default:
+					line.scaleY = scaleY;
+					break;
 				}
 				line.y = (i - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
 				line.y *= scaleY;
@@ -352,6 +361,19 @@ public class DrawableCircuit implements Drawable {
 	
 	//TODO
 	public void toggleLineWidth() {
-		
+		switch (this.lineType) {
+		case full:
+			this.lineType = lineWidth.usageWide;
+			break;
+		case usageWide:
+			this.lineType = lineWidth.pixelWide;
+			break;
+		case pixelWide:
+			this.lineType = lineWidth.full;
+			break;
+		default:
+			this.lineType = lineWidth.full;
+			break;
+		}
 	}
 }

@@ -24,9 +24,6 @@ public class RevVisInputProcessor implements InputProcessor {
 	public boolean keyTyped (char character) {
 		//String c = character;
 		switch (character) {
-		case 'p':
-			RevVisGDX.singleton.currentCircuit.pixelWideLines = !RevVisGDX.singleton.currentCircuit.pixelWideLines;
-			break;
 		case 'g':
 			RevVisGDX.singleton.currentCircuit.colorizeGarbageLine = !RevVisGDX.singleton.currentCircuit.colorizeGarbageLine;
 			break;
@@ -36,9 +33,6 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'S':
 			RevVisGDX.singleton.currentCircuit.hideGates = !RevVisGDX.singleton.currentCircuit.hideGates;
 			break;
-//		case 'c':
-//			RevVisGDX.singleton.currentCircuit.countGatesForGroupColor = !RevVisGDX.singleton.currentCircuit.countGatesForGroupColor;
-//			break;
 		case 's':
 			RevVisGDX.singleton.currentCircuit.shrinkToSquareAlignment();
 			break;
@@ -66,8 +60,8 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'u':
 			RevVisGDX.singleton.currentCircuit.colorizeLineUsage = !RevVisGDX.singleton.currentCircuit.colorizeLineUsage;
 			break;
-		case 'U':
-			RevVisGDX.singleton.currentCircuit.lineWidthByUsage = !RevVisGDX.singleton.currentCircuit.lineWidthByUsage;
+		case 'w':
+			RevVisGDX.singleton.currentCircuit.toggleLineWidth();
 			break;
 		}
 		return false;
