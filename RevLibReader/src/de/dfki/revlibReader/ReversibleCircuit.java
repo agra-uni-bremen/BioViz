@@ -353,4 +353,15 @@ public class ReversibleCircuit {
 		}
 		return null;
 	}
+	
+	public int calculateMaximumMobility() {
+		int max = 0;
+		for (int i = 0; i < this.gates.size(); i++) {
+			if (this.gates.get(i).getMobilityLeft() > max)
+				max = this.gates.get(i).getMobilityLeft();
+			if (this.gates.get(i).getMobilityRight() > max)
+				max = this.gates.get(i).getMobilityRight();
+		}
+		return max;
+	}
 }
