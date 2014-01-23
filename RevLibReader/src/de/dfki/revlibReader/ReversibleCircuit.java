@@ -25,6 +25,7 @@ public class ReversibleCircuit {
 	private int maximumLineUsage = 0;
 	private int amountOfVars = -1;
 	private HashMap<String, HashSet<String>> buses = new HashMap<String, HashSet<String>>();
+	private Vector<String> busNames = new Vector<String>();
 
 	public void addGate(ToffoliGate g) {
 		this.gates.add(g);
@@ -323,9 +324,18 @@ public class ReversibleCircuit {
 		if (this.vars.contains(variable)) {
 			if (!this.buses.containsKey(bus)) {
 				this.buses.put(bus, new HashSet<String>());
+				this.busNames.add(bus);
 			}
 			
 			this.buses.get(bus).add(variable);
 		}
+	}
+	
+	public Vector<String> getBuses() {
+		return this.busNames;
+	}
+	
+	public boolean isMemberOfBus(String variableName, String busName) {
+		return (this.buses.get(busName).contains(variableName));
 	}
 }

@@ -50,6 +50,8 @@ public class RevlibFileReader {
 			readGarbageLine(line);
 		} else if (line.startsWith(".constants")) {
 			readConstLine(line);
+		} else if (line.startsWith(".inputbus") || line.startsWith(".outputbus")) {
+			readBus(line);
 		}
 	}
 	
@@ -117,6 +119,13 @@ public class RevlibFileReader {
 				currentCircuit.addFunctionLine(elements[i]);
 			else
 				break;
+		}
+	}
+	
+	private static void readBus(String line) {
+		String[] elements = line.split(" ");
+		for (int i = 2; i < elements.length; i++) {
+			currentCircuit.addToBus(elements[i].trim(), elements[1].trim());
 		}
 	}
 

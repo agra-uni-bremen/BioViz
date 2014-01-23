@@ -63,6 +63,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'w':
 			RevVisGDX.singleton.currentCircuit.toggleLineWidth();
 			break;
+		case 'b':
+			RevVisGDX.singleton.currentCircuit.toggleBusDrawing();
+			break;
 		}
 		return false;
 	}
