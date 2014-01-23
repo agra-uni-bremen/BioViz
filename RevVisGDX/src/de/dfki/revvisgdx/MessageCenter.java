@@ -66,6 +66,8 @@ public class MessageCenter {
 		for (Message m : this.messages) {
 			if (m.color != null)
 				font.setColor(m.color);
+			else
+				font.setColor(Color.WHITE);
 			int start_x = spacing;
 			int start_y = yCoord;
 			font.draw(RevVisGDX.singleton.batch, new Date(m.createdOn).toLocaleString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
