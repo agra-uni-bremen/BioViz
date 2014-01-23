@@ -96,8 +96,8 @@ public class RevVisInputProcessor implements InputProcessor {
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
 		if (isMoving) {
-			RevVisGDX.singleton.currentCircuit.offsetX += (x - oldX) / RevVisGDX.singleton.currentCircuit.scaleX;
-			RevVisGDX.singleton.currentCircuit.offsetY += (y - oldY) / RevVisGDX.singleton.currentCircuit.scaleY;
+			RevVisGDX.singleton.currentCircuit.offsetX += (x - oldX) / RevVisGDX.singleton.currentCircuit.getScaleX();
+			RevVisGDX.singleton.currentCircuit.offsetY += (y - oldY) / RevVisGDX.singleton.currentCircuit.getScaleY();
 			oldX = x;
 			oldY = y;
 		} else if (multiTouchZoom) {
@@ -117,11 +117,13 @@ public class RevVisInputProcessor implements InputProcessor {
 				
 				if (oldX - oldX2 != 0) {
 					float zoomFactorX = (float)zoomX / Math.abs(oldX - oldX2);
-					RevVisGDX.singleton.currentCircuit.scaleX *= Math.max(1 - (zoomFactorX), 0.01f);
+					RevVisGDX.singleton.currentCircuit.setScaleX(RevVisGDX.singleton.currentCircuit.getScaleX()
+							* Math.max(1 - (zoomFactorX), 0.01f));
 				}
 				if (oldY - oldY2 != 0) {
 					float zoomFactorY = (float)zoomY / Math.abs(oldY - oldY2);
-					RevVisGDX.singleton.currentCircuit.scaleY *= Math.max(1 - (zoomFactorY), 0.01f);
+					RevVisGDX.singleton.currentCircuit.setScaleY(RevVisGDX.singleton.currentCircuit.getScaleY()
+							* Math.max(1 - (zoomFactorY), 0.01f));
 				}
 			}
 		}
@@ -132,12 +134,16 @@ public class RevVisInputProcessor implements InputProcessor {
 	@Override
 	public boolean scrolled (int amount) {
 		if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
-			RevVisGDX.singleton.currentCircuit.scaleY *= 1 - (amount * 0.2f);
+			RevVisGDX.singleton.currentCircuit.setScaleY(RevVisGDX.singleton.currentCircuit.getScaleY()
+					* (1 - (amount * 0.2f)));
 		else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-			RevVisGDX.singleton.currentCircuit.scaleX *= 1 - (amount * 0.2f);
+			RevVisGDX.singleton.currentCircuit.setScaleX(RevVisGDX.singleton.currentCircuit.getScaleX()
+					* (1 - (amount * 0.2f)));
 		else {
-			RevVisGDX.singleton.currentCircuit.scaleY *= 1 - (amount * 0.2f);
-			RevVisGDX.singleton.currentCircuit.scaleX *= 1 - (amount * 0.2f);
+			RevVisGDX.singleton.currentCircuit.setScaleY(RevVisGDX.singleton.currentCircuit.getScaleY()
+					* (1 - (amount * 0.2f)));
+			RevVisGDX.singleton.currentCircuit.setScaleX(RevVisGDX.singleton.currentCircuit.getScaleX()
+					* (1 - (amount * 0.2f)));
 		}
 		return false;
 	}

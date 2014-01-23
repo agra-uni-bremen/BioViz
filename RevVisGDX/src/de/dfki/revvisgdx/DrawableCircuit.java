@@ -14,10 +14,15 @@ public class DrawableCircuit implements Drawable {
 	DrawableSprite gate01;
 	DrawableSprite gate02;
 
-	public float scaleX = 1;
+	private float scaleX = 1;
 	public float offsetX = 0;
-	public float scaleY = 1;
+	private float scaleY = 1;
 	public float offsetY = 0;
+	
+	private float smoothScaleX = 1;
+	private float smoothScaleY = 1;
+	
+	private float scalingDelay = 4f;
 
 	public boolean colorizeGarbageLine = false;
 //	public boolean pixelWideLines = false;
@@ -54,6 +59,10 @@ public class DrawableCircuit implements Drawable {
 
 //		float distanceV = (RevVisGDX.singleton.camera.viewportHeight / (data.getAmountOfVars() + 2));
 //		float distanceH = RevVisGDX.singleton.camera.viewportWidth / (data.getGates().size() + 2);
+		
+		smoothScaleX += (getScaleX() - smoothScaleX) / scalingDelay;
+		smoothScaleY += (getScaleY() - smoothScaleY) / scalingDelay;
+		
 		HashMap<String, Float> signalsToCoords = new HashMap<String, Float>();
 
 		for (int i = 0; i < data.getAmountOfVars(); i++) {
@@ -105,10 +114,10 @@ public class DrawableCircuit implements Drawable {
 				float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
 				switch(this.lineType) {
 				case full:
-					line.scaleY = scaleY;
+					line.scaleY = smoothScaleY;
 					break;
 				case usageWide:
-					line.scaleY = scaleY;
+					line.scaleY = smoothScaleY;
 					line.scaleY *= usagePercent;
 					line.scaleY = Math.max(1, line.scaleY);
 					break;
@@ -116,11 +125,11 @@ public class DrawableCircuit implements Drawable {
 					line.scaleY = 1;
 					break;
 				default:
-					line.scaleY = scaleY;
+					line.scaleY = smoothScaleY;
 					break;
 				}
 				line.y = (i - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
-				line.y *= scaleY;
+				line.y *= smoothScaleY;
 				
 				if (colorizeLineUsage) {
 					line.color = line.color.mul(usagePercent, usagePercent, usagePercent, 1);
@@ -136,9 +145,9 @@ public class DrawableCircuit implements Drawable {
 
 			signalsToCoords.put(data.getVars().get(i), line.y);
 			
-			if (showLineNames && scaleY > 10) {
+			if (showLineNames && smoothScaleY > 10) {
 				Color lineNameColor = new Color(Color.WHITE);
-				lineNameColor.a = Math.max(0, Math.min(1, (scaleY - 10f) / 5f));
+				lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
 				RevVisGDX.singleton.mc.addHUDMessage(data.getVars().get(i).hashCode(), data.getVars().get(i), RevVisGDX.singleton.camera.viewportWidth - 64, (line.y + RevVisGDX.singleton.camera.viewportHeight / 2f), lineNameColor);
 			} else {
 				RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(i).hashCode());
@@ -159,7 +168,7 @@ public class DrawableCircuit implements Drawable {
 				if (!drawGroups) {
 					if (xCoord > -RevVisGDX.singleton.camera.viewportWidth / 2 && xCoord < RevVisGDX.singleton.camera.viewportWidth / 2) {
 
-						float maxDim = Math.min(scaleX, scaleY);
+						float maxDim = Math.min(smoothScaleX, smoothScaleY);
 
 						Color gateColor = new Color(Color.BLACK);
 						if(this.colourizeGatesByMobility) {
@@ -198,10 +207,10 @@ public class DrawableCircuit implements Drawable {
 							float movementRight = data.calculateGateMobilityRight(i);
 							line.y = 0;
 							
-							line.x = xCoord + ((movementRight * scaleX) + ((movementRight + 1) * scaleX)) / 2f;
+							line.x = xCoord + ((movementRight * smoothScaleX) + ((movementRight + 1) * smoothScaleX)) / 2f;
 							line.draw();
 							
-							line.x = xCoord - ((movementLeft * scaleX) + ((movementLeft + 1) * scaleX)) / 2f;
+							line.x = xCoord - ((movementLeft * smoothScaleX) + ((movementLeft + 1) * smoothScaleX)) / 2f;
 							line.draw();
 						}
 
@@ -216,8 +225,8 @@ public class DrawableCircuit implements Drawable {
 						} else {
 							targetGate = line;
 							controlGate = line;
-							targetGate.setDimensions(scaleX, scaleY);
-							controlGate.setDimensions(scaleX, scaleY);
+							targetGate.setDimensions(smoothScaleX, smoothScaleY);
+							controlGate.setDimensions(smoothScaleX, smoothScaleY);
 						}
 						targetGate.color = gateColor;
 						targetGate.y = signalsToCoords.get(data.getGate(i).output);
@@ -249,10 +258,10 @@ public class DrawableCircuit implements Drawable {
 					}
 					
 					if (drawGroup) {
-						maxX = xCoord - (0.5f) * scaleX;
+						maxX = xCoord - (0.5f) * smoothScaleX;
 
-						minY -= 0.5f * scaleY;
-						maxY += 0.5f * scaleY;
+						minY -= 0.5f * smoothScaleY;
+						maxY += 0.5f * smoothScaleY;
 
 						if (!currentGroup.equals("")) {
 							
@@ -274,7 +283,7 @@ public class DrawableCircuit implements Drawable {
 
 						//set current group to output in order to collect all gates and reset variables.
 						currentGroup = data.getGate(i).output;
-						minX = xCoord - 0.5f * scaleX;
+						minX = xCoord - 0.5f * smoothScaleX;
 						minY = signalsToCoords.get(data.getGate(i).output);
 						maxY = minY;
 						//groupCol.
@@ -311,21 +320,21 @@ public class DrawableCircuit implements Drawable {
 	private float xCoordOnScreen(int i) {
 		float xCoord = i;
 		xCoord += offsetX;
-		xCoord *= scaleX;
+		xCoord *= smoothScaleX;
 		return xCoord;
 	}
 	
 	public void shrinkToSquareAlignment() {
-		if (scaleY < scaleX)
-			scaleX = scaleY;
+		if (getScaleY() < getScaleX())
+			setScaleX(getScaleY());
 		else
-			scaleY = scaleX;
+			setScaleY(getScaleX());
 	}
 	
 	private int gateAt(int x) {
 		float xResult = x - RevVisGDX.singleton.camera.viewportWidth / 2;
 		
-		xResult /= scaleX;
+		xResult /= getScaleX();
 		xResult -= offsetX;
 		
 		return (int)xResult;
@@ -375,5 +384,21 @@ public class DrawableCircuit implements Drawable {
 			this.lineType = lineWidth.full;
 			break;
 		}
+	}
+
+	public float getScaleX() {
+		return scaleX;
+	}
+
+	public void setScaleX(float scaleX) {
+		this.scaleX = scaleX;
+	}
+
+	public float getScaleY() {
+		return scaleY;
+	}
+
+	public void setScaleY(float scaleY) {
+		this.scaleY = scaleY;
 	}
 }
