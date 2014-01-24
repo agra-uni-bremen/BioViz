@@ -66,6 +66,12 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'b':
 			RevVisGDX.singleton.currentCircuit.toggleBusDrawing();
 			break;
+		case 'p':
+			RevVisGDX.singleton.saveScreenshotFull();
+			break;
+		case 'z':
+			RevVisGDX.singleton.currentCircuit.zoomTo1Px();
+			break;
 		}
 		return false;
 	}

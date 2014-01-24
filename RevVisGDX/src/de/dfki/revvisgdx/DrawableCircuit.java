@@ -489,4 +489,12 @@ public class DrawableCircuit implements Drawable {
 			RevVisGDX.singleton.mc.addMessage(Messages.highlightBus.replace("$1", this.drawnBus));
 		}
 	}
+	
+	/**
+	 * Resets the zoom to 1 px per element
+	 */
+	public void zoomTo1Px() {
+		this.scaleX = 1;
+		this.scaleY = 1;
+	}
 }
