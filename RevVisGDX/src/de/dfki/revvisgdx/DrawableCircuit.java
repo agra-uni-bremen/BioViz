@@ -2,6 +2,7 @@ package de.dfki.revvisgdx;
 
 import java.util.HashMap;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
@@ -58,11 +59,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	@Override
-	public void draw() {
-
-//		float distanceV = (RevVisGDX.singleton.camera.viewportHeight / (data.getAmountOfVars() + 2));
-//		float distanceH = RevVisGDX.singleton.camera.viewportWidth / (data.getGates().size() + 2);
-		
+	public void draw() {		
 		smoothScaleX += (getScaleX() - smoothScaleX) / scalingDelay;
 		smoothScaleY += (getScaleY() - smoothScaleY) / scalingDelay;
 		
@@ -496,5 +493,20 @@ public class DrawableCircuit implements Drawable {
 	public void zoomTo1Px() {
 		this.scaleX = 1;
 		this.scaleY = 1;
+	}
+	
+	/**
+	 * Resets the zoom so that the whole circuit is shown.
+	 */
+	public void zoomExtents() {
+		float x = 1f / this.data.getGates().size();
+		float y = 1f / this.data.getVars().size();
+		float xFactor = Gdx.graphics.getWidth();
+		float yFactor = Gdx.graphics.getHeight();
+		float maxScale = Math.min(x * xFactor, y * yFactor);
+		this.scaleX = maxScale;
+		this.scaleY = maxScale;
+		this.offsetY = 0;
+		this.offsetX = this.data.getGates().size() / -2f;
 	}
 }

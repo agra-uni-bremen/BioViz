@@ -79,6 +79,8 @@ public class RevVisGDX implements ApplicationListener {
 		
 		mc.addMessage("RevVisGDX started");
 		mc.addMessage(Messages.helpText);
+		
+		currentCircuit.zoomExtents();
 	}
 
 	@Override
