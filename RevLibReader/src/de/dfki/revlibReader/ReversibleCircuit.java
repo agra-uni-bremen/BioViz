@@ -26,6 +26,8 @@ public class ReversibleCircuit {
 	private int amountOfVars = -1;
 	private HashMap<String, HashSet<String>> buses = new HashMap<String, HashSet<String>>();
 	private Vector<String> busNames = new Vector<String>();
+	boolean recalculateMobility = true;
+	int cachedMaxMobility = 0;
 
 	public void addGate(ToffoliGate g) {
 		this.gates.add(g);
@@ -59,6 +61,8 @@ public class ReversibleCircuit {
 			outputOnly.remove(g.output);
 		}
 		lastGates.put(g.output, g);
+		
+		recalculateMobility = true;
 	}
 
 	public ToffoliGate getGate(int gateNumber) {
@@ -353,15 +357,18 @@ public class ReversibleCircuit {
 		}
 		return null;
 	}
-	
+
 	public int calculateMaximumMobility() {
-		int max = 0;
-		for (int i = 0; i < this.gates.size(); i++) {
-			if (this.gates.get(i).getMobilityLeft() > max)
-				max = this.gates.get(i).getMobilityLeft();
-			if (this.gates.get(i).getMobilityRight() > max)
-				max = this.gates.get(i).getMobilityRight();
+		if (recalculateMobility) {
+			cachedMaxMobility = 0;
+			for (int i = 0; i < this.gates.size(); i++) {
+				if (this.gates.get(i).getMobilityLeft() > cachedMaxMobility)
+					cachedMaxMobility = this.gates.get(i).getMobilityLeft();
+				if (this.gates.get(i).getMobilityRight() > cachedMaxMobility)
+					cachedMaxMobility = this.gates.get(i).getMobilityRight();
+			}
+			recalculateMobility = false;
 		}
-		return max;
+		return cachedMaxMobility;
 	}
 }
