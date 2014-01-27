@@ -4,21 +4,27 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Vector;
 
 public class RevlibFileReader {
 	private ReversibleCircuit currentCircuit;
+	private String fileContents;
+	private static int currentLine;
 	
 	public static ReversibleCircuit readRealFileContents(String fileContents) {
 		RevlibFileReader rfr = new RevlibFileReader();
-		return rfr.readRealContents(fileContents);
+		rfr.fileContents = fileContents;
+		return rfr.readRealContents(0);
 	}
 	
-	public ReversibleCircuit readRealContents(String fileContents) {
+	public ReversibleCircuit readRealContents(int startAt) {
 		currentCircuit = new ReversibleCircuit();
+		this.currentLine = startAt;
 		String[] lines = fileContents.split("\n");
-		for (int i = 0; i < lines.length; i++) {
-			if (readLine(lines[i]))
+		while(currentLine < lines.length) {
+			if (readLine(lines[currentLine]))
 				return currentCircuit;
+			currentLine++;
 		}
 		return currentCircuit;
 	}
@@ -34,7 +40,12 @@ public class RevlibFileReader {
 		try {
 			br = new BufferedReader(new FileReader(filename));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			try {
+				br.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 		if (br != null) {
@@ -42,13 +53,27 @@ public class RevlibFileReader {
 			String line;
 			try {
 				while((line = br.readLine()) != null) {
-					if(readLine(line));
-						return currentCircuit;
+					this.fileContents += line;
+//					if(readLine(line));
+//						return currentCircuit;
 				}
+				
+				this.readRealContents(0);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				try {
+					br.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				e.printStackTrace();
 			}
+		}
+		try {
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return currentCircuit;
 	}
@@ -70,9 +95,27 @@ public class RevlibFileReader {
 		} else if (line.startsWith(".inputbus") || line.startsWith(".outputbus")) {
 			readBus(line);
 		} else if (line.startsWith(".module")) {
-			
+			System.out.println("Starting to read subcircuit at " + currentLine);
+			RevlibFileReader subReader = new RevlibFileReader();
+			subReader.fileContents = this.fileContents;
+			ReversibleCircuit subCircuit = subReader.readRealContents(this.currentLine + 1);
+			this.currentLine = subReader.currentLine;
+			currentCircuit.addSubCircuit(subCircuit, line.split(" ")[1].trim());
+			System.out.println("Added subcircuit " + line);
 		} else if (line.startsWith(".end")) {
+			System.out.println("Returning on .end");
 			return true;
+		} else {
+			//If everything fails, try subcircuit...
+			String[] lineParts = line.split(" ");
+			if (currentCircuit.hasSubCircuit(lineParts[0].trim())) {
+				Vector<String> vars = new Vector<String>();
+				for (int i = 1; i < lineParts.length; i++) {
+					vars.add(lineParts[i]);
+				}
+				currentCircuit.insertSubCircuit(line.split(" ")[0], vars);
+				System.out.println("Inserted subcircuit " + lineParts[0] + " at " + currentLine);
+			}
 		}
 		return false;
 	}
