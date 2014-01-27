@@ -371,4 +371,16 @@ public class ReversibleCircuit {
 		}
 		return cachedMaxMobility;
 	}
+	
+	//TODO finish sub circuit parsing!
+	public void addSubCircuit(ReversibleCircuit sub, HashMap<String, String> variableMap) {
+		for (ToffoliGate g : sub.getGates()) {
+			ToffoliGate newGate = new ToffoliGate();
+			for (String input : g.getInputs()) {
+				newGate.addInput(variableMap.get(input));
+			}
+			newGate.output = variableMap.get(g.output);
+			this.addGate(newGate);
+		}
+	}
 }

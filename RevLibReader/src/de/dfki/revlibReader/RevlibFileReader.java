@@ -6,18 +6,29 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class RevlibFileReader {
-	private static ReversibleCircuit currentCircuit;
+	private ReversibleCircuit currentCircuit;
 	
 	public static ReversibleCircuit readRealFileContents(String fileContents) {
+		RevlibFileReader rfr = new RevlibFileReader();
+		return rfr.readRealContents(fileContents);
+	}
+	
+	public ReversibleCircuit readRealContents(String fileContents) {
 		currentCircuit = new ReversibleCircuit();
 		String[] lines = fileContents.split("\n");
 		for (int i = 0; i < lines.length; i++) {
-			readLine(lines[i]);
+			if (readLine(lines[i]))
+				return currentCircuit;
 		}
 		return currentCircuit;
 	}
 	
 	public static ReversibleCircuit readRealFile(String filename) {
+		RevlibFileReader rfr = new RevlibFileReader();
+		return rfr.readReal(filename);
+	}
+	
+	public ReversibleCircuit readReal(String filename) {
 		BufferedReader br = null;
 		currentCircuit = new ReversibleCircuit();
 		try {
@@ -31,7 +42,8 @@ public class RevlibFileReader {
 			String line;
 			try {
 				while((line = br.readLine()) != null) {
-					readLine(line);
+					if(readLine(line));
+						return currentCircuit;
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -41,7 +53,12 @@ public class RevlibFileReader {
 		return currentCircuit;
 	}
 	
-	private static void readLine(String line) {
+	/**
+	 * Reads a line from the real file to be added to the current circuit
+	 * @param line the line to be read
+	 * @return true when the circuit has been read, false otherwise
+	 */
+	private boolean readLine(String line) {
 		if (line.startsWith("t")) {
 			currentCircuit.addGate(readT3GateFromLine(line));
 		} else if (line.startsWith(".variables")) {
@@ -52,7 +69,12 @@ public class RevlibFileReader {
 			readConstLine(line);
 		} else if (line.startsWith(".inputbus") || line.startsWith(".outputbus")) {
 			readBus(line);
+		} else if (line.startsWith(".module")) {
+			
+		} else if (line.startsWith(".end")) {
+			return true;
 		}
+		return false;
 	}
 	
 	private static ToffoliGate readT3GateFromLine(String line){
@@ -73,7 +95,7 @@ public class RevlibFileReader {
 		return result;
 	}
 	
-	private static void readVariablesLine(String line) {
+	private void readVariablesLine(String line) {
 		String[] elements = line.split(" ");
 		for (int i = 1; i < elements.length; i++) {
 			if (!elements[i].startsWith("#")) {
@@ -89,7 +111,7 @@ public class RevlibFileReader {
 			assert(currentCircuit.getVars().size() == currentCircuit.getVarAmount());
 	}
 	
-	private static void readGarbageLine(String line) {
+	private void readGarbageLine(String line) {
 		String[] elements = line.split(" ");
 		String garbageInfo = elements[1];
 		for (int j = 0; j < garbageInfo.length(); j++) {
@@ -98,7 +120,7 @@ public class RevlibFileReader {
 		}
 	}
 	
-	private static void readConstLine(String line) {
+	private void readConstLine(String line) {
 		String[] elements = line.split(" ");
 		String constInfo = elements[1];
 		for (int j = 0; j < constInfo.length(); j++) {
@@ -117,7 +139,7 @@ public class RevlibFileReader {
 		}
 	}	
 	
-	private static void readFunctionLine(String line) {
+	private void readFunctionLine(String line) {
 		String[] elements = line.split(" ");
 		for (int i = 1; i < elements.length - 1; i++) {
 			if (!elements[i].startsWith("#"))
@@ -127,7 +149,7 @@ public class RevlibFileReader {
 		}
 	}
 	
-	private static void readBus(String line) {
+	private void readBus(String line) {
 		String[] elements = line.split(" ");
 		for (int i = 2; i < elements.length; i++) {
 			currentCircuit.addToBus(elements[i].trim(), elements[1].trim());
