@@ -7,6 +7,7 @@ public class Messages {
 	public static String helpText =
 			"b: highlight a bus\n"
 			+ "c: colorize constant inputs\n"
+			+ "C: Show/hide sub-circuits\n"
 			+ "d: draw dark lines when used\n"
 			+ "g: garbage lines color\n"
 			+ "h: highlight hovered gate\n"
