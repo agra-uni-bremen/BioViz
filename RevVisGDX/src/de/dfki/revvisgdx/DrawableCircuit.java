@@ -6,6 +6,7 @@ import java.util.Vector;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector3;
 
 import de.dfki.revlibReader.ReversibleCircuit;
 
@@ -104,15 +105,38 @@ public class DrawableCircuit implements Drawable {
 //				float xCoord = (xCoordOnScreen(j) + xCoordOnScreen(j - 1)) / 2f;
 				
 				line.color = new Color(col);
+				if (line.color.r < 0.5f)
+					line.color.r += 0.5f;
+				if (line.color.g < 0.5f)
+					line.color.g += 0.5f;
+				if (line.color.b < 0.5f)
+					line.color.b += 0.5f;
 				line.color.a = 1;
 				
 				line.scaleX = right - left; //RevVisGDX.singleton.camera.viewportWidth;
-				line.scaleY = Math.max(8, 20 * smoothScaleY);
-				line.x = left;
+				line.scaleY = Math.min(32, 20 * smoothScaleY);
+				line.x = (right + left) / 2f;
 				line.y = (data.getAmountOfVars() / 2 + 10f) - offsetY;
 				line.y *= smoothScaleY;
-				line.y = Math.min(line.y, RevVisGDX.singleton.camera.viewportHeight / 2f);
+				line.y = Math.min(line.y, RevVisGDX.singleton.camera.viewportHeight / 2f - 24);
 				line.draw();
+				
+//				if (showLineNames && smoothScaleY > 10) {
+				Color lineNameColor = new Color(line.color).mul(0.5f);
+//					lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
+				Vector3 lineCoord = new Vector3(left, line.y + 10, 1);
+				float fontWidth = RevVisGDX.singleton.mc.getFont().getBounds(subs.get(j).name).width;
+				if (fontWidth > right - left)
+					lineNameColor.a = 0;
+				else if (fontWidth > right - left - 50)
+					lineNameColor.a = ((right - left) - fontWidth) / 50f;
+				else
+					lineNameColor.a = 1;
+				RevVisGDX.singleton.camera.project(lineCoord);
+				RevVisGDX.singleton.mc.addHUDMessage(subs.get(j).hashCode(), subs.get(j).name, lineCoord.x, lineCoord.y, lineNameColor);
+//				} else {
+//					RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(i).hashCode());
+//				}
 			}
 		}
 	}

@@ -14,8 +14,14 @@ import com.badlogic.gdx.math.Matrix4;
 
 public class MessageCenter {
 	private Vector<Message> messages;
-	BitmapFont font;
+	private BitmapFont font;
 	private int spacing = 18;
+	
+	public BitmapFont getFont() {
+		if (font == null)
+			font = new BitmapFont();
+		return font;
+	}
 	
 	private class HUDMessage {
 		public String message;
