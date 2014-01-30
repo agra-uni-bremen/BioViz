@@ -29,6 +29,7 @@ public class ReversibleCircuit {
 	boolean recalculateMobility = true;
 	int cachedMaxMobility = 0;
 	private HashMap<String, ReversibleCircuit> subCircuits = new HashMap<String, ReversibleCircuit>();
+	private Vector<subCircuitDimensions> insertedCircuits = new Vector<subCircuitDimensions>();
 
 	public void addGate(ToffoliGate g) {
 		this.gates.add(g);
@@ -375,6 +376,7 @@ public class ReversibleCircuit {
 	
 	//TODO finish sub circuit parsing!
 	public void insertSubCircuit(String name, Vector<String> variableMap) {
+		int start = this.gates.size();
 		ReversibleCircuit sub = this.subCircuits.get(name);
 		for (ToffoliGate g : sub.getGates()) {
 			ToffoliGate newGate = new ToffoliGate();
@@ -388,6 +390,8 @@ public class ReversibleCircuit {
 			newGate.output = variableMap.get(ownOutputIndex);
 			this.addGate(newGate);
 		}
+		int end = this.gates.size();
+		this.insertedCircuits.add(new subCircuitDimensions(start, end, name));
 	}
 	
 	public void addSubCircuit(ReversibleCircuit sub, String name) {
@@ -396,5 +400,20 @@ public class ReversibleCircuit {
 	
 	public boolean hasSubCircuit(String name) {
 		return this.subCircuits.containsKey(name);
+	}
+	
+	public class subCircuitDimensions {
+		public int startAt, endAt;
+		public String name;
+		
+		public subCircuitDimensions(int startAt, int endAt, String name) {
+			this.startAt = startAt;
+			this.endAt = endAt;
+			this.name = name;
+		}
+	}
+	
+	public Vector<subCircuitDimensions> getSubCircuits() {
+		return this.insertedCircuits;
 	}
 }

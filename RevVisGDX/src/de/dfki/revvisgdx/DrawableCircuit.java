@@ -1,6 +1,7 @@
 package de.dfki.revvisgdx;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -45,6 +46,7 @@ public class DrawableCircuit implements Drawable {
 	private lineWidth lineType = lineWidth.full;
 	private lineGrouping neighbourhoodGrouping = lineGrouping.none;
 	private String drawnBus = "";
+	public boolean drawSubCircuits = true;
 	
 	private int highlitGate = 0;
 	
@@ -87,6 +89,28 @@ public class DrawableCircuit implements Drawable {
 				line.scaleY = RevVisGDX.singleton.camera.viewportHeight;
 				line.x = xCoord;
 				line.y = 0; //+ RevVisGDX.singleton.camera.viewportHeight;
+				line.draw();
+			}
+		}
+		
+		if (drawSubCircuits) {
+			Vector<ReversibleCircuit.subCircuitDimensions> subs = this.data.getSubCircuits();
+			
+			for (int j = 0; j < subs.size(); j++) {
+				float left = xCoordOnScreen(subs.get(j).startAt);
+				float right = xCoordOnScreen(subs.get(j).endAt);
+				int col = subs.get(j).name.hashCode();
+				
+//				float xCoord = (xCoordOnScreen(j) + xCoordOnScreen(j - 1)) / 2f;
+				
+				line.color = new Color(col);
+				line.color.a = 1;
+				
+				line.scaleX = right - left; //RevVisGDX.singleton.camera.viewportWidth;
+				line.scaleY = Math.max(8, 20 * smoothScaleY);
+				line.x = left;
+				line.y = (data.getAmountOfVars() / 2 + 10f) - offsetY;
+				line.y *= smoothScaleY;
 				line.draw();
 			}
 		}
