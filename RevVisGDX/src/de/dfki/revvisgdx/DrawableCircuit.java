@@ -111,6 +111,7 @@ public class DrawableCircuit implements Drawable {
 				line.x = left;
 				line.y = (data.getAmountOfVars() / 2 + 10f) - offsetY;
 				line.y *= smoothScaleY;
+				line.y = Math.min(line.y, RevVisGDX.singleton.camera.viewportHeight / 2f);
 				line.draw();
 			}
 		}
