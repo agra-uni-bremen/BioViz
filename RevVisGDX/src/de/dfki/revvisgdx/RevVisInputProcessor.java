@@ -84,6 +84,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case '2':
 			Presets.setBoxesAndUsage();
 			break;
+		case '3':
+			Presets.setColourizedUsage();
+			break;
 		}
 		return false;
 	}

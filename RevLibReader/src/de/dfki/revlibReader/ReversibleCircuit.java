@@ -23,6 +23,7 @@ public class ReversibleCircuit {
 	private int[] movingRuleAccumulations;
 	private int maximumMovingRuleAccumulation = 0;
 	private int maximumLineUsage = 0;
+	private int minimumLineUsage = Integer.MAX_VALUE;
 	private int amountOfVars = -1;
 	private HashMap<String, HashSet<String>> buses = new HashMap<String, HashSet<String>>();
 	private Vector<String> busNames = new Vector<String>();
@@ -284,6 +285,8 @@ public class ReversibleCircuit {
 			
 			if (result > maximumLineUsage)
 				maximumLineUsage = result;
+			if (result < minimumLineUsage)
+				minimumLineUsage = result;
 			this.lineUsage.put(line, result);
 		}
 	}
@@ -300,6 +303,10 @@ public class ReversibleCircuit {
 	
 	public int getMaximumLineUsage() {
 		return maximumLineUsage;
+	}
+	
+	public int getMinimumLineUsage() {
+		return minimumLineUsage;
 	}
 	
 	/**

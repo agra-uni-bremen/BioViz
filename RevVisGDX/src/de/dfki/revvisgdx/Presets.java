@@ -21,4 +21,9 @@ public class Presets {
 		dc.colorizeConstants = false;
 		dc.colorizeGarbageLine = false;
 	}
+	
+	public static void setColourizedUsage() {
+		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
+		dc.drawLinesColourizedWhenUsed = true;
+	}
 }

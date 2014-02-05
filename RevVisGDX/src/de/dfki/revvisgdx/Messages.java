@@ -28,5 +28,6 @@ public class Messages {
 			+ "mouse wheel + ctrl: zoom vertically\n"
 			+ "left drag: move viewport\n"
 			+ "\n"
-			+ "1: set const/garbage preset";
+			+ "1: set const/garbage preset\n"
+			+ "2: set gates + usage preset";
 }

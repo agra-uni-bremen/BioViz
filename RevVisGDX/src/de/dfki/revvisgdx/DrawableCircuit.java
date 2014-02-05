@@ -49,6 +49,7 @@ public class DrawableCircuit implements Drawable {
 	private String drawnBus = "";
 	public boolean drawSubCircuits = true;
 	public boolean markVariableTypes = false;
+	public boolean drawLinesColourizedWhenUsed = false;
 	
 	private int highlitGate = 0;
 	
@@ -313,11 +314,13 @@ public class DrawableCircuit implements Drawable {
 	 */
 	private HashMap<String, Float> drawVariables() {
 		HashMap<String, Float> signalsToCoords = new HashMap<String, Float>();
-
+		float minimumUsagePercent = ((float)data.getMinimumLineUsage() / (float)data.getMaximumLineUsage());
+		
 		for (int i = 0; i < data.getAmountOfVars(); i++) {
 
 			int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(i)));
 			int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(i)));
+			float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
 
 			for (int j = 0; j < 3; j++) {
 				Color col = new Color(Color.BLACK);
@@ -351,6 +354,18 @@ public class DrawableCircuit implements Drawable {
 					line.scaleX = left - right;
 					if (!drawLinesDarkWhenUsed)
 						col.add(0.25f, 0.25f, 0.25f, 0);
+					if (drawLinesColourizedWhenUsed) {
+						float lineUsageValue = (usagePercent - minimumUsagePercent) / (1 - minimumUsagePercent);
+						if (lineUsageValue <= 0.5f) {
+							col.r = lineUsageValue * 2;
+							col.g = 1;
+							col.b = 0;
+						} else {
+							col.r = 1;
+							col.g = lineUsageValue - 0.5f * 2;
+							col.b = 0;
+						}
+					}
 				} else {
 					float left = xCoordOnScreen(lastGateCoord);
 					float right = RevVisGDX.singleton.camera.viewportWidth;;
@@ -370,7 +385,6 @@ public class DrawableCircuit implements Drawable {
 					}
 				}
 				
-				float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
 				switch(this.lineType) {
 				case full:
 					line.scaleY = smoothScaleY;
