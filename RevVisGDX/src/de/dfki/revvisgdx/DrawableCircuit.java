@@ -44,7 +44,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean colorizeLineUsage = false;
 //	public boolean lineWidthByUsage = false;
 	public boolean showLineNames = true;
-	private lineWidth lineType = lineWidth.pixelWide;
+	public lineWidth lineType = lineWidth.pixelWide;
 	private lineGrouping neighbourhoodGrouping = lineGrouping.none;
 	private String drawnBus = "";
 	public boolean drawSubCircuits = true;
@@ -52,8 +52,8 @@ public class DrawableCircuit implements Drawable {
 	
 	private int highlitGate = 0;
 	
-	private enum lineWidth {pixelWide, usageWide, full}
-	private enum lineGrouping {none, single, bus}
+	public enum lineWidth {pixelWide, usageWide, full}
+	public enum lineGrouping {none, single, bus}
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;

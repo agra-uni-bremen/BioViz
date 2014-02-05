@@ -78,6 +78,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'Z':
 			RevVisGDX.singleton.currentCircuit.zoomExtents();
 			break;
+		case '1':
+			Presets.setConstGarbage();
+			break;
 		}
 		return false;
 	}
