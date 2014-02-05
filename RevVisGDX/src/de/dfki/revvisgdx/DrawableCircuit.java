@@ -54,7 +54,7 @@ public class DrawableCircuit implements Drawable {
 	private int highlitGate = 0;
 	
 	public enum lineWidth {pixelWide, usageWide, full}
-	public enum lineGrouping {none, single, bus}
+	public enum lineGrouping {none, single, singleGreyscale, bus}
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -239,7 +239,7 @@ public class DrawableCircuit implements Drawable {
 				} else {
 					
 					boolean drawGroup;
-					if (this.neighbourhoodGrouping == lineGrouping.single) {
+					if (this.neighbourhoodGrouping == lineGrouping.single || this.neighbourhoodGrouping == lineGrouping.singleGreyscale) {
 						drawGroup = !(data.getGate(i).output.equals(currentGroup));
 					} else {
 						if (data.getBus(data.getGate(i).output) != null) {
@@ -275,12 +275,26 @@ public class DrawableCircuit implements Drawable {
 							currentSaturation = 1f;
 							
 							//actually draw group
-							line.color = hsvToRgb(usedHue, currentSaturation, 0.5f);
+							if (this.neighbourhoodGrouping != lineGrouping.singleGreyscale)
+								line.color = hsvToRgb(usedHue, currentSaturation, 0.5f);
+							else
+								line.color = new Color(0.5f, 0.5f, 0.5f, 1);
 							line.scaleX = maxX - minX; //RevVisGDX.singleton.camera.viewportWidth;
 							line.scaleY = maxY - minY;
 							line.x = (maxX + minX) / 2;
 							line.y = (maxY + minY) / 2; //+ RevVisGDX.singleton.camera.viewportHeight;
 							line.draw();
+							
+							
+							if (this.neighbourhoodGrouping == lineGrouping.singleGreyscale) {
+								line.color = new Color(0f, 0f, 0f, 1);
+								line.scaleX = maxX - minX; //RevVisGDX.singleton.camera.viewportWidth;
+								line.scaleY = smoothScaleY;
+								line.x = (maxX + minX) / 2;
+								line.y = (signalsToCoords.get(data.getGate(i -1).output)); //+ RevVisGDX.singleton.camera.viewportHeight;
+								line.draw();
+							}
+							
 							groupCount++;
 						}
 
@@ -504,6 +518,9 @@ public class DrawableCircuit implements Drawable {
 			this.neighbourhoodGrouping = lineGrouping.single;
 			break;
 		case single:
+			this.neighbourhoodGrouping = lineGrouping.singleGreyscale;
+			break;
+		case singleGreyscale:
 			this.neighbourhoodGrouping = lineGrouping.bus;
 			break;
 		case bus:
