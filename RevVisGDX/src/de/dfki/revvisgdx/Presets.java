@@ -9,6 +9,7 @@ public class Presets {
 		dc.colorizeGarbageLine = true;
 		dc.hideGates = true;
 		dc.lineType = lineWidth.full;
+		dc.drawLinesDarkWhenUsed = false;
 	}
 	
 	public static void setBoxesAndUsage() {
@@ -16,5 +17,8 @@ public class Presets {
 		dc.lineType = lineWidth.full;
 		dc.drawVerticalLines = false;
 		dc.drawLinesDarkWhenUsed = true;
+		dc.hideGates = false;
+		dc.colorizeConstants = false;
+		dc.colorizeGarbageLine = false;
 	}
 }
