@@ -34,20 +34,21 @@ public class DrawableCircuit implements Drawable {
 	public boolean countGatesForGroupColor = false;
 	public boolean colorizeConstants = false;
 	public boolean drawVerticalLines = true;
-	public boolean drawLinesDarkWhenUsed = true;
+	public boolean drawLinesDarkWhenUsed = false;
 	public float reduceGatesToBlocksWhenSmallerThanPixels = 8f;
 	public float groupColorAmount = 16f;
 	public boolean colourizeGatesByMobility = false;
-	public boolean drawAccumulatedMovingRule = true;
-	public boolean highlightHoveredGate = true;
-	public boolean highlightHoveredGateMovingRule = true;
+	public boolean drawAccumulatedMovingRule = false;
+	public boolean highlightHoveredGate = false;
+	public boolean highlightHoveredGateMovingRule = false;
 	public boolean colorizeLineUsage = false;
 //	public boolean lineWidthByUsage = false;
 	public boolean showLineNames = true;
-	private lineWidth lineType = lineWidth.full;
+	private lineWidth lineType = lineWidth.pixelWide;
 	private lineGrouping neighbourhoodGrouping = lineGrouping.none;
 	private String drawnBus = "";
 	public boolean drawSubCircuits = true;
+	public boolean markVariableTypes = false;
 	
 	private int highlitGate = 0;
 	
@@ -323,10 +324,14 @@ public class DrawableCircuit implements Drawable {
 				line.color = col;
 				col.add(0.25f, 0.25f, 0.25f, 0);
 
-				if (data.isInputOnly(data.getVars().get(i)))
-					col.add(0, 0.5f, 0, 0);
-				else if (data.isTargetOnly(data.getVars().get(i)))
-					col.add(0.5f, 0, 0, 0);
+				if (markVariableTypes) {
+					if (data.isInputOnly(data.getVars().get(i)))
+						col.add(0, 0.5f, 0, 0);
+					else if (data.isTargetOnly(data.getVars().get(i)))
+						col.add(0.5f, 0, 0, 0);
+					else
+						col.add(0.5f, 0.5f, 0, 0);
+				}
 
 				if (j == 0) {
 					float left = -RevVisGDX.singleton.camera.viewportWidth;
