@@ -81,6 +81,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case '1':
 			Presets.setConstGarbage();
 			break;
+		case '2':
+			Presets.setBoxesAndUsage();
+			break;
 		}
 		return false;
 	}

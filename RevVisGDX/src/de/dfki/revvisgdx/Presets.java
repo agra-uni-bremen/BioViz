@@ -10,4 +10,11 @@ public class Presets {
 		dc.hideGates = true;
 		dc.lineType = lineWidth.full;
 	}
+	
+	public static void setBoxesAndUsage() {
+		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
+		dc.lineType = lineWidth.full;
+		dc.drawVerticalLines = false;
+		dc.drawLinesDarkWhenUsed = true;
+	}
 }
