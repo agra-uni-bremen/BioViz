@@ -15,7 +15,7 @@ public class Messages {
 			+ "H: highlight hovered gate's moving rule\n"
 			+ "m: show moving rule by gate color (red: left, green: right)\n"
 			+ "M: show moving rule by line overlay\n"
-			+ "n: neighbouring targets as groups (off / by variable / by bus)\n"
+			+ "n: neighbouring targets as groups (off / by variable / by variable in greyscale / by bus)\n"
 			+ "p: save screenshot\n"
 			+ "s: square alignment\n"
 			+ "S: show/hide gates\n"
