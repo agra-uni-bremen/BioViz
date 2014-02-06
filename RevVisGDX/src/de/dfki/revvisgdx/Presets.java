@@ -40,6 +40,8 @@ public class Presets {
 		dc.drawLinesColourizedWhenUsed = true;
 		dc.lineType = lineWidth.full;
 		dc.drawVerticalLines = false;
+		dc.hideGates = true;
+		dc.lineBaseColor = new Color(Color.WHITE);
 	}
 	
 	public static void setColourizeLineType() {
