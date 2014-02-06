@@ -149,13 +149,14 @@ public class RevVisGDX implements ApplicationListener {
 		
 		int requiredYDim = (int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1;
 		int requiredXDim = (int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1;
-		float maxCoordY = this.currentCircuit.data.getAmountOfVars() / 2f;
-		float minCoordY = -maxCoordY;
+//		float maxCoordY = this.currentCircuit.data.getAmountOfVars() / 2f;
+		float elementsPerScreenY = (Gdx.graphics.getHeight() / currentCircuit.getScaleY());
+		float minCoordY = -this.currentCircuit.data.getAmountOfVars() / 2f + elementsPerScreenY / 2f;
 		float minCoordX = (Gdx.graphics.getWidth() / currentCircuit.getScaleX()) / 2f - 0.5f;
 
 		for (int y = 0; y < requiredYDim; y++) {
-			this.currentCircuit.offsetY = ((float)(y + 0.5f) / (float)requiredYDim) * (maxCoordY - minCoordY) + minCoordY;
-			this.currentCircuit.offsetX = 0;
+//			this.currentCircuit.offsetY = ((float)(y + 0.5f) / (float)requiredYDim) * (maxCoordY - minCoordY) + minCoordY;
+			this.currentCircuit.offsetY = y * -(Gdx.graphics.getHeight() * (1f / currentCircuit.getScaleY())) - minCoordY;
 			for (int x = 0; x < requiredXDim; x++) {
 //				if (requiredXDim % 2 == 0)
 					this.currentCircuit.offsetX = x * -(Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX())) - minCoordX;
