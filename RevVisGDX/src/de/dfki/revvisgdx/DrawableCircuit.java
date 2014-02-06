@@ -176,7 +176,7 @@ public class DrawableCircuit implements Drawable {
 				float xCoord = xCoordOnScreen(i);
 
 				if (this.neighbourhoodGrouping == lineGrouping.none) {
-					if (xCoord > -RevVisGDX.singleton.camera.viewportWidth / 2 && xCoord < RevVisGDX.singleton.camera.viewportWidth / 2) {
+					if (xCoord > -RevVisGDX.singleton.camera.viewportWidth / 2 - smoothScaleX && xCoord < RevVisGDX.singleton.camera.viewportWidth / 2 + smoothScaleX) {
 
 						float maxDim = Math.min(smoothScaleX, smoothScaleY);
 
