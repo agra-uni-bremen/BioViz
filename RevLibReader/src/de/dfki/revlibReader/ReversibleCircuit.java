@@ -29,6 +29,8 @@ public class ReversibleCircuit {
 	private Vector<String> busNames = new Vector<String>();
 	boolean recalculateMobility = true;
 	int cachedMaxMobility = 0;
+	int cachedMaxMobilityTotal = 0;
+	int cachedMinMobilityTotal = Integer.MAX_VALUE;
 	private HashMap<String, ReversibleCircuit> subCircuits = new HashMap<String, ReversibleCircuit>();
 	private Vector<subCircuitDimensions> insertedCircuits = new Vector<subCircuitDimensions>();
 
@@ -370,15 +372,33 @@ public class ReversibleCircuit {
 	public int calculateMaximumMobility() {
 		if (recalculateMobility) {
 			cachedMaxMobility = 0;
+			cachedMaxMobilityTotal = 0;
+			cachedMinMobilityTotal = Integer.MAX_VALUE;
 			for (int i = 0; i < this.gates.size(); i++) {
 				if (this.gates.get(i).getMobilityLeft() > cachedMaxMobility)
 					cachedMaxMobility = this.gates.get(i).getMobilityLeft();
 				if (this.gates.get(i).getMobilityRight() > cachedMaxMobility)
 					cachedMaxMobility = this.gates.get(i).getMobilityRight();
+				if (this.gates.get(i).getMobilityLeft() + this.gates.get(i).getMobilityRight() > cachedMaxMobilityTotal)
+					cachedMaxMobilityTotal = this.gates.get(i).getMobilityLeft() + this.gates.get(i).getMobilityRight();
+				if (this.gates.get(i).getMobilityLeft() + this.gates.get(i).getMobilityRight() < cachedMinMobilityTotal)
+					cachedMinMobilityTotal = this.gates.get(i).getMobilityLeft() + this.gates.get(i).getMobilityRight();
 			}
 			recalculateMobility = false;
 		}
 		return cachedMaxMobility;
+	}
+	
+	public int calculateMaximumMobilityTotal() {
+		if (recalculateMobility)
+			calculateMaximumMobility();
+		return cachedMaxMobilityTotal;
+	}
+	
+	public int calculateMinimumMobilityTotal() {
+		if (recalculateMobility)
+			calculateMaximumMobility();
+		return cachedMinMobilityTotal;
 	}
 	
 	//TODO finish sub circuit parsing!

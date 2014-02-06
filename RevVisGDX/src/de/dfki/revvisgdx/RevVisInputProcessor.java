@@ -49,7 +49,7 @@ public class RevVisInputProcessor implements InputProcessor {
 			RevVisGDX.singleton.currentCircuit.drawLinesDarkWhenUsed = !RevVisGDX.singleton.currentCircuit.drawLinesDarkWhenUsed;
 			break;
 		case 'm':
-			RevVisGDX.singleton.currentCircuit.colourizeGatesByMobility = !RevVisGDX.singleton.currentCircuit.colourizeGatesByMobility;
+			RevVisGDX.singleton.currentCircuit.toggleMobilityGateColours();
 			break;
 		case 'M':
 			RevVisGDX.singleton.currentCircuit.drawAccumulatedMovingRule = !RevVisGDX.singleton.currentCircuit.drawAccumulatedMovingRule;

@@ -37,7 +37,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean drawLinesDarkWhenUsed = false;
 	public float reduceGatesToBlocksWhenSmallerThanPixels = 8f;
 	public float groupColorAmount = 16f;
-	public boolean colourizeGatesByMobility = false;
+	public movingRuleDisplay colourizeGatesByMobility = movingRuleDisplay.none;
 	public boolean drawAccumulatedMovingRule = false;
 	public boolean highlightHoveredGate = false;
 	public boolean highlightHoveredGateMovingRule = false;
@@ -55,6 +55,7 @@ public class DrawableCircuit implements Drawable {
 	
 	public enum lineWidth {pixelWide, usageWide, full}
 	public enum lineGrouping {none, single, singleGreyscale, bus}
+	public enum movingRuleDisplay{none, leftRight, total}
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -165,11 +166,22 @@ public class DrawableCircuit implements Drawable {
 						float maxDim = Math.min(smoothScaleX, smoothScaleY);
 
 						Color gateColor = new Color(Color.BLACK);
-						if(this.colourizeGatesByMobility) {
+						if(this.colourizeGatesByMobility == movingRuleDisplay.leftRight) {
 							int leftRange = data.calculateGateMobilityLeft(i);
 							int rightRange = data.calculateGateMobilityRight(i);
 							gateColor.r = Math.min(1, leftRange / (float)data.calculateMaximumMobility());
 							gateColor.g = Math.min(1, rightRange / (float)data.calculateMaximumMobility());
+						} else if (this.colourizeGatesByMobility == colourizeGatesByMobility.total) {
+							int minMobility = data.calculateMinimumMobilityTotal();
+							int maxMobility = data.calculateMaximumMobilityTotal();
+							int gateMobility = data.calculateGateMobilityLeft(i) + data.calculateGateMobilityRight(i);
+							if (gateMobility < (maxMobility - minMobility) / 2) {
+								gateColor.r = 1f;
+								gateColor.g = gateMobility / ((maxMobility - minMobility) / 2f);
+							} else {
+								gateColor.g = 1f;
+								gateColor.r = (gateMobility - ((maxMobility - minMobility) / 2f)) / ((maxMobility - minMobility) / 2f);
+							}
 						}
 						
 						if (i == highlitGate && highlightHoveredGate) {
@@ -529,6 +541,22 @@ public class DrawableCircuit implements Drawable {
 		default:
 			this.neighbourhoodGrouping = lineGrouping.none;
 				
+		}
+	}
+	
+	public void toggleMobilityGateColours() {
+		switch (this.colourizeGatesByMobility) {
+		case none:
+			this.colourizeGatesByMobility = movingRuleDisplay.leftRight;
+			break;
+		case leftRight:
+			this.colourizeGatesByMobility = movingRuleDisplay.total;
+			break;
+		case total:
+			this.colourizeGatesByMobility = movingRuleDisplay.none;
+			break;
+		default:
+			break;
 		}
 	}
 
