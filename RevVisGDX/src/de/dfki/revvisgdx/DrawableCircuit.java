@@ -51,6 +51,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean markVariableTypes = false;
 	public boolean drawLinesColourizedWhenUsed = false;
 	public gateElementDisplay gateDisplay = gateElementDisplay.dynamic;
+	public Color lineBaseColor = new Color(Color.BLACK);
 	
 	private int highlitGate = 0;
 	
@@ -374,7 +375,7 @@ public class DrawableCircuit implements Drawable {
 			float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
 
 			for (int j = 0; j < 3; j++) {
-				Color col = new Color(Color.BLACK);
+				Color col = new Color(lineBaseColor);
 				line.color = col;
 				col.add(0.25f, 0.25f, 0.25f, 0);
 
@@ -394,7 +395,7 @@ public class DrawableCircuit implements Drawable {
 					line.scaleX = left - right;
 					
 					if (colorizeConstants && data.constValue(data.getVars().get(i)) >= 0) {
-						col.add(0, 0, 0.75f, 0);
+						col.mul(0, 0, 0, 1);
 					}
 
 					col.add(0.25f, 0.25f, 0.25f, 0);
@@ -424,7 +425,7 @@ public class DrawableCircuit implements Drawable {
 					line.scaleX = left - right;
 					
 					if (colorizeGarbageLine && data.isGarbageLine(data.getVars().get(i))) {
-						col.add(0, 0, 0.75f, 0);
+						col.mul(0, 0, 0, 1);
 					}
 					
 					col.add(0.25f, 0.25f, 0.25f, 0);
@@ -693,6 +694,7 @@ public class DrawableCircuit implements Drawable {
 		markVariableTypes = false;
 		drawLinesColourizedWhenUsed = false;
 		gateDisplay = gateElementDisplay.dynamic;
+		lineBaseColor = new Color(Color.BLACK);
 	}
 
 	/**

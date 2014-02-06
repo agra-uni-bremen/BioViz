@@ -4,6 +4,7 @@ import de.dfki.revvisgdx.DrawableCircuit.lineGrouping;
 import de.dfki.revvisgdx.DrawableCircuit.lineWidth;
 import de.dfki.revvisgdx.DrawableCircuit.movingRuleDisplay;
 import de.dfki.revvisgdx.DrawableCircuit.movingRuleHighlight;
+import com.badlogic.gdx.graphics.Color;
 
 public class Presets {
 	public static void setConstGarbage() {
@@ -16,6 +17,7 @@ public class Presets {
 		dc.drawLinesDarkWhenUsed = false;
 		dc.highlightHoveredGateMovingRule = movingRuleHighlight.none;
 		dc.drawLinesColourizedWhenUsed = false;
+		dc.lineBaseColor = new Color(Color.WHITE);
 	}
 	
 	public static void setBoxesAndUsage() {
