@@ -40,7 +40,7 @@ public class DrawableCircuit implements Drawable {
 	public movingRuleDisplay colourizeGatesByMobility = movingRuleDisplay.none;
 	public boolean drawAccumulatedMovingRule = false;
 	public boolean highlightHoveredGate = false;
-	public boolean highlightHoveredGateMovingRule = false;
+	public movingRuleHighlight highlightHoveredGateMovingRule = movingRuleHighlight.none;
 	public boolean colorizeLineUsage = false;
 //	public boolean lineWidthByUsage = false;
 	public boolean showLineNames = true;
@@ -56,6 +56,7 @@ public class DrawableCircuit implements Drawable {
 	public enum lineWidth {hidden, pixelWide, usageWide, full}
 	public enum lineGrouping {none, single, singleGreyscale, bus}
 	public enum movingRuleDisplay{none, leftRight, total}
+	public enum movingRuleHighlight{none, whiteBars, boxes}
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -205,19 +206,32 @@ public class DrawableCircuit implements Drawable {
 							line.draw();
 						}
 						
-						if (highlightHoveredGateMovingRule && i == highlitGate) {
-							line.color = new Color(Color.WHITE);
-							line.scaleX = 3; //RevVisGDX.singleton.camera.viewportWidth;
-							line.scaleY = RevVisGDX.singleton.camera.viewportHeight;
-							float movementLeft = data.calculateGateMobilityLeft(i);
-							float movementRight = data.calculateGateMobilityRight(i);
-							line.y = 0;
-							
-							line.x = xCoord + ((movementRight * smoothScaleX) + ((movementRight + 1) * smoothScaleX)) / 2f;
-							line.draw();
-							
-							line.x = xCoord - ((movementLeft * smoothScaleX) + ((movementLeft + 1) * smoothScaleX)) / 2f;
-							line.draw();
+						if (highlightHoveredGateMovingRule != movingRuleHighlight.none && i == highlitGate) {
+							if (highlightHoveredGateMovingRule == movingRuleHighlight.whiteBars) {
+								line.color = new Color(Color.WHITE);
+								line.scaleX = 3; //RevVisGDX.singleton.camera.viewportWidth;
+								line.scaleY = RevVisGDX.singleton.camera.viewportHeight;
+								float movementLeft = data.calculateGateMobilityLeft(i);
+								float movementRight = data.calculateGateMobilityRight(i);
+								line.y = 0;
+
+								line.x = xCoord + ((movementRight * smoothScaleX) + ((movementRight + 1) * smoothScaleX)) / 2f;
+								line.draw();
+
+								line.x = xCoord - ((movementLeft * smoothScaleX) + ((movementLeft + 1) * smoothScaleX)) / 2f;
+								line.draw();
+							} else if (highlightHoveredGateMovingRule == movingRuleHighlight.boxes) {
+								line.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+								
+								float movementLeft = data.calculateGateMobilityLeft(i);
+								float movementRight = data.calculateGateMobilityRight(i);
+								
+								line.x = xCoord + ((movementRight - movementLeft) / 2f) * smoothScaleX;
+								line.y = 0;
+								line.scaleX = (movementRight + movementLeft + 1) * smoothScaleX;
+								line.scaleY = RevVisGDX.singleton.camera.viewportHeight;
+								line.draw();
+							}
 						}
 
 						DrawableSprite targetGate;
@@ -547,6 +561,22 @@ public class DrawableCircuit implements Drawable {
 		default:
 			this.neighbourhoodGrouping = lineGrouping.none;
 				
+		}
+	}
+	
+	public void toggleMovingRuleHighlight() {
+		switch (this.highlightHoveredGateMovingRule) {
+		case none:
+			this.highlightHoveredGateMovingRule = movingRuleHighlight.whiteBars;
+			break;
+		case whiteBars:
+			this.highlightHoveredGateMovingRule = movingRuleHighlight.boxes;
+			break;
+		case boxes:
+			this.highlightHoveredGateMovingRule = movingRuleHighlight.none;
+			break;
+		default:
+			break;
 		}
 	}
 	
