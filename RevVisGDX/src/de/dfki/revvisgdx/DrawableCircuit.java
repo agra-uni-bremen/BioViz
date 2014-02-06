@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import de.dfki.revlibReader.ReversibleCircuit;
 
 public class DrawableCircuit implements Drawable {
-	private ReversibleCircuit data;
+	ReversibleCircuit data;
 
 	DrawableSprite line;
 	DrawableSprite gate01;
@@ -50,6 +50,7 @@ public class DrawableCircuit implements Drawable {
 	public boolean drawSubCircuits = true;
 	public boolean markVariableTypes = false;
 	public boolean drawLinesColourizedWhenUsed = false;
+	public gateElementDisplay gateDisplay = gateElementDisplay.dynamic;
 	
 	private int highlitGate = 0;
 	
@@ -57,6 +58,7 @@ public class DrawableCircuit implements Drawable {
 	public enum lineGrouping {none, single, singleGreyscale, bus}
 	public enum movingRuleDisplay{none, leftRight, total}
 	public enum movingRuleHighlight{none, whiteBars, boxes}
+	public enum gateElementDisplay{alwaysDetailed, dynamic, alwaysBoxy}
 	
 	private float boxOverlayX;
 	private float boxOverlayWidth;
@@ -246,7 +248,7 @@ public class DrawableCircuit implements Drawable {
 						DrawableSprite targetGate;
 						DrawableSprite controlGate;
 
-						if (maxDim >= reduceGatesToBlocksWhenSmallerThanPixels) {
+						if (!(this.gateDisplay == gateElementDisplay.alwaysBoxy) && (maxDim >= reduceGatesToBlocksWhenSmallerThanPixels || this.gateDisplay == gateElementDisplay.alwaysDetailed)) {
 							targetGate = gate01;
 							controlGate = gate02;
 							targetGate.setDimensions(maxDim, maxDim);
@@ -604,6 +606,22 @@ public class DrawableCircuit implements Drawable {
 			break;
 		}
 	}
+	
+	public void toggleGateDisplay() {
+		switch (this.gateDisplay) {
+		case alwaysDetailed:
+			this.gateDisplay = gateElementDisplay.dynamic;
+			break;
+		case dynamic:
+			this.gateDisplay = gateElementDisplay.alwaysBoxy;
+			break;
+		case alwaysBoxy:
+			this.gateDisplay = gateElementDisplay.alwaysDetailed;
+			break;
+		default:
+			break;
+		}
+	}
 
 	public float getScaleX() {
 		return scaleX;
@@ -653,6 +671,30 @@ public class DrawableCircuit implements Drawable {
 		this.scaleY = 1;
 	}
 	
+	public void setAllDefault() {
+		colorizeGarbageLine = false;
+		hideGates = false;
+		countGatesForGroupColor = false;
+		colorizeConstants = false;
+		drawVerticalLines = true;
+		drawLinesDarkWhenUsed = false;
+		reduceGatesToBlocksWhenSmallerThanPixels = 8f;
+		groupColorAmount = 16f;
+		colourizeGatesByMobility = movingRuleDisplay.none;
+		drawAccumulatedMovingRule = false;
+		highlightHoveredGate = false;
+		highlightHoveredGateMovingRule = movingRuleHighlight.none;
+		colorizeLineUsage = false;
+		showLineNames = true;
+		lineType = lineWidth.pixelWide;
+		neighbourhoodGrouping = lineGrouping.none;
+		drawnBus = "";
+		drawSubCircuits = true;
+		markVariableTypes = false;
+		drawLinesColourizedWhenUsed = false;
+		gateDisplay = gateElementDisplay.dynamic;
+	}
+
 	/**
 	 * Resets the zoom so that the whole circuit is shown.
 	 */
@@ -666,5 +708,18 @@ public class DrawableCircuit implements Drawable {
 		this.scaleY = maxScale;
 		this.offsetY = 0;
 		this.offsetX = this.data.getGates().size() / -2f;
+	}
+	
+	public void zoomExtentsImmediately() {
+		zoomExtents();
+		this.smoothScaleX = scaleX;
+		this.smoothScaleY = scaleY;
+	}
+	
+	public void setScaleImmediately(float scaleX, float scaleY) {
+		this.scaleX = scaleX;
+		this.smoothScaleX = scaleX;
+		this.scaleY = scaleY;
+		this.smoothScaleY = scaleY;
 	}
 }

@@ -10,6 +10,7 @@ public class Messages {
 			+ "C: Show/hide sub-circuits\n"
 			+ "d: draw dark lines when used\n"
 			+ "g: garbage lines color\n"
+			+ "G: toggle gate display (detailed / dynamic / boxy)\n"
 			+ "h: highlight hovered gate\n"
 			+ "H: highlight hovered gate's moving rule\n"
 			+ "m: show moving rule by gate color (red: left, green: right)\n"
@@ -32,6 +33,6 @@ public class Messages {
 			+ "2: set gates + usage preset\n"
 			+ "3: set colourized usage preset\n"
 			+ "4: set colourized line type preset\n"
-			+ "5:\n"
+			+ "5: set moving rule as grey box for highlit gate\n"
 			+ "6: set moving rule colour preset";
 }

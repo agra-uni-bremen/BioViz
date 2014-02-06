@@ -16,6 +16,7 @@ public class MessageCenter {
 	private Vector<Message> messages;
 	private BitmapFont font;
 	private int spacing = 18;
+	public boolean hidden = false;
 	
 	public BitmapFont getFont() {
 		if (font == null)
@@ -56,48 +57,48 @@ public class MessageCenter {
 			this.messages.add(m);
 		}
 		
-		if (messages.size() > 20)
+		if (messages.size() > 50)
 			messages.remove(0);
 	}
 
 	public void render() {
-//		SystemViewMain.Singleton.myBatch.begin();
-		if (font == null)
-			font = new BitmapFont();
-		
-		Matrix4 normalProjection = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
-		RevVisGDX.singleton.batch.setProjectionMatrix(normalProjection);
-		
-		int yCoord = Gdx.graphics.getHeight() - spacing;
-		for (Message m : this.messages) {
-			if (m.color != null)
-				font.setColor(m.color);
-			else
-				font.setColor(Color.WHITE);
-			int start_x = spacing;
-			int start_y = yCoord;
-			font.draw(RevVisGDX.singleton.batch, new Date(m.createdOn).toLocaleString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
-			//SystemViewMain.Singleton.myBatch.disableBlending();
+		if (!hidden) {
+			if (font == null)
+				font = new BitmapFont();
 
-			
+			Matrix4 normalProjection = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
+			RevVisGDX.singleton.batch.setProjectionMatrix(normalProjection);
 
-			yCoord -= spacing;
-		}
-		
-		for (HUDMessage s: this.HUDMessages.values()) {
-			font.setColor(s.color);
-			int x = (int) s.x;
-			int y = (int) s.y;
-			font.draw(RevVisGDX.singleton.batch, s.message, x, y);
-		}
+			int yCoord = Gdx.graphics.getHeight() - spacing;
+			for (Message m : this.messages) {
+				if (m.color != null)
+					font.setColor(m.color);
+				else
+					font.setColor(Color.WHITE);
+				int start_x = spacing;
+				int start_y = yCoord;
+				font.draw(RevVisGDX.singleton.batch, new Date(m.createdOn).toLocaleString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
+				//SystemViewMain.Singleton.myBatch.disableBlending();
 
-		long curTime = System.currentTimeMillis();
-		while(this.messages.size() > 0 && this.messages.get(0).displayTime + this.messages.get(0).createdOn < curTime) {
-			this.messages.remove(0);
+
+
+				yCoord -= spacing;
+			}
+
+			for (HUDMessage s: this.HUDMessages.values()) {
+				font.setColor(s.color);
+				int x = (int) s.x;
+				int y = (int) s.y;
+				font.draw(RevVisGDX.singleton.batch, s.message, x, y);
+			}
+
+			long curTime = System.currentTimeMillis();
+			while(this.messages.size() > 0 && this.messages.get(0).displayTime + this.messages.get(0).createdOn < curTime) {
+				this.messages.remove(0);
+			}
 		}
-//		SystemViewMain.Singleton.myBatch.end();
 	}
-	
+
 	public void addHUDMessage(int key, String message, float x, float y) {
 		addHUDMessage(key, message, x, y, null);
 	}

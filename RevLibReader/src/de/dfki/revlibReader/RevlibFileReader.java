@@ -53,12 +53,12 @@ public class RevlibFileReader {
 			String line;
 			try {
 				while((line = br.readLine()) != null) {
-					this.fileContents += line;
+					this.fileContents += line + "\n";
 //					if(readLine(line));
 //						return currentCircuit;
 				}
 				
-				this.readRealContents(0);
+				currentCircuit = this.readRealContents(0);
 			} catch (IOException e) {
 				try {
 					br.close();

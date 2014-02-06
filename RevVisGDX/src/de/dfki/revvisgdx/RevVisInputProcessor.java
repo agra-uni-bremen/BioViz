@@ -27,6 +27,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'g':
 			RevVisGDX.singleton.currentCircuit.colorizeGarbageLine = !RevVisGDX.singleton.currentCircuit.colorizeGarbageLine;
 			break;
+		case 'G':
+			RevVisGDX.singleton.currentCircuit.toggleGateDisplay();
+			break;
 		case 'n':
 			RevVisGDX.singleton.currentCircuit.toggleNeighbourGrouping();
 			break;
@@ -72,6 +75,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'p':
 			RevVisGDX.singleton.saveScreenshotFull();
 			break;
+		case 'P':
+			RevVisGDX.singleton.saveScreenshotCircuit();
+			break;
 		case 'z':
 			RevVisGDX.singleton.currentCircuit.zoomTo1Px();
 			break;
@@ -89,6 +95,9 @@ public class RevVisInputProcessor implements InputProcessor {
 			break;
 		case '4':
 			Presets.setColourizeLineType();
+			break;
+		case '5':
+			Presets.setMovingRuleBoxOverlay();
 			break;
 		case '6':
 			Presets.setMovingRuleColoured();

@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 import de.dfki.revlibReader.ReversibleCircuit;
 import de.dfki.revlibReader.RevlibFileReader;
@@ -127,9 +128,39 @@ public class RevVisGDX implements ApplicationListener {
 	public void resume() {
 	}
 	
+//	public void saveScreenshotCircuit() {
+//		int viewportWidth = (int)(this.currentCircuit.data.getGates().size());
+//		int viewportHeight = (int)(this.currentCircuit.data.getAmountOfVars());
+//		Gdx.graphics.setDisplayMode(viewportWidth, viewportHeight, false);
+//		RevVisGDX.singleton.camera.viewportWidth = viewportWidth;
+//		RevVisGDX.singleton.camera.viewportHeight= viewportHeight;
+//		RevVisGDX.singleton.camera.update();
+//        
+//		this.currentCircuit.setScaleImmediately(1, 1);
+//		this.currentCircuit.zoomExtentsImmediately();
+//		
+//		this.render();
+//		
+//		saveScreenshotFull();
+//	}
+	
+	public void saveScreenshotCircuit() {
+		this.mc.hidden = true;
+		this.currentCircuit.offsetX = 0;
+		
+		while(this.currentCircuit.offsetX > - (this.currentCircuit.data.getGates().size() + Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX()))) {
+			saveScreenshotFull();
+			this.currentCircuit.offsetX -= Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX());
+		}		
+	}
+	
+	private static int screenshotCount = 0;
 	public void saveScreenshotFull() {
-		FileHandle fh = Gdx.files.getFileHandle("screenshots/scr" + new Date().getTime() + ".png", FileType.Local);
+		render();
+		FileHandle fh = Gdx.files.getFileHandle("screenshots/scr" + new Date().getTime() + "_" + screenshotCount + ".png", FileType.Local);
+		screenshotCount++;
 		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		mc.addMessage("saved screenshot: " + fh.path());
 	}
 
 	/**
