@@ -15,7 +15,13 @@ public class Main {
 		if (args.length <= 0) {
 			new LwjglApplication(new RevVisGDX(), cfg);
 		} else {
-			new LwjglApplication(new RevVisGDX(args[0]), cfg);
+			if (args.length >= 1) {
+				new LwjglApplication(new RevVisGDX(args[0]), cfg);
+				if (args.length >= 2) {
+					RevVisGDX.singleton.runFullPresetScreenshots = true;
+					try {RevVisGDX.singleton.fullPresetScreenshotsScaling = Float.parseFloat(args[1]);} catch(Throwable t) {}
+				}
+			}
 		}
 	}
 }

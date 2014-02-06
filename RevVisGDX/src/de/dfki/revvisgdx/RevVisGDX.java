@@ -38,8 +38,12 @@ public class RevVisGDX implements ApplicationListener {
 	
 	private String filename;
 	
+	boolean runFullPresetScreenshots = false;
+	float fullPresetScreenshotsScaling = 4f;
+	
 	public RevVisGDX() {
 		super();
+		singleton = this;
 	}
 	
 	public RevVisGDX(String filename) {
@@ -49,7 +53,6 @@ public class RevVisGDX implements ApplicationListener {
 	
 	@Override
 	public void create() {		
-		singleton = this;
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
@@ -80,8 +83,6 @@ public class RevVisGDX implements ApplicationListener {
 		
 		mc.addMessage("RevVisGDX started");
 		mc.addMessage(Messages.helpText);
-		
-		currentCircuit.zoomExtents();
 	}
 
 	@Override
@@ -112,12 +113,21 @@ public class RevVisGDX implements ApplicationListener {
 		batch.end();
 	}
 
+	private boolean firstRun = true;
 	@Override
 	public void resize(int width, int height) {
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;
-//		camera.update();
-		//camera = new OrthographicCamera(1, height/width);
+		if (firstRun) {
+			if (!runFullPresetScreenshots)
+				currentCircuit.zoomExtents();
+			else {
+				currentCircuit.setScaleImmediately(4, 4);
+				Presets.setColourizeLineType();
+				saveScreenshotCircuit();
+			}
+			firstRun = false;
+		}
 	}
 
 	@Override
