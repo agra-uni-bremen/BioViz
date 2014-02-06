@@ -49,6 +49,7 @@ public class Presets {
 		dc.setAllDefault();
 		dc.markVariableTypes = true;
 		dc.lineType = lineWidth.full;
+		dc.drawLinesDarkWhenUsed = false;
 	}
 	
 	public static void setMovingRuleColoured() {

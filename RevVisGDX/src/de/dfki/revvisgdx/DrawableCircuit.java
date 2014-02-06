@@ -380,11 +380,11 @@ public class DrawableCircuit implements Drawable {
 
 				if (markVariableTypes) {
 					if (data.isInputOnly(data.getVars().get(i)))
-						col.add(0, 0.5f, 0, 0);
+						col.add(0, 1f, 0, 0);
 					else if (data.isTargetOnly(data.getVars().get(i)))
-						col.add(0.5f, 0, 0, 0);
+						col.add(1f, 0, 0, 0);
 					else
-						col.add(0.5f, 0.5f, 0, 0);
+						col.add(1f, 1f, 0, 0);
 				}
 
 				if (j == 0) {
@@ -397,14 +397,15 @@ public class DrawableCircuit implements Drawable {
 						col.mul(0, 0, 0, 1);
 					}
 
-					col.add(0.25f, 0.25f, 0.25f, 0);
+//					col.add(0.25f, 0.25f, 0.25f, 0);
 				} else if (j == 1) {
 					float left = xCoordOnScreen(firstGateCoord);
 					float right = xCoordOnScreen(lastGateCoord);
 					line.x = (left + right) / 2;
 					line.scaleX = left - right;
-					if (drawLinesDarkWhenUsed)
+					if (drawLinesDarkWhenUsed) {
 						col.sub(0.25f, 0.25f, 0.25f, 0);
+					}
 					if (drawLinesColourizedWhenUsed) {
 						float lineUsageValue = (usagePercent - minimumUsagePercent) / (1 - minimumUsagePercent);
 						if (lineUsageValue <= 0.5f) {
@@ -427,7 +428,7 @@ public class DrawableCircuit implements Drawable {
 						col.mul(0, 0, 0, 1);
 					}
 					
-					col.add(0.25f, 0.25f, 0.25f, 0);
+//					col.add(0.25f, 0.25f, 0.25f, 0);
 				}
 				
 				if (!drawnBus.equals("")) {
