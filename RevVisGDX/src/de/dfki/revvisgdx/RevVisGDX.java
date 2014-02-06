@@ -146,12 +146,16 @@ public class RevVisGDX implements ApplicationListener {
 	
 	public void saveScreenshotCircuit() {
 		this.mc.hidden = true;
-		this.currentCircuit.offsetX = 0;
-		
-		while(this.currentCircuit.offsetX > - (this.currentCircuit.data.getGates().size() + Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX()))) {
-			saveScreenshotFull();
-			this.currentCircuit.offsetX -= Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX());
-		}		
+		this.currentCircuit.offsetY = (this.currentCircuit.data.getAmountOfVars() + Gdx.graphics.getHeight() * (1f / currentCircuit.getScaleY())) / 2f;
+
+		while(this.currentCircuit.offsetY > -this.currentCircuit.data.getAmountOfVars() + Gdx.graphics.getHeight() * (1f / currentCircuit.getScaleY()) / 2f) {
+			this.currentCircuit.offsetX = 0;
+			while(this.currentCircuit.offsetX > - (this.currentCircuit.data.getGates().size() + Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX()))) {
+				saveScreenshotFull();
+				this.currentCircuit.offsetX -= Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX());
+			}
+			this.currentCircuit.offsetY -= Gdx.graphics.getHeight() * (1f / currentCircuit.getScaleY());
+		}
 	}
 	
 	private static int screenshotCount = 0;
