@@ -32,7 +32,8 @@ public class Messages {
 			+ "1: set const/garbage preset\n"
 			+ "2: set gates + usage preset\n"
 			+ "3: set colourized usage preset\n"
-			+ "4: set colourized line type preset\n"
-			+ "5: set moving rule as grey box for highlit gate\n"
-			+ "6: set moving rule colour preset";
+			+ "4: set greyscale neighbours preset\n"
+			+ "5: set colourized line type preset\n"
+			+ "6: set moving rule as grey box for highlit gate\n"
+			+ "7: set moving rule colour preset";
 }
