@@ -9,8 +9,8 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "RevVisGDX";
 		cfg.useGL20 = false;
-		cfg.width = 480;
-		cfg.height = 320;
+		cfg.width = 800;
+		cfg.height = 600;
 		cfg.addIcon("data/icon_win_linux.png", Files.FileType.Internal);
 		if (args.length <= 0) {
 			new LwjglApplication(new RevVisGDX(), cfg);

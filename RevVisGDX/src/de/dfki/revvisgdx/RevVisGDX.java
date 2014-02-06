@@ -146,9 +146,13 @@ public class RevVisGDX implements ApplicationListener {
 	
 	public void saveScreenshotCircuit() {
 		this.mc.hidden = true;
-		this.currentCircuit.offsetY = (this.currentCircuit.data.getAmountOfVars() + Gdx.graphics.getHeight() * (1f / currentCircuit.getScaleY())) / 2f;
+		
+		int requiredYDim = (int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1;
+		float maxCoordY = this.currentCircuit.data.getAmountOfVars() / 2f;
+		float minCoordY = -maxCoordY;
 
-		while(this.currentCircuit.offsetY > -this.currentCircuit.data.getAmountOfVars() + Gdx.graphics.getHeight() * (1f / currentCircuit.getScaleY()) / 2f) {
+		for (int y = 0; y < requiredYDim; y++) {
+			this.currentCircuit.offsetY = ((float)(y + 0.5f) / (float)requiredYDim) * (maxCoordY - minCoordY) + minCoordY;
 			this.currentCircuit.offsetX = 0;
 			while(this.currentCircuit.offsetX > - (this.currentCircuit.data.getGates().size() + Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX()))) {
 				saveScreenshotFull();
