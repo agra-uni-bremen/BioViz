@@ -53,7 +53,7 @@ public class DrawableCircuit implements Drawable {
 	
 	private int highlitGate = 0;
 	
-	public enum lineWidth {pixelWide, usageWide, full}
+	public enum lineWidth {hidden, pixelWide, usageWide, full}
 	public enum lineGrouping {none, single, singleGreyscale, bus}
 	public enum movingRuleDisplay{none, leftRight, total}
 
@@ -437,8 +437,11 @@ public class DrawableCircuit implements Drawable {
 				if (!data.isFunctionLine(data.getVars().get(i))) {
 					//					line.color.mul(0.5f);
 				}
-				if (line.scaleX < 0) {
-					line.draw();
+				//TODO: this probably should be catched earlier
+				if (this.lineType != lineWidth.hidden) {
+					if (line.scaleX < 0) {
+						line.draw();
+					}
 				}
 			}
 
@@ -516,6 +519,9 @@ public class DrawableCircuit implements Drawable {
 			this.lineType = lineWidth.pixelWide;
 			break;
 		case pixelWide:
+			this.lineType = lineWidth.hidden;
+			break;
+		case hidden:
 			this.lineType = lineWidth.full;
 			break;
 		default:

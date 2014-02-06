@@ -1,6 +1,7 @@
 package de.dfki.revvisgdx;
 
 import de.dfki.revvisgdx.DrawableCircuit.lineWidth;
+import de.dfki.revvisgdx.DrawableCircuit.movingRuleDisplay;
 
 public class Presets {
 	public static void setConstGarbage() {
@@ -31,5 +32,12 @@ public class Presets {
 		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
 		dc.markVariableTypes = true;
 		dc.lineType = lineWidth.full;
+	}
+	
+	public static void setMovingRuleColoured() {
+		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
+		dc.colourizeGatesByMobility = movingRuleDisplay.total;
+		dc.drawVerticalLines = false;
+		dc.lineType = lineWidth.hidden;
 	}
 }

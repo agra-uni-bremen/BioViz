@@ -29,5 +29,9 @@ public class Messages {
 			+ "left drag: move viewport\n"
 			+ "\n"
 			+ "1: set const/garbage preset\n"
-			+ "2: set gates + usage preset";
+			+ "2: set gates + usage preset\n"
+			+ "3: set colourized usage preset\n"
+			+ "4: set colourized line type preset\n"
+			+ "5:\n"
+			+ "6: set moving rule colour preset";
 }

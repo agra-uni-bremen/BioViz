@@ -90,6 +90,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case '4':
 			Presets.setColourizeLineType();
 			break;
+		case '6':
+			Presets.setMovingRuleColoured();
+			break;
 		}
 		return false;
 	}

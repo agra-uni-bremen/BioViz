@@ -374,6 +374,7 @@ public class ReversibleCircuit {
 			cachedMaxMobility = 0;
 			cachedMaxMobilityTotal = 0;
 			cachedMinMobilityTotal = Integer.MAX_VALUE;
+			recalculateMovingRuleAccumulations();
 			for (int i = 0; i < this.gates.size(); i++) {
 				if (this.gates.get(i).getMobilityLeft() > cachedMaxMobility)
 					cachedMaxMobility = this.gates.get(i).getMobilityLeft();
