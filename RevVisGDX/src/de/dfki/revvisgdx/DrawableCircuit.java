@@ -57,6 +57,9 @@ public class DrawableCircuit implements Drawable {
 	public enum lineGrouping {none, single, singleGreyscale, bus}
 	public enum movingRuleDisplay{none, leftRight, total}
 	public enum movingRuleHighlight{none, whiteBars, boxes}
+	
+	private float boxOverlayX;
+	private float boxOverlayWidth;
 
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
@@ -143,6 +146,15 @@ public class DrawableCircuit implements Drawable {
 //				}
 			}
 		}
+		
+		if (highlightHoveredGateMovingRule == movingRuleHighlight.boxes) {
+			line.color = new Color(0.25f, 0.25f, 0.25f, 0.5f);
+			line.x = boxOverlayX;
+			line.y = 0;
+			line.scaleX = boxOverlayWidth;
+			line.scaleY = RevVisGDX.singleton.camera.viewportHeight;
+			line.draw();
+		}
 	}
 
 	/**
@@ -226,11 +238,8 @@ public class DrawableCircuit implements Drawable {
 								float movementLeft = data.calculateGateMobilityLeft(i);
 								float movementRight = data.calculateGateMobilityRight(i);
 								
-								line.x = xCoord + ((movementRight - movementLeft) / 2f) * smoothScaleX;
-								line.y = 0;
-								line.scaleX = (movementRight + movementLeft + 1) * smoothScaleX;
-								line.scaleY = RevVisGDX.singleton.camera.viewportHeight;
-								line.draw();
+								this.boxOverlayX = xCoord + ((movementRight - movementLeft) / 2f) * smoothScaleX;
+								this.boxOverlayWidth = (movementRight + movementLeft + 1) * smoothScaleX;
 							}
 						}
 
