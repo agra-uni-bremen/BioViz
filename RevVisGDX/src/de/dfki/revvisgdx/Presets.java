@@ -31,6 +31,7 @@ public class Presets {
 		dc.colorizeGarbageLine = false;
 		dc.highlightHoveredGateMovingRule = movingRuleHighlight.none;
 		dc.drawLinesColourizedWhenUsed = false;
+		dc.lineBaseColor = new Color(Color.WHITE);
 	}
 	
 	public static void setColourizedUsage() {

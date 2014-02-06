@@ -377,7 +377,6 @@ public class DrawableCircuit implements Drawable {
 			for (int j = 0; j < 3; j++) {
 				Color col = new Color(lineBaseColor);
 				line.color = col;
-				col.add(0.25f, 0.25f, 0.25f, 0);
 
 				if (markVariableTypes) {
 					if (data.isInputOnly(data.getVars().get(i)))
@@ -404,8 +403,8 @@ public class DrawableCircuit implements Drawable {
 					float right = xCoordOnScreen(lastGateCoord);
 					line.x = (left + right) / 2;
 					line.scaleX = left - right;
-					if (!drawLinesDarkWhenUsed)
-						col.add(0.25f, 0.25f, 0.25f, 0);
+					if (drawLinesDarkWhenUsed)
+						col.sub(0.25f, 0.25f, 0.25f, 0);
 					if (drawLinesColourizedWhenUsed) {
 						float lineUsageValue = (usagePercent - minimumUsagePercent) / (1 - minimumUsagePercent);
 						if (lineUsageValue <= 0.5f) {
