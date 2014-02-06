@@ -123,8 +123,18 @@ public class RevVisGDX implements ApplicationListener {
 				currentCircuit.zoomExtents();
 			else {
 				currentCircuit.setScaleImmediately(fullPresetScreenshotsScaling, fullPresetScreenshotsScaling);
+				Presets.setConstGarbage();
+				saveScreenshotCircuit("preset1_");
 				Presets.setColourizeLineType();
-				saveScreenshotCircuit();
+				saveScreenshotCircuit("preset3_");
+				try {
+					String execString = "montage screenshots/*.png -geometry +0+0 -tile " + ((int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1) + "x" + ((int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1) + " screenshots/fullPreset.png";
+					System.out.println(execString);
+					Runtime.getRuntime().exec(execString);
+				} catch(Exception e) {
+					System.out.println(System.getenv("PATH"));
+					System.out.println(e.getMessage());
+				}
 			}
 			firstRun = false;
 		}
@@ -155,35 +165,37 @@ public class RevVisGDX implements ApplicationListener {
 //	}
 	
 	public void saveScreenshotCircuit() {
+		saveScreenshotCircuit("");
+	}
+	
+	public void saveScreenshotCircuit(String prefix) {
 		this.mc.hidden = true;
 		
 		int requiredYDim = (int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1;
 		int requiredXDim = (int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1;
-//		float maxCoordY = this.currentCircuit.data.getAmountOfVars() / 2f;
 		float elementsPerScreenY = (Gdx.graphics.getHeight() / currentCircuit.getScaleY());
 		float minCoordY = -this.currentCircuit.data.getAmountOfVars() / 2f + elementsPerScreenY / 2f;
 		float minCoordX = (Gdx.graphics.getWidth() / currentCircuit.getScaleX()) / 2f - 0.5f;
 
 		for (int y = 0; y < requiredYDim; y++) {
-//			this.currentCircuit.offsetY = ((float)(y + 0.5f) / (float)requiredYDim) * (maxCoordY - minCoordY) + minCoordY;
 			this.currentCircuit.offsetY = y * -(Gdx.graphics.getHeight() * (1f / currentCircuit.getScaleY())) - minCoordY;
 			for (int x = 0; x < requiredXDim; x++) {
-//				if (requiredXDim % 2 == 0)
-					this.currentCircuit.offsetX = x * -(Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX())) - minCoordX;
-//				else
-//					this.currentCircuit.offsetX = (x - 0.5f) * -(Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX()));
-				saveScreenshotFull();
+				this.currentCircuit.offsetX = x * -(Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX())) - minCoordX;
+				saveScreenshotFull(prefix);
 			}
 		}
 	}
 	
 	private static int screenshotCount = 0;
-	public void saveScreenshotFull() {
+	public void saveScreenshotFull(String prefix) {
 		render();
-		FileHandle fh = Gdx.files.getFileHandle("screenshots/scr" + new Date().getTime() + "_" + screenshotCount + ".png", FileType.Local);
+		FileHandle fh = Gdx.files.getFileHandle("screenshots/" + prefix + "" + new Date().getTime() + "_" + screenshotCount + ".png", FileType.Local);
 		screenshotCount++;
 		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		mc.addMessage("saved screenshot: " + fh.path());
+	}
+	public void saveScreenshotFull() {
+		saveScreenshotFull("");
 	}
 
 	/**
