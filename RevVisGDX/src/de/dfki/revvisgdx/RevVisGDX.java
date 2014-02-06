@@ -125,8 +125,16 @@ public class RevVisGDX implements ApplicationListener {
 				currentCircuit.setScaleImmediately(fullPresetScreenshotsScaling, fullPresetScreenshotsScaling);
 				Presets.setConstGarbage();
 				saveScreenshotCircuit("preset1_");
-				Presets.setColourizeLineType();
+				Presets.setBoxesAndUsage();
+				saveScreenshotCircuit("preset2_");
+				Presets.setColourizedUsage();
 				saveScreenshotCircuit("preset3_");
+				Presets.setGreyNeighboursWithBlackTargets();
+				saveScreenshotCircuit("preset4_");
+				Presets.setColourizeLineType();
+				saveScreenshotCircuit("preset5_");
+				Presets.setMovingRuleColoured();
+				saveScreenshotCircuit("preset7_");
 				try {
 					String execString = "montage screenshots/*.png -geometry +0+0 -tile " + ((int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1) + "x" + ((int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1) + " screenshots/fullPreset.png";
 					System.out.println(execString);

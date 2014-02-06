@@ -45,7 +45,7 @@ public class DrawableCircuit implements Drawable {
 //	public boolean lineWidthByUsage = false;
 	public boolean showLineNames = true;
 	public lineWidth lineType = lineWidth.pixelWide;
-	private lineGrouping neighbourhoodGrouping = lineGrouping.none;
+	public lineGrouping neighbourhoodGrouping = lineGrouping.none;
 	private String drawnBus = "";
 	public boolean drawSubCircuits = true;
 	public boolean markVariableTypes = false;

@@ -94,12 +94,15 @@ public class RevVisInputProcessor implements InputProcessor {
 			Presets.setColourizedUsage();
 			break;
 		case '4':
-			Presets.setColourizeLineType();
+			Presets.setGreyNeighboursWithBlackTargets();
 			break;
 		case '5':
-			Presets.setMovingRuleBoxOverlay();
+			Presets.setColourizeLineType();
 			break;
 		case '6':
+			Presets.setMovingRuleBoxOverlay();
+			break;
+		case '7':
 			Presets.setMovingRuleColoured();
 			break;
 		}

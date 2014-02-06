@@ -1,5 +1,6 @@
 package de.dfki.revvisgdx;
 
+import de.dfki.revvisgdx.DrawableCircuit.lineGrouping;
 import de.dfki.revvisgdx.DrawableCircuit.lineWidth;
 import de.dfki.revvisgdx.DrawableCircuit.movingRuleDisplay;
 import de.dfki.revvisgdx.DrawableCircuit.movingRuleHighlight;
@@ -57,6 +58,13 @@ public class Presets {
 		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
 		dc.setAllDefault();
 		dc.highlightHoveredGateMovingRule = movingRuleHighlight.boxes;
+		dc.lineType = lineWidth.hidden;
+	}
+	
+	public static void setGreyNeighboursWithBlackTargets() {
+		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
+		dc.setAllDefault();
+		dc.neighbourhoodGrouping = lineGrouping.singleGreyscale;
 		dc.lineType = lineWidth.hidden;
 	}
 }
