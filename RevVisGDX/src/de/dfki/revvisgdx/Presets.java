@@ -26,4 +26,10 @@ public class Presets {
 		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
 		dc.drawLinesColourizedWhenUsed = true;
 	}
+	
+	public static void setColourizeLineType() {
+		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
+		dc.markVariableTypes = true;
+		dc.lineType = lineWidth.full;
+	}
 }
