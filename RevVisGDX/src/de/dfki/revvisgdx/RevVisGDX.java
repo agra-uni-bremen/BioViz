@@ -122,7 +122,7 @@ public class RevVisGDX implements ApplicationListener {
 			if (!runFullPresetScreenshots)
 				currentCircuit.zoomExtents();
 			else {
-				currentCircuit.setScaleImmediately(4, 4);
+				currentCircuit.setScaleImmediately(fullPresetScreenshotsScaling, fullPresetScreenshotsScaling);
 				Presets.setColourizeLineType();
 				saveScreenshotCircuit();
 			}
