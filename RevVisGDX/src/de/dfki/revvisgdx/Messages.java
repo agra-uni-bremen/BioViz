@@ -19,7 +19,8 @@ public class Messages {
 			+ "p: save screenshot\n"
 			+ "s: square alignment\n"
 			+ "S: show/hide gates\n"
-			+ "u: colorize lines by usage\n"
+			+ "u: lighten lines by usage\n"
+			+ "U: colourize lines by usage\n"
 			+ "v: draw vertical gate connectors\n"
 			+ "w: toggle line width (full / usage / pixel)\n"
 			+ "z: zoom to exactly 1 pixel / element (both axes)\n"
@@ -35,5 +36,7 @@ public class Messages {
 			+ "4: set greyscale neighbours preset\n"
 			+ "5: set colourized line type preset\n"
 			+ "6: set moving rule as grey box for highlit gate\n"
-			+ "7: set moving rule colour preset";
+			+ "7: set moving rule colour preset\n"
+			+ "8: set colourized usage absolute preset\n"
+			+ "9: set moving rule colour absolute preset";
 }
