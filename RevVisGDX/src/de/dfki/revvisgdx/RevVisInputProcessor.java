@@ -111,6 +111,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case '8':
 			Presets.setColourizeUsageAbsolute();
 			break;
+		case '9':
+			Presets.setMovingRuleColouredAbsolute();
+			break;
 		}
 		return false;
 	}

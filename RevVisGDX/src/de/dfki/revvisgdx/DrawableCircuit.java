@@ -57,7 +57,7 @@ public class DrawableCircuit implements Drawable {
 	
 	public enum lineWidth {hidden, pixelWide, usageWide, full}
 	public enum lineGrouping {none, single, singleGreyscale, bus}
-	public enum movingRuleDisplay{none, leftRight, total}
+	public enum movingRuleDisplay{none, leftRight, total, totalAbsolute}
 	public enum movingRuleHighlight{none, whiteBars, boxes}
 	public enum gateElementDisplay{alwaysDetailed, dynamic, alwaysBoxy}
 	public enum drawLinesColourizedByUsageType{none, relative, absolute}
@@ -188,7 +188,7 @@ public class DrawableCircuit implements Drawable {
 							int rightRange = data.calculateGateMobilityRight(i);
 							gateColor.r = Math.min(1, leftRange / (float)data.calculateMaximumMobility());
 							gateColor.g = Math.min(1, rightRange / (float)data.calculateMaximumMobility());
-						} else if (this.colourizeGatesByMobility == colourizeGatesByMobility.total) {
+						} else if (this.colourizeGatesByMobility == movingRuleDisplay.total) {
 							int minMobility = data.calculateMinimumMobilityTotal();
 							int maxMobility = data.calculateMaximumMobilityTotal();
 							int gateMobility = data.calculateGateMobilityLeft(i) + data.calculateGateMobilityRight(i);
@@ -197,7 +197,17 @@ public class DrawableCircuit implements Drawable {
 								gateColor.g = gateMobility / ((maxMobility - minMobility) / 2f);
 							} else {
 								gateColor.g = 1f;
-								gateColor.r = (gateMobility - ((maxMobility - minMobility) / 2f)) / ((maxMobility - minMobility) / 2f);
+								gateColor.r = 1 - ((gateMobility - ((maxMobility - minMobility) / 2f)) / ((maxMobility - minMobility) / 2f));
+							}
+						} else if (this.colourizeGatesByMobility == movingRuleDisplay.totalAbsolute) {
+							int gateMobility = data.calculateGateMobilityLeft(i) + data.calculateGateMobilityRight(i);
+							int max = data.getGates().size();
+							if (gateMobility < max / 2) {
+								gateColor.r = 1f;
+								gateColor.g = gateMobility / (max / 2f);
+							} else {
+								gateColor.g = 1f;
+								gateColor.r = 1 - ((gateMobility - (max / 2f)) / (max/2f));
 							}
 						}
 						
@@ -613,6 +623,9 @@ public class DrawableCircuit implements Drawable {
 			this.colourizeGatesByMobility = movingRuleDisplay.total;
 			break;
 		case total:
+			this.colourizeGatesByMobility = movingRuleDisplay.totalAbsolute;
+			break;
+		case totalAbsolute:
 			this.colourizeGatesByMobility = movingRuleDisplay.none;
 			break;
 		default:

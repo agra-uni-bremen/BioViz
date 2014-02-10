@@ -66,6 +66,12 @@ public class Presets {
 		dc.lineType = lineWidth.hidden;
 	}
 	
+	public static void setMovingRuleColouredAbsolute() {
+		setMovingRuleColoured();
+		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
+		dc.colourizeGatesByMobility = movingRuleDisplay.totalAbsolute;
+	}
+	
 	public static void setMovingRuleBoxOverlay() {
 		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
 		dc.setAllDefault();
