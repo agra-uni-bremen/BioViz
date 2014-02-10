@@ -49,7 +49,7 @@ public class DrawableCircuit implements Drawable {
 	private String drawnBus = "";
 	public boolean drawSubCircuits = true;
 	public boolean markVariableTypes = false;
-	public boolean drawLinesColourizedWhenUsed = false;
+	public drawLinesColourizedByUsageType drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.none;
 	public gateElementDisplay gateDisplay = gateElementDisplay.dynamic;
 	public Color lineBaseColor = new Color(Color.BLACK);
 	
@@ -60,6 +60,7 @@ public class DrawableCircuit implements Drawable {
 	public enum movingRuleDisplay{none, leftRight, total}
 	public enum movingRuleHighlight{none, whiteBars, boxes}
 	public enum gateElementDisplay{alwaysDetailed, dynamic, alwaysBoxy}
+	public enum drawLinesColourizedByUsageType{none, relative, absolute}
 	
 	private float boxOverlayX;
 	private float boxOverlayWidth;
@@ -406,7 +407,7 @@ public class DrawableCircuit implements Drawable {
 					if (drawLinesDarkWhenUsed) {
 						col.sub(0.25f, 0.25f, 0.25f, 0);
 					}
-					if (drawLinesColourizedWhenUsed) {
+					if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.relative) {
 						float lineUsageValue = (usagePercent - minimumUsagePercent) / (1 - minimumUsagePercent);
 						if (lineUsageValue <= 0.5f) {
 							col.r = lineUsageValue * 2;
@@ -414,7 +415,18 @@ public class DrawableCircuit implements Drawable {
 							col.b = 0;
 						} else {
 							col.r = 1;
-							col.g = lineUsageValue - 0.5f * 2;
+							col.g = 1 - (lineUsageValue - 0.5f) * 2;
+							col.b = 0;
+						}
+					} else if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.absolute) {
+						float lineUsageValue = (float)data.getLineUsage(data.getVars().get(i)) / (float)data.getGates().size();
+						if (lineUsageValue <= 0.5f) {
+							col.r = lineUsageValue * 2;
+							col.g = 1;
+							col.b = 0;
+						} else {
+							col.r = 1;
+							col.g = 1 - (lineUsageValue - 0.5f) * 2;
 							col.b = 0;
 						}
 					}
@@ -664,6 +676,22 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 	
+	public void toggleLineUsageColouring() {
+		switch (this.drawLinesColourizedWhenUsed) {
+		case none:
+			this.drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.relative;
+			break;
+		case relative:
+			this.drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.absolute;
+			break;
+		case absolute:
+			this.drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.none;
+			break;
+		default:
+			break;
+		}
+	}
+	
 	/**
 	 * Resets the zoom to 1 px per element
 	 */
@@ -692,7 +720,7 @@ public class DrawableCircuit implements Drawable {
 		drawnBus = "";
 		drawSubCircuits = true;
 		markVariableTypes = false;
-		drawLinesColourizedWhenUsed = false;
+		drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.none;
 		gateDisplay = gateElementDisplay.dynamic;
 		lineBaseColor = new Color(Color.BLACK);
 	}

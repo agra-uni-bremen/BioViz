@@ -1,9 +1,11 @@
 package de.dfki.revvisgdx;
 
+import de.dfki.revvisgdx.DrawableCircuit.drawLinesColourizedByUsageType;
 import de.dfki.revvisgdx.DrawableCircuit.lineGrouping;
 import de.dfki.revvisgdx.DrawableCircuit.lineWidth;
 import de.dfki.revvisgdx.DrawableCircuit.movingRuleDisplay;
 import de.dfki.revvisgdx.DrawableCircuit.movingRuleHighlight;
+
 import com.badlogic.gdx.graphics.Color;
 
 public class Presets {
@@ -16,7 +18,6 @@ public class Presets {
 		dc.lineType = lineWidth.full;
 		dc.drawLinesDarkWhenUsed = false;
 		dc.highlightHoveredGateMovingRule = movingRuleHighlight.none;
-		dc.drawLinesColourizedWhenUsed = false;
 		dc.lineBaseColor = new Color(Color.WHITE);
 	}
 	
@@ -30,18 +31,23 @@ public class Presets {
 		dc.colorizeConstants = false;
 		dc.colorizeGarbageLine = false;
 		dc.highlightHoveredGateMovingRule = movingRuleHighlight.none;
-		dc.drawLinesColourizedWhenUsed = false;
 		dc.lineBaseColor = new Color(Color.WHITE);
 	}
 	
 	public static void setColourizedUsage() {
 		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
 		dc.setAllDefault();
-		dc.drawLinesColourizedWhenUsed = true;
+		dc.drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.relative;
 		dc.lineType = lineWidth.full;
 		dc.drawVerticalLines = false;
 		dc.hideGates = true;
 		dc.lineBaseColor = new Color(Color.WHITE);
+	}
+	
+	public static void setColourizeUsageAbsolute() {
+		setColourizedUsage();
+		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
+		dc.drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.absolute;
 	}
 	
 	public static void setColourizeLineType() {
