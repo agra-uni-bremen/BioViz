@@ -9,6 +9,10 @@ import de.dfki.revvisgdx.DrawableCircuit.movingRuleHighlight;
 import com.badlogic.gdx.graphics.Color;
 
 public class Presets {
+	
+	/**
+	 * Sets the preset '1'
+	 */
 	public static void setConstGarbage() {
 		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
 		dc.setAllDefault();
@@ -20,6 +24,7 @@ public class Presets {
 		dc.highlightHoveredGateMovingRule = movingRuleHighlight.none;
 		dc.lineBaseColor = new Color(Color.WHITE);
 	}
+	
 	
 	public static void setBoxesAndUsage() {
 		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
@@ -55,6 +60,7 @@ public class Presets {
 		dc.setAllDefault();
 		dc.markVariableTypes = true;
 		dc.lineType = lineWidth.full;
+		dc.drawVerticalLines = false;
 		dc.drawLinesDarkWhenUsed = false;
 	}
 	
