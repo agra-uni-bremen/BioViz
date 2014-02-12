@@ -514,10 +514,11 @@ public class DrawableCircuit implements Drawable {
 	}
 	
 	private int gateAt(int x) {
-		float xResult = x - RevVisGDX.singleton.camera.viewportWidth / 2;
+		float xResult = x - RevVisGDX.singleton.camera.viewportWidth / 2f;
 		
 		xResult /= getScaleX();
 		xResult -= offsetX;
+		xResult += 0.5f;
 		
 		return (int)xResult;
 	}
