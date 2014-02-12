@@ -39,7 +39,7 @@ public class RevVisGDX implements ApplicationListener {
 	
 	private String filename;
 	
-	boolean runFullPresetScreenshots = true;
+	boolean runFullPresetScreenshots = false;
 	float fullPresetScreenshotsScaling = 4f;
 	
 	public RevVisGDX() {
