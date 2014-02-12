@@ -192,12 +192,12 @@ public class DrawableCircuit implements Drawable {
 							int minMobility = data.calculateMinimumMobilityTotal();
 							int maxMobility = data.calculateMaximumMobilityTotal();
 							int gateMobility = data.calculateGateMobilityLeft(i) + data.calculateGateMobilityRight(i);
-							if (gateMobility < (maxMobility - minMobility) / 2) {
+							if (gateMobility - minMobility < (maxMobility - minMobility) / 2) {
 								gateColor.r = 1f;
-								gateColor.g = gateMobility / ((maxMobility - minMobility) / 2f);
+								gateColor.g = (gateMobility - minMobility) / ((maxMobility - minMobility) / 2f);
 							} else {
 								gateColor.g = 1f;
-								gateColor.r = 1 - ((gateMobility - ((maxMobility - minMobility) / 2f)) / ((maxMobility - minMobility) / 2f));
+								gateColor.r = 1 - (((gateMobility - minMobility) - ((maxMobility - minMobility) / 2f)) / ((maxMobility - minMobility) / 2f));
 							}
 						} else if (this.colourizeGatesByMobility == movingRuleDisplay.totalAbsolute) {
 							int gateMobility = data.calculateGateMobilityLeft(i) + data.calculateGateMobilityRight(i);
