@@ -167,11 +167,11 @@ public class DrawableCircuit implements Drawable {
 	 */
 	private void drawGates(HashMap<String, Float> signalsToCoords) {
 		if (!hideGates) {
-			float minY = 0, maxY = 0, minX = 0, maxX = 0;
+			float minY = Float.MAX_VALUE, maxY = -Float.MIN_VALUE, minX = xCoordOnScreen(0) - 0.5f * smoothScaleX, maxX = minX + 0.5f*smoothScaleX;
 			Color groupCol = Color.RED.cpy();
 			float currentHue = 0;
 			float currentSaturation = 1;
-			String currentGroup = "";
+			String currentGroup = data.getGates().iterator().next().output;
 			int groupCount = 0;
 			
 			for (int i = 0; i < data.getGates().size(); i++) {
@@ -287,30 +287,29 @@ public class DrawableCircuit implements Drawable {
 					}
 				} else {
 					
+					//First: Add current gate to group.
+					for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
+						minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
+						maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
+					}
+					minY = Math.min(minY, signalsToCoords.get(data.getGate(i).output));
+					maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).output));
+					
+					//Second: Check if current gate is the group's last gate
 					boolean drawGroup;
 					if (this.neighbourhoodGrouping == lineGrouping.single || this.neighbourhoodGrouping == lineGrouping.singleGreyscale) {
-						drawGroup = !(data.getGate(i).output.equals(currentGroup));
+						drawGroup = (i == data.getGates().size() - 1) || (!(data.getGate(i + 1).output.equals(currentGroup)));
 					} else {
 						if (data.getBus(data.getGate(i).output) != null) {
-							drawGroup = !(data.getBus(data.getGate(i).output).equals(currentGroup));
+							drawGroup = (i == data.getGates().size() - 1) || (!(data.getBus(data.getGate(i + 1).output).equals(currentGroup)));
 						} else {
-							drawGroup = !(data.getGate(i).output.equals(currentGroup));
+							drawGroup = (i == data.getGates().size() - 1) || (!(data.getGate(i + 1).output.equals(currentGroup)));
 						}
 					}
 					
-					if (i >= data.getGates().size() - 1) {
-						for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-							minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
-							maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
-						}
-						minY = Math.min(minY, signalsToCoords.get(data.getGate(i).output));
-						maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).output));
-						 xCoord = xCoordOnScreen(i + 1);
-						drawGroup = true;
-					}
-					
+					//Third: If second, draw group
 					if (drawGroup) {
-						maxX = xCoord - (0.5f) * smoothScaleX;
+						maxX = xCoord + (0.5f) * smoothScaleX;
 
 						minY -= 0.5f * smoothScaleY;
 						maxY += 0.5f * smoothScaleY;
@@ -340,31 +339,25 @@ public class DrawableCircuit implements Drawable {
 								line.scaleX = maxX - minX; //RevVisGDX.singleton.camera.viewportWidth;
 								line.scaleY = smoothScaleY;
 								line.x = (maxX + minX) / 2;
-								line.y = (signalsToCoords.get(data.getGate(i -1).output)); //+ RevVisGDX.singleton.camera.viewportHeight;
+								line.y = (signalsToCoords.get(data.getGate(i).output)); //+ RevVisGDX.singleton.camera.viewportHeight;
 								line.draw();
 							}
 							
 							groupCount++;
 						}
 
-						//set current group to output in order to collect all gates and reset variables.
-						if (this.neighbourhoodGrouping == lineGrouping.single || data.getBus(data.getGate(i).output) == null) {
-							currentGroup = data.getGate(i).output;
-						} else {
-							currentGroup = data.getBus(data.getGate(i).output);
+						if (i < data.getGates().size() - 1) {
+							//set current group to output in order to collect all gates and reset variables.
+							if (!(this.neighbourhoodGrouping == lineGrouping.bus) || data.getBus(data.getGate(i).output) == null) {
+								currentGroup = data.getGate(i + 1).output;
+							} else {
+								currentGroup = data.getBus(data.getGate(i + 1).output);
+							}
+							minX = xCoord + 0.5f * smoothScaleX;
+							minY = Float.MAX_VALUE;
+							maxY = -Float.MAX_VALUE;
 						}
-						minX = xCoord - 0.5f * smoothScaleX;
-						minY = signalsToCoords.get(data.getGate(i).output);
-						maxY = minY;
-						//groupCol.
 					}
-
-					for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-						minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
-						maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
-					}
-					minY = Math.min(minY, signalsToCoords.get(data.getGate(i).output));
-					maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).output));
 				}
 			}
 		}
