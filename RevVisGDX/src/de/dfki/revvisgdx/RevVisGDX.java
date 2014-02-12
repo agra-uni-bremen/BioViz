@@ -39,7 +39,7 @@ public class RevVisGDX implements ApplicationListener {
 	
 	private String filename;
 	
-	boolean runFullPresetScreenshots = false;
+	boolean runFullPresetScreenshots = true;
 	float fullPresetScreenshotsScaling = 4f;
 	
 	public RevVisGDX() {
@@ -143,9 +143,9 @@ public class RevVisGDX implements ApplicationListener {
 					Presets.setMovingRuleColouredAbsolute();
 					saveScreenshotCircuit("preset9_");
 					try {
-						String execString = "montage screenshots/*.png -geometry +0+0 -tile " + ((int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1) + "x" + ((int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1) + " screenshots/fullPreset.png";
+						String execString = "montage screenshots/*.png -geometry +0+0 -tile " + ((int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1) + "x" + ((int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1) + " -crop " + (int)(fullPresetScreenshotsScaling * currentCircuit.data.getGates().size()) + "x" + (int)(fullPresetScreenshotsScaling * currentCircuit.data.getAmountOfVars()) + "+0+0 screenshots/fullPreset.png";
 						System.out.println(execString);
-						Runtime.getRuntime().exec(execString);
+						Process p = Runtime.getRuntime().exec(execString);
 					} catch(Exception e) {
 						System.out.println(System.getenv("PATH"));
 						System.out.println(e.getMessage());
