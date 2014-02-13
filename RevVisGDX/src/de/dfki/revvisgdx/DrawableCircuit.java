@@ -167,7 +167,7 @@ public class DrawableCircuit implements Drawable {
 	 */
 	private void drawGates(HashMap<String, Float> signalsToCoords) {
 		if (!hideGates) {
-			float minY = Float.MAX_VALUE, maxY = -Float.MIN_VALUE, minX = xCoordOnScreen(0) - 0.5f * smoothScaleX, maxX = minX + 0.5f*smoothScaleX;
+			float minY = Float.MAX_VALUE, maxY = -Float.MAX_VALUE, minX = xCoordOnScreen(0) - 0.5f * smoothScaleX, maxX = minX + 0.5f*smoothScaleX;
 			Color groupCol = Color.RED.cpy();
 			float currentHue = 0;
 			float currentSaturation = 1;
