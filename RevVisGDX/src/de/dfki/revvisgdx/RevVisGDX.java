@@ -39,8 +39,8 @@ public class RevVisGDX implements ApplicationListener {
 	
 	private String filename;
 	
-	boolean runFullPresetScreenshots = false;
-	float fullPresetScreenshotsScaling = 4f;
+	boolean runFullPresetScreenshots = true;
+	float fullPresetScreenshotsScaling = 6f;
 	
 	public RevVisGDX() {
 		super();
@@ -64,7 +64,7 @@ public class RevVisGDX implements ApplicationListener {
 		if (this.filename != null && this.filename != "") {
 			c = RevlibFileReader.readRealFile(filename);
 		} else {
-			FileHandle handle = Gdx.files.internal("examples/____intro_beispiel.real");
+			FileHandle handle = Gdx.files.internal("examples/bdd_mod5adder_66.real");
 //			FileHandle handle = Gdx.files.internal("examples/cpu.real");
 			String fileContents = handle.readString();
 			c = RevlibFileReader.readRealFileContents(fileContents);
@@ -193,7 +193,7 @@ public class RevVisGDX implements ApplicationListener {
 		int requiredYDim = (int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1;
 		int requiredXDim = (int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1;
 		float elementsPerScreenY = (Gdx.graphics.getHeight() / currentCircuit.getScaleY());
-		float minCoordY = -this.currentCircuit.data.getAmountOfVars() / 2f + elementsPerScreenY / 2f;
+		float minCoordY = -this.currentCircuit.data.getAmountOfVars() / 2f + elementsPerScreenY / 2f + 0.5f;
 		float minCoordX = (Gdx.graphics.getWidth() / currentCircuit.getScaleX()) / 2f - 0.5f;
 
 		for (int y = 0; y < requiredYDim; y++) {
