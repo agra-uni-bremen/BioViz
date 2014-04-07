@@ -381,6 +381,30 @@ public class DrawableCircuit implements Drawable {
 			for (int j = 0; j < 3; j++) {
 				Color col = new Color(lineBaseColor);
 				line.color = col;
+				
+				if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.relative) {
+					float lineUsageValue = (usagePercent - minimumUsagePercent) / (1 - minimumUsagePercent);
+					if (lineUsageValue <= 0.5f) {
+						col.r = lineUsageValue * 2;
+						col.g = 1;
+						col.b = 0;
+					} else {
+						col.r = 1;
+						col.g = 1 - (lineUsageValue - 0.5f) * 2;
+						col.b = 0;
+					}
+				} else if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.absolute) {
+					float lineUsageValue = (float)data.getLineUsage(data.getVars().get(i)) / (float)data.getGates().size();
+					if (lineUsageValue <= 0.5f) {
+						col.r = lineUsageValue * 2;
+						col.g = 1;
+						col.b = 0;
+					} else {
+						col.r = 1;
+						col.g = 1 - (lineUsageValue - 0.5f) * 2;
+						col.b = 0;
+					}
+				}
 
 				if (markVariableTypes) {
 					if (data.isInputOnly(data.getVars().get(i)))
@@ -409,29 +433,6 @@ public class DrawableCircuit implements Drawable {
 					line.scaleX = left - right;
 					if (drawLinesDarkWhenUsed) {
 						col.sub(0.25f, 0.25f, 0.25f, 0);
-					}
-					if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.relative) {
-						float lineUsageValue = (usagePercent - minimumUsagePercent) / (1 - minimumUsagePercent);
-						if (lineUsageValue <= 0.5f) {
-							col.r = lineUsageValue * 2;
-							col.g = 1;
-							col.b = 0;
-						} else {
-							col.r = 1;
-							col.g = 1 - (lineUsageValue - 0.5f) * 2;
-							col.b = 0;
-						}
-					} else if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.absolute) {
-						float lineUsageValue = (float)data.getLineUsage(data.getVars().get(i)) / (float)data.getGates().size();
-						if (lineUsageValue <= 0.5f) {
-							col.r = lineUsageValue * 2;
-							col.g = 1;
-							col.b = 0;
-						} else {
-							col.r = 1;
-							col.g = 1 - (lineUsageValue - 0.5f) * 2;
-							col.b = 0;
-						}
 					}
 				} else {
 					float left = xCoordOnScreen(lastGateCoord);

@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class DrawableSprite implements Drawable {
 
 	private Sprite sprite;
-	private HashMap<String, Texture> allTextures = new HashMap<String, Texture>();
+	private HashMap<String, TextureRegion> allTextures = new HashMap<String, TextureRegion>();
 	public Color color = Color.BLACK.cpy();
 	
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1;
@@ -41,9 +41,9 @@ public class DrawableSprite implements Drawable {
 	
 	private TextureRegion loadTexture(String textureFilename) {
 		Texture t = new Texture(Gdx.files.internal(textureFilename));
-		t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		TextureRegion region = new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
-		allTextures.put(textureFilename, t);
+		allTextures.put(textureFilename, region);
 		return region;
 	}
 	
