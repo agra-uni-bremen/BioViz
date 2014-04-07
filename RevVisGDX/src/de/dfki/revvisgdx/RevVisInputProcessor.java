@@ -64,12 +64,14 @@ public class RevVisInputProcessor implements InputProcessor {
 			RevVisGDX.singleton.currentCircuit.toggleMovingRuleHighlight();
 			break;
 		case 'u':
+			// seems to be unused, not done in gui
 			RevVisGDX.singleton.currentCircuit.colorizeLineUsage = !RevVisGDX.singleton.currentCircuit.colorizeLineUsage;
 			break;
 		case 'U':
 			RevVisGDX.singleton.currentCircuit.toggleLineUsageColouring();
 			break;
 		case 'w':
+			// done in gui
 			RevVisGDX.singleton.currentCircuit.toggleLineWidth();
 			break;
 		case 'b':

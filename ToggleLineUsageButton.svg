@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="256"
+   height="256"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="ToggleLineUsageButton.svg"
+   inkscape:export-filename="/home/jannis/Quellcode/RevViewWorkspace/RevVisGDX-android/assets/data/VariableButtonUsageNone.png"
+   inkscape:export-xdpi="22.5"
+   inkscape:export-ydpi="22.5">
+  <defs
+     id="defs4">
+    <filter
+       inkscape:collect="always"
+       id="filter3838">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.6"
+         id="feGaussianBlur3840" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.1918616"
+     inkscape:cx="239.4998"
+     inkscape:cy="84.456801"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:snap-bbox="false"
+     inkscape:object-nodes="true"
+     inkscape:window-width="1631"
+     inkscape:window-height="1026"
+     inkscape:window-x="49"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2985"
+       empspacing="8"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="8px"
+       spacingy="8px" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-796.36218)">
+    <rect
+       ry="32"
+       rx="32"
+       y="804.36218"
+       x="8"
+       height="240"
+       width="240"
+       id="rect3820"
+       style="fill:#000000;fill-rule:evenodd;stroke:none;filter:url(#filter3838)" />
+    <rect
+       style="fill:#e6e6e6;fill-rule:evenodd;stroke:none"
+       id="rect2987"
+       width="240"
+       height="240"
+       x="8"
+       y="8"
+       rx="32"
+       ry="32"
+       transform="translate(0,796.36218)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:32;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 8,64 240,0"
+       id="path2989"
+       inkscape:connector-curvature="0"
+       transform="translate(0,796.36218)" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3759"
+       d="m 8,924.36218 240,0"
+       style="fill:none;stroke:#000000;stroke-width:64;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:16;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 8,988.36218 240,0"
+       id="path3761"
+       inkscape:connector-curvature="0" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3842"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(0,796.36218)"><flowRegion
+         id="flowRegion3844"><rect
+           id="rect3846"
+           width="240"
+           height="40"
+           x="8"
+           y="8"
+           style="font-size:24px" /></flowRegion><flowPara
+         id="flowPara3848"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold">Variable Usage</flowPara></flowRoot>    <flowRoot
+       transform="translate(-64,989.86218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot3864"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3866"><rect
+           style="font-size:24px;fill:#000000;fill-opacity:1"
+           y="16"
+           x="16"
+           height="40"
+           width="224"
+           id="rect3868" /></flowRegion><flowPara
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara3870">None</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3872"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(0,989.86218)"><flowRegion
+         id="flowRegion3874"><rect
+           id="rect3876"
+           width="224"
+           height="40"
+           x="16"
+           y="16"
+           style="font-size:24px" /></flowRegion><flowPara
+         id="flowPara3878"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.24705882;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold">Absolute</flowPara></flowRoot>    <flowRoot
+       transform="translate(64,989.86218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot3880"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3882"><rect
+           style="font-size:24px"
+           y="16"
+           x="16"
+           height="40"
+           width="224"
+           id="rect3884" /></flowRegion><flowPara
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.24705882000000001;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara3886">Relative</flowPara></flowRoot>    <rect
+       style="fill:#000000;fill-rule:evenodd;stroke:none;filter:url(#filter3838)"
+       id="rect3926"
+       width="240"
+       height="240"
+       x="328"
+       y="804.36218"
+       rx="32"
+       ry="32" />
+    <rect
+       ry="32"
+       rx="32"
+       y="804.36218"
+       x="328"
+       height="240"
+       width="240"
+       id="rect3928"
+       style="fill:#e6e6e6;fill-rule:evenodd;stroke:none" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3930"
+       d="m 328,860.36218 240,0"
+       style="fill:none;stroke:#ffa000;stroke-width:32;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       style="fill:none;stroke:#6dff00;stroke-width:64;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 328,924.36218 240,0"
+       id="path3932"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3934"
+       d="m 328,988.36218 240,0"
+       style="fill:none;stroke:#00db00;stroke-width:16;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <flowRoot
+       transform="translate(320,796.36218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot3936"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3938"><rect
+           style="font-size:24px"
+           y="8"
+           x="8"
+           height="40"
+           width="240"
+           id="rect3940" /></flowRegion><flowPara
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara3942">Variable Usage</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3944"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(256,989.86218)"><flowRegion
+         id="flowRegion3946"><rect
+           id="rect3948"
+           width="224"
+           height="40"
+           x="16"
+           y="16"
+           style="font-size:24px;fill:#000000;fill-opacity:1" /></flowRegion><flowPara
+         id="flowPara3950"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.24825175;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold">None</flowPara></flowRoot>    <flowRoot
+       transform="translate(320,989.86218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot3952"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3954"><rect
+           style="font-size:24px"
+           y="16"
+           x="16"
+           height="40"
+           width="224"
+           id="rect3956" /></flowRegion><flowPara
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara3958">Absolute</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3960"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(384,989.86218)"><flowRegion
+         id="flowRegion3962"><rect
+           id="rect3964"
+           width="224"
+           height="40"
+           x="16"
+           y="16"
+           style="font-size:24px" /></flowRegion><flowPara
+         id="flowPara3966"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.24705882;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold">Relative</flowPara></flowRoot>    <rect
+       ry="32"
+       rx="32"
+       y="484.36218"
+       x="328"
+       height="240"
+       width="240"
+       id="rect4008"
+       style="fill:#000000;fill-rule:evenodd;stroke:none;filter:url(#filter3838)" />
+    <rect
+       style="fill:#e6e6e6;fill-rule:evenodd;stroke:none"
+       id="rect4010"
+       width="240"
+       height="240"
+       x="328"
+       y="484.36218"
+       rx="32"
+       ry="32" />
+    <path
+       style="fill:none;stroke:#b10000;stroke-width:32;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 328,540.36218 240,0"
+       id="path4012"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4014"
+       d="m 328,604.36218 240,0"
+       style="fill:none;stroke:#ff5a00;stroke-width:64;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       style="fill:none;stroke:#00db00;stroke-width:16;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 328,668.36218 240,0"
+       id="path4016"
+       inkscape:connector-curvature="0" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4018"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(320,476.36218)"><flowRegion
+         id="flowRegion4020"><rect
+           id="rect4022"
+           width="240"
+           height="40"
+           x="8"
+           y="8"
+           style="font-size:24px" /></flowRegion><flowPara
+         id="flowPara4024"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold">Variable Usage</flowPara></flowRoot>    <flowRoot
+       transform="translate(256,669.86218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot4026"
+       xml:space="preserve"><flowRegion
+         id="flowRegion4028"><rect
+           style="font-size:24px;fill:#000000;fill-opacity:1"
+           y="16"
+           x="16"
+           height="40"
+           width="224"
+           id="rect4030" /></flowRegion><flowPara
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.24825176;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara4032">None</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4034"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(320,669.86218)"><flowRegion
+         id="flowRegion4036"><rect
+           id="rect4038"
+           width="224"
+           height="40"
+           x="16"
+           y="16"
+           style="font-size:24px" /></flowRegion><flowPara
+         id="flowPara4040"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.24825177;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold">Absolute</flowPara></flowRoot>    <flowRoot
+       transform="translate(384,669.86218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot4042"
+       xml:space="preserve"><flowRegion
+         id="flowRegion4044"><rect
+           style="font-size:24px"
+           y="16"
+           x="16"
+           height="40"
+           width="224"
+           id="rect4046" /></flowRegion><flowPara
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara4048">Relative</flowPara></flowRoot>  </g>
+</svg>

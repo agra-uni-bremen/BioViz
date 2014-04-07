@@ -88,7 +88,7 @@ public class RevVisGDX implements ApplicationListener {
 		this.drawables.add(menu);
 		
 		mc.addMessage("RevVisGDX started");
-		mc.addMessage(Messages.helpText);
+//		mc.addMessage(Messages.helpText);
 	}
 
 	@Override

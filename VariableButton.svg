@@ -14,9 +14,21 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="Neues Dokument 1">
+   sodipodi:docname="VariableButton.svg"
+   inkscape:export-filename="/home/jannis/Quellcode/RevViewWorkspace/RevVisGDX-android/assets/data/VariableButton.png"
+   inkscape:export-xdpi="22.5"
+   inkscape:export-ydpi="22.5">
   <defs
-     id="defs4" />
+     id="defs4">
+    <filter
+       inkscape:collect="always"
+       id="filter3838">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.6"
+         id="feGaussianBlur3840" />
+    </filter>
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -36,7 +48,9 @@
      inkscape:window-height="1026"
      inkscape:window-x="49"
      inkscape:window-y="24"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -55,7 +69,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -64,6 +77,15 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-796.36218)">
+    <rect
+       ry="32"
+       rx="32"
+       y="804.36218"
+       x="8"
+       height="240"
+       width="240"
+       id="rect3820"
+       style="fill:#000000;fill-rule:evenodd;stroke:none;filter:url(#filter3838)" />
     <rect
        style="fill:#e6e6e6;fill-rule:evenodd;stroke:none"
        id="rect2987"
@@ -90,5 +112,57 @@
        d="m 8,988.36218 240,0"
        id="path3761"
        inkscape:connector-curvature="0" />
-  </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3842"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(0,796.36218)"><flowRegion
+         id="flowRegion3844"><rect
+           id="rect3846"
+           width="224"
+           height="40"
+           x="16"
+           y="16"
+           style="font-size:24px" /></flowRegion><flowPara
+         id="flowPara3848"
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold">Variable Width</flowPara></flowRoot>    <flowRoot
+       transform="translate(-64,989.86218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot3864"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3866"><rect
+           style="font-size:24px"
+           y="16"
+           x="16"
+           height="40"
+           width="224"
+           id="rect3868" /></flowRegion><flowPara
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara3870">Pixel</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3872"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(0,989.86218)"><flowRegion
+         id="flowRegion3874"><rect
+           id="rect3876"
+           width="224"
+           height="40"
+           x="16"
+           y="16"
+           style="font-size:24px" /></flowRegion><flowPara
+         id="flowPara3878"
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold;fill:#000000;fill-opacity:0.24705882">Usage</flowPara></flowRoot>    <flowRoot
+       transform="translate(64,989.86218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot3880"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3882"><rect
+           style="font-size:24px"
+           y="16"
+           x="16"
+           height="40"
+           width="224"
+           id="rect3884" /></flowRegion><flowPara
+         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold;fill:#000000;fill-opacity:0.24705882"
+         id="flowPara3886">Full</flowPara></flowRoot>  </g>
 </svg>

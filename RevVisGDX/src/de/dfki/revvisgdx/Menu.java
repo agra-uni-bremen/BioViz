@@ -4,17 +4,17 @@ import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
 
+import de.dfki.revvisgdx.buttons.UsageColorButton;
 import de.dfki.revvisgdx.buttons.variableButton;
 
 public class Menu implements Drawable {
-	variableButton varButton;
+//	variableButton varButton;
 	private Vector<Button> buttons = new Vector<Button>();
 	private float buttonOffsetX = 0;
 	
 	public Menu() {
-		varButton = new variableButton();
-		buttons.add(varButton);
-		
+		buttons.add(new variableButton());
+		buttons.add(new UsageColorButton());
 	}
 	
 	public void MouseCoords(int x, int y) {
@@ -30,22 +30,22 @@ public class Menu implements Drawable {
 			percentageX = 1;
 		
 		float buttonX = x - Gdx.graphics.getWidth() / 2f;
-		float buttonY = y - Gdx.graphics.getHeight() / 2f;
+		float buttonY = -y + Gdx.graphics.getHeight() / 2f;
 		
 		for (Button b : buttons) {
 			
 			b.IsHovered((int)buttonX, (int)buttonY);
 		}
 		
-		this.buttonOffsetX = 64 - 64 * percentageX;
+		this.buttonOffsetX = 32 - 64 * percentageX;
 	}
 	
 	public boolean click(int x, int y) {
-		x -= Gdx.graphics.getWidth() / 2f;
-		y -= Gdx.graphics.getHeight() / 2f;
-		System.out.println("Clicked at " + x + "/" + y);
+		float xButton = x - Gdx.graphics.getWidth() / 2f;
+		float yButton = -y + Gdx.graphics.getHeight() / 2f;
+		System.out.println("Clicked at " + xButton + "/" + yButton);
 		for (Button b : this.buttons) {
-			if (b.IsClicked(x, y))
+			if (b.IsClicked((int)xButton, (int)yButton))
 				return true;
 		}
 		return false;
@@ -53,10 +53,12 @@ public class Menu implements Drawable {
 	
 	@Override
 	public void draw() {
-		varButton.x = Gdx.graphics.getWidth() / -2f + buttonOffsetX;
-		
+		int i = 1;
 		for (Button b : this.buttons) {
 			b.draw();
+			b.y = (Gdx.graphics.getHeight() / (buttons.size() + 1)) * i - Gdx.graphics.getHeight() / 2f;
+			b.x = Gdx.graphics.getWidth() / -2f + buttonOffsetX;
+			i++;
 		}
 	}
 

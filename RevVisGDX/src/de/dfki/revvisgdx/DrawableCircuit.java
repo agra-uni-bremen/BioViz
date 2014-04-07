@@ -556,18 +556,23 @@ public class DrawableCircuit implements Drawable {
 		switch (this.lineType) {
 		case full:
 			this.lineType = lineWidth.usageWide;
+			System.out.println("Toggled line width to usage");
 			break;
 		case usageWide:
 			this.lineType = lineWidth.pixelWide;
+			System.out.println("Toggled line width to pixel");
 			break;
 		case pixelWide:
 			this.lineType = lineWidth.hidden;
+			System.out.println("Toggled line width to hidden");
 			break;
 		case hidden:
 			this.lineType = lineWidth.full;
+			System.out.println("Toggled line width to full");
 			break;
 		default:
 			this.lineType = lineWidth.full;
+			System.out.println("Toggled line width to full via error fallback");
 			break;
 		}
 	}
@@ -687,12 +692,15 @@ public class DrawableCircuit implements Drawable {
 		switch (this.drawLinesColourizedWhenUsed) {
 		case none:
 			this.drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.relative;
+			System.out.println("Toggled line usage color to relative");
 			break;
 		case relative:
 			this.drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.absolute;
+			System.out.println("Toggled line usage color to absolute");
 			break;
 		case absolute:
 			this.drawLinesColourizedWhenUsed = drawLinesColourizedByUsageType.none;
+			System.out.println("Toggled line usage color to none");
 			break;
 		default:
 			break;

@@ -31,7 +31,6 @@ public class Button extends DrawableSprite {
 	private boolean oldHoverState = false;
 	public boolean IsHovered(int x, int y) {
 		if (isMouseOver(x, y)) {
-			System.out.println("Hovering " + this.getClass());
 			if (!oldHoverState) {
 				Hovered();
 				oldHoverState = true;
