@@ -42,6 +42,8 @@ public class RevVisGDX implements ApplicationListener {
 	boolean runFullPresetScreenshots = false;
 	float fullPresetScreenshotsScaling = 6f;
 	
+	public Menu menu;
+	
 	public RevVisGDX() {
 		super();
 		singleton = this;
@@ -81,6 +83,9 @@ public class RevVisGDX implements ApplicationListener {
 		
 		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
+		
+		this.menu = new Menu();
+		this.drawables.add(menu);
 		
 		mc.addMessage("RevVisGDX started");
 		mc.addMessage(Messages.helpText);
@@ -166,22 +171,6 @@ public class RevVisGDX implements ApplicationListener {
 	@Override
 	public void resume() {
 	}
-	
-//	public void saveScreenshotCircuit() {
-//		int viewportWidth = (int)(this.currentCircuit.data.getGates().size());
-//		int viewportHeight = (int)(this.currentCircuit.data.getAmountOfVars());
-//		Gdx.graphics.setDisplayMode(viewportWidth, viewportHeight, false);
-//		RevVisGDX.singleton.camera.viewportWidth = viewportWidth;
-//		RevVisGDX.singleton.camera.viewportHeight= viewportHeight;
-//		RevVisGDX.singleton.camera.update();
-//        
-//		this.currentCircuit.setScaleImmediately(1, 1);
-//		this.currentCircuit.zoomExtentsImmediately();
-//		
-//		this.render();
-//		
-//		saveScreenshotFull();
-//	}
 	
 	public void saveScreenshotCircuit() {
 		saveScreenshotCircuit("");
