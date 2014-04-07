@@ -61,6 +61,7 @@ public class RevVisInputProcessor implements InputProcessor {
 			RevVisGDX.singleton.currentCircuit.highlightHoveredGate = !RevVisGDX.singleton.currentCircuit.highlightHoveredGate;
 			break;
 		case 'H':
+			// done in gui
 			RevVisGDX.singleton.currentCircuit.toggleMovingRuleHighlight();
 			break;
 		case 'u':
