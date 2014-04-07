@@ -68,6 +68,7 @@ public class RevVisInputProcessor implements InputProcessor {
 			RevVisGDX.singleton.currentCircuit.colorizeLineUsage = !RevVisGDX.singleton.currentCircuit.colorizeLineUsage;
 			break;
 		case 'U':
+			// done in gui
 			RevVisGDX.singleton.currentCircuit.toggleLineUsageColouring();
 			break;
 		case 'w':

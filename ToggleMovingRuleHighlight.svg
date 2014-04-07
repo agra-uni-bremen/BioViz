@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="256"
+   height="256"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="ToggleMovingRuleHighlight.svg"
+   inkscape:export-filename="/home/jannis/Quellcode/RevViewWorkspace/RevVisGDX-android/assets/data/MovingRuleHighlightNone.png"
+   inkscape:export-xdpi="22.5"
+   inkscape:export-ydpi="22.5">
+  <defs
+     id="defs4">
+    <filter
+       inkscape:collect="always"
+       id="filter3838">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="3.6"
+         id="feGaussianBlur3840" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.1918616"
+     inkscape:cx="-44.687177"
+     inkscape:cy="209.3316"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:snap-bbox="false"
+     inkscape:object-nodes="true"
+     inkscape:window-width="1631"
+     inkscape:window-height="1026"
+     inkscape:window-x="49"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2985"
+       empspacing="8"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="8px"
+       spacingy="8px" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-796.36218)">
+    <rect
+       ry="32"
+       rx="32"
+       y="804.36218"
+       x="8"
+       height="240"
+       width="240"
+       id="rect3820"
+       style="fill:#000000;fill-rule:evenodd;stroke:none;filter:url(#filter3838)" />
+    <rect
+       style="fill:#e6e6e6;fill-rule:evenodd;stroke:none"
+       id="rect2987"
+       width="240"
+       height="240"
+       x="8"
+       y="8"
+       rx="32"
+       ry="32"
+       transform="translate(0,796.36218)" />
+    <rect
+       style="fill:#7f7f7f;fill-opacity:1;stroke:none"
+       id="rect4674"
+       width="152"
+       height="128"
+       x="-8"
+       y="1076.3622" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3842"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(0,796.36218)"><flowRegion
+         id="flowRegion3844"><rect
+           id="rect3846"
+           width="240"
+           height="88"
+           x="8"
+           y="8"
+           style="font-size:24px" /></flowRegion><flowPara
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara4670">MR Highlight</flowPara></flowRoot>    <flowRoot
+       transform="translate(-64,989.86218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot3864"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3866"><rect
+           style="font-size:24px;fill:#000000;fill-opacity:1"
+           y="16"
+           x="16"
+           height="40"
+           width="224"
+           id="rect3868" /></flowRegion><flowPara
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara3870">None</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3872"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(0,989.86218)"><flowRegion
+         id="flowRegion3874"><rect
+           id="rect3876"
+           width="224"
+           height="40"
+           x="16"
+           y="16"
+           style="font-size:24px" /></flowRegion><flowPara
+         id="flowPara3878"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.24705882;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold">Bars</flowPara></flowRoot>    <flowRoot
+       transform="translate(64,989.86218)"
+       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot3880"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3882"><rect
+           style="font-size:24px"
+           y="16"
+           x="16"
+           height="40"
+           width="224"
+           id="rect3884" /></flowRegion><flowPara
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.24705882;font-family:FreeSans;-inkscape-font-specification:FreeSans Semi-Bold"
+         id="flowPara3886">Boxes</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 128,64 0,128"
+       id="path4140"
+       inkscape:connector-curvature="0"
+       transform="translate(0,796.36218)" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4650"
+       d="m 192,860.36218 0,128"
+       style="fill:none;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 64,860.36218 0,128"
+       id="path4652"
+       inkscape:connector-curvature="0" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="path4654"
+       sodipodi:cx="96"
+       sodipodi:cy="96"
+       sodipodi:rx="32"
+       sodipodi:ry="32"
+       d="m 128,96 a 32,32 0 1 1 -64,0 32,32 0 1 1 64,0 z"
+       transform="translate(-32,828.36218)" />
+    <path
+       transform="translate(96,828.36218)"
+       d="m 128,96 a 32,32 0 1 1 -64,0 32,32 0 1 1 64,0 z"
+       sodipodi:ry="32"
+       sodipodi:rx="32"
+       sodipodi:cy="96"
+       sodipodi:cx="96"
+       id="path4658"
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 160,128 64,0"
+       id="path4660"
+       inkscape:connector-curvature="0"
+       transform="translate(0,796.36218)" />
+  </g>
+</svg>

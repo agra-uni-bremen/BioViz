@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
 
+import de.dfki.revvisgdx.buttons.MovingRuleHighlightButton;
 import de.dfki.revvisgdx.buttons.UsageColorButton;
 import de.dfki.revvisgdx.buttons.variableButton;
 
@@ -15,6 +16,7 @@ public class Menu implements Drawable {
 	public Menu() {
 		buttons.add(new variableButton());
 		buttons.add(new UsageColorButton());
+		buttons.add(new MovingRuleHighlightButton());
 	}
 	
 	public void MouseCoords(int x, int y) {
