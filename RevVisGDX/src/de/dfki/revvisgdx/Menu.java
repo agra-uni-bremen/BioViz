@@ -13,6 +13,7 @@ public class Menu implements Drawable {
 //	variableButton varButton;
 	private Vector<Button> buttons = new Vector<Button>();
 	private float buttonOffsetX = 0;
+	private float lastMouseY = 0f;
 	
 	public Menu() {
 		try {
@@ -53,6 +54,7 @@ public class Menu implements Drawable {
 		float buttonX = x - Gdx.graphics.getWidth() / 2f;
 		float buttonY = -y + Gdx.graphics.getHeight() / 2f;
 		
+		lastMouseY = buttonY;
 		for (Button b : buttons) {
 			
 			b.IsHovered((int)buttonX, (int)buttonY);
@@ -75,9 +77,24 @@ public class Menu implements Drawable {
 	@Override
 	public void draw() {
 		int i = 1;
+		float placePerButton = (Gdx.graphics.getHeight() / (buttons.size() + 1f));
+		float desiredPlacePerButton = 64;
+		float desiredShift = Math.max(0, desiredPlacePerButton - placePerButton);
+		
 		for (Button b : this.buttons) {
 			b.draw();
-			b.y = (Gdx.graphics.getHeight() / (buttons.size() + 1)) * i - Gdx.graphics.getHeight() / 2f;
+			float originalY = (Gdx.graphics.getHeight() / (buttons.size() + 1)) * i - Gdx.graphics.getHeight() / 2f;
+			float diffToMouse = lastMouseY - originalY;
+			float factor = Math.signum(diffToMouse);
+			diffToMouse = Math.abs(diffToMouse);
+			
+			float offset = 0;
+			if (diffToMouse < placePerButton)
+				offset = desiredShift * (diffToMouse / placePerButton);
+			else
+				offset = desiredShift * (placePerButton / diffToMouse);
+			
+			b.y = originalY + (-factor * offset);
 			b.x = Gdx.graphics.getWidth() / -2f + buttonOffsetX;
 			i++;
 		}

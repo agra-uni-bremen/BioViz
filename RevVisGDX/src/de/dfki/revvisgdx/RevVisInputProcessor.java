@@ -92,33 +92,43 @@ public class RevVisInputProcessor implements InputProcessor {
 			RevVisGDX.singleton.currentCircuit.zoomExtents();
 			break;
 		case '1':
+			// done in gui
 			Presets.setConstGarbage();
 			break;
 		case '2':
+			// done in gui
 			Presets.setBoxesAndUsage();
 			break;
 		case '3':
+			// done in gui
 			Presets.setColourizedUsage();
 			break;
 		case '4':
+			// done in gui
 			Presets.setGreyNeighboursWithBlackTargets();
 			break;
 		case '5':
+			// done in gui
 			Presets.setColourizeLineType();
 			break;
 		case '6':
+			// done in gui
 			Presets.setMovingRuleBoxOverlay();
 			break;
 		case '7':
+			// done in gui
 			Presets.setMovingRuleColoured();
 			break;
 		case '8':
+			// done in gui
 			Presets.setColourizeUsageAbsolute();
 			break;
 		case '9':
+			// done in gui
 			Presets.setMovingRuleColouredAbsolute();
 			break;
 		case '0':
+			// done in gui
 			RevVisGDX.singleton.currentCircuit.setAllDefault();
 			break;
 		}
