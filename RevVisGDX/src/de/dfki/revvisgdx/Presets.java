@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.Color;
 
 public class Presets {
 	
+	public static void setDefault() {
+		RevVisGDX.singleton.currentCircuit.setAllDefault();
+	}
 	/**
 	 * Sets the preset '1'
 	 */

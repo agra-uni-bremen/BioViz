@@ -118,6 +118,9 @@ public class RevVisInputProcessor implements InputProcessor {
 		case '9':
 			Presets.setMovingRuleColouredAbsolute();
 			break;
+		case '0':
+			RevVisGDX.singleton.currentCircuit.setAllDefault();
+			break;
 		}
 		return false;
 	}

@@ -16,6 +16,7 @@ public class Menu implements Drawable {
 	
 	public Menu() {
 		try {
+			buttons.add(new FunctionButton("data/Preset0.png", Presets.class.getMethod("setDefault")));
 			buttons.add(new FunctionButton("data/Preset1.png", Presets.class.getMethod("setConstGarbage")));
 			buttons.add(new FunctionButton("data/Preset2.png", Presets.class.getMethod("setBoxesAndUsage")));
 			buttons.add(new FunctionButton("data/Preset3.png", Presets.class.getMethod("setColourizedUsage")));
