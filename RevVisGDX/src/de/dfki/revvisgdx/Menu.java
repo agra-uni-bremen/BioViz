@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 
 import de.dfki.revvisgdx.buttons.FunctionButton;
 import de.dfki.revvisgdx.buttons.MovingRuleHighlightButton;
+import de.dfki.revvisgdx.buttons.ToggleButton;
 import de.dfki.revvisgdx.buttons.UsageColorButton;
 import de.dfki.revvisgdx.buttons.variableButton;
 
@@ -37,6 +38,8 @@ public class Menu implements Drawable {
 		buttons.add(new variableButton());
 		buttons.add(new UsageColorButton());
 		buttons.add(new MovingRuleHighlightButton());
+		buttons.add(new ToggleButton("data/VerticalLinesButtonOn.png", "data/VerticalLinesButtonOff.png", RevVisGDX.singleton.currentCircuit, "drawVerticalLines"));
+		buttons.add(new ToggleButton("data/DarkUsedVarsButtonOn.png", "data/DarkUsedVarsButtonOff.png", RevVisGDX.singleton.currentCircuit, "drawLinesDarkWhenUsed"));
 	}
 	
 	public void MouseCoords(int x, int y) {

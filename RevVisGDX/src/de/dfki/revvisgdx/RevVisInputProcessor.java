@@ -46,9 +46,11 @@ public class RevVisInputProcessor implements InputProcessor {
 			RevVisGDX.singleton.currentCircuit.drawSubCircuits = !RevVisGDX.singleton.currentCircuit.drawSubCircuits;
 			break;
 		case 'v':
+			// done in gui
 			RevVisGDX.singleton.currentCircuit.drawVerticalLines = !RevVisGDX.singleton.currentCircuit.drawVerticalLines;
 			break;
 		case 'd':
+			// done in gui
 			RevVisGDX.singleton.currentCircuit.drawLinesDarkWhenUsed = !RevVisGDX.singleton.currentCircuit.drawLinesDarkWhenUsed;
 			break;
 		case 'm':
@@ -223,7 +225,7 @@ public class RevVisInputProcessor implements InputProcessor {
 	public boolean mouseMoved(int screenX, int screenY) {
 		oldX = screenX;
 		oldY = screenY;
-		RevVisGDX.singleton.mc.addHUDMessage(this.hashCode(), "Mouse now at " + oldX + ",  " + oldY, 32, 32);
+//		RevVisGDX.singleton.mc.addHUDMessage(this.hashCode(), "Mouse now at " + oldX + ",  " + oldY, 32, 32);
 		RevVisGDX.singleton.currentCircuit.highlightAt(screenX, screenY);
 		RevVisGDX.singleton.menu.MouseCoords(screenX, screenY);
 		return false;
