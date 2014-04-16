@@ -22,7 +22,7 @@ public class DrawableCircuit implements Drawable {
 	private float scaleY = 1;
 	public float offsetY = 0;
 	
-	private float smoothScaleX = 1;
+	protected float smoothScaleX = 1;
 	private float smoothScaleY = 1;
 	
 	private float scalingDelay = 4f;
@@ -500,7 +500,7 @@ public class DrawableCircuit implements Drawable {
 		return signalsToCoords;
 	}
 
-	private float xCoordOnScreen(int i) {
+	protected float xCoordOnScreen(int i) {
 		float xCoord = i;
 		xCoord += offsetX;
 		xCoord *= smoothScaleX;
