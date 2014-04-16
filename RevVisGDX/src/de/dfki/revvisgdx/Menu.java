@@ -13,8 +13,9 @@ import de.dfki.revvisgdx.buttons.variableButton;
 public class Menu implements Drawable {
 //	variableButton varButton;
 	private Vector<Button> buttons = new Vector<Button>();
-	private float buttonOffsetX = 64;
-	private float lastMouseY = 0f;
+	private float buttonOffsetY = 64;
+	private float lastMouseX = 0f;
+	private float buttonShiftPercentage = 0f;
 	
 	public Menu() {
 		try {
@@ -38,27 +39,30 @@ public class Menu implements Drawable {
 	}
 	
 	public void MouseCoords(int x, int y) {
-		float mouseAreaRight = 256;
-		float mouseAreaLeft = 128f;
-		float percentageX ;
-		if (x < mouseAreaRight)
-			if (x > mouseAreaLeft)
-				percentageX = (x - mouseAreaLeft) / (mouseAreaRight - mouseAreaLeft);
+		float mouseAreaMin = Gdx.graphics.getHeight() - 128f;
+		float mouseAreaMax = Gdx.graphics.getHeight() - 64f;
+		float percentageY;
+		if (y < mouseAreaMax)
+			if (y > mouseAreaMin)
+				percentageY = (y - mouseAreaMin) / (mouseAreaMax - mouseAreaMin);
 			else
-				percentageX = 0;
+				percentageY = 0;
 		else
-			percentageX = 1;
+			percentageY = 1;
+		
+		System.out.println(percentageY);
 		
 		float buttonX = x - Gdx.graphics.getWidth() / 2f;
 		float buttonY = -y + Gdx.graphics.getHeight() / 2f;
 		
-		lastMouseY = buttonY;
+		lastMouseX = buttonX;
 		for (Button b : buttons) {
 			
 			b.IsHovered((int)buttonX, (int)buttonY);
 		}
 		
-		this.buttonOffsetX = 128 - 64 * percentageX;
+		this.buttonOffsetY = 24 * percentageY;
+		buttonShiftPercentage = percentageY;
 	}
 	
 	public boolean click(int x, int y) {
@@ -75,25 +79,25 @@ public class Menu implements Drawable {
 	@Override
 	public void draw() {
 		int i = 1;
-		float placePerButton = (Gdx.graphics.getHeight() / (buttons.size() + 1f));
-		float desiredPlacePerButton = 64;
+		float placePerButton = (Gdx.graphics.getWidth() / (buttons.size() + 1f));
+		float desiredPlacePerButton = 128 + 32;
 		float desiredShift = Math.max(0, desiredPlacePerButton - placePerButton);
 		
 		for (Button b : this.buttons) {
 			b.draw();
-			float originalY = (Gdx.graphics.getHeight() / (buttons.size() + 1)) * i - Gdx.graphics.getHeight() / 2f;
-			float diffToMouse = lastMouseY - originalY;
+			float originalX = (Gdx.graphics.getWidth() / (buttons.size() + 1)) * i - Gdx.graphics.getWidth() / 2f;
+			float diffToMouse = lastMouseX - originalX;
 			float factor = Math.signum(diffToMouse);
 			diffToMouse = Math.abs(diffToMouse);
 			
 			float offset = 0;
 			if (diffToMouse < placePerButton)
-				offset = desiredShift * (diffToMouse / placePerButton);
+				offset = buttonShiftPercentage * desiredShift * (diffToMouse / placePerButton);
 			else
-				offset = desiredShift * (placePerButton / diffToMouse);
+				offset = buttonShiftPercentage * desiredShift * (placePerButton / diffToMouse);
 			
-			b.y = originalY + (-factor * offset);
-			b.x = Gdx.graphics.getWidth() / -2f + buttonOffsetX;
+			b.x = originalX + (-factor * offset);
+			b.y = Gdx.graphics.getHeight() / -2f + buttonOffsetY;
 			i++;
 		}
 	}

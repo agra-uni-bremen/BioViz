@@ -200,7 +200,6 @@ public class RevVisInputProcessor implements InputProcessor {
 				}
 			}
 		}
-		RevVisGDX.singleton.mc.addHUDMessage(this.hashCode(), "Mouse now at " + oldX + ",  " + oldY, 32, 32);
 		return false;
 	}
 
@@ -225,7 +224,6 @@ public class RevVisInputProcessor implements InputProcessor {
 	public boolean mouseMoved(int screenX, int screenY) {
 		oldX = screenX;
 		oldY = screenY;
-//		RevVisGDX.singleton.mc.addHUDMessage(this.hashCode(), "Mouse now at " + oldX + ",  " + oldY, 32, 32);
 		RevVisGDX.singleton.currentCircuit.highlightAt(screenX, screenY);
 		RevVisGDX.singleton.menu.MouseCoords(screenX, screenY);
 		return false;
