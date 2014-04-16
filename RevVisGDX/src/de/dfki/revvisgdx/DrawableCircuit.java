@@ -374,130 +374,128 @@ public class DrawableCircuit implements Drawable {
 		
 		for (int i = 0; i < data.getAmountOfVars(); i++) {
 
-			int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(i)));
-			int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(i)));
-			float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
-
-			for (int j = 0; j < 3; j++) {
-				Color col = new Color(lineBaseColor);
-				line.color = col;
-				
-				if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.relative) {
-					float lineUsageValue = (usagePercent - minimumUsagePercent) / (1 - minimumUsagePercent);
-					if (lineUsageValue <= 0.5f) {
-						col.r = lineUsageValue * 2;
-						col.g = 1;
-						col.b = 0;
-					} else {
-						col.r = 1;
-						col.g = 1 - (lineUsageValue - 0.5f) * 2;
-						col.b = 0;
-					}
-				} else if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.absolute) {
-					float lineUsageValue = (float)data.getLineUsage(data.getVars().get(i)) / (float)data.getGates().size();
-					if (lineUsageValue <= 0.5f) {
-						col.r = lineUsageValue * 2;
-						col.g = 1;
-						col.b = 0;
-					} else {
-						col.r = 1;
-						col.g = 1 - (lineUsageValue - 0.5f) * 2;
-						col.b = 0;
-					}
-				}
-
-				if (markVariableTypes) {
-					if (data.isInputOnly(data.getVars().get(i)))
-						col.add(0, 1f, 0, 0);
-					else if (data.isTargetOnly(data.getVars().get(i)))
-						col.add(1f, 0, 0, 0);
-					else
-						col.add(1f, 1f, 0, 0);
-				}
-
-				if (j == 0) {
-					float left = -RevVisGDX.singleton.camera.viewportWidth;
-					float right = xCoordOnScreen(firstGateCoord);
-					line.x = (left + right) / 2;
-					line.scaleX = left - right;
-					
-					if (colorizeConstants && data.constValue(data.getVars().get(i)) >= 0) {
-						col.mul(0, 0, 0, 1);
-					}
-
-//					col.add(0.25f, 0.25f, 0.25f, 0);
-				} else if (j == 1) {
-					float left = xCoordOnScreen(firstGateCoord);
-					float right = xCoordOnScreen(lastGateCoord);
-					line.x = (left + right) / 2;
-					line.scaleX = left - right;
-					if (drawLinesDarkWhenUsed) {
-						col.sub(0.25f, 0.25f, 0.25f, 0);
-					}
-				} else {
-					float left = xCoordOnScreen(lastGateCoord);
-					float right = RevVisGDX.singleton.camera.viewportWidth;;
-					line.x = (left + right) / 2;
-					line.scaleX = left - right;
-					
-					if (colorizeGarbageLine && data.isGarbageLine(data.getVars().get(i))) {
-						col.mul(0, 0, 0, 1);
-					}
-					
-//					col.add(0.25f, 0.25f, 0.25f, 0);
-				}
-				
-				if (!drawnBus.equals("")) {
-					if (data.isMemberOfBus(data.getVars().get(i), drawnBus)) {
-						col.add(0,0,0.5f,0);
-					}
-				}
-				
-				switch(this.lineType) {
-				case full:
-					line.scaleY = smoothScaleY;
-					break;
-				case usageWide:
-					line.scaleY = smoothScaleY;
-					line.scaleY *= usagePercent;
-					line.scaleY = Math.max(1, line.scaleY);
-					break;
-				case pixelWide:
-					line.scaleY = 1;
-					break;
-				default:
-					line.scaleY = smoothScaleY;
-					break;
-				}
-				line.y = (i - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
-				line.y *= smoothScaleY;
-				
-				if (colorizeLineUsage) {
-					line.color = line.color.mul(usagePercent, usagePercent, usagePercent, 1);
-				}
-
-				if (!data.isFunctionLine(data.getVars().get(i))) {
-					//					line.color.mul(0.5f);
-				}
-				//TODO: this probably should be catched earlier
-				if (this.lineType != lineWidth.hidden) {
-					if (line.scaleX < 0) {
-						line.draw();
-					}
-				}
-			}
-
-			signalsToCoords.put(data.getVars().get(i), line.y);
-			
-			if (showLineNames && smoothScaleY > 10) {
-				Color lineNameColor = new Color(Color.WHITE);
-				lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
-				RevVisGDX.singleton.mc.addHUDMessage(data.getVars().get(i).hashCode(), data.getVars().get(i), RevVisGDX.singleton.camera.viewportWidth - 64, (line.y + RevVisGDX.singleton.camera.viewportHeight / 2f), lineNameColor);
-			} else {
-				RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(i).hashCode());
-			}
+			drawLine(signalsToCoords, minimumUsagePercent, i);
 		}
 		return signalsToCoords;
+	}
+
+	private void drawLine(HashMap<String, Float> signalsToCoords, float minimumUsagePercent, int indexOfGate) {
+		int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(indexOfGate)));
+		int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(indexOfGate)));
+		float usagePercent = ((float)data.getLineUsage(data.getVars().get(indexOfGate)) / (float)data.getMaximumLineUsage());
+
+		Color multiplier;
+		
+		if (colorizeConstants)
+			multiplier = Color.BLACK;
+		else
+			multiplier = Color.WHITE;
+		drawLineSegment(minimumUsagePercent, indexOfGate, -1,	firstGateCoord, usagePercent, false, multiplier);
+		
+		drawLineSegment(minimumUsagePercent, indexOfGate, firstGateCoord,	lastGateCoord, usagePercent, true);
+		
+		if (colorizeGarbageLine)
+			multiplier = Color.BLACK;
+		else
+			multiplier = Color.WHITE;
+		drawLineSegment(minimumUsagePercent, indexOfGate, lastGateCoord,	this.data.getGates().size(), usagePercent, false, multiplier);
+
+		signalsToCoords.put(data.getVars().get(indexOfGate), line.y);
+		
+		if (showLineNames && smoothScaleY > 10) {
+			Color lineNameColor = new Color(Color.WHITE);
+			lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
+			RevVisGDX.singleton.mc.addHUDMessage(data.getVars().get(indexOfGate).hashCode(), data.getVars().get(indexOfGate), RevVisGDX.singleton.camera.viewportWidth - 64, (line.y + RevVisGDX.singleton.camera.viewportHeight / 2f), lineNameColor);
+		} else {
+			RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(indexOfGate).hashCode());
+		}
+	}
+
+	private void drawLineSegment(float minimumUsagePercent, int i, int firstGateCoord, int lastGateCoord, float usagePercent, boolean currentlyUsed) {
+		drawLineSegment(minimumUsagePercent, i, firstGateCoord, lastGateCoord, usagePercent, currentlyUsed, Color.WHITE);
+	}
+	
+	private void drawLineSegment(float minimumUsagePercent, int i, int firstGateCoord, int lastGateCoord, float usagePercent, boolean currentlyUsed, Color additionalMultiplier) {
+		Color col = new Color(lineBaseColor);
+		line.color = col;
+		
+		if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.relative) {
+			float lineUsageValue = (usagePercent - minimumUsagePercent) / (1 - minimumUsagePercent);
+			if (lineUsageValue <= 0.5f) {
+				col.r = lineUsageValue * 2;
+				col.g = 1;
+				col.b = 0;
+			} else {
+				col.r = 1;
+				col.g = 1 - (lineUsageValue - 0.5f) * 2;
+				col.b = 0;
+			}
+		} else if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.absolute) {
+			float lineUsageValue = (float)data.getLineUsage(data.getVars().get(i)) / (float)data.getGates().size();
+			if (lineUsageValue <= 0.5f) {
+				col.r = lineUsageValue * 2;
+				col.g = 1;
+				col.b = 0;
+			} else {
+				col.r = 1;
+				col.g = 1 - (lineUsageValue - 0.5f) * 2;
+				col.b = 0;
+			}
+		}
+
+		if (markVariableTypes) {
+			if (data.isInputOnly(data.getVars().get(i)))
+				col.add(0, 1f, 0, 0);
+			else if (data.isTargetOnly(data.getVars().get(i)))
+				col.add(1f, 0, 0, 0);
+			else
+				col.add(1f, 1f, 0, 0);
+		}
+
+		float left = xCoordOnScreen(firstGateCoord);
+		float right = xCoordOnScreen(lastGateCoord);
+		line.x = (left + right) / 2;
+		line.scaleX = left - right;
+		if (drawLinesDarkWhenUsed && currentlyUsed) {
+			col.sub(0.25f, 0.25f, 0.25f, 0);
+		}
+
+		
+		if (!drawnBus.equals("")) {
+			if (data.isMemberOfBus(data.getVars().get(i), drawnBus)) {
+				col.add(0,0,0.5f,0);
+			}
+		}
+		
+		switch(this.lineType) {
+		case full:
+			line.scaleY = smoothScaleY;
+			break;
+		case usageWide:
+			line.scaleY = smoothScaleY;
+			line.scaleY *= usagePercent;
+			line.scaleY = Math.max(1, line.scaleY);
+			break;
+		case pixelWide:
+			line.scaleY = 1;
+			break;
+		default:
+			line.scaleY = smoothScaleY;
+			break;
+		}
+		line.y = (i - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
+		line.y *= smoothScaleY;
+		
+		if (colorizeLineUsage) {
+			line.color = line.color.mul(usagePercent, usagePercent, usagePercent, 1);
+		}
+
+		line.color.mul(additionalMultiplier);
+		if (this.lineType != lineWidth.hidden) {
+			if (line.scaleX < 0) {
+				line.draw();
+			}
+		}
 	}
 
 	protected float xCoordOnScreen(int i) {
