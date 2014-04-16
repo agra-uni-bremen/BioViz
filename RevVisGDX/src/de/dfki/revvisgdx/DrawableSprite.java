@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class DrawableSprite implements Drawable {
 
-	private Sprite sprite;
+	protected Sprite sprite;
 	private HashMap<String, TextureRegion> allTextures = new HashMap<String, TextureRegion>();
 	public Color color = Color.BLACK.cpy();
 	

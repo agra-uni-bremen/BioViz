@@ -10,8 +10,8 @@ public class Button extends DrawableSprite {
 	}
 	
 	private boolean isMouseOver(int x, int y) {
-		if (Math.abs(this.x - x) < 32) {
-			if (Math.abs(this.y - y) < 32) {
+		if (Math.abs(this.x - x) < this.sprite.getWidth() / 2f) {
+			if (Math.abs(this.y - y) < this.sprite.getHeight() / 2f) {
 				return true;
 			}
 		}

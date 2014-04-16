@@ -13,7 +13,7 @@ import de.dfki.revvisgdx.buttons.variableButton;
 public class Menu implements Drawable {
 //	variableButton varButton;
 	private Vector<Button> buttons = new Vector<Button>();
-	private float buttonOffsetX = 0;
+	private float buttonOffsetX = 64;
 	private float lastMouseY = 0f;
 	
 	public Menu() {
@@ -35,11 +35,6 @@ public class Menu implements Drawable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		buttons.add(new variableButton());
-		buttons.add(new UsageColorButton());
-		buttons.add(new MovingRuleHighlightButton());
-		buttons.add(new ToggleButton("data/VerticalLinesButtonOn.png", "data/VerticalLinesButtonOff.png", RevVisGDX.singleton.currentCircuit, "drawVerticalLines"));
-		buttons.add(new ToggleButton("data/DarkUsedVarsButtonOn.png", "data/DarkUsedVarsButtonOff.png", RevVisGDX.singleton.currentCircuit, "drawLinesDarkWhenUsed"));
 	}
 	
 	public void MouseCoords(int x, int y) {
@@ -63,7 +58,7 @@ public class Menu implements Drawable {
 			b.IsHovered((int)buttonX, (int)buttonY);
 		}
 		
-		this.buttonOffsetX = 32 - 64 * percentageX;
+		this.buttonOffsetX = 128 - 64 * percentageX;
 	}
 	
 	public boolean click(int x, int y) {
