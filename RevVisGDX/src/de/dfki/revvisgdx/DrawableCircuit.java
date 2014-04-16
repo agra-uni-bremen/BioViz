@@ -77,9 +77,9 @@ public class DrawableCircuit implements Drawable {
 		smoothScaleX += (getScaleX() - smoothScaleX) / scalingDelay;
 		smoothScaleY += (getScaleY() - smoothScaleY) / scalingDelay;
 		
-		HashMap<String, Float> signalsToCoords = drawVariables();
+		drawVariables();
 
-		drawGates(signalsToCoords);
+		drawGates();
 		
 		drawOverlay();
 	}
@@ -165,7 +165,7 @@ public class DrawableCircuit implements Drawable {
 	 * Draws the gates using previously calculated y coordinates.
 	 * @param signalsToCoords the y coordinates for each variable
 	 */
-	private void drawGates(HashMap<String, Float> signalsToCoords) {
+	private void drawGates() {
 		if (!hideGates) {
 			float minY = Float.MAX_VALUE, maxY = -Float.MAX_VALUE, minX = xCoordOnScreen(0) - 0.5f * smoothScaleX, maxX = minX + 0.5f*smoothScaleX;
 			Color groupCol = Color.RED.cpy();
@@ -216,12 +216,12 @@ public class DrawableCircuit implements Drawable {
 						}
 
 						if (drawVerticalLines) {
-							minY = signalsToCoords.get(data.getGate(i).output);
+							minY = getLineYScreenCoord(data.getGate(i).output, i);
 							maxY = minY;
 
 							for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-								minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
-								maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
+								minY = Math.min(minY, getLineYScreenCoord(data.getGate(i).getInputs().get(j), i));
+								maxY = Math.max(maxY, getLineYScreenCoord(data.getGate(i).getInputs().get(j), i));
 							}
 															
 							line.color = gateColor;
@@ -272,14 +272,14 @@ public class DrawableCircuit implements Drawable {
 							controlGate.setDimensions(smoothScaleX, smoothScaleY);
 						}
 						targetGate.color = gateColor;
-						targetGate.y = signalsToCoords.get(data.getGate(i).output);
+						targetGate.y = getLineYScreenCoord(data.getGate(i).output, i);
 						targetGate.x = xCoord;
 						
 						targetGate.draw();
 
 						controlGate.color = gateColor;
 						for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-							controlGate.y = signalsToCoords.get(data.getGate(i).getInputs().get(j));
+							controlGate.y = getLineYScreenCoord(data.getGate(i).getInputs().get(j), i);
 							controlGate.x = xCoord;
 							
 							controlGate.draw();
@@ -289,11 +289,11 @@ public class DrawableCircuit implements Drawable {
 					
 					//First: Add current gate to group.
 					for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-						minY = Math.min(minY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
-						maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).getInputs().get(j)));
+						minY = Math.min(minY, getLineYScreenCoord(data.getGate(i).getInputs().get(j), i));
+						maxY = Math.max(maxY, getLineYScreenCoord(data.getGate(i).getInputs().get(j), i));
 					}
-					minY = Math.min(minY, signalsToCoords.get(data.getGate(i).output));
-					maxY = Math.max(maxY, signalsToCoords.get(data.getGate(i).output));
+					minY = Math.min(minY, getLineYScreenCoord(data.getGate(i).output, i));
+					maxY = Math.max(maxY, getLineYScreenCoord(data.getGate(i).output, i));
 					
 					//Second: Check if current gate is the group's last gate
 					boolean drawGroup;
@@ -339,7 +339,7 @@ public class DrawableCircuit implements Drawable {
 								line.scaleX = maxX - minX; //RevVisGDX.singleton.camera.viewportWidth;
 								line.scaleY = smoothScaleY;
 								line.x = (maxX + minX) / 2;
-								line.y = (signalsToCoords.get(data.getGate(i).output)); //+ RevVisGDX.singleton.camera.viewportHeight;
+								line.y = (getLineYScreenCoord(data.getGate(i).output, i));
 								line.draw();
 							}
 							
@@ -362,24 +362,28 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 	}
+	
+	protected float getLineYScreenCoord(String line, int index) {
+		float y = (this.data.getVars().indexOf(line) - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
+		y *= smoothScaleY;
+		return y;
+	}
 
 	/**
 	 * Draws the variables and calculates the y coordinate for each variable, which is
 	 * returned as a HashMap
 	 * @return the mapping from variable names to y-coordinates on screen
 	 */
-	private HashMap<String, Float> drawVariables() {
-		HashMap<String, Float> signalsToCoords = new HashMap<String, Float>();
+	private void drawVariables() {
 		float minimumUsagePercent = ((float)data.getMinimumLineUsage() / (float)data.getMaximumLineUsage());
 		
 		for (int i = 0; i < data.getAmountOfVars(); i++) {
 
-			drawLine(signalsToCoords, minimumUsagePercent, i);
+			drawLine(minimumUsagePercent, i);
 		}
-		return signalsToCoords;
 	}
 
-	private void drawLine(HashMap<String, Float> signalsToCoords, float minimumUsagePercent, int indexOfGate) {
+	private void drawLine(float minimumUsagePercent, int indexOfGate) {
 		int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(indexOfGate)));
 		int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(indexOfGate)));
 		float usagePercent = ((float)data.getLineUsage(data.getVars().get(indexOfGate)) / (float)data.getMaximumLineUsage());
@@ -399,8 +403,6 @@ public class DrawableCircuit implements Drawable {
 		else
 			multiplier = Color.WHITE;
 		drawLineSegment(minimumUsagePercent, indexOfGate, lastGateCoord,	this.data.getGates().size(), usagePercent, false, multiplier);
-
-		signalsToCoords.put(data.getVars().get(indexOfGate), line.y);
 		
 		if (showLineNames && smoothScaleY > 10) {
 			Color lineNameColor = new Color(Color.WHITE);
@@ -483,8 +485,7 @@ public class DrawableCircuit implements Drawable {
 			line.scaleY = smoothScaleY;
 			break;
 		}
-		line.y = (i - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
-		line.y *= smoothScaleY;
+		line.y = getLineYScreenCoord(data.getVars().get(i), i);
 		
 		if (colorizeLineUsage) {
 			line.color = line.color.mul(usagePercent, usagePercent, usagePercent, 1);
