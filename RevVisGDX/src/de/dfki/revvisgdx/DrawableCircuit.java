@@ -23,7 +23,7 @@ public class DrawableCircuit implements Drawable {
 	public float offsetY = 0;
 	
 	protected float smoothScaleX = 1;
-	private float smoothScaleY = 1;
+	protected float smoothScaleY = 1;
 	
 	private float scalingDelay = 4f;
 
@@ -162,8 +162,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Draws the gates using previously calculated y coordinates.
-	 * @param signalsToCoords the y coordinates for each variable
+	 * Draws the gates
 	 */
 	private void drawGates() {
 		if (!hideGates) {
@@ -413,9 +412,9 @@ public class DrawableCircuit implements Drawable {
 		drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, currentlyUsed, Color.WHITE);
 	}
 	
-	private void drawLineSegment(int i, int firstGateCoord, int lastGateCoord, boolean currentlyUsed, Color additionalMultiplier) {
+	private void drawLineSegment(int indexOfVariable, int firstGateCoord, int lastGateCoord, boolean currentlyUsed, Color additionalMultiplier) {
 		float minimumUsagePercent = ((float)data.getMinimumLineUsage() / (float)data.getMaximumLineUsage());
-		float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
+		float usagePercent = ((float)data.getLineUsage(data.getVars().get(indexOfVariable)) / (float)data.getMaximumLineUsage());
 		
 		Color col = new Color(lineBaseColor);
 		line.color = col;
@@ -432,7 +431,7 @@ public class DrawableCircuit implements Drawable {
 				col.b = 0;
 			}
 		} else if (drawLinesColourizedWhenUsed == drawLinesColourizedByUsageType.absolute) {
-			float lineUsageValue = (float)data.getLineUsage(data.getVars().get(i)) / (float)data.getGates().size();
+			float lineUsageValue = (float)data.getLineUsage(data.getVars().get(indexOfVariable)) / (float)data.getGates().size();
 			if (lineUsageValue <= 0.5f) {
 				col.r = lineUsageValue * 2;
 				col.g = 1;
@@ -445,9 +444,9 @@ public class DrawableCircuit implements Drawable {
 		}
 
 		if (markVariableTypes) {
-			if (data.isInputOnly(data.getVars().get(i)))
+			if (data.isInputOnly(data.getVars().get(indexOfVariable)))
 				col.add(0, 1f, 0, 0);
-			else if (data.isTargetOnly(data.getVars().get(i)))
+			else if (data.isTargetOnly(data.getVars().get(indexOfVariable)))
 				col.add(1f, 0, 0, 0);
 			else
 				col.add(1f, 1f, 0, 0);
@@ -463,7 +462,7 @@ public class DrawableCircuit implements Drawable {
 
 		
 		if (!drawnBus.equals("")) {
-			if (data.isMemberOfBus(data.getVars().get(i), drawnBus)) {
+			if (data.isMemberOfBus(data.getVars().get(indexOfVariable), drawnBus)) {
 				col.add(0,0,0.5f,0);
 			}
 		}
@@ -484,7 +483,7 @@ public class DrawableCircuit implements Drawable {
 			line.scaleY = smoothScaleY;
 			break;
 		}
-		line.y = getLineYScreenCoord(data.getVars().get(i), i);
+		line.y = getLineYScreenCoord(data.getVars().get(indexOfVariable), indexOfVariable);
 		
 		if (colorizeLineUsage) {
 			line.color = line.color.mul(usagePercent, usagePercent, usagePercent, 1);
