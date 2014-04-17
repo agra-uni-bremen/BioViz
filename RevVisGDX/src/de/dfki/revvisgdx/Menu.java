@@ -50,8 +50,6 @@ public class Menu implements Drawable {
 		else
 			percentageY = 1;
 		
-		System.out.println(percentageY);
-		
 		float buttonX = x - Gdx.graphics.getWidth() / 2f;
 		float buttonY = -y + Gdx.graphics.getHeight() / 2f;
 		
