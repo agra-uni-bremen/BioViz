@@ -374,19 +374,15 @@ public class DrawableCircuit implements Drawable {
 	 * returned as a HashMap
 	 * @return the mapping from variable names to y-coordinates on screen
 	 */
-	private void drawVariables() {
-		float minimumUsagePercent = ((float)data.getMinimumLineUsage() / (float)data.getMaximumLineUsage());
-		
+	private void drawVariables() {		
 		for (int i = 0; i < data.getAmountOfVars(); i++) {
-
-			drawLine(minimumUsagePercent, i);
+			drawLine(i);
 		}
 	}
 
-	private void drawLine(float minimumUsagePercent, int indexOfGate) {
-		int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(indexOfGate)));
-		int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(indexOfGate)));
-		float usagePercent = ((float)data.getLineUsage(data.getVars().get(indexOfGate)) / (float)data.getMaximumLineUsage());
+	private void drawLine(int indexOfVariable) {
+		int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(indexOfVariable)));
+		int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(indexOfVariable)));
 
 		Color multiplier;
 		
@@ -394,30 +390,33 @@ public class DrawableCircuit implements Drawable {
 			multiplier = Color.BLACK;
 		else
 			multiplier = Color.WHITE;
-		drawLineSegment(minimumUsagePercent, indexOfGate, -1,	firstGateCoord, usagePercent, false, multiplier);
+		drawLineSegment(indexOfVariable, -1, firstGateCoord, false, multiplier);
 		
-		drawLineSegment(minimumUsagePercent, indexOfGate, firstGateCoord,	lastGateCoord, usagePercent, true);
+		drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, true);
 		
 		if (colorizeGarbageLine)
 			multiplier = Color.BLACK;
 		else
 			multiplier = Color.WHITE;
-		drawLineSegment(minimumUsagePercent, indexOfGate, lastGateCoord,	this.data.getGates().size(), usagePercent, false, multiplier);
+		drawLineSegment(indexOfVariable, lastGateCoord,	this.data.getGates().size(), false, multiplier);
 		
 		if (showLineNames && smoothScaleY > 10) {
 			Color lineNameColor = new Color(Color.WHITE);
 			lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
-			RevVisGDX.singleton.mc.addHUDMessage(data.getVars().get(indexOfGate).hashCode(), data.getVars().get(indexOfGate), RevVisGDX.singleton.camera.viewportWidth - 64, (line.y + RevVisGDX.singleton.camera.viewportHeight / 2f), lineNameColor);
+			RevVisGDX.singleton.mc.addHUDMessage(data.getVars().get(indexOfVariable).hashCode(), data.getVars().get(indexOfVariable), RevVisGDX.singleton.camera.viewportWidth - 64, (line.y + RevVisGDX.singleton.camera.viewportHeight / 2f), lineNameColor);
 		} else {
-			RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(indexOfGate).hashCode());
+			RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(indexOfVariable).hashCode());
 		}
 	}
 
-	private void drawLineSegment(float minimumUsagePercent, int i, int firstGateCoord, int lastGateCoord, float usagePercent, boolean currentlyUsed) {
-		drawLineSegment(minimumUsagePercent, i, firstGateCoord, lastGateCoord, usagePercent, currentlyUsed, Color.WHITE);
+	private void drawLineSegment(int indexOfVariable, int firstGateCoord, int lastGateCoord, boolean currentlyUsed) {
+		drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, currentlyUsed, Color.WHITE);
 	}
 	
-	private void drawLineSegment(float minimumUsagePercent, int i, int firstGateCoord, int lastGateCoord, float usagePercent, boolean currentlyUsed, Color additionalMultiplier) {
+	private void drawLineSegment(int i, int firstGateCoord, int lastGateCoord, boolean currentlyUsed, Color additionalMultiplier) {
+		float minimumUsagePercent = ((float)data.getMinimumLineUsage() / (float)data.getMaximumLineUsage());
+		float usagePercent = ((float)data.getLineUsage(data.getVars().get(i)) / (float)data.getMaximumLineUsage());
+		
 		Color col = new Color(lineBaseColor);
 		line.color = col;
 		
