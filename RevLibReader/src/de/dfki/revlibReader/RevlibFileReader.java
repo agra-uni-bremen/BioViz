@@ -6,6 +6,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
+/**
+ * <p>The RevlibFileReader is the parser for reversible circuit descriptions.
+ * It parses a given file and returns a ReversibleCircuit instance for
+ * further processing (i.e. visualization, in our case).</p>
+ * 
+ * <p>The easiest way is to just cann the static readRealFile(String filename)
+ * method, which returns the according circuit.</p>
+ * 
+ * @author Jannis Stoppe
+ *
+ */
 public class RevlibFileReader {
 	private ReversibleCircuit currentCircuit;
 	private String fileContents;
@@ -43,7 +54,6 @@ public class RevlibFileReader {
 			try {
 				br.close();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			e.printStackTrace();
@@ -54,8 +64,6 @@ public class RevlibFileReader {
 			try {
 				while((line = br.readLine()) != null) {
 					this.fileContents += line + "\n";
-//					if(readLine(line));
-//						return currentCircuit;
 				}
 				
 				currentCircuit = this.readRealContents(0);
@@ -63,7 +71,6 @@ public class RevlibFileReader {
 				try {
 					br.close();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				e.printStackTrace();
@@ -72,7 +79,6 @@ public class RevlibFileReader {
 		try {
 			br.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return currentCircuit;

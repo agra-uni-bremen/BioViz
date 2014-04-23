@@ -3,8 +3,18 @@ package de.dfki.revlibReader;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * <p>This class represents a single gate of a reversible circuit. Basically,
+ * it consists of an output string and several input strings that are references
+ * to the variable names used to identify the variables of the ReversibleCircuit this
+ * gate is contained in.</p>
+ * 
+ * @author jannis
+ *
+ */
 public class ToffoliGate {	
 	public String output;
+	private Vector<String> inputs = new Vector<String>();
 	private int mobilityLeft = -1;
 	private int mobilityRight = -1;
 	
@@ -31,8 +41,6 @@ public class ToffoliGate {
 	 * @param mobilityValue this gate's mobility to the right
 	 */
 	public void setMobilityRight(int mobilityValue) {this.mobilityRight = mobilityValue;}
-	
-	private Vector<String> inputs = new Vector<String>();
 	
 	/**
 	 * Gives you access to this gate's control lines
