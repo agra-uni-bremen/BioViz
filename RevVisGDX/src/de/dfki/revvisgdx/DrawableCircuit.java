@@ -412,7 +412,7 @@ public class DrawableCircuit implements Drawable {
 		drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, currentlyUsed, Color.WHITE);
 	}
 	
-	private void drawLineSegment(int indexOfVariable, int firstGateCoord, int lastGateCoord, boolean currentlyUsed, Color additionalMultiplier) {
+	protected void drawLineSegment(int indexOfVariable, int firstGateCoord, int lastGateCoord, boolean currentlyUsed, Color additionalMultiplier) {
 		float minimumUsagePercent = ((float)data.getMinimumLineUsage() / (float)data.getMaximumLineUsage());
 		float usagePercent = ((float)data.getLineUsage(data.getVars().get(indexOfVariable)) / (float)data.getMaximumLineUsage());
 		

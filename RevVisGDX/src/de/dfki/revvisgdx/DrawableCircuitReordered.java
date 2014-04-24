@@ -3,7 +3,10 @@ package de.dfki.revvisgdx;
 import java.util.HashMap;
 import java.util.Vector;
 
+import com.badlogic.gdx.graphics.Color;
+
 import de.dfki.revlibReader.ReversibleCircuit;
+import de.dfki.revvisgdx.DrawableCircuit.lineWidth;
 
 public class DrawableCircuitReordered extends DrawableCircuit {
 	
@@ -86,6 +89,29 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	protected void drawLineSegment(int indexOfVariable, int firstGateCoord, int lastGateCoord, boolean currentlyUsed, Color additionalMultiplier) {
+		super.drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord - 1, currentlyUsed, additionalMultiplier);
+		
+		float left = xCoordOnScreen(firstGateCoord);
+		float right = xCoordOnScreen(lastGateCoord - 1);
+		float y = getLineYScreenCoord(data.getVars().get(indexOfVariable), indexOfVariable);
+		
+		if (this.lineType != lineWidth.hidden) {
+			line.x = left;
+			line.y = y + smoothScaleY / 4f;
+			line.scaleX = 1;
+			line.scaleY = smoothScaleY / 2f;
+			line.draw();
+			
+			line.x = right;
+			line.y = y - smoothScaleY / 4f;
+			line.scaleX = 1;
+			line.scaleY = smoothScaleY / 2f;
+			line.draw();
+		}
 	}
 
 }
