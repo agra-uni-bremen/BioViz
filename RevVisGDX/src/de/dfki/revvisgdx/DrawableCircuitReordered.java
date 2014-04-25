@@ -23,7 +23,6 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 		int indexOfLine = this.getShiftedLineCoords(line);
 		float y = (indexOfLine - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
 		y *= smoothScaleY;
-		System.out.println("gained " + (this.data.getVars().indexOf(line) - indexOfLine) + " for " + line);
 		return y;
 	}
 	
