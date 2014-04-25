@@ -215,12 +215,12 @@ public class DrawableCircuit implements Drawable {
 						}
 
 						if (drawVerticalLines) {
-							minY = getLineYScreenCoord(data.getGate(i).output, i);
+							minY = getLineYScreenCoord(data.getGate(i).output);
 							maxY = minY;
 
 							for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-								minY = Math.min(minY, getLineYScreenCoord(data.getGate(i).getInputs().get(j), i));
-								maxY = Math.max(maxY, getLineYScreenCoord(data.getGate(i).getInputs().get(j), i));
+								minY = Math.min(minY, getLineYScreenCoord(data.getGate(i).getInputs().get(j)));
+								maxY = Math.max(maxY, getLineYScreenCoord(data.getGate(i).getInputs().get(j)));
 							}
 															
 							line.color = gateColor;
@@ -271,14 +271,14 @@ public class DrawableCircuit implements Drawable {
 							controlGate.setDimensions(smoothScaleX, smoothScaleY);
 						}
 						targetGate.color = gateColor;
-						targetGate.y = getLineYScreenCoord(data.getGate(i).output, i);
+						targetGate.y = getLineYScreenCoord(data.getGate(i).output);
 						targetGate.x = xCoord;
 						
 						targetGate.draw();
 
 						controlGate.color = gateColor;
 						for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-							controlGate.y = getLineYScreenCoord(data.getGate(i).getInputs().get(j), i);
+							controlGate.y = getLineYScreenCoord(data.getGate(i).getInputs().get(j));
 							controlGate.x = xCoord;
 							
 							controlGate.draw();
@@ -288,11 +288,11 @@ public class DrawableCircuit implements Drawable {
 					
 					//First: Add current gate to group.
 					for (int j = 0; j < data.getGate(i).getInputs().size(); j++) {
-						minY = Math.min(minY, getLineYScreenCoord(data.getGate(i).getInputs().get(j), i));
-						maxY = Math.max(maxY, getLineYScreenCoord(data.getGate(i).getInputs().get(j), i));
+						minY = Math.min(minY, getLineYScreenCoord(data.getGate(i).getInputs().get(j)));
+						maxY = Math.max(maxY, getLineYScreenCoord(data.getGate(i).getInputs().get(j)));
 					}
-					minY = Math.min(minY, getLineYScreenCoord(data.getGate(i).output, i));
-					maxY = Math.max(maxY, getLineYScreenCoord(data.getGate(i).output, i));
+					minY = Math.min(minY, getLineYScreenCoord(data.getGate(i).output));
+					maxY = Math.max(maxY, getLineYScreenCoord(data.getGate(i).output));
 					
 					//Second: Check if current gate is the group's last gate
 					boolean drawGroup;
@@ -338,7 +338,7 @@ public class DrawableCircuit implements Drawable {
 								line.scaleX = maxX - minX; //RevVisGDX.singleton.camera.viewportWidth;
 								line.scaleY = smoothScaleY;
 								line.x = (maxX + minX) / 2;
-								line.y = (getLineYScreenCoord(data.getGate(i).output, i));
+								line.y = (getLineYScreenCoord(data.getGate(i).output));
 								line.draw();
 							}
 							
@@ -362,7 +362,7 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 	
-	protected float getLineYScreenCoord(String line, int index) {
+	protected float getLineYScreenCoord(String line) {
 		float y = (this.data.getVars().indexOf(line) - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
 		y *= smoothScaleY;
 		return y;
@@ -379,7 +379,7 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	private void drawLine(int indexOfVariable) {
+	protected void drawLine(int indexOfVariable) {
 		int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(indexOfVariable)));
 		int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(indexOfVariable)));
 
@@ -408,7 +408,7 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	private void drawLineSegment(int indexOfVariable, int firstGateCoord, int lastGateCoord, boolean currentlyUsed) {
+	protected void drawLineSegment(int indexOfVariable, int firstGateCoord, int lastGateCoord, boolean currentlyUsed) {
 		drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, currentlyUsed, Color.WHITE);
 	}
 	
@@ -483,7 +483,7 @@ public class DrawableCircuit implements Drawable {
 			line.scaleY = smoothScaleY;
 			break;
 		}
-		line.y = getLineYScreenCoord(data.getVars().get(indexOfVariable), indexOfVariable);
+		line.y = getLineYScreenCoord(data.getVars().get(indexOfVariable));
 		
 		if (colorizeLineUsage) {
 			line.color = line.color.mul(usagePercent, usagePercent, usagePercent, 1);
