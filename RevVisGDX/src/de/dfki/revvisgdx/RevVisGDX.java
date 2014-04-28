@@ -67,21 +67,13 @@ public class RevVisGDX implements ApplicationListener {
 			c = RevlibFileReader.readRealFile(filename);
 		} else {
 			FileHandle handle = Gdx.files.internal("examples/bdd_mod5adder_66.real");
-//			FileHandle handle = Gdx.files.internal("examples/cpu.real");
-//			FileHandle handle = Gdx.files.internal("examples/bdd_rd73_312.real");
-//			FileHandle handle = Gdx.files.internal("examples/syrec_mult_stmts_gf_3bit.real");
-//			FileHandle handle = Gdx.files.internal("examples/urf4_187.real");
 			String fileContents = handle.readString();
 			c = RevlibFileReader.readRealFileContents(fileContents);
-			//c = RevlibFileReader.readRealFile("bin/examples/apex2_289.real");	
 		}
-		currentCircuit = new DrawableCircuitReordered(c);
-//		currentCircuit = new DrawableCircuit(c);
+		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
 		
 		System.out.println("Total distance: " + c.totalDistance());
-		
-		//OrderOptimizer.optimizeNN(c);
 		
 		System.out.println("Total distance NN: " + c.totalDistance());
 		
@@ -92,7 +84,6 @@ public class RevVisGDX implements ApplicationListener {
 		this.drawables.add(menu);
 		
 		mc.addMessage("RevVisGDX started");
-//		mc.addMessage(Messages.helpText);
 	}
 
 	@Override
