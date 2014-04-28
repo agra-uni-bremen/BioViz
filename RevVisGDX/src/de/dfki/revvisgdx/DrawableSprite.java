@@ -16,7 +16,7 @@ public class DrawableSprite implements Drawable {
 	private HashMap<String, TextureRegion> allTextures = new HashMap<String, TextureRegion>();
 	public Color color = Color.BLACK.cpy();
 	
-	public float x = 0, y = 0, scaleX = 1, scaleY = 1;
+	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 	
 	public DrawableSprite(String textureFilename) {
 		TextureRegion region = loadTexture(textureFilename);
@@ -30,6 +30,7 @@ public class DrawableSprite implements Drawable {
 	public void draw() {
 		this.sprite.setPosition(x-sprite.getWidth()/2f, y-sprite.getHeight()/2f);
 		this.sprite.setScale(scaleX, scaleY);
+		this.sprite.setRotation(rotation);
 		this.sprite.setColor(color);
 		this.sprite.draw(RevVisGDX.singleton.batch);
 	}

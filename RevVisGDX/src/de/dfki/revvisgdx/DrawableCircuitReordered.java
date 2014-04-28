@@ -60,13 +60,6 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 		
 	}
 	
-	private boolean isVisibleAt(String line, int index) {
-		int result = 0;
-		int start = lineVisibleFrom(line);
-		int end = lineVisibleTo(line);
-		return (index >= start && index <= end);
-	}
-	
 	protected int lineVisibleFrom(String line) {
 		return data.getCoordOfGate(this.data.getFirstGateOnLine(line));
 	}
@@ -107,14 +100,18 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 			line.scaleX = 1;
 			line.scaleY = smoothScaleY / 2f;
 			line.color = Color.GREEN;
-			line.draw();
+//			line.draw();
+			
+			drawArc(left, y + smoothScaleY, 1f, 270, 180, true, true);
 			
 			line.x = right;
 			line.y = y - smoothScaleY / 4f;
 			line.scaleX = 1;
 			line.scaleY = smoothScaleY / 2f;
 			line.color = Color.RED;
-			line.draw();
+//			line.draw();
+			
+			drawArc(right, y + smoothScaleY, 1f, 270, 360, true, true);
 		}
 	}
 	
@@ -122,6 +119,57 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 		for (int i = 0; i < this.data.getVars().size(); i++) {
 			String line = this.data.getVars().get(i);
 			System.out.println("Var " + line + " visible from " + data.getCoordOfGate(this.data.getFirstGateOnLine(line)) + " to " +data.getCoordOfGate(this.data.getLastGateOnLine(line)) + ", placed at " + getLineYScreenCoord(line));
+		}
+	}
+	
+	private void drawArc(float centerX, float centerY, float radius, float from, float to) {
+		drawArc(centerX, centerY, radius, from, to, false);
+	}
+	private void drawArc(float centerX, float centerY, float radius, float from, float to, boolean fadeCol) {
+		drawArc(centerX, centerY, radius, from, to, fadeCol, false);
+	}
+	
+	private void drawArc(float centerX, float centerY, float radius, float from, float to, boolean fadeCol, boolean getWider) {
+		// TODO this should of course depend on the camera zoom value
+		int steps = (int)(smoothScaleX);
+		
+		float fromRad = (float)(from * (Math.PI / 180));
+		float toRad = (float)(to * (Math.PI / 180));
+		
+		Color col = line.color.cpy();
+		float alphaBase = col.a;
+		
+		for (int i = 0; i < steps; i++) {
+			// Calculate points on unit circle: from
+			float x1 = (float)(Math.cos(fromRad + ((toRad - fromRad) * ((float)i / steps))));
+			float y1 = (float)(Math.sin(fromRad + ((toRad - fromRad) * ((float)i / steps))));
+			// and to.
+			float x2 = (float)(Math.cos(fromRad + ((toRad - fromRad) * ((i + 1f) / steps))));
+			float y2 = (float)(Math.sin(fromRad + ((toRad - fromRad) * ((i + 1f) / steps))));
+			
+			// scale points away from center according to the given radius and the camera zoom factor
+			float fromX = centerX + (x1 * radius * smoothScaleX);
+			float fromY = centerY + (y1 * radius * smoothScaleY);
+			
+			float targetX = centerX + (x2 * radius * smoothScaleX);
+			float targetY = centerY + (y2 * radius * smoothScaleY);
+			
+			// Just some beautification
+			float scale = (float)(Math.sqrt((fromX-targetX)*(fromX-targetX) + (fromY-targetY)*(fromY-targetY)));
+			if (!getWider)
+				line.scaleY = 1;
+			else
+				line.scaleY = 1 + 32 * ((float)i / steps);
+			
+			// actually paint the resulting line
+			line.scaleX = scale;
+			line.x = fromX;
+			line.y = fromY;
+			line.rotation = 90 + from + ((to - from) * ((float)i / steps));
+			col.a = alphaBase * (1f - ((float)i / steps));
+			line.color = col;
+			line.draw();
+			line.rotation = 0;
 		}
 	}
 

@@ -70,7 +70,7 @@ public class RevVisGDX implements ApplicationListener {
 			String fileContents = handle.readString();
 			c = RevlibFileReader.readRealFileContents(fileContents);
 		}
-		currentCircuit = new DrawableCircuit(c);
+		currentCircuit = new DrawableCircuitReordered(c);
 		drawables.add(currentCircuit);
 		
 		System.out.println("Total distance: " + c.totalDistance());
