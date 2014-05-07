@@ -99,8 +99,6 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 			line.y = y + smoothScaleY / 4f;
 			line.scaleX = 1;
 			line.scaleY = smoothScaleY / 2f;
-			line.color = Color.GREEN;
-//			line.draw();
 			
 			drawArc(left, y + smoothScaleY, 1f, 270, 180, true, true);
 			
@@ -108,8 +106,6 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 			line.y = y - smoothScaleY / 4f;
 			line.scaleX = 1;
 			line.scaleY = smoothScaleY / 2f;
-			line.color = Color.RED;
-//			line.draw();
 			
 			drawArc(right, y + smoothScaleY, 1f, 270, 360, true, true);
 		}
@@ -131,12 +127,13 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 	
 	private void drawArc(float centerX, float centerY, float radius, float from, float to, boolean fadeCol, boolean getWider) {
 		// TODO this should of course depend on the camera zoom value
-		int steps = (int)(smoothScaleX);
+		int steps = Math.max(2, (int)(smoothScaleX / 8f));
 		
 		float fromRad = (float)(from * (Math.PI / 180));
 		float toRad = (float)(to * (Math.PI / 180));
 		
 		Color col = line.color.cpy();
+		Color oldCol = col.cpy();
 		float alphaBase = col.a;
 		
 		for (int i = 0; i < steps; i++) {
@@ -159,7 +156,7 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 			if (!getWider)
 				line.scaleY = 1;
 			else
-				line.scaleY = 1 + 32 * ((float)i / steps);
+				line.scaleY = 1 + (((float)i / steps) * smoothScaleX) / 8f;
 			
 			// actually paint the resulting line
 			line.scaleX = scale;
@@ -171,6 +168,7 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 			line.draw();
 			line.rotation = 0;
 		}
+		line.color = oldCol;
 	}
 
 }
