@@ -132,9 +132,7 @@ public class DrawableCircuit implements Drawable {
 				line.y = Math.min(line.y, RevVisGDX.singleton.camera.viewportHeight / 2f - 24);
 				line.draw();
 				
-//				if (showLineNames && smoothScaleY > 10) {
 				Color lineNameColor = new Color(line.color).mul(0.5f);
-//					lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
 				Vector3 lineCoord = new Vector3(left, line.y + 10, 1);
 				float fontWidth = RevVisGDX.singleton.mc.getFont().getBounds(subs.get(j).name).width;
 				if (fontWidth > right - left)
@@ -145,9 +143,6 @@ public class DrawableCircuit implements Drawable {
 					lineNameColor.a = 1;
 				RevVisGDX.singleton.camera.project(lineCoord);
 				RevVisGDX.singleton.mc.addHUDMessage(subs.get(j).hashCode(), subs.get(j).name, lineCoord.x, lineCoord.y, lineNameColor);
-//				} else {
-//					RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(i).hashCode());
-//				}
 			}
 		}
 		
@@ -380,8 +375,8 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	protected void drawLine(int indexOfVariable) {
-		int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(indexOfVariable)));
-		int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(indexOfVariable)));
+		int firstGateCoord = getFirstGateCoord(indexOfVariable);
+		int lastGateCoord = getLastGateCoord(indexOfVariable);
 
 		Color multiplier;
 		
@@ -399,6 +394,20 @@ public class DrawableCircuit implements Drawable {
 			multiplier = Color.WHITE;
 		drawLineSegment(indexOfVariable, lastGateCoord,	this.data.getGates().size(), false, multiplier);
 		
+		drawVariableNameOverlay(indexOfVariable);
+	}
+
+	protected int getLastGateCoord(int indexOfVariable) {
+		int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(indexOfVariable)));
+		return lastGateCoord;
+	}
+
+	protected int getFirstGateCoord(int indexOfVariable) {
+		int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(indexOfVariable)));
+		return firstGateCoord;
+	}
+
+	protected void drawVariableNameOverlay(int indexOfVariable) {
 		if (showLineNames && smoothScaleY > 10) {
 			Color lineNameColor = new Color(Color.WHITE);
 			lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
