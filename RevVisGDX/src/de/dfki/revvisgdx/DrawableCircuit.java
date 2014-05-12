@@ -498,6 +498,10 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	protected float xCoordOnScreen(int i) {
+		return xCoordOnScreen((float)i);
+	}
+	
+	protected float xCoordOnScreen(float i) {
 		float xCoord = i;
 		xCoord += offsetX;
 		xCoord *= smoothScaleX;
