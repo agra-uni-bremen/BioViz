@@ -5,15 +5,9 @@ import java.util.Vector;
 import com.badlogic.gdx.Gdx;
 
 import de.dfki.revvisgdx.buttons.FunctionButton;
-import de.dfki.revvisgdx.buttons.MovingRuleHighlightButton;
-import de.dfki.revvisgdx.buttons.ToggleButton;
-import de.dfki.revvisgdx.buttons.UsageColorButton;
-import de.dfki.revvisgdx.buttons.variableButton;
 
 public class Menu implements Drawable {
-//	variableButton varButton;
 	private Vector<Button> buttons = new Vector<Button>();
-	private float buttonOffsetY = 64;
 	private float lastMouseX = 0f;
 	private float buttonShiftPercentage = 0f;
 	
@@ -59,7 +53,6 @@ public class Menu implements Drawable {
 			b.IsHovered((int)buttonX, (int)buttonY);
 		}
 		
-		this.buttonOffsetY = 24 * percentageY;
 		buttonShiftPercentage = percentageY;
 	}
 	

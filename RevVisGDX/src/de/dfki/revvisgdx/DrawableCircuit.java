@@ -1,11 +1,9 @@
 package de.dfki.revvisgdx;
 
-import java.util.HashMap;
 import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector3;
 
 import de.dfki.revlibReader.ReversibleCircuit;
@@ -162,7 +160,6 @@ public class DrawableCircuit implements Drawable {
 	private void drawGates() {
 		if (!hideGates) {
 			float minY = Float.MAX_VALUE, maxY = -Float.MAX_VALUE, minX = xCoordOnScreen(0) - 0.5f * smoothScaleX, maxX = minX + 0.5f*smoothScaleX;
-			Color groupCol = Color.RED.cpy();
 			float currentHue = 0;
 			float currentSaturation = 1;
 			String currentGroup = data.getGates().iterator().next().output;

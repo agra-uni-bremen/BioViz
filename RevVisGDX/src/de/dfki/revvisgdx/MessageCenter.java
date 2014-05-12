@@ -1,15 +1,12 @@
 package de.dfki.revvisgdx;
 
 import java.sql.Date;
-import java.text.DateFormat;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 
 public class MessageCenter {
@@ -77,8 +74,7 @@ public class MessageCenter {
 					font.setColor(Color.WHITE);
 				int start_x = spacing;
 				int start_y = yCoord;
-				font.draw(RevVisGDX.singleton.batch, new Date(m.createdOn).toLocaleString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
-				//SystemViewMain.Singleton.myBatch.disableBlending();
+				font.draw(RevVisGDX.singleton.batch, new Date(m.createdOn).toString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
 
 
 

@@ -1,14 +1,11 @@
 package de.dfki.revvisgdx;
 
 import java.util.HashMap;
-import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 
 import de.dfki.revlibReader.ReversibleCircuit;
-import de.dfki.revvisgdx.DrawableCircuit.lineWidth;
 
 public class DrawableCircuitReordered extends DrawableCircuit {
 	

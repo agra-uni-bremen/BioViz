@@ -1,7 +1,6 @@
 package de.dfki.revvisgdx;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
@@ -15,16 +14,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 import de.dfki.revlibReader.ReversibleCircuit;
 import de.dfki.revlibReader.RevlibFileReader;
-import de.dfki.revlibReader.optimization.OrderOptimizer;
 
 public class RevVisGDX implements ApplicationListener {
 	public OrthographicCamera camera;
@@ -145,7 +138,7 @@ public class RevVisGDX implements ApplicationListener {
 					try {
 						String execString = "montage screenshots/*.png -geometry +0+0 -tile " + ((int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1) + "x" + ((int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1) + " -crop " + (int)(fullPresetScreenshotsScaling * currentCircuit.data.getGates().size()) + "x" + (int)(fullPresetScreenshotsScaling * currentCircuit.data.getAmountOfVars()) + "+0+0 screenshots/fullPreset.png";
 						System.out.println(execString);
-						Process p = Runtime.getRuntime().exec(execString);
+						Runtime.getRuntime().exec(execString);
 					} catch(Exception e) {
 						System.out.println(System.getenv("PATH"));
 						System.out.println(e.getMessage());
