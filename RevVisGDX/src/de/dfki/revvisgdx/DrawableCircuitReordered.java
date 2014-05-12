@@ -111,13 +111,6 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 		}
 	}
 	
-	private void printVisibilityStatus() {
-		for (int i = 0; i < this.data.getVars().size(); i++) {
-			String line = this.data.getVars().get(i);
-			System.out.println("Var " + line + " visible from " + data.getCoordOfGate(this.data.getFirstGateOnLine(line)) + " to " +data.getCoordOfGate(this.data.getLastGateOnLine(line)) + ", placed at " + getLineYScreenCoord(line));
-		}
-	}
-	
 	private void drawArc(float centerX, float centerY, float radius, float from, float to) {
 		drawArc(centerX, centerY, radius, from, to, false);
 	}
