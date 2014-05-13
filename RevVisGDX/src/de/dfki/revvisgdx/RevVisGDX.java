@@ -46,11 +46,14 @@ public class RevVisGDX implements ApplicationListener {
 	
 	public RevVisGDX() {
 		super();
+		System.out.println("Starting without filename being specified; loading example.");
+		System.out.println("Usage: java -jar RevVisGDX.jar filename.real");
 		singleton = this;
 	}
 	
 	public RevVisGDX(String filename) {
 		this();
+		System.out.println("Starting RevVisGDX, loading " + filename);
 		this.filename = filename;
 	}
 	
@@ -72,10 +75,6 @@ public class RevVisGDX implements ApplicationListener {
 		}
 		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
-		
-		System.out.println("Total distance: " + c.totalDistance());
-		
-		System.out.println("Total distance NN: " + c.totalDistance());
 		
 		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);

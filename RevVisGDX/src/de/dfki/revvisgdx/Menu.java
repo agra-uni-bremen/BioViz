@@ -66,7 +66,6 @@ public class Menu implements Drawable {
 	public boolean click(int x, int y) {
 		float xButton = x - Gdx.graphics.getWidth() / 2f;
 		float yButton = -y + Gdx.graphics.getHeight() / 2f;
-		System.out.println("Clicked at " + xButton + "/" + yButton);
 		for (Button b : this.buttons) {
 			if (b.IsClicked((int)xButton, (int)yButton))
 				return true;
