@@ -104,8 +104,7 @@ public class Menu implements Drawable {
 				offset = buttonShiftPercentage * desiredShift * (placePerButton / diffToMouse);
 			
 			b.x = originalX + (-factor * offset);
-//			b.y = Gdx.graphics.getHeight() / -2f + buttonOffsetY;
-			b.y = Gdx.graphics.getHeight() / -2f - 32 + (64 * currentLine);
+			b.y = Gdx.graphics.getHeight() / -2f - 32 + (72 * currentLine);
 			i++;
 			
 			currentButton++;
