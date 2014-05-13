@@ -13,6 +13,8 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 	private HashMap<String, Integer> shiftedIndices;
 	
 	DrawableSprite lineStart, lineEnd;
+	
+	boolean inputsFromStart, functionsToEnd;
 
 	public DrawableCircuitReordered(ReversibleCircuit toDraw) {
 		super(toDraw);
@@ -68,7 +70,10 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 	}
 	
 	protected int lineVisibleTo(String line) {
-		return data.getCoordOfGate(this.data.getLastGateOnLine(line));
+		if (this.data.isFunctionLine(line))
+			return this.data.getAmountOfVars();
+		else
+			return data.getCoordOfGate(this.data.getLastGateOnLine(line));
 	}
 	
 	@Override
