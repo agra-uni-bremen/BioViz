@@ -16,6 +16,8 @@ public class Menu implements Drawable {
 	private float buttonOffsetY = 64;
 	private float lastMouseX = 0f;
 	private float buttonShiftPercentage = 0f;
+	private int lines = 1;
+	private int minPlacePerButton = 128;
 	
 	public Menu() {
 		try {
@@ -38,7 +40,7 @@ public class Menu implements Drawable {
 		}
 	}
 	
-	public void MouseCoords(int x, int y) {
+	public void MouseCoords(int x, int y) {		
 		float mouseAreaMin = Gdx.graphics.getHeight() - 128f;
 		float mouseAreaMax = Gdx.graphics.getHeight() - 64f;
 		float percentageY;
@@ -75,14 +77,22 @@ public class Menu implements Drawable {
 	
 	@Override
 	public void draw() {
-		int i = 1;
+		int i = 1; 
 		float placePerButton = (Gdx.graphics.getWidth() / (buttons.size() + 1f));
 		float desiredPlacePerButton = 128 + 32;
+		
+		lines = (int)((desiredPlacePerButton / 1.5f) / placePerButton) + 1;
+		placePerButton *= lines;
+		
 		float desiredShift = Math.max(0, desiredPlacePerButton - placePerButton);
+		
+		int buttonsPerLine = buttons.size() / lines;
+		int currentButton = 1;
+		int currentLine = 1;
 		
 		for (Button b : this.buttons) {
 			b.draw();
-			float originalX = (Gdx.graphics.getWidth() / (buttons.size() + 1)) * i - Gdx.graphics.getWidth() / 2f;
+			float originalX = (Gdx.graphics.getWidth() / (buttonsPerLine + 1)) * currentButton - Gdx.graphics.getWidth() / 2f;
 			float diffToMouse = lastMouseX - originalX;
 			float factor = Math.signum(diffToMouse);
 			diffToMouse = Math.abs(diffToMouse);
@@ -95,8 +105,14 @@ public class Menu implements Drawable {
 			
 			b.x = originalX + (-factor * offset);
 //			b.y = Gdx.graphics.getHeight() / -2f + buttonOffsetY;
-			b.y = Gdx.graphics.getHeight() / -2f + 48;
+			b.y = Gdx.graphics.getHeight() / -2f - 32 + (64 * currentLine);
 			i++;
+			
+			currentButton++;
+			if (currentButton > buttonsPerLine) {
+				currentButton = 1;
+				currentLine++;
+			}
 		}
 	}
 
