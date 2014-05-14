@@ -3,6 +3,7 @@ package de.dfki.revvisgdx;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.math.Rectangle;
 
 public class RevVisInputProcessor implements InputProcessor {
 	boolean isMoving = false;
@@ -211,18 +212,27 @@ public class RevVisInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean scrolled (int amount) {
-		if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
-			RevVisGDX.singleton.currentCircuit.setScaleY(RevVisGDX.singleton.currentCircuit.getScaleY()
-					* (1 - (amount * 0.2f)));
-		else if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-			RevVisGDX.singleton.currentCircuit.setScaleX(RevVisGDX.singleton.currentCircuit.getScaleX()
-					* (1 - (amount * 0.2f)));
-		else {
-			RevVisGDX.singleton.currentCircuit.setScaleY(RevVisGDX.singleton.currentCircuit.getScaleY()
-					* (1 - (amount * 0.2f)));
-			RevVisGDX.singleton.currentCircuit.setScaleX(RevVisGDX.singleton.currentCircuit.getScaleX()
-					* (1 - (amount * 0.2f)));
-		}
+		float mouseAtWidth = (float)oldX / Gdx.graphics.getWidth();
+		float mouseAtHeight = (float)(Gdx.graphics.getHeight() - oldY) / Gdx.graphics.getHeight();
+		
+		Rectangle current = RevVisGDX.singleton.currentCircuit.getViewBounds();
+		
+		float mouseToLeftOriginal = current.width * mouseAtWidth;
+		float mouseToBottomOriginal = current.height * mouseAtHeight;
+		
+		float zoomFactor = (1 + (amount * 0.2f));
+		current.height *= zoomFactor;
+		current.width *= zoomFactor;
+		
+		float expectedMouseToLeft = current.width * mouseAtWidth;
+		float mouseDiffX = mouseToLeftOriginal - expectedMouseToLeft;
+		current.x += mouseDiffX;
+		
+		float expectedMouseToBottom = current.height * mouseAtHeight;
+		float mouseDiffY = mouseToBottomOriginal - expectedMouseToBottom;
+		current.y += mouseDiffY;
+		
+		RevVisGDX.singleton.currentCircuit.setViewBounds(current);
 		return false;
 	}
 

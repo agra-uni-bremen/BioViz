@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 import de.dfki.revlibReader.ReversibleCircuit;
@@ -22,6 +23,8 @@ public class DrawableCircuit implements Drawable {
 	
 	protected float smoothScaleX = 1;
 	protected float smoothScaleY = 1;
+	protected float smoothOffsetX = 0;
+	protected float smoothOffsetY = 0;
 	
 	private float scalingDelay = 4f;
 
@@ -74,6 +77,8 @@ public class DrawableCircuit implements Drawable {
 	public void draw() {		
 		smoothScaleX += (getScaleX() - smoothScaleX) / scalingDelay;
 		smoothScaleY += (getScaleY() - smoothScaleY) / scalingDelay;
+		smoothOffsetX += (offsetX - smoothOffsetX) / scalingDelay;
+		smoothOffsetY += (offsetY - smoothOffsetY) / scalingDelay;
 		
 		drawVariables();
 
@@ -355,7 +360,7 @@ public class DrawableCircuit implements Drawable {
 	}
 	
 	protected float getLineYScreenCoord(String line) {
-		float y = (this.data.getVars().indexOf(line) - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
+		float y = (this.data.getVars().indexOf(line) - (data.getAmountOfVars() / 2)) - smoothOffsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
 		y *= smoothScaleY;
 		return y;
 	}
@@ -503,13 +508,25 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
+	/**
+	 * Calculates the x coordinate of a given gate
+	 * @param i the gate index
+	 * @return the x coordinate on screen
+	 */
 	protected float xCoordOnScreen(int i) {
 		return xCoordOnScreen((float)i);
 	}
 	
+	/**
+	 * Calculates the x coordinate of a given value. Keep in mind that
+	 * this is still in gate-space, so a value of 0 would be at the center
+	 * of the circuit's first gate.
+	 * @param i the value to translate
+	 * @return the x coordinate on screen
+	 */
 	protected float xCoordOnScreen(float i) {
 		float xCoord = i;
-		xCoord += offsetX;
+		xCoord += smoothOffsetX;
 		xCoord *= smoothScaleX;
 		return xCoord;
 	}
@@ -559,7 +576,7 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 	
-	//TODO
+
 	public void toggleLineWidth() {
 		switch (this.lineType) {
 		case full:
@@ -670,6 +687,33 @@ public class DrawableCircuit implements Drawable {
 
 	public void setScaleY(float scaleY) {
 		this.scaleY = scaleY;
+	}
+	
+	/**
+	 * Calculates the screen bounds in gate-space
+	 * @return the screen bounds
+	 */
+	public Rectangle getViewBounds() {
+		Rectangle result = new Rectangle();
+		
+		float centerX = -offsetX;
+		float width = Gdx.graphics.getWidth() * (1f / scaleX);
+		float centerY = offsetY;
+		float height = Gdx.graphics.getHeight() * (1f / scaleY);
+		result.set(centerX - (width / 2f), centerY + (data.getAmountOfVars() / 2) - (height / 2f), width, height);
+		return result;
+	}
+	
+	public void setViewBounds(Rectangle bounds) {
+		float targetHeight = Gdx.graphics.getHeight() / bounds.height;
+		float targetWidth = Gdx.graphics.getWidth() / bounds.width;
+		float targetOffsetX = (bounds.x + (bounds.width / 2f));
+		float targetOffsetY = bounds.y - (data.getAmountOfVars() / 2) + (bounds.height / 2f);
+				
+		setScaleX(targetWidth);
+		setScaleY(targetHeight);
+		this.offsetX = -targetOffsetX;
+		this.offsetY = targetOffsetY;
 	}
 	
 	private int busDrawn = 0;
