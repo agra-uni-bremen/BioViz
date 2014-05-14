@@ -86,6 +86,13 @@ public class RevVisInputProcessor implements InputProcessor {
 		case 'P':
 			RevVisGDX.singleton.saveScreenshotCircuit();
 			break;
+		case 'r':
+			DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
+			if (dc instanceof DrawableCircuitReordered) {
+				DrawableCircuitReordered dcr = (DrawableCircuitReordered)dc;
+				dcr.drawReordered = !dcr.drawReordered;
+			}
+			break;
 		case 'z':
 			RevVisGDX.singleton.currentCircuit.zoomTo1Px();
 			break;

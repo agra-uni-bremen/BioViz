@@ -15,6 +15,7 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 	DrawableSprite lineStart, lineEnd;
 	
 	boolean inputsFromStart, functionsToEnd;
+	boolean drawReordered = false;
 
 	public DrawableCircuitReordered(ReversibleCircuit toDraw) {
 		super(toDraw);
@@ -25,10 +26,14 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 	
 	@Override
 	protected float getLineYScreenCoord(String line) {
-		int indexOfLine = this.getShiftedLineCoords(line);
-		float y = (indexOfLine - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
-		y *= smoothScaleY;
-		return y;
+		if (drawReordered) {
+			int indexOfLine = this.getShiftedLineCoords(line);
+			float y = (indexOfLine - (data.getAmountOfVars() / 2)) - offsetY; //+ RevVisGDX.singleton.camera.viewportHeight;
+			y *= smoothScaleY;
+			return y;
+		} else {
+			return super.getLineYScreenCoord(line);
+		}
 	}
 	
 	private void calculateShiftedLineCoords() {
@@ -78,54 +83,65 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 	
 	@Override
 	protected void drawLine(int indexOfVariable) {
-		int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(indexOfVariable)));
-		int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(indexOfVariable)));
-		
-		drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, true);
-		drawVariableNameOverlay(indexOfVariable);
+		if (drawReordered) {
+			int firstGateCoord = data.getCoordOfGate(data.getFirstGateOnLine(data.getVars().get(indexOfVariable)));
+			int lastGateCoord = data.getCoordOfGate(data.getLastGateOnLine(data.getVars().get(indexOfVariable)));
+			
+			drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, true);
+			drawVariableNameOverlay(indexOfVariable);
+		} else {
+			super.drawLine(indexOfVariable);
+		}
 	}
 	
 	@Override
 	protected void drawLineSegment(int indexOfVariable, int firstGateCoord, int lastGateCoord, boolean currentlyUsed, Color additionalMultiplier) {
 		super.drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, currentlyUsed, additionalMultiplier);
-		
-		float y = getLineYScreenCoord(data.getVars().get(indexOfVariable));
-		
-		float maxDim = Math.min(smoothScaleX, smoothScaleY);
-		lineStart.x = xCoordOnScreen(firstGateCoord - 0.5f);
-		lineStart.y = y;
-		lineStart.setDimensions(maxDim, maxDim);
-		lineStart.draw();
-		
-		lineEnd.x = xCoordOnScreen(lastGateCoord + 0.5f);
-		lineEnd.y = y;
-		lineEnd.setDimensions(maxDim, maxDim);
-		lineEnd.draw();
+		if (drawReordered) {
+			float y = getLineYScreenCoord(data.getVars().get(indexOfVariable));
+			
+			float maxDim = Math.min(smoothScaleX, smoothScaleY);
+			lineStart.x = xCoordOnScreen(firstGateCoord - 0.5f);
+			lineStart.y = y;
+			lineStart.setDimensions(maxDim, maxDim);
+			lineStart.draw();
+			
+			lineEnd.x = xCoordOnScreen(lastGateCoord + 0.5f);
+			lineEnd.y = y;
+			lineEnd.setDimensions(maxDim, maxDim);
+			lineEnd.draw();
+		}
 	}
 	
 	@Override
 	protected void drawVariableNameOverlay(int indexOfVariable) {
-		if (showLineNames && smoothScaleY > 10) {
-			Color lineNameColor = new Color(Color.GREEN);
-			lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
-			RevVisGDX.singleton.mc.addHUDMessage(
-					data.getVars().get(indexOfVariable).hashCode(),
-					data.getVars().get(indexOfVariable),
-					xCoordOnScreen(this.getFirstGateCoord(indexOfVariable)) + Gdx.graphics.getWidth() / 2f,
-					(line.y + RevVisGDX.singleton.camera.viewportHeight / 2f) + smoothScaleY / 1.5f,
-					lineNameColor);
-			
-			lineNameColor = new Color(Color.RED);
-			lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
-			RevVisGDX.singleton.mc.addHUDMessage(
-					data.getVars().get(indexOfVariable).hashCode() + Integer.MAX_VALUE / 2,
-					data.getVars().get(indexOfVariable),
-					xCoordOnScreen(this.getLastGateCoord(indexOfVariable)) + Gdx.graphics.getWidth() / 2f,
-					(line.y + RevVisGDX.singleton.camera.viewportHeight / 2f) + smoothScaleY / 1.5f,
-					lineNameColor);
+		if (drawReordered) {
+			if (showLineNames && smoothScaleY > 10) {
+				Color lineNameColor = new Color(Color.GREEN);
+				lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
+				RevVisGDX.singleton.mc.addHUDMessage(
+						data.getVars().get(indexOfVariable).hashCode(),
+						data.getVars().get(indexOfVariable),
+						xCoordOnScreen(this.getFirstGateCoord(indexOfVariable)) + Gdx.graphics.getWidth() / 2f,
+						(line.y + RevVisGDX.singleton.camera.viewportHeight / 2f) + smoothScaleY / 1.5f,
+						lineNameColor);
+
+				lineNameColor = new Color(Color.RED);
+				lineNameColor.a = Math.max(0, Math.min(1, (smoothScaleY - 10f) / 5f));
+				RevVisGDX.singleton.mc.addHUDMessage(
+						data.getVars().get(indexOfVariable).hashCode() + Integer.MAX_VALUE / 2,
+						data.getVars().get(indexOfVariable),
+						xCoordOnScreen(this.getLastGateCoord(indexOfVariable)) + Gdx.graphics.getWidth() / 2f,
+						(line.y + RevVisGDX.singleton.camera.viewportHeight / 2f) + smoothScaleY / 1.5f,
+						lineNameColor);
+			} else {
+				RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(indexOfVariable).hashCode());
+				RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(indexOfVariable).hashCode() + Integer.MAX_VALUE / 2);
+			}
 		} else {
 			RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(indexOfVariable).hashCode());
 			RevVisGDX.singleton.mc.removeHUDMessage(data.getVars().get(indexOfVariable).hashCode() + Integer.MAX_VALUE / 2);
+			super.drawVariableNameOverlay(indexOfVariable);
 		}
 	}
 
