@@ -11,7 +11,6 @@ public class Menu implements Drawable {
 	private float lastMouseX = 0f;
 	private float buttonShiftPercentage = 0f;
 	private int lines = 1;
-	private int minPlacePerButton = 128;
 	
 	public Menu() {
 		try {
@@ -70,7 +69,6 @@ public class Menu implements Drawable {
 	
 	@Override
 	public void draw() {
-		int i = 1; 
 		float placePerButton = (Gdx.graphics.getWidth() / (buttons.size() + 1f));
 		float desiredPlacePerButton = 128 + 32;
 		
@@ -98,8 +96,6 @@ public class Menu implements Drawable {
 			
 			b.x = originalX + (-factor * offset);
 			b.y = Gdx.graphics.getHeight() / -2f - 32 + (72 * currentLine);
-			i++;
-			
 			currentButton++;
 			if (currentButton > buttonsPerLine) {
 				currentButton = 1;
