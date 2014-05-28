@@ -1,4 +1,25 @@
-# Reversible Circuit Visualization RevVis
+## RevVis - A Tool for the Visualization 
+## of Structures and Properties in Reversible Circuits
+
+Copyright (c) 2014 Robert Wille, Jannis Stoppe, Eleonora Schönborn, 
+Kamalika Datta, and Rolf Drechsler
+University of Bremen, Germany
+http://www.informatik.uni-bremen.de/agra/eng/revvis.php
+
+The software is intellectual property of the University of Bremen, Germany. You 
+can freely redistritbute this software for non-comercial pruposes as long as 
+it includes a reference to its orign.
+
+Use at your own risk!
+In no event shall the University of Bremen or the authors be liable for any 
+damages whatsoever (including without limitation damages for loss of business 
+profits, business interruption, loss of business information, or any other 
+pecuniary loss) arising from the use of or inability to use the software, even 
+if the the University of Bremen has been advised of the possibility of such 
+damages.
+
+If you have any questions feel free to contact us using
+revvis@informatik.uni-bremen.de
 
 ## Overview
 
@@ -24,28 +45,29 @@ tained from several synthesis approaches.
 
 ## Usage
 
-RevVis was written using java and the libgdx framework, so you'll need a
-working Java Runtime Environment to run RevVis.
+RevVis was written using java and the libgdx framework, i.e. you will need a
+working Java Runtime Environment to run RevVis. Then, simply executing the
+*.jar-file starts the program.
 
-Download and compile the source code or simply download the .jar file provided
-in the repository. If you start the program, an example circuit is loaded
-and shown; to load your own circuit specify the file as a command line parameter
-to the program.
+By default, an example circuit is loaded and visualized. Using the GUI, you may
+load your own circuit. All loaded circuit must be provided in the RevLib-format
+(see www.revlib.org for details).
 
 Shift the viewport by dragging with the left mouse button, zoom in or out using
 the mouse wheel. On the bottom of the screen, 10 buttons offer visualization
 presets that show different aspects of the loaded circuit. These presets can
 also be selected using the keys 0 - 9.
 
-## Referencing RevVis
+## Reference
 
-If you want to reference RevVis, please use the following BibTex data:
+If you use RevVis for your research, we would be thankful if you refer to the
+tool by citing the following publication: 
 
-@inproceedings{pub7286,
-    abstract = {o.A. },
-    year = {2014},
+@inproceedings{revvis,
+    author = {Robert Wille and Jannis Stoppe and Eleonora Sch{\"o}nborn and Kamalika Datta and Rolf Drechsler},
     title = {RevVis: Visualization of Structures and Properties in Reversible Circuits},
-    booktitle = {Conference on Reversible Computation - Proceedings. Conference on Reversible Computation (RC-14), 6th Conference on Reversible Computation, July 10-11, Kyoto, Japan},
+    booktitle = {Reversible Computation},
     publisher = {Springer},
-    author = {Robert Wille and Jannis Stoppe and Eleonora Schönborn and Kamalika Datta and Rolf Drechsler}
+    year = {2014},
+    note = {{RevVis} is available at http://www.informatik.uni-bremen.de/agra/eng/revvis.php}
 }
