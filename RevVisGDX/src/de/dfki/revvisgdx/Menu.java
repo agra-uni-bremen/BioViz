@@ -69,38 +69,37 @@ public class Menu implements Drawable {
 	
 	@Override
 	public void draw() {
-		float placePerButton = (Gdx.graphics.getWidth() / (buttons.size() + 1f));
-		float desiredPlacePerButton = 128 + 32;
+		float desiredPlacePerButton = 128 + 38;
+		int buttonsPerLine = (int)(Gdx.graphics.getWidth() / desiredPlacePerButton);
+		int buttonsInLastLine = buttons.size() % buttonsPerLine;
+		if (buttonsInLastLine == 0)
+			buttonsInLastLine = buttonsPerLine;
 		
-		lines = (int)((desiredPlacePerButton / 1.5f) / placePerButton) + 1;
-		placePerButton *= lines;
+		lines = (int)(buttons.size() / buttonsPerLine);
+		if (buttons.size() % buttonsPerLine != 0)
+			lines++;
 		
-		float desiredShift = Math.max(0, desiredPlacePerButton - placePerButton);
-		
-		int buttonsPerLine = buttons.size() / lines;
 		int currentButton = 1;
-		int currentLine = 1;
+		int currentLine = lines;
+		float placePerButton = (Gdx.graphics.getWidth() / (buttonsPerLine + 1));
 		
 		for (Button b : this.buttons) {
-			b.draw();
-			float originalX = (Gdx.graphics.getWidth() / (buttonsPerLine + 1)) * currentButton - Gdx.graphics.getWidth() / 2f;
-			float diffToMouse = lastMouseX - originalX;
-			float factor = Math.signum(diffToMouse);
-			diffToMouse = Math.abs(diffToMouse);
 			
-			float offset = 0;
-			if (diffToMouse < placePerButton)
-				offset = buttonShiftPercentage * desiredShift * (diffToMouse / placePerButton);
-			else
-				offset = buttonShiftPercentage * desiredShift * (placePerButton / diffToMouse);
+			float originalX = placePerButton * currentButton - Gdx.graphics.getWidth() / 2f;
 			
-			b.x = originalX + (-factor * offset);
+			b.x = originalX;
 			b.y = Gdx.graphics.getHeight() / -2f - 32 + (72 * currentLine);
+			if (currentLine == 1) {
+				b.x += placePerButton * ((buttonsPerLine - buttonsInLastLine) / 2f);
+			}
+			
 			currentButton++;
 			if (currentButton > buttonsPerLine) {
 				currentButton = 1;
-				currentLine++;
+				currentLine--;
 			}
+			
+			b.draw();
 		}
 	}
 
