@@ -1,5 +1,7 @@
 package de.dfki.revvisgdx;
 
+import javax.swing.JFileChooser;
+
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -13,7 +15,9 @@ public class Main {
 		cfg.height = 600;
 		cfg.addIcon("data/icon_win_linux.png", Files.FileType.Internal);
 		if (args.length <= 0) {
-			new LwjglApplication(new RevVisGDX(), cfg);
+			final JFileChooser fc = new JFileChooser();
+			fc.showOpenDialog(null);
+			new LwjglApplication(new RevVisGDX(fc.getSelectedFile().toString()), cfg);
 		} else {
 			if (args.length >= 1) {
 				new LwjglApplication(new RevVisGDX(args[0]), cfg);
