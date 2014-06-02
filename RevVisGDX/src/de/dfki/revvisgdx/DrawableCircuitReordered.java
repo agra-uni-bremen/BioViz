@@ -6,11 +6,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
 import de.dfki.revlibReader.ReversibleCircuit;
+import de.dfki.revlibReader.ToffoliGate;
 
 public class DrawableCircuitReordered extends DrawableCircuit {
 	
 //	private Vector<ReorderInfo> reorders = new Vector<ReorderInfo>();
 	private HashMap<String, Integer> shiftedIndices;
+	private HashMap<Integer, Integer> shiftedGateCoords;
 	
 	DrawableSprite lineStart, lineEnd;
 	
@@ -145,4 +147,53 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 		}
 	}
 
+	@Override
+	protected float xCoordOnScreen(int i) {
+		if (shiftedGateCoords == null) {
+			recalculateGateShift();
+		}
+		if (shiftedGateCoords.containsKey(i)) {
+			return xCoordOnScreen((float)shiftedGateCoords.get(i));
+		} else {
+			return xCoordOnScreen((float)i);
+		}
+	}
+	
+	private void recalculateGateShift() {
+		shiftedGateCoords = new HashMap<Integer, Integer>();
+		int[] maximumCoord = new int[this.data.getAmountOfVars()];
+		for (int i = 0; i < this.data.getGates().size(); i++) {
+			int maxCoord = Integer.MIN_VALUE;
+			int minCoord = Integer.MAX_VALUE;
+			
+			ToffoliGate current = this.data.getGate(i);
+			for (int j = 0; j < current.getInputs().size(); j++) {
+				String line = current.getInputs().get(j);
+				int coord = this.getShiftedLineCoords(line);
+				if (coord < minCoord)
+					minCoord = coord;
+				if (coord > maxCoord)
+					maxCoord = coord;
+			}
+			String line = current.output;
+			int coord = this.getShiftedLineCoords(line);
+			if (coord < minCoord)
+				minCoord = coord;
+			if (coord > maxCoord)
+				maxCoord = coord;
+			
+			int furthestCoord = 0;
+			for (int j = minCoord; j <= maxCoord; j++) {
+				if (maximumCoord[j] > furthestCoord)
+					furthestCoord = maximumCoord[j];
+			}
+			
+			int resultingCoord = furthestCoord + 1;
+			for (int j = minCoord; j <= maxCoord; j++) {
+				maximumCoord[j] = resultingCoord;
+			}
+			
+			this.shiftedGateCoords.put(i, resultingCoord);
+		}
+	}
 }
