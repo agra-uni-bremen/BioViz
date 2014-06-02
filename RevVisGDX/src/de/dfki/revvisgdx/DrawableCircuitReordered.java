@@ -162,6 +162,9 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 	private void recalculateGateShift() {
 		shiftedGateCoords = new HashMap<Integer, Integer>();
 		int[] maximumCoord = new int[this.data.getAmountOfVars()];
+		for (int i = 0; i < maximumCoord.length; i++) {
+			maximumCoord[i] = -1;
+		}
 		for (int i = 0; i < this.data.getGates().size(); i++) {
 			int maxCoord = Integer.MIN_VALUE;
 			int minCoord = Integer.MAX_VALUE;
@@ -182,7 +185,7 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 			if (coord > maxCoord)
 				maxCoord = coord;
 			
-			int furthestCoord = 0;
+			int furthestCoord = -1;
 			for (int j = minCoord; j <= maxCoord; j++) {
 				if (maximumCoord[j] > furthestCoord)
 					furthestCoord = maximumCoord[j];
