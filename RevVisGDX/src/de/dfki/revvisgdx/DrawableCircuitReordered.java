@@ -18,6 +18,7 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 	
 	boolean inputsFromStart, functionsToEnd;
 	boolean drawReordered = false;
+	boolean drawShifted = false;
 
 	public DrawableCircuitReordered(ReversibleCircuit toDraw) {
 		super(toDraw);
@@ -149,11 +150,15 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 
 	@Override
 	protected float xCoordOnScreen(int i) {
+		if (drawShifted) {
 		if (shiftedGateCoords == null) {
 			recalculateGateShift();
 		}
 		if (shiftedGateCoords.containsKey(i)) {
 			return xCoordOnScreen((float)shiftedGateCoords.get(i));
+		} else {
+			return xCoordOnScreen((float)i);
+		}
 		} else {
 			return xCoordOnScreen((float)i);
 		}
