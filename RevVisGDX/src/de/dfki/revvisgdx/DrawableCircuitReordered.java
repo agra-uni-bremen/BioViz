@@ -104,12 +104,12 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 			float y = getLineYScreenCoord(data.getVars().get(indexOfVariable));
 			
 			float maxDim = Math.min(smoothScaleX, smoothScaleY);
-			lineStart.x = xCoordOnScreen(firstGateCoord - 0.5f);
+			lineStart.x = xCoordOnScreen(getShiftedCoord(firstGateCoord) - 0.5f);
 			lineStart.y = y;
 			lineStart.setDimensions(maxDim, maxDim);
 			lineStart.draw();
 			
-			lineEnd.x = xCoordOnScreen(lastGateCoord + 0.5f);
+			lineEnd.x = xCoordOnScreen(getShiftedCoord(lastGateCoord) + 0.5f);
 			lineEnd.y = y;
 			lineEnd.setDimensions(maxDim, maxDim);
 			lineEnd.draw();
@@ -150,17 +150,20 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 
 	@Override
 	protected float xCoordOnScreen(int i) {
+		return xCoordOnScreen((float)getShiftedCoord(i));
+	}
+	
+	private int getShiftedCoord(int i) {
 		if (drawShifted) {
-		if (shiftedGateCoords == null) {
-			recalculateGateShift();
-		}
-		if (shiftedGateCoords.containsKey(i)) {
-			return xCoordOnScreen((float)shiftedGateCoords.get(i));
+			if (shiftedGateCoords == null) {
+				recalculateGateShift();
+			}
+			if (shiftedGateCoords.containsKey(i))
+				return shiftedGateCoords.get(i);
+			else
+				return -1;
 		} else {
-			return xCoordOnScreen((float)i);
-		}
-		} else {
-			return xCoordOnScreen((float)i);
+			return i;
 		}
 	}
 	
