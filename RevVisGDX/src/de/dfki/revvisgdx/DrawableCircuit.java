@@ -228,7 +228,12 @@ public class DrawableCircuit implements Drawable {
 							line.draw();
 						}
 						
-						if (highlightHoveredGateMovingRule != movingRuleHighlight.none && i == highlitGate) {
+						if (highlightHoveredGateMovingRule != movingRuleHighlight.none &&
+								(i == highlitGate ||
+									(highlitGate >= this.data.getGates().size() && i == this.data.getGates().size() - 1) ||
+									(highlitGate < 0 && i == 0)
+								)
+							){
 							if (highlightHoveredGateMovingRule == movingRuleHighlight.whiteBars) {
 								line.color = new Color(Color.WHITE);
 								line.scaleX = 3; //RevVisGDX.singleton.camera.viewportWidth;
