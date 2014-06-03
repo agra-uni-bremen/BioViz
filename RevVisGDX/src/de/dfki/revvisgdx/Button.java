@@ -2,6 +2,12 @@ package de.dfki.revvisgdx;
 
 import com.badlogic.gdx.graphics.Color;
 
+/**
+ * Base class for the menu buttons you see on the bottom of the screen.
+ * 
+ * @author jannis
+ *
+ */
 public class Button extends DrawableSprite {
 
 	public Button(String textureFilename) {

@@ -1,5 +1,11 @@
 package de.dfki.revvisgdx;
 
+/**
+ * Just a collection of strings that are used somewhere in this application.
+ * 
+ * @author jannis
+ *
+ */
 public class Messages {
 	public static String highlightBus = "Now highlighting bus $1";
 	public static String highlightNoBus = "How highlighting no bus";

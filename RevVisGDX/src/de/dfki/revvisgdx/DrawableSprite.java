@@ -9,6 +9,12 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+/**
+ * This is a wrapper for the 2d drawing methods. 
+ * 
+ * @author jannis
+ *
+ */
 public class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
@@ -17,6 +23,12 @@ public class DrawableSprite implements Drawable {
 	
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 	
+	/**
+	 * This constructor checks if the given texture has been loaded before and does so
+	 * if that's not the case. A sprite is initialized accordingly.
+	 * 
+	 * @param textureFilename the texture to use
+	 */
 	public DrawableSprite(String textureFilename) {
 		TextureRegion region = loadTexture(textureFilename);
 		Texture currentTexture = region.getTexture();
@@ -47,6 +59,11 @@ public class DrawableSprite implements Drawable {
 		return region;
 	}
 	
+	/**
+	 * Set the texture to something different.
+	 * 
+	 * @param textureFilename
+	 */
 	public void setTexture(String textureFilename) {
 		if (!this.allTextures.containsKey(textureFilename))
 			this.loadTexture(textureFilename);

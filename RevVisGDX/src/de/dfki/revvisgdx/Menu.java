@@ -6,10 +6,15 @@ import com.badlogic.gdx.Gdx;
 
 import de.dfki.revvisgdx.buttons.FunctionButton;
 
+/**
+ * This is the menu you can see at the bottom edge of the screen. It's just a collection
+ * of a few buttons to call certain methods that alter how the ReversibleCircuit is drawn.
+ * 
+ * @author jannis
+ *
+ */
 public class Menu implements Drawable {
 	private Vector<Button> buttons = new Vector<Button>();
-	private float lastMouseX = 0f;
-	private float buttonShiftPercentage = 0f;
 	private int lines = 1;
 	
 	public Menu() {
@@ -33,30 +38,26 @@ public class Menu implements Drawable {
 		}
 	}
 	
-	public void MouseCoords(int x, int y) {		
-		float mouseAreaMin = Gdx.graphics.getHeight() - 128f;
-		float mouseAreaMax = Gdx.graphics.getHeight() - 64f;
-		float percentageY;
-		if (y < mouseAreaMax)
-			if (y > mouseAreaMin)
-				percentageY = (y - mouseAreaMin) / (mouseAreaMax - mouseAreaMin);
-			else
-				percentageY = 0;
-		else
-			percentageY = 1;
-		
+	/**
+	 * Call this if the mouse has been moved.
+	 * @param x the new x coordinate
+	 * @param y the new y coordinate
+	 */
+	public void MouseCoords(int x, int y) {
 		float buttonX = x - Gdx.graphics.getWidth() / 2f;
 		float buttonY = -y + Gdx.graphics.getHeight() / 2f;
 		
-		lastMouseX = buttonX;
 		for (Button b : buttons) {
-			
 			b.IsHovered((int)buttonX, (int)buttonY);
 		}
-		
-		buttonShiftPercentage = percentageY;
 	}
 	
+	/**
+	 * Call this if the uses clicked somewhere
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return true if a button was clicked, false otherwise
+	 */
 	public boolean click(int x, int y) {
 		float xButton = x - Gdx.graphics.getWidth() / 2f;
 		float yButton = -y + Gdx.graphics.getHeight() / 2f;

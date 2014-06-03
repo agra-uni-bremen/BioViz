@@ -7,16 +7,42 @@ import com.badlogic.gdx.graphics.Color;
 
 import de.dfki.revlibReader.ReversibleCircuit;
 
+/**
+ * The reordered version of the DrawableCircuit allow for the gates and variables to
+ * shift their location. Currently, gates can either be drawn normally or in parallel,
+ * meaning that gates are shifted to the left, above and below other gates that reside
+ * on a certain coordinate. This allows for a more compact view of circuits if the gates
+ * are usually just connecting neighbouring variables. Same is possible for the variables
+ * that can be toggled to only be drawn from the first to the last gate that accesses
+ * them - and then being shifted down into empty spaces. This allows for a more compact
+ * display of circuits that access certain variables only for a few times but contain
+ * lots of them (as e.g. BDD-synthesis circuits).
+ * 
+ * TODO: Merge the parallel drawing into master branch once it's tested
+ * 
+ * @author jannis
+ *
+ */
 public class DrawableCircuitReordered extends DrawableCircuit {
 	
-//	private Vector<ReorderInfo> reorders = new Vector<ReorderInfo>();
 	private HashMap<String, Integer> shiftedIndices;
 	
 	DrawableSprite lineStart, lineEnd;
 	
 	boolean inputsFromStart, functionsToEnd;
+	
+	/**
+	 * Set this to true if the variables should only be drawn in areas
+	 * where they are actually used and be shifted "down" into empty areas
+	 * to reduce the height of the drawn circuit.
+	 */
 	boolean drawReordered = false;
 
+	/**
+	 * Basically just a wrapper for the DrawableCircuit super-constructor,
+	 * this needs a ReversibleCircuit instance that is supposed to be drawn
+	 * @param toDraw
+	 */
 	public DrawableCircuitReordered(ReversibleCircuit toDraw) {
 		super(toDraw);
 		

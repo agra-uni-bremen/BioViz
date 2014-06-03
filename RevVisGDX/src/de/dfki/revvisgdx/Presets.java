@@ -8,14 +8,19 @@ import de.dfki.revvisgdx.DrawableCircuit.movingRuleHighlight;
 
 import com.badlogic.gdx.graphics.Color;
 
+/**
+ * This class should not be instanciated. Just use the static methods to
+ * set the currently drawn circuit to certain preset settings.
+ * 
+ * @author jannis
+ *
+ */
 public class Presets {
 	
 	public static void setDefault() {
 		RevVisGDX.singleton.currentCircuit.setAllDefault();
 	}
-	/**
-	 * Sets the preset '1'
-	 */
+
 	public static void setConstGarbage() {
 		DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
 		dc.setAllDefault();

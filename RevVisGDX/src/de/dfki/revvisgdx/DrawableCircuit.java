@@ -9,6 +9,13 @@ import com.badlogic.gdx.math.Vector3;
 
 import de.dfki.revlibReader.ReversibleCircuit;
 
+/**
+ * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
+ * Create a ReversibleCircuit first (e.g. by loading a given .real file), then
+ * create a DrawableCircuit instance for the ReversibleCircuit to draw the latter.
+ * @author jannis
+ *
+ */
 public class DrawableCircuit implements Drawable {
 	ReversibleCircuit data;
 
@@ -29,8 +36,6 @@ public class DrawableCircuit implements Drawable {
 	private float scalingDelay = 4f;
 
 	public boolean colorizeGarbageLine = false;
-//	public boolean pixelWideLines = false;
-//	public boolean drawGroups = false;
 	public boolean hideGates = false;
 	public boolean countGatesForGroupColor = false;
 	public boolean colorizeConstants = false;
@@ -43,7 +48,6 @@ public class DrawableCircuit implements Drawable {
 	public boolean highlightHoveredGate = false;
 	public movingRuleHighlight highlightHoveredGateMovingRule = movingRuleHighlight.none;
 	public boolean colorizeLineUsage = false;
-//	public boolean lineWidthByUsage = false;
 	public boolean showLineNames = true;
 	public lineWidth lineType = lineWidth.pixelWide;
 	public lineGrouping neighbourhoodGrouping = lineGrouping.none;
@@ -66,6 +70,10 @@ public class DrawableCircuit implements Drawable {
 	private float boxOverlayX;
 	private float boxOverlayWidth;
 
+	/**
+	 * Creates a drawable entity based on the data given.
+	 * @param toDraw the data to draw
+	 */
 	public DrawableCircuit(ReversibleCircuit toDraw) {
 		this.data = toDraw;
 		line = new DrawableSprite("data/BlackPixel.png");
@@ -170,9 +178,17 @@ public class DrawableCircuit implements Drawable {
 			String currentGroup = data.getGates().iterator().next().output;
 			int groupCount = 0;
 			
+			/**
+			 * Iterate through all gates and draw each of them.
+			 */
 			for (int i = 0; i < data.getGates().size(); i++) {
 				float xCoord = xCoordOnScreen(i);
 
+				/**
+				 * Drawing grouped gates is totally different, so this is the topmost check.
+				 * There's not much overlap between those two cases.
+				 * If lines aren't drawn grouped, this first block will be called.
+				 */
 				if (this.neighbourhoodGrouping == lineGrouping.none) {
 					if (xCoord > -RevVisGDX.singleton.camera.viewportWidth / 2 - smoothScaleX && xCoord < RevVisGDX.singleton.camera.viewportWidth / 2 + smoothScaleX) {
 
@@ -286,6 +302,14 @@ public class DrawableCircuit implements Drawable {
 							controlGate.draw();
 						}
 					}
+				/**
+				 * If lines are supposed to be drawn grouped, go here!
+				 * This is a little messy... as the loop is still being carried
+				 * out once per gate, groups are generated on-the-fly, with each
+				 * gate not being drawn by itself but instead being added to the
+				 * group, which is drawn as soon as the current gate has a different
+				 * target variable
+				 */
 				} else {
 					
 					//First: Add current gate to group.
@@ -428,6 +452,17 @@ public class DrawableCircuit implements Drawable {
 		drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, currentlyUsed, Color.WHITE);
 	}
 	
+	/**
+	 * Draws a segment of a variable (i.e. a horizontal line)
+	 * @param indexOfVariable the index of the given variable (i.e. the y coordinate in circuit-space, if you want to put it that way).
+	 * @param firstGateCoord the starting point (on the left hand side) of the line
+	 * @param lastGateCoord the end coordinate (on the right hand side) of the line
+	 * @param currentlyUsed if the drawLinesColourizedWhenUsed field is set to absolute or relative and this
+	 * value is set to true, the line is colourized accordingly. Set this to true if the segment is placed
+	 * after the first gate on the variable but before the last one.
+	 * @param additionalMultiplier after all other colour calculations, the resulting line colour is multiplied with the colour
+	 * given here. Use Color.WHITE if the colour should remain unchanged.
+	 */
 	protected void drawLineSegment(int indexOfVariable, int firstGateCoord, int lastGateCoord, boolean currentlyUsed, Color additionalMultiplier) {
 		float minimumUsagePercent = ((float)data.getMinimumLineUsage() / (float)data.getMaximumLineUsage());
 		float usagePercent = ((float)data.getLineUsage(data.getVars().get(indexOfVariable)) / (float)data.getMaximumLineUsage());
@@ -536,6 +571,10 @@ public class DrawableCircuit implements Drawable {
 		return xCoord;
 	}
 	
+	/**
+	 * If the two scaling factors aren't equal, this sets the larger scaling factor to
+	 * the smaller one in order to display square elements on screen
+	 */
 	public void shrinkToSquareAlignment() {
 		if (getScaleY() < getScaleX())
 			setScaleX(getScaleY());
@@ -553,6 +592,11 @@ public class DrawableCircuit implements Drawable {
 		return (int)xResult;
 	}
 	
+	/**
+	 * Highlights the gate at the given mouse coordinates, as in "hovering something"
+	 * @param x x coordinate of the cursor
+	 * @param y y coordinate of the cursor
+	 */
 	public void highlightAt(int x, int y) {
 		highlitGate = gateAt(x);
 	}
@@ -582,6 +626,9 @@ public class DrawableCircuit implements Drawable {
 	}
 	
 
+	/**
+	 * Cycles through the available settings of the lineType field.
+	 */
 	public void toggleLineWidth() {
 		switch (this.lineType) {
 		case full:
@@ -607,6 +654,9 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 	
+	/**
+	 * Cycles through the available settings of the neighbourhoodGrouping field.
+	 */
 	public void toggleNeighbourGrouping() {
 		switch(this.neighbourhoodGrouping) {
 		case none:
@@ -627,6 +677,9 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 	
+	/**
+	 * Cycles through the available settings of the highlightHoveredGateMovingRule field
+	 */
 	public void toggleMovingRuleHighlight() {
 		switch (this.highlightHoveredGateMovingRule) {
 		case none:
@@ -643,6 +696,9 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 	
+	/**
+	 * Cycles through the available settings of the colourizeGatesByMobility field
+	 */
 	public void toggleMobilityGateColours() {
 		switch (this.colourizeGatesByMobility) {
 		case none:
@@ -662,6 +718,9 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 	
+	/**
+	 * Cycles through the available settings of the gateDisplay field
+	 */
 	public void toggleGateDisplay() {
 		switch (this.gateDisplay) {
 		case alwaysDetailed:
@@ -678,18 +737,38 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
+	/**
+	 * retrieves the current x scaling factor
+	 */
 	public float getScaleX() {
 		return scaleX;
 	}
 
+	/**
+	 * sets the current x scaling factor
+	 * Keep in mind that the value used for actually drawing the
+	 * circuit is successively approaching the given value for a
+	 * smooth camera movement. Use setScaleImmediately if the viewport
+	 * is supposed to skip those inbetween steps.
+	 */
 	public void setScaleX(float scaleX) {
 		this.scaleX = scaleX;
 	}
-
+	
+	/**
+	 * retrieves the current y scaling factor
+	 */
 	public float getScaleY() {
 		return scaleY;
 	}
 
+	/**
+	 * Sets the current y scaling factor.
+	 * Keep in mind that the value used for actually drawing the
+	 * circuit is successively approaching the given value for a
+	 * smooth camera movement. Use setScaleImmediately if the viewport
+	 * is supposed to skip those inbetween steps.
+	 */
 	public void setScaleY(float scaleY) {
 		this.scaleY = scaleY;
 	}
@@ -709,6 +788,10 @@ public class DrawableCircuit implements Drawable {
 		return result;
 	}
 	
+	/**
+	 * Sets the screen bounds in gate-space
+	 * @param bounds the area the viewport is supposed to show.
+	 */
 	public void setViewBounds(Rectangle bounds) {
 		float targetHeight = Gdx.graphics.getHeight() / bounds.height;
 		float targetWidth = Gdx.graphics.getWidth() / bounds.width;
@@ -722,6 +805,12 @@ public class DrawableCircuit implements Drawable {
 	}
 	
 	private int busDrawn = 0;
+	
+	/**
+	 * Cycles through all available buses and draws them separately.
+	 * This includes a "draw no bus" state, so just keep calling this
+	 * method until no bus is drawn anymore if you need that.
+	 */
 	public void toggleBusDrawing() {
 		if (drawnBus.equals("")) {
 			if (this.data.getBuses().size() > 0) {
@@ -745,6 +834,9 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 	
+	/**
+	 * Cycles through the available values of the drawLinesColourizedWhenUsed field.
+	 */
 	public void toggleLineUsageColouring() {
 		switch (this.drawLinesColourizedWhenUsed) {
 		case none:
@@ -772,6 +864,9 @@ public class DrawableCircuit implements Drawable {
 		this.scaleY = 1;
 	}
 	
+	/**
+	 * Resets all drawing parameters to their default value.
+	 */
 	public void setAllDefault() {
 		colorizeGarbageLine = false;
 		hideGates = false;
@@ -812,12 +907,20 @@ public class DrawableCircuit implements Drawable {
 		this.offsetX = this.data.getGates().size() / -2f;
 	}
 	
+	/**
+	 * Resets the zoom so that the whole circuit is shown without
+	 * smoothly zooming to those settings.
+	 */
 	public void zoomExtentsImmediately() {
 		zoomExtents();
 		this.smoothScaleX = scaleX;
 		this.smoothScaleY = scaleY;
 	}
 	
+	/**
+	 * Sets the zoom to the given values without smoothly approaching
+	 * those target values (instead sets them immediately).
+	 */
 	public void setScaleImmediately(float scaleX, float scaleY) {
 		this.scaleX = scaleX;
 		this.smoothScaleX = scaleX;

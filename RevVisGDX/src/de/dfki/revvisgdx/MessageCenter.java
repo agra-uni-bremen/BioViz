@@ -9,6 +9,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Matrix4;
 
+/**
+ * This class provides some methods to draw text.
+ * 
+ * @author jannis
+ *
+ */
 public class MessageCenter {
 	private Vector<Message> messages;
 	private BitmapFont font;
@@ -40,6 +46,11 @@ public class MessageCenter {
 		messages = new Vector<Message>();
 	}
 	
+	/**
+	 * Add a message that is shown for some time and then disappears.
+	 * 
+	 * @param message the message to be displayed
+	 */
 	public void addMessage(String message) {
 		Message m = new Message();
 		m.message = message;
@@ -95,10 +106,27 @@ public class MessageCenter {
 		}
 	}
 
+	/**
+	 * Use this to draw text somewhere on the screen.
+	 * @param key a unique identifier; subsequent calls with the same key will erase
+	 * the previous message, so you can move the text around
+	 * @param message the message to display
+	 * @param x the x coordinate to show the message at
+	 * @param y the y coordinate to show the message at
+	 */
 	public void addHUDMessage(int key, String message, float x, float y) {
 		addHUDMessage(key, message, x, y, null);
 	}
 	
+	/**
+	 * Use this to draw text somewhere on the screen.
+	 * @param key a unique identifier; subsequent calls with the same key will erase
+	 * the previous message, so you can move the text around
+	 * @param message the message to display
+	 * @param x the x coordinate to show the message at
+	 * @param y the y coordinate to show the message at
+	 * @param col the color of the message
+	 */
 	public void addHUDMessage(int key, String message, float x, float y, Color col) {
 		HUDMessage hm ;
 		if (!this.HUDMessages.containsKey(key)) {
