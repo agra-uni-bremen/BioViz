@@ -22,7 +22,7 @@ public class RevVisInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean keyTyped (char character) {
-		//String c = character;
+		DrawableCircuit dc; 
 		switch (character) {
 		case 'g':
 			RevVisGDX.singleton.currentCircuit.colorizeGarbageLine = !RevVisGDX.singleton.currentCircuit.colorizeGarbageLine;
@@ -88,10 +88,17 @@ public class RevVisInputProcessor implements InputProcessor {
 			RevVisGDX.singleton.saveScreenshotCircuit();
 			break;
 		case 'r':
-			DrawableCircuit dc = RevVisGDX.singleton.currentCircuit;
+			dc = RevVisGDX.singleton.currentCircuit;
 			if (dc instanceof DrawableCircuitReordered) {
 				DrawableCircuitReordered dcr = (DrawableCircuitReordered)dc;
 				dcr.drawReordered = !dcr.drawReordered;
+			}
+			break;
+		case 'R':
+			dc = RevVisGDX.singleton.currentCircuit;
+			if (dc instanceof DrawableCircuitReordered) {
+				DrawableCircuitReordered dcr = (DrawableCircuitReordered)dc;
+				dcr.drawShifted = !dcr.drawShifted;
 			}
 			break;
 		case 'z':

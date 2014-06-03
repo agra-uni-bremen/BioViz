@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
 import de.dfki.revlibReader.ReversibleCircuit;
+import de.dfki.revlibReader.ToffoliGate;
 
 /**
  * The reordered version of the DrawableCircuit allow for the gates and variables to
@@ -26,6 +27,7 @@ import de.dfki.revlibReader.ReversibleCircuit;
 public class DrawableCircuitReordered extends DrawableCircuit {
 	
 	private HashMap<String, Integer> shiftedIndices;
+	private HashMap<Integer, Integer> shiftedGateCoords;
 	
 	DrawableSprite lineStart, lineEnd;
 	
@@ -37,6 +39,7 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 	 * to reduce the height of the drawn circuit.
 	 */
 	boolean drawReordered = false;
+	boolean drawShifted = false;
 
 	/**
 	 * Basically just a wrapper for the DrawableCircuit super-constructor,
@@ -127,12 +130,12 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 			float y = getLineYScreenCoord(data.getVars().get(indexOfVariable));
 			
 			float maxDim = Math.min(smoothScaleX, smoothScaleY);
-			lineStart.x = xCoordOnScreen(firstGateCoord - 0.5f);
+			lineStart.x = xCoordOnScreen(getShiftedCoord(firstGateCoord) - 0.5f);
 			lineStart.y = y;
 			lineStart.setDimensions(maxDim, maxDim);
 			lineStart.draw();
 			
-			lineEnd.x = xCoordOnScreen(lastGateCoord + 0.5f);
+			lineEnd.x = xCoordOnScreen(getShiftedCoord(lastGateCoord) + 0.5f);
 			lineEnd.y = y;
 			lineEnd.setDimensions(maxDim, maxDim);
 			lineEnd.draw();
@@ -171,4 +174,63 @@ public class DrawableCircuitReordered extends DrawableCircuit {
 		}
 	}
 
+	@Override
+	protected float xCoordOnScreen(int i) {
+		return xCoordOnScreen((float)getShiftedCoord(i));
+	}
+	
+	private int getShiftedCoord(int i) {
+		if (drawShifted) {
+			if (shiftedGateCoords == null) {
+				recalculateGateShift();
+			}
+			if (shiftedGateCoords.containsKey(i))
+				return shiftedGateCoords.get(i);
+			else
+				return -1;
+		} else {
+			return i;
+		}
+	}
+	
+	private void recalculateGateShift() {
+		shiftedGateCoords = new HashMap<Integer, Integer>();
+		int[] maximumCoord = new int[this.data.getAmountOfVars()];
+		for (int i = 0; i < maximumCoord.length; i++) {
+			maximumCoord[i] = -1;
+		}
+		for (int i = 0; i < this.data.getGates().size(); i++) {
+			int maxCoord = Integer.MIN_VALUE;
+			int minCoord = Integer.MAX_VALUE;
+			
+			ToffoliGate current = this.data.getGate(i);
+			for (int j = 0; j < current.getInputs().size(); j++) {
+				String line = current.getInputs().get(j);
+				int coord = this.getShiftedLineCoords(line);
+				if (coord < minCoord)
+					minCoord = coord;
+				if (coord > maxCoord)
+					maxCoord = coord;
+			}
+			String line = current.output;
+			int coord = this.getShiftedLineCoords(line);
+			if (coord < minCoord)
+				minCoord = coord;
+			if (coord > maxCoord)
+				maxCoord = coord;
+			
+			int furthestCoord = -1;
+			for (int j = minCoord; j <= maxCoord; j++) {
+				if (maximumCoord[j] > furthestCoord)
+					furthestCoord = maximumCoord[j];
+			}
+			
+			int resultingCoord = furthestCoord + 1;
+			for (int j = minCoord; j <= maxCoord; j++) {
+				maximumCoord[j] = resultingCoord;
+			}
+			
+			this.shiftedGateCoords.put(i, resultingCoord);
+		}
+	}
 }
