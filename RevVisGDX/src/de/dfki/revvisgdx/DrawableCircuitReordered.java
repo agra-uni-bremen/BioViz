@@ -19,8 +19,6 @@ import de.dfki.revlibReader.ToffoliGate;
  * display of circuits that access certain variables only for a few times but contain
  * lots of them (as e.g. BDD-synthesis circuits).
  * 
- * TODO: Merge the parallel drawing into master branch once it's tested
- * 
  * @author jannis
  *
  */
