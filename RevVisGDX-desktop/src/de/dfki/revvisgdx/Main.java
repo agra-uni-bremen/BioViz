@@ -17,7 +17,11 @@ public class Main {
 		if (args.length <= 0) {
 			final JFileChooser fc = new JFileChooser();
 			fc.showOpenDialog(null);
-			new LwjglApplication(new RevVisGDX(fc.getSelectedFile().toString()), cfg);
+			try {
+				new LwjglApplication(new RevVisGDX(fc.getSelectedFile().toString()), cfg);
+			} catch (Exception e) {
+				new LwjglApplication(new RevVisGDX(), cfg);
+			}
 		} else {
 			if (args.length >= 1) {
 				new LwjglApplication(new RevVisGDX(args[0]), cfg);

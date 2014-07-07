@@ -179,11 +179,10 @@ public class RevlibFileReader {
 				try {
 					value = Integer.parseInt(toParse);
 					currentCircuit.addConstLine(currentCircuit.getVars().elementAt(j), value);
+					System.out.println("added const line " + line);
 				} catch(Exception e) {
 					System.out.println("Could not parse const value " + toParse);
 				}
-			
-				
 			}
 		}
 	}	

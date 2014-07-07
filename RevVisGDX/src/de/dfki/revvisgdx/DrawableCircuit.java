@@ -411,15 +411,16 @@ public class DrawableCircuit implements Drawable {
 
 		Color multiplier;
 		
-		if (colorizeConstants)
+		if (colorizeConstants && this.data.constValue(data.getVars().get(indexOfVariable)) >= 0)
 			multiplier = Color.BLACK;
 		else
 			multiplier = Color.WHITE;
+		
 		drawLineSegment(indexOfVariable, -1, firstGateCoord, false, multiplier);
 		
 		drawLineSegment(indexOfVariable, firstGateCoord, lastGateCoord, true);
 		
-		if (colorizeGarbageLine)
+		if (colorizeGarbageLine && this.data.isGarbageLine(data.getVars().get(indexOfVariable)))
 			multiplier = Color.BLACK;
 		else
 			multiplier = Color.WHITE;

@@ -265,8 +265,10 @@ public class ReversibleCircuit {
 	 */
 	public void addLine(String varName) {
 		varName = varName.trim();
-		if (!this.vars.contains(varName))
-			this.vars.add(varName);
+		if (!varName.equals("")) {
+			if (!this.vars.contains(varName))
+				this.vars.add(varName);
+		}
 	}
 	
 	/**
