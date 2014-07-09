@@ -5,9 +5,12 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.JFileChooser;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+//import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -239,5 +242,25 @@ public class RevVisGDX implements ApplicationListener {
 		}
 
 		return pixmap;
+	}
+	
+	public static void loadNewFile() {
+		final JFileChooser fc = new JFileChooser();
+		fc.showOpenDialog(null);
+		String filename = fc.getSelectedFile().toString();
+		try {
+			ReversibleCircuit c;
+			if (filename != null && filename != "") {
+				c = RevlibFileReader.readRealFile(filename);
+				RevVisGDX.singleton.drawables.remove(RevVisGDX.singleton.currentCircuit);
+				RevVisGDX.singleton.currentCircuit = new DrawableCircuitReordered(c);
+				RevVisGDX.singleton.drawables.add(RevVisGDX.singleton.currentCircuit);
+				RevVisGDX.singleton.currentCircuit.zoomExtents();
+			} else {
+				System.out.println("Error: could not load " + filename);
+			}
+		} catch (Exception e) {
+			System.out.println("Error: could not load " + filename);
+		}
 	}
 }

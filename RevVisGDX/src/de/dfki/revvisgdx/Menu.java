@@ -29,7 +29,7 @@ public class Menu implements Drawable {
 			buttons.add(new FunctionButton("data/Preset7.png", Presets.class.getMethod("setMovingRuleColoured")));
 			buttons.add(new FunctionButton("data/Preset8.png", Presets.class.getMethod("setColourizeUsageAbsolute")));
 			buttons.add(new FunctionButton("data/Preset9.png", Presets.class.getMethod("setMovingRuleColouredAbsolute")));
-			buttons.add(new FunctionButton("data/LoadFile.png", Presets.class.getMethod("setMovingRuleColouredAbsolute")));
+			buttons.add(new FunctionButton("data/LoadFile.png", RevVisGDX.class.getMethod("loadNewFile")));
 		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
