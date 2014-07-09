@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.4 r9939"
    sodipodi:docname="NewButtons.svg"
-   inkscape:export-filename="/home/jannis/Quellcode/RevViewWorkspace/RevVisGDX-android/assets/data/Preset9.png"
+   inkscape:export-filename="/media/data/LocalSources/RevViewWorkspace/RevVisGDX-android/assets/data/LoadFile.png"
    inkscape:export-xdpi="45"
    inkscape:export-ydpi="45">
   <defs
@@ -284,6 +284,70 @@
          rx="8"
          ry="8" />
     </mask>
+    <filter
+       id="filter6498"
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow">
+      <feFlood
+         id="feFlood6500"
+         flood-opacity="0.5"
+         flood-color="rgb(0,0,0)"
+         result="flood" />
+      <feComposite
+         id="feComposite6502"
+         in2="SourceGraphic"
+         in="flood"
+         operator="in"
+         result="composite1" />
+      <feGaussianBlur
+         id="feGaussianBlur6504"
+         in="composite"
+         stdDeviation="2"
+         result="blur" />
+      <feOffset
+         id="feOffset6506"
+         dx="0"
+         dy="0"
+         result="offset" />
+      <feComposite
+         id="feComposite6508"
+         in2="offset"
+         in="SourceGraphic"
+         operator="over"
+         result="composite2" />
+    </filter>
+    <filter
+       id="filter6514"
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow">
+      <feFlood
+         id="feFlood6516"
+         flood-opacity="0.5"
+         flood-color="rgb(0,0,0)"
+         result="flood" />
+      <feComposite
+         id="feComposite6518"
+         in2="SourceGraphic"
+         in="flood"
+         operator="in"
+         result="composite1" />
+      <feGaussianBlur
+         id="feGaussianBlur6520"
+         in="composite"
+         stdDeviation="2"
+         result="blur" />
+      <feOffset
+         id="feOffset6522"
+         dx="0"
+         dy="0"
+         result="offset" />
+      <feComposite
+         id="feComposite6524"
+         in2="offset"
+         in="SourceGraphic"
+         operator="over"
+         result="composite2" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -293,18 +357,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="70.803239"
-     inkscape:cy="-102.21774"
+     inkscape:cx="157.4496"
+     inkscape:cy="62.167876"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:object-nodes="true"
-     inkscape:window-width="1631"
-     inkscape:window-height="1026"
-     inkscape:window-x="49"
-     inkscape:window-y="24"
+     inkscape:window-width="1366"
+     inkscape:window-height="744"
+     inkscape:window-x="1680"
+     inkscape:window-y="306"
      inkscape:window-maximized="1"
-     inkscape:snap-bbox="true">
+     inkscape:snap-bbox="true"
+     showguides="true"
+     inkscape:guide-bbox="true">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -370,7 +436,7 @@
          id="tspan4101"
          x="128"
          y="964.36218"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Medium">Preset 9</tspan></text>
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Medium">Load File</tspan></text>
     <image
        y="1068.3622"
        x="0"
@@ -555,15 +621,6 @@
          style="font-size:24px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Medium">Preset 8 <tspan
    id="tspan4180"
    style="font-size:14px">absolute usage</tspan></tspan></text>
-    <image
-       y="1404.3622"
-       x="0"
-       id="image4082"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAAgCAYAAAD9qabkAAAABHNCSVQICAgIfAhkiAAADOdJREFU eJzt3Xl41eWVwPHPzR4SkhAIRPZFwAiIKGoRqoh0AKmiTkvto9jqVOu41Tr6uHRmOi6t0lEfOzhu uLTiuHTUFimug7XgAqggLkRFIOySkLAmhGx3/nhDQ0poWWIi+Ps+z31ufve+v/M77819z3vec877 u7F4PB4H05/jzH8kIwbE41TgzLH87wySkkREtBrLljJiOOvWh+OkBC48n/+6n9TUvZMRjzNmDNOn U1XF009TWclNNzF6NCeeyIQJ5OTw9tukpDBgAPn5+693XRVVpUhAnLQDkPUlEPuLASgvp18PNpVS h1p0as/UxxgzjlisVRWNiFCxndtupWIrJwzj6CH0O2LfZLz4Im++yXHHhQE+blz47k+aFAzE5Mm8 8AI33hiMREoKP/sZ112375NgeRGbFlCxnNrt4ZHUjr5XkpCyb7KgroaaChKSw3FS+r7L+CsaDACs XMHVP2XhexzZnxEncdW1e29hIyJagnj8wCakiy4Kg/mCC+jSheJiCgvp0YONG/nhDyktbXzOk09y zjl7f426GpbcQd5IMvuFAf/FC9TuYOtHDJy8bzpvL6F4LluXU7Odqo3kHsvh3903OX9FYwOwk2VL 6dSJjMwDEh4R8ZXlpZdYvZo2bWjXjsGD6dyZa6/ljjtCm9guy+HTT+f558XVqVGp0iaJUrXRvmn5 pW+x+EaqtjH0UdSx8V16XEjRg7QfTtbAvdM1Xsfi+2g/hLY9SM5i5Uy2LCc5nUFX7ffH0LRP07vP /kmr3k5CEonJ+61QRESLMHZs06+vWBGedx38UFWrprbSxsTlVpjtC4vkO0qxz53iRulyG8vZvprB 97D+VWYPI+soBkwOcvPPoHR2MADxWmoriSWSmNa0TqWLKHyQrP6MnEr5Gqq2MOR63v0521aR2W2/ PoamPYB9JR5nySzenEJNNe16cfJV5PU9YNERhxCbyvh4ASmpDD4hrK+/anzxBX36UFHR8Fr7DuLT nrVqbKYNsfd1doxchytRaLV5VpvrDFMl22VNvvxBck8gezBrnmHlb9k4j3430uEktn4SnjfMCX+3 6UF1BX1+3LDG38nnT5LZk88epej3dB3DwCvpeDxbi4KB6HEG4sFbECMhca+6m3CAH1dgwxKev5IP Z/Dhi8y5lwdOpbqyWcRHHAKUFjP1Ti79PueO51tHM/vl1tZqd/LzWbAgZAsOO4xRo7jiKpWnDrIs 9pKX3aBCqQTJvvC+nk4yxp3mmdJYTu4wih5iRwlVGzjmUUa8xuqneO8HbC1k4zukH0afy8gaQE0Z Cy9u8Dp2smMj6R056UGG3kLZImadw6qXKV9NbRWVJaz4I+//ks//h6KZe9Xd5vEAZlzDn+4khsR6 12l7nAm3MvpnByw+4hDgoTu562ZKt5AiZJoqsXAp3Xu3snJ7oLAwBAmzsmyy1kqvS5LuZVfJ1k0/ 3zbC9eANvzLcNWK7zqnvX0rqYbQbSv446qopm8vKx8L7ZXMZ9gcy+rDiEbKHIMbmhfS4oEHO2tcp X0W301j+bHgumc+cS8jsGjyC/JNC4DGnL9uLWfosSSl84z//ZhebxwNY90H4hybusm5KQHlxs4iP OAT4+H1KtpCOpBgpMRLx6vTW1mzPFBSQlVV/UGWt+Y50lovMlyLTbLea6TKVtkjVVrWKxucffS9S guu/7H5WTaO2nN6XkXcKXb7Ha4N597z6wTuEnKOpXNfYC+g8knVzWD2LjG5h0Pc6m5MfDtmF8jV8 NIWu3yLnCLatoP8k8kew/u2/2cXmMQD9x4TneDw8apDdjt4jm0V8I3Zeoxkcl4gWZOvmMOB3Btfq 4uF4xdLW1GqvydbDKnNV226lNw1zjZ9YZrsydzncFqslaCKmUXBdGPCdJ9Dlu3QcQ1JmKBAq+FdO nseWxSy+gaKHQ0AwJZe6HY3lDLuLdXPZtJglj4e4ABz3S7qMDuc81YsFt4QlQe5Aek5g7Z9Cuz2M m+Yp7xt2SVj/L/lzkJiWxcCzOOK0ZhHfiMrNfPwiJcvoM5x+I5v/GhHNz8QL+MOM8AXc6f4f0ZuJ F7a2ZntFTMypfuH3JulvgsONkSLDWHfL9mvt9Zewp+GUmtf4uE1PCn9Ojx+GYqEjbw1tFl3Gkl/T 9TvE/mpuTs7km3exsTAYidRcMrqw5XO2r2f046x6hdkXhnOz+5J3PGkdgnexdTllH4Tz4nV0OTX0 q1liADtZ+DQbPqXnMPKOIGf/UhN7JI7X7+b5m9i8KcwgQydy4W9J3kMKJeKrw4zfcfM1VFXQq4Bx Z3DxNQdVleki0xT5ky6Ol66DmJi2OuvkKCky9l5Q0SNUria9O52/EwZ4VSkf/DTUCPS8aHcj0BTV Fcz7F0bcx5rXqNoUKg7nXkPOILJ70WsiWz6jTZdQPbj890H2iHua2QB82axbzMMTWf4xacIXpyLO 8O9x4RN794FFtC5VVXyyiB6Hh2XiQcgOW5VbL0GyVFnS7Wc/Fv8bO4pDPCAxk7rK4AlkHUXKPshc cCudR7GpkJ5nkZYb4gLTh4fXK0s45TFS27HpU4rnkdOPDYu+IgZgfSGr5pOaSf4g8vo13W7O/Uz7 5zDz7ww4VsfpfDjXLwznR0QcTJQvpaqMxIww6FPyQjHdvhCP88blJGfQfVwoKtqxMby36ZOQMSie z/G3B++g/THkHcPC25opBnAgbFjCMz9i6VvBxW/XjUlP0GvE7m07Dwptds021KFD34biiZJ1LF9M Vi5HDGmhTkRE7CcZfcLjQIjF+OZ/h3RhTUWY6XMHhRhBxVq+9Wx4b9Y5oUBo9DPhvLyhrWwAaquZ /yhL3gr5iCRsWsXU0/j52t1n9F7foGtfVi4hWcg2ZLVl5BUh51m8hpsv4o1XQ4nl+B9w491kZrd8 3yIiWprOI3d/reyjEATMGxqKiKq38dJ4uo4jLedLWgLUVvPZHCq20O0o2ncnsQlbs62Eu4ewYU0o DhEL6aFaXDyTgiayCNWVIQi4+AW6DqD3CIb/KLhND97ClP8IBUlJwv0M+vVj+sdNXz8i4lBn1cv1 ew3q42M9Tqe6nOdHkpz6JRiA2hpeupM3prHmM7I7cMpFnH1TE22ruL0vZSsbr+kzszn/OfqOomo7 pcvDRqO8PqTnhHbbNoR0Y1J97rVkHT84kWVFodhELCwRqvCbWRw/qlm7GRFx0DDvujB++p1HZvdQ Kbj+bdI7NVMh0K6sWMCse0KkXjWb1/HUzXz0yu5tE1M49ryQE66LU1M/+w86O6QS43HefID7JnDX qdw5ivnTwrmZHRoGP7TNYduWBk9CuLy2GVF2IOLrzQmTQ7lw+UrWvBoqBbuPp9eZX0IM4M9TWbea VCTUD8SkOK/dx8B/2L392F+EDRGzbiKrC10H841Lwj7ntR/x+j2sWRoG9qqFTD2f7seSf2RjOWnp DB/L754gs96Q7MD40yg4ptm7GRFxUNFzfP0fcX+ZIDVXJeCudOwT5CfsEqmHzPYNx+UloaIvuytJ qZx8OSdMCuv7tp0aZM2+l7VLG4xJIirjvHI75z+2+7VvfoT0XGY8Qvt8evflnCvIzNq9bUTE15LG RVfNbwCOPYtpN9TXHQtueKcufLN+d9P6xfzfLSybQ3o2BRP49m2kZYdHI+qNx67GJGbP91NLTuXf pzDpUsTI70bqgd83LSLiUKX5DUB+f66bzrSrqdxIp/4MGUefYdTVMv8h3nm6fiCvZWUhbbIYdcPu soZM5KX7SdnFmOR2ZOj3/rYOvQqavVsREYciX14lYF0dRe/RqQ8Z9bdLWvo6j09kY0lDsK42TloG Nywjs+Pucl6ZzIybiVfRridHn86EySRFtx2LiDhQWrYUeP1ibh8Q1vIJsYatw+06cdVCsg5r+rzN X7DyHQ4bQHbnaONPREQz0bLVMR0LyGpPeWlDGS8MPJu0nD2fl53PoNNbRMWIiK8TLZsgj8U476lQ o1wtzOTdjuKEi0mJgnURES1N6+wGrN7BOw+HTTwdC8jp2uIq7DMrPwzFTIkpjL6UxL2762rEXlJd TU0NCQnRD9G0IF+N7cBfddZ+wr3n8umCkI3o1I2LH2DwuNbW7OCnrCz8VFdxMSUl4XbcBQV8//ut rdnXgqhG9u9RU8Xs3/DZghC8TEXpKm4bT9maVlYOm0v4+A2KPmxtTfad2lqeey78TNfJJ/OTnzBo EEVFnH9+a2v3tSAyAH+P6h289XiY+ZNiIY6RKOxbKHy99fSKxylewZQfc/1oLjuaO/6J8s2tp9O+ UlgYfp5r5kzS0tiwIXgCV1/NwIG8915ra3jIE+2R/XuktiEzj6T62T4ery9Iym0ob24Naqu573Lm /rH+luyY+UiovZiy8OC4z97SpZx2Gj17cvfd4Vd5zj03xAAuuIApUzj22NbW8pDm/wGJr1fq/Qjk swAAAABJRU5ErkJggg== "
-       height="32"
-       width="256"
-       mask="url(#mask4085)"
-       transform="translate(0,-431.99998)" />
     <text
        sodipodi:linespacing="125%"
        id="text4182"
@@ -589,12 +646,7 @@
          x="128"
          y="1020.3622"
          style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:89.99999762%;writing-mode:lr-tb;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
-         id="tspan4867">absolute</tspan><tspan
-         sodipodi:role="line"
-         x="128"
-         y="1045.5621"
-         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:89.99999762%;writing-mode:lr-tb;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
-         id="tspan4871">moving rule</tspan></text>
+         id="tspan4871" /></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -609,5 +661,32 @@
          style="font-size:24px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Medium">Preset 0 <tspan
    id="tspan4829"
    style="font-size:14px">default</tspan></tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter6498)"
+       id="rect6496"
+       width="32"
+       height="32"
+       x="112"
+       y="972.36218" />
+    <path
+       transform="translate(0,924.3622)"
+       inkscape:connector-curvature="0"
+       id="path6512"
+       d="m 80,112 0,-48 64,0 8,-8 16,0 8,8 0,48 z"
+       style="fill:#ffeeaa;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter6514)" />
+    <rect
+       y="972.36218"
+       x="112"
+       height="32"
+       width="32"
+       id="rect6510"
+       style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter6498)"
+       transform="matrix(0.96592583,-0.25881905,0.25881905,0.96592583,-255.84955,70.120185)" />
+    <path
+       style="fill:#ffeeaa;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 80,112 0,-48 64,0 8,-8 16,0 8,8 0,48 z"
+       id="path6446"
+       inkscape:connector-curvature="0"
+       transform="translate(0,924.3622)" />
   </g>
 </svg>
