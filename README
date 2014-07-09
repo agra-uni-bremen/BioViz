@@ -49,9 +49,11 @@ RevVis was written using java and the libgdx framework, i.e. you will need a
 working Java Runtime Environment to run RevVis. Then, simply executing the
 *.jar-file starts the program.
 
-By default, an example circuit is loaded and visualized. Using the GUI, you may
-load your own circuit. All loaded circuit must be provided in the RevLib-format
-(see www.revlib.org for details).
+You are prompted with a dialogue to open a circuit when starting the program.
+If you cancel the selection of a file, an example circuit will be loaded
+instead. Using the GUI, you may load your own circuit later on as well. All
+loaded circuits must be provided in the RevLib-format (see www.revlib.org for
+details).
 
 Shift the viewport by dragging with the left mouse button, zoom in or out using
 the mouse wheel. On the bottom of the screen, 10 buttons offer visualization
