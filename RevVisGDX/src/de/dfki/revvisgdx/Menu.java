@@ -73,7 +73,11 @@ public class Menu implements Drawable {
 	public void draw() {
 		float desiredPlacePerButton = 128 + 38;
 		int buttonsPerLine = (int)(Gdx.graphics.getWidth() / desiredPlacePerButton);
-		int buttonsInLastLine = buttons.size() % buttonsPerLine;
+		int buttonsInLastLine = 0;
+		if (buttonsPerLine > 0)
+			buttonsInLastLine = buttons.size() % buttonsPerLine;
+		else
+			buttonsPerLine = buttons.size();
 		if (buttonsInLastLine == 0)
 			buttonsInLastLine = buttonsPerLine;
 		

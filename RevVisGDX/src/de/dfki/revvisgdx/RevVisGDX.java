@@ -13,6 +13,7 @@ import com.badlogic.gdx.Gdx;
 //import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL11;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -89,13 +90,13 @@ public class RevVisGDX implements ApplicationListener {
 	@Override
 	public void render() {		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		camera.update();
 		
-        camera.apply(Gdx.gl10);
+        camera.apply(Gdx.gl11);
  
         // clear previous frame
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
