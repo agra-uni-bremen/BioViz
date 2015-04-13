@@ -76,8 +76,8 @@ public class RevVisGDX implements ApplicationListener {
 		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
-		this.menu = new Menu();
-		this.drawables.add(menu);
+		//this.menu = new Menu();
+		//this.drawables.add(menu);
 		
 		mc.addMessage("RevVisGDX started");
 	}

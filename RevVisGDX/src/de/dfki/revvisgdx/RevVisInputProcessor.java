@@ -175,7 +175,7 @@ public class RevVisInputProcessor implements InputProcessor {
 			multiTouchZoom = false;
 		}
 		
-		RevVisGDX.singleton.menu.click(x, y);
+		//RevVisGDX.singleton.menu.click(x, y);
 		
 		return false;
 	}
@@ -248,7 +248,7 @@ public class RevVisInputProcessor implements InputProcessor {
 		oldX = screenX;
 		oldY = screenY;
 		RevVisGDX.singleton.currentCircuit.highlightAt(screenX, screenY);
-		RevVisGDX.singleton.menu.MouseCoords(screenX, screenY);
+		//RevVisGDX.singleton.menu.MouseCoords(screenX, screenY);
 		return false;
 	}
 }
