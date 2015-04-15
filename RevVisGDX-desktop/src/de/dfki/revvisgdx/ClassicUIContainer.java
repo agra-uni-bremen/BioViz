@@ -11,19 +11,25 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import de.dfki.revvisgdx.buttons.FunctionButton;
 
 public class ClassicUIContainer extends JFrame {
 
-	public ClassicUIContainer() {
+	public JSlider time;
+	public static ClassicUIContainer singleton;
+	
+	public ClassicUIContainer(int timeMax) {
+		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
@@ -35,112 +41,32 @@ public class ClassicUIContainer extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
-		panel.setPreferredSize(new Dimension(256, 600));
+		panel.setPreferredSize(new Dimension(128, 600));
 
 		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/>for Olli &lt;3</body></html>");
 
 		JButton defaultButton = new JButton();
-		defaultButton.setText("  Default Preset  ");
-		defaultButton.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setDefault();
-		    } 
-		});
+		defaultButton.setText("Autoplay");
+		defaultButton.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            RevVisGDX.singleton.currentCircuit.autoAdvance = !RevVisGDX.singleton.currentCircuit.autoAdvance;
+	        }
+	    });
 		
-		JButton constGarbage = new JButton();
-		constGarbage.setText("Const as Garbage");
-		constGarbage.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setConstGarbage();
-		    } 
-		});
-		
-		JButton boxesAndUsage = new JButton();
-		boxesAndUsage.setText("Boxes and Usage");
-		boxesAndUsage.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setBoxesAndUsage();
-		    } 
-		});
-		
-		JButton colourizedUsage = new JButton();
-		colourizedUsage.setText("Colourized Usage");
-		colourizedUsage.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setColourizedUsage();
-		    } 
-		});
-		
-		JButton greyNeighboursWithBlackTargets = new JButton();
-		greyNeighboursWithBlackTargets.setText("Black Targets");
-		greyNeighboursWithBlackTargets.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setGreyNeighboursWithBlackTargets();
-		    } 
-		});
-		
-		JButton colourizeLineType = new JButton();
-		colourizeLineType.setText("Colourized Line Type");
-		colourizeLineType.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setColourizeLineType();
-		    } 
-		});
-		
-		JButton movingRuleBoxOverlay = new JButton();
-		movingRuleBoxOverlay.setText("Moving Rule Box Overlay");
-		movingRuleBoxOverlay.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setMovingRuleBoxOverlay();
-		    } 
-		});
-		
-		JButton movingRuleColoured = new JButton();
-		movingRuleColoured.setText("Moving Rule Coloured");
-		movingRuleColoured.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setMovingRuleColoured();
-		    } 
-		});
-		
-		JButton colourizeUsageAbsolute = new JButton();
-		colourizeUsageAbsolute.setText("Colourized Usage Abs");
-		colourizeUsageAbsolute.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setColourizeUsageAbsolute();
-		    } 
-		});
-		
-		JButton movingRuleColouredAbsolute = new JButton();
-		movingRuleColouredAbsolute.setText("Moving Rule Coloured Abs");
-		movingRuleColouredAbsolute.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		        Presets.setMovingRuleColouredAbsolute();
-		    } 
-		});
-		
-		
-		JButton loadFile = new JButton();
-		loadFile.setText("  Load new File  ");
-		loadFile.addActionListener(new ActionListener() { 
-		    public void actionPerformed(ActionEvent e) { 
-		    	RevVisGDX.loadNewFile();
-		    } 
-		});
-
+		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
+		time.setPreferredSize(new Dimension(128, 64));
+		time.addChangeListener(new ChangeListener() {
+	        @Override
+	        public void stateChanged(ChangeEvent ce) {
+	            RevVisGDX.singleton.currentCircuit.currentTime = ((JSlider)ce.getSource()).getValue();
+	        }
+	    });
 		
 		panel.add(label);
-		panel.add(loadFile);
 		panel.add(defaultButton);
-		panel.add(constGarbage);
-		panel.add(boxesAndUsage);
-		panel.add(colourizedUsage);
-		panel.add(greyNeighboursWithBlackTargets);
-		panel.add(colourizeLineType);
-		panel.add(movingRuleBoxOverlay);
-		panel.add(movingRuleColoured);
-		panel.add(colourizeUsageAbsolute);
-		panel.add(movingRuleColouredAbsolute);
+		panel.add(time);
+		
 		
 		container.add(panel, BorderLayout.WEST);
 		container.add(canvas.getCanvas(), BorderLayout.CENTER);
@@ -170,7 +96,7 @@ public class ClassicUIContainer extends JFrame {
 			// handle exception
 		}
 
-		JFrame frame = new ClassicUIContainer();
+		JFrame frame = new ClassicUIContainer(10);
 
 //		JPanel panel = new JPanel();
 //		panel.setLayout(new FlowLayout());

@@ -29,13 +29,17 @@ public class DrawableSprite implements Drawable {
 	 * 
 	 * @param textureFilename the texture to use
 	 */
-	public DrawableSprite(String textureFilename) {
+	public DrawableSprite(String textureFilename, float sizeX, float sizeY) {
 		TextureRegion region = loadTexture(textureFilename);
 		Texture currentTexture = region.getTexture();
 		sprite = new Sprite(region);
-		sprite.setSize(currentTexture.getWidth(), currentTexture.getHeight());
+		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight()/2f);
 		sprite.setPosition(-sprite.getWidth()/2f, -sprite.getHeight()/2f);
+	}
+	
+	public DrawableSprite(String textureFilename) {
+		this(textureFilename, 1, 1);
 	}
 	
 	public void draw() {
@@ -52,7 +56,7 @@ public class DrawableSprite implements Drawable {
 	}
 	
 	private TextureRegion loadTexture(String textureFilename) {
-		Texture t = new Texture(Gdx.files.internal(textureFilename));
+		Texture t = RevVisGDX.singleton.manager.get(textureFilename, Texture.class);// new Texture(Gdx.files.internal(textureFilename));
 		t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		TextureRegion region = new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
 		allTextures.put(textureFilename, region);
