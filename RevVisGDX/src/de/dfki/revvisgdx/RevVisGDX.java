@@ -7,20 +7,23 @@ import java.util.Vector;
 
 import javax.swing.JFileChooser;
 
+import structures.Biochip;
+import structures.Blob;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 //import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL11;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import de.dfki.revlibReader.ReversibleCircuit;
-import de.dfki.revlibReader.RevlibFileReader;
 
 public class RevVisGDX implements ApplicationListener {
 	public OrthographicCamera camera;
@@ -31,14 +34,13 @@ public class RevVisGDX implements ApplicationListener {
 	public static RevVisGDX singleton;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 	
+	AssetManager manager = new AssetManager();
 	MessageCenter mc = new MessageCenter();
 	
 	private String filename;
 	
 	boolean runFullPresetScreenshots = false;
 	float fullPresetScreenshotsScaling = 6f;
-	
-	public Menu menu;
 	
 	public RevVisGDX() {
 		super();
@@ -49,36 +51,53 @@ public class RevVisGDX implements ApplicationListener {
 	
 	public RevVisGDX(String filename) {
 		this();
-		System.out.println("Starting RevVisGDX, loading " + filename);
+		System.out.println("Starting BiochipVis, loading currently disabled");// + filename);
 		this.filename = filename;
 	}
 	
 	@Override
-	public void create() {		
+	public void create() {
+		
+	    File path = new File("assets/textures");
+
+	    File [] files = path.listFiles();
+	    for (int i = 0; i < files.length; i++){
+	        if (files[i].isFile() && files[i].getName().endsWith(".png")){
+	            System.out.println("loading " + files[i].toString() + " as texture");
+	            manager.load(files[i].toString(), Texture.class);
+	        }
+	    }
+	    
+		manager.finishLoading();
+		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
 		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
 		
-		ReversibleCircuit c;
-		if (this.filename != null && this.filename != "") {
-			c = RevlibFileReader.readRealFile(filename);
-		} else {
-			FileHandle handle = Gdx.files.internal("examples/____intro_beispiel.real");
-			String fileContents = handle.readString();
-			c = RevlibFileReader.readRealFileContents(fileContents);
-		}
-		currentCircuit = new DrawableCircuitReordered(c);
+		Biochip c;
+		//TODO loading stuff
+		c = new Biochip(10, 5);
+		c.disableFieldAt(9, 4);
+		c.disableFieldAt(8, 4);
+		c.disableFieldAt(9, 3);
+		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
+		
+		Blob b = c.addBlob();
+		b.addPosition(0, 0, 0);
+		b.addPosition(1, 1, 0);
+		b.addPosition(2, 1, 1);
+		b.addPosition(5, 2, 1);
 		
 		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
-		this.menu = new Menu();
-		this.drawables.add(menu);
+		//this.menu = new Menu();
+		//this.drawables.add(menu);
 		
-		mc.addMessage("RevVisGDX started");
+		mc.addMessage("BiochipVis started");
 	}
 
 	@Override
@@ -87,26 +106,28 @@ public class RevVisGDX implements ApplicationListener {
 	}
 
 	@Override
-	public void render() {		
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		camera.update();
-		
-        camera.apply(Gdx.gl10);
- 
-        // clear previous frame
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		
-		for (int i = 0; i < drawables.size(); i++) {
-			drawables.get(i).draw();
+	public void render() {
+		if(manager.update()) {
+			Gdx.gl.glClearColor(1, 1, 1, 1);
+			Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			camera.update();
+			
+	        camera.apply(Gdx.gl11);
+	 
+	        // clear previous frame
+	        Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			
+			batch.setProjectionMatrix(camera.combined);
+			batch.begin();
+			
+			for (int i = 0; i < drawables.size(); i++) {
+				drawables.get(i).draw();
+			}
+			
+			mc.render();
+			
+			batch.end();
 		}
-		
-		mc.render();
-		
-		batch.end();
 	}
 
 	private boolean firstRun = true;
@@ -115,41 +136,7 @@ public class RevVisGDX implements ApplicationListener {
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;
 		if (firstRun) {
-			if (!runFullPresetScreenshots)
-				currentCircuit.zoomExtents();
-			else {
-				File f = new File(".\\screenshots");
-				if (f.list().length == 0) {
-					currentCircuit.setScaleImmediately(fullPresetScreenshotsScaling, fullPresetScreenshotsScaling);
-					Presets.setConstGarbage();
-					saveScreenshotCircuit("preset1_");
-					Presets.setBoxesAndUsage();
-					saveScreenshotCircuit("preset2_");
-					Presets.setColourizedUsage();
-					saveScreenshotCircuit("preset3_");
-					Presets.setGreyNeighboursWithBlackTargets();
-					saveScreenshotCircuit("preset4_");
-					Presets.setColourizeLineType();
-					saveScreenshotCircuit("preset5_");
-					Presets.setMovingRuleColoured();
-					saveScreenshotCircuit("preset7_");
-					Presets.setColourizeUsageAbsolute();
-					saveScreenshotCircuit("preset8_");
-					Presets.setMovingRuleColouredAbsolute();
-					saveScreenshotCircuit("preset9_");
-					try {
-						String execString = "montage screenshots/*.png -geometry +0+0 -tile " + ((int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1) + "x" + ((int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1) + " -crop " + (int)(fullPresetScreenshotsScaling * currentCircuit.data.getGates().size()) + "x" + (int)(fullPresetScreenshotsScaling * currentCircuit.data.getAmountOfVars()) + "+0+0 screenshots/fullPreset.png";
-						System.out.println(execString);
-						Runtime.getRuntime().exec(execString);
-					} catch(Exception e) {
-						System.out.println(System.getenv("PATH"));
-						System.out.println(e.getMessage());
-					}
-				} else {
-					System.out.println("screenshots folder must be empty, no images were generated.");
-				}
-				currentCircuit.zoomExtents();
-			}
+			currentCircuit.zoomExtents();
 			firstRun = false;
 		}
 	}
@@ -161,28 +148,7 @@ public class RevVisGDX implements ApplicationListener {
 	@Override
 	public void resume() {
 	}
-	
-	public void saveScreenshotCircuit() {
-		saveScreenshotCircuit("");
-	}
-	
-	public void saveScreenshotCircuit(String prefix) {
-		this.mc.hidden = true;
-		
-		int requiredYDim = (int)(this.currentCircuit.data.getAmountOfVars() / (Gdx.graphics.getHeight() / currentCircuit.getScaleY())) + 1;
-		int requiredXDim = (int)(this.currentCircuit.data.getGates().size() / (Gdx.graphics.getWidth() / currentCircuit.getScaleX())) + 1;
-		float elementsPerScreenY = (Gdx.graphics.getHeight() / currentCircuit.getScaleY());
-		float minCoordY = -this.currentCircuit.data.getAmountOfVars() / 2f + elementsPerScreenY / 2f + 0.5f;
-		float minCoordX = (Gdx.graphics.getWidth() / currentCircuit.getScaleX()) / 2f - 0.5f;
 
-		for (int y = 0; y < requiredYDim; y++) {
-			this.currentCircuit.offsetY = y * -(Gdx.graphics.getHeight() * (1f / currentCircuit.getScaleY())) - minCoordY;
-			for (int x = 0; x < requiredXDim; x++) {
-				this.currentCircuit.offsetX = x * -(Gdx.graphics.getWidth() * (1f / currentCircuit.getScaleX())) - minCoordX;
-				saveScreenshotFull(prefix);
-			}
-		}
-	}
 	
 	private static int screenshotCount = 0;
 	public void saveScreenshotFull(String prefix) {
@@ -249,13 +215,13 @@ public class RevVisGDX implements ApplicationListener {
 		fc.showOpenDialog(null);
 		String filename = fc.getSelectedFile().toString();
 		try {
-			ReversibleCircuit c;
+			Biochip c;
 			if (filename != null && filename != "") {
-				c = RevlibFileReader.readRealFile(filename);
-				RevVisGDX.singleton.drawables.remove(RevVisGDX.singleton.currentCircuit);
-				RevVisGDX.singleton.currentCircuit = new DrawableCircuitReordered(c);
-				RevVisGDX.singleton.drawables.add(RevVisGDX.singleton.currentCircuit);
-				RevVisGDX.singleton.currentCircuit.zoomExtents();
+//				c = RevlibFileReader.readRealFile(filename);
+//				RevVisGDX.singleton.drawables.remove(RevVisGDX.singleton.currentCircuit);
+//				RevVisGDX.singleton.currentCircuit = new DrawableCircuitReordered(c);
+//				RevVisGDX.singleton.drawables.add(RevVisGDX.singleton.currentCircuit);
+//				RevVisGDX.singleton.currentCircuit.zoomExtents();
 			} else {
 				System.out.println("Error: could not load " + filename);
 			}
