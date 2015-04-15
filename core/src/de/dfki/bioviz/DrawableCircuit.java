@@ -109,11 +109,17 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		for (Blob b : this.data.getBlobs()) {
-			float xCoord = xCoordOnScreen(b.getXAt(currentTime));
-			float yCoord = yCoordOnScreen(b.getYAt(currentTime));
+			float xCoord = b.getXAt(currentTime);
+			float yCoord = b.getYAt(currentTime);
 			
-			blob.x = xCoord;
-			blob.y = yCoord;
+			b.targetX = xCoord;
+			b.targetY = yCoord;
+			
+			b.update();
+			
+			
+			blob.x = xCoordOnScreen(b.smoothX);
+			blob.y = yCoordOnScreen(b.smoothY);
 			blob.scaleX = this.smoothScaleX;
 			blob.scaleY = this.smoothScaleY;
 			blob.draw();

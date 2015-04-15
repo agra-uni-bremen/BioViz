@@ -7,6 +7,10 @@ public class Blob {
 	
 	private Vector<Blob.timedPosition> positions = new Vector<Blob.timedPosition>();
 	
+	public float smoothX, smoothY, targetX, targetY;
+
+	private float movementDelay = 4f;
+	
 	public Blob() {
 		// TODO Auto-generated constructor stub
 	}
@@ -38,6 +42,11 @@ public class Blob {
 			}
 		}
 		return result;
+	}
+	
+	public void update() {
+		smoothX += (targetX - smoothX) / movementDelay;
+		smoothY += (targetY - smoothY) / movementDelay;
 	}
 	
 	class timedPosition implements Comparable<timedPosition> {
