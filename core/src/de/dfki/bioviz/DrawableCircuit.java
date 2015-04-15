@@ -91,7 +91,6 @@ public class DrawableCircuit implements Drawable {
 					listener.bioVizEvent();
 				}
 			}
-			System.out.println(currentTime);
 		}
 		
 		for (int i = 0; i < this.data.field.length; i++) {

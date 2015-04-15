@@ -41,6 +41,9 @@ public class RevVisGDX implements ApplicationListener {
 	boolean runFullPresetScreenshots = false;
 	float fullPresetScreenshotsScaling = 6f;
 	
+
+	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
+	
 	public RevVisGDX() {
 		super();
 		System.out.println("Starting without filename being specified; loading example.");
@@ -83,6 +86,14 @@ public class RevVisGDX implements ApplicationListener {
 		c.disableFieldAt(9, 3);
 		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
+		
+		currentCircuit.addTimeChangedListener(new BioVizEvent() {
+			
+			@Override
+			public void bioVizEvent() {
+				RevVisGDX.singleton.callTimeChangedListeners();
+			}
+		});
 		
 		Blob b = c.addBlob();
 		b.addPosition(0, 0, 0);
@@ -224,6 +235,16 @@ public class RevVisGDX implements ApplicationListener {
 			}
 		} catch (Exception e) {
 			System.out.println("Error: could not load " + filename);
+		}
+	}
+	
+	public void addTimeChangedListener(BioVizEvent listener) {
+		timeChangedListeners.add(listener);
+	}
+	
+	private void callTimeChangedListeners() {
+		for (BioVizEvent listener : this.timeChangedListeners) {
+			listener.bioVizEvent();
 		}
 	}
 }

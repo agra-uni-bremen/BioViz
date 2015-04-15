@@ -22,12 +22,14 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.RevVisGDX;
 
 
 public class DesktopLauncher extends JFrame {
 
 	public JSlider time;
+	timerCallback tc;
 	public static DesktopLauncher singleton;
 	
 	public DesktopLauncher(int timeMax) {
@@ -64,7 +66,7 @@ public class DesktopLauncher extends JFrame {
 	            RevVisGDX.singleton.currentCircuit.currentTime = ((JSlider)ce.getSource()).getValue();
 	        }
 	    });
-		
+		tc = new timerCallback(time);
 		panel.add(label);
 		panel.add(defaultButton);
 		panel.add(time);
@@ -99,23 +101,18 @@ public class DesktopLauncher extends JFrame {
 		}
 
 		JFrame frame = new DesktopLauncher(10);
-
-//		JPanel panel = new JPanel();
-//		panel.setLayout(new FlowLayout());
-//
-//		JLabel label = new JLabel("This is a label!");
-//
-//		JButton button = new JButton();
-//		button.setText("Press me");
-//
-//		panel.add(label);
-//		panel.add(button);
-//
-//		frame.add(panel);
-//		frame.setSize(300, 300);
-//		frame.setLocationRelativeTo(null);
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.pack();
-//		frame.setVisible(true);
+	}
+	
+	private class timerCallback implements BioVizEvent {
+		private JSlider time;
+		public timerCallback(JSlider slider) {
+			this.time = slider;
+			RevVisGDX.singleton.addTimeChangedListener(this);
+		}
+		@Override
+		public void bioVizEvent() {
+			this.time.setValue((int)RevVisGDX.singleton.currentCircuit.currentTime);
+		}
+		
 	}
 }
