@@ -79,6 +79,9 @@ public class RevVisGDX implements ApplicationListener {
 		Biochip c;
 		//TODO loading stuff
 		c = new Biochip(10, 5);
+		c.disableFieldAt(9, 4);
+		c.disableFieldAt(8, 4);
+		c.disableFieldAt(9, 3);
 		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
 		

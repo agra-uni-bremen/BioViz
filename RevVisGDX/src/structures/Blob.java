@@ -19,7 +19,7 @@ public class Blob {
 	public int getXAt(long t) {
 		int result = 0;
 		for (int i = 0; i < positions.size(); i++) {
-			if (positions.get(i).time < t) {
+			if (positions.get(i).time <= t) {
 				result = positions.get(i).x;
 			} else {
 				return result;
@@ -31,7 +31,7 @@ public class Blob {
 	public int getYAt(long t) {
 		int result = 0;
 		for (int i = 0; i < positions.size(); i++) {
-			if (positions.get(i).time < t) {
+			if (positions.get(i).time <= t) {
 				result = positions.get(i).y;
 			} else {
 				return result;
