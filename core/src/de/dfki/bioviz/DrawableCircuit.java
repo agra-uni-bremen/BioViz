@@ -10,6 +10,7 @@ import structures.Blob;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
@@ -95,15 +96,8 @@ public class DrawableCircuit implements Drawable {
 		
 		for (int i = 0; i < this.data.field.length; i++) {
 			for (int j = 0; j < this.data.field[i].length; j++) {
-				if (this.data.field[i][j].isEnabled) {
-					float xCoord = xCoordOnScreen(i);
-					float yCoord = yCoordOnScreen(j);
-					
-					field.x = xCoord;
-					field.y = yCoord;
-					field.scaleX = this.smoothScaleX;
-					field.scaleY = this.smoothScaleY;
-					field.draw();
+				if (this.data.field[i][j].isEnabled) {					
+					RevVisGDX.singleton.drawRect(i - 0.4f, j - 0.4f, 0.8f, 0.8f, 1, Color.GRAY.cpy(), ShapeType.Line);
 				}
 			}
 		}
@@ -117,12 +111,13 @@ public class DrawableCircuit implements Drawable {
 			
 			b.update();
 			
-			
-			blob.x = xCoordOnScreen(b.smoothX);
-			blob.y = yCoordOnScreen(b.smoothY);
-			blob.scaleX = this.smoothScaleX;
-			blob.scaleY = this.smoothScaleY;
-			blob.draw();
+			RevVisGDX.singleton.drawCircle(
+					b.smoothX,
+					b.smoothY,
+					0.5f,	//radius
+					2, 	//line width
+					Color.BLUE.cpy(),
+					ShapeType.Line);
 		}
 		
 	}

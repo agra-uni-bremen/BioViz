@@ -16,6 +16,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 //import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -23,10 +24,14 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector2;
 
 public class RevVisGDX implements ApplicationListener {
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
+	public ShapeRenderer shapes;
 	
 	
 	public DrawableCircuit currentCircuit;
@@ -60,17 +65,7 @@ public class RevVisGDX implements ApplicationListener {
 	@Override
 	public void create() {
 		
-//	    File path = new File("assets/textures");
-//
-//	    File [] files = path.listFiles();
-//	    for (int i = 0; i < files.length; i++){
-//	        if (files[i].isFile() && files[i].getName().endsWith(".png")){
-//	            System.out.println("loading " + files[i].toString() + " as texture");
-//	            manager.load(files[i].toString(), Texture.class);
-//	        }
-//	    }
-	    
-//		manager.finishLoading();
+		shapes = new ShapeRenderer();
 		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
@@ -121,9 +116,6 @@ public class RevVisGDX implements ApplicationListener {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
 
-		//camera.apply(Gdx.gl20);
-
-		// clear previous frame
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.setProjectionMatrix(camera.combined);
@@ -136,6 +128,49 @@ public class RevVisGDX implements ApplicationListener {
 		mc.render();
 
 		batch.end();
+	}
+	
+	public void drawCircle(float x, float y, float radius, int lineWidth, Color col, ShapeType st) {
+		Gdx.gl20.glLineWidth(lineWidth);
+		shapes.setProjectionMatrix(camera.combined);
+		
+		shapes.begin(st);
+		shapes.setColor(col);
+		shapes.circle(
+				(x + currentCircuit.smoothOffsetX) * currentCircuit.smoothScaleX,
+				(y + currentCircuit.smoothOffsetY) * currentCircuit.smoothScaleY,
+				radius * currentCircuit.smoothScaleX);
+		shapes.end();
+	}
+
+	public void drawRect(float x, float y, float width, float height, int lineWidth, Color col, ShapeType st) {
+		Gdx.gl20.glLineWidth(lineWidth);
+		shapes.setProjectionMatrix(camera.combined);
+		
+		shapes.begin(st);
+		shapes.setColor(col);
+		shapes.rect(
+				(x + currentCircuit.smoothOffsetX) * currentCircuit.smoothScaleX,
+				(y + currentCircuit.smoothOffsetY) * currentCircuit.smoothScaleY,
+				width  * currentCircuit.smoothScaleX,
+				height * currentCircuit.smoothScaleY);
+		shapes.end();
+	}
+	
+	public void drawLine(float x, float y, float x2, float y2, int lineWidth, Color col, ShapeType st) {
+		Gdx.gl20.glLineWidth(lineWidth);
+		shapes.setProjectionMatrix(camera.combined);
+		
+		shapes.begin(st);
+		shapes.setColor(col);
+		shapes.line(
+				new Vector2(
+						(x + currentCircuit.smoothOffsetX) * currentCircuit.smoothScaleX,
+						(y + currentCircuit.smoothOffsetY) * currentCircuit.smoothScaleY),
+				new Vector2(
+						(x2 + currentCircuit.smoothOffsetX) * currentCircuit.smoothScaleX,
+						(y2 + currentCircuit.smoothOffsetY) * currentCircuit.smoothScaleY));
+		shapes.end();
 	}
 
 	private boolean firstRun = true;
