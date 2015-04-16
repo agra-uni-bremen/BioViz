@@ -48,12 +48,14 @@ public class RevVisGDX implements ApplicationListener {
 	
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
+	public long currentTime;
 	
 	public RevVisGDX() {
 		super();
 		System.out.println("Starting without filename being specified; loading example.");
 		System.out.println("Usage: java -jar RevVisGDX.jar filename.real");
 		singleton = this;
+		currentTime = new Date().getTime();
 	}
 	
 	public RevVisGDX(String filename) {
@@ -112,6 +114,8 @@ public class RevVisGDX implements ApplicationListener {
 
 	@Override
 	public void render() {
+
+		currentTime = new Date().getTime();
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
@@ -170,6 +174,22 @@ public class RevVisGDX implements ApplicationListener {
 				new Vector2(
 						(x2 + currentCircuit.smoothOffsetX) * currentCircuit.smoothScaleX,
 						(y2 + currentCircuit.smoothOffsetY) * currentCircuit.smoothScaleY));
+		shapes.end();
+	}
+	
+	public void drawPolygon(float[] coords, int lineWidth, Color col, ShapeType st) {
+		Gdx.gl20.glLineWidth(lineWidth);
+		shapes.setProjectionMatrix(camera.combined);
+		
+		float[] transformed = new float[coords.length];
+		for (int i = 0; i < transformed.length; i += 2) {
+			transformed[i] = (coords[i] + currentCircuit.smoothOffsetX) * currentCircuit.smoothScaleX;
+			transformed[i+1] = (coords[i+1] + currentCircuit.smoothOffsetY) * currentCircuit.smoothScaleY;
+		}
+		
+		shapes.begin(st);
+		shapes.setColor(col);
+		shapes.polygon(transformed);
 		shapes.end();
 	}
 
