@@ -108,7 +108,7 @@ public class RevVisInputProcessor implements InputProcessor {
 	@Override
 	public boolean scrolled (int amount) {
 		float mouseAtWidth = (float)oldX / Gdx.graphics.getWidth();
-		float mouseAtHeight = (float)(Gdx.graphics.getHeight() - oldY) / Gdx.graphics.getHeight();
+		float mouseAtHeight = (float)oldY / Gdx.graphics.getHeight();
 		
 		Rectangle current = RevVisGDX.singleton.currentCircuit.getViewBounds();
 		
