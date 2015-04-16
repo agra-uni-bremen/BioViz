@@ -171,16 +171,6 @@ public class DrawableCircuit implements Drawable {
 		else
 			setScaleY(getScaleX());
 	}
-	
-	private int gateAt(int x) {
-		float xResult = x - RevVisGDX.singleton.camera.viewportWidth / 2f;
-		
-		xResult /= getScaleX();
-		xResult -= offsetX;
-		xResult += 0.5f;
-		
-		return (int)xResult;
-	}
 
 	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
 	private static Color hsvToRgb(float hue, float saturation, float value) {
@@ -297,8 +287,8 @@ public class DrawableCircuit implements Drawable {
 		float maxScale = Math.min(x * xFactor, y * yFactor);
 		this.scaleX = maxScale;
 		this.scaleY = maxScale;
-		this.offsetY = 0;
-		this.offsetX = this.data.field.length / -2f;
+		this.offsetY = this.data.field[0].length / -2f + 0.5f;
+		this.offsetX = this.data.field.length / -2f + 0.5f;
 	}
 	
 	/**
