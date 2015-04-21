@@ -2,7 +2,6 @@ package de.dfki.bioviz;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 import java.util.Vector;
 
 import structures.Biochip;
@@ -11,9 +10,7 @@ import structures.Blob;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -98,8 +95,15 @@ public class DrawableCircuit implements Drawable {
 		
 		for (int i = 0; i < this.data.field.length; i++) {
 			for (int j = 0; j < this.data.field[i].length; j++) {
-				if (this.data.field[i][j].isEnabled) {					
-					RevVisGDX.singleton.drawRect(i - 0.4f, j - 0.4f, 0.8f, 0.8f, 1, Color.GRAY.cpy(), ShapeType.Line);
+				if (this.data.field[i][j].isEnabled) {
+					float xCoord = xCoordOnScreen(i);
+					float yCoord = yCoordOnScreen(j);
+					
+					field.x = xCoord;
+					field.y = yCoord;
+					field.scaleX = this.smoothScaleX;
+					field.scaleY = this.smoothScaleY;
+					field.draw();
 				}
 			}
 		}
@@ -113,81 +117,14 @@ public class DrawableCircuit implements Drawable {
 			
 			b.update();
 			
-//			RevVisGDX.singleton.drawCircle(
-//					b.smoothX,
-//					b.smoothY,
-//					0.5f,	//radius
-//					2, 	//line width
-//					Color.BLUE.cpy(),
-//					ShapeType.Line);
 			
-			float[] currentPolygon = generatePolygonForBlob(b);
-			RevVisGDX.singleton.drawPolygon(currentPolygon, 2, Color.BLUE.cpy(), ShapeType.Line);
+			blob.x = xCoordOnScreen(b.smoothX);
+			blob.y = yCoordOnScreen(b.smoothY);
+			blob.scaleX = this.smoothScaleX;
+			blob.scaleY = this.smoothScaleY;
+			blob.draw();
 		}
 		
-	}
-	
-	float[] generatePolygonForBlob(Blob b) {
-		int totalPoints = 128;
-		float radius = 0.5f;
-		int freq = 2;
-		float[] result = new float[totalPoints * 2];
-		Random rnd = new Random(b.hashCode());
-		
-		Vector2 direction = new Vector2(b.targetX - b.smoothX, b.targetY - b.smoothY);
-		
-		int currentFreq = freq;
-		float factor = 1f;
-		float[] offsets = new float[totalPoints];
-		while (currentFreq <= totalPoints) {
-			for (int i = 0; i < currentFreq; i++) {
-				int index = i * (totalPoints / currentFreq);
-				if (offsets[index] == 0) {
-					float offset = (float)Math.sin((double)(RevVisGDX.singleton.currentTime / (500.0 + (500.0 * rnd.nextDouble())))) / 40f;
-					offsets[index] = offset;
-					
-					if (currentFreq != freq) {
-						int indexR = index + (totalPoints / currentFreq);
-						int indexL = index - (totalPoints / currentFreq);
-						if (indexR >= totalPoints)
-							indexR -= totalPoints;
-						if (indexL < 0)
-							indexL += totalPoints;
-						
-						offsets[index] = offset * factor;
-						
-						float avg = (offsets[indexR] + offsets[indexL]) / 2f;
-						
-						offsets[index] += avg * (1-factor);
-						//System.out.println("" + index + ": " + offset + " * " + factor + " + " + avg + " * " + (1-factor) + " (" + indexR + "/" + indexL + ")");
-					}
-				}
-			}
-			currentFreq *= 2;
-			factor /= 2f;
-		}
-		
-		for (int i = 0; i < totalPoints; i++) {
-			float offset = offsets[i];//(float)Math.sin((double)(RevVisGDX.singleton.currentTime / (500.0 + (500.0 * rnd.nextDouble())))) / 40f;
-			float r = radius + offset;
-			float x = b.smoothX + (float)(r * Math.cos(2 * Math.PI * ((float)i / (float)totalPoints)));
-			float y = b.smoothY + (float)(r * Math.sin(2 * Math.PI * ((float)i / (float)totalPoints)));
-			result[i * 2] = x;
-			result[i * 2 + 1] = y;
-		}
-		
-		for (int i = 0; i < totalPoints; i++) {
-			Vector2 dirNor = direction.cpy().nor();
-			Vector2 centerToVecNor = new Vector2(b.smoothX, b.smoothY).sub(new Vector2(result[i * 2], result[i * 2 + 1])).nor();
-			float d = centerToVecNor.dot(dirNor);
-			
-			Vector2 modified = new Vector2(result[i * 2], result[i * 2 + 1]).add(direction.cpy().scl(d));
-			
-			result[i * 2] = modified.x;
-			result[i * 2 + 1] = modified.y;
-		}
-		
-		return result;
 	}
 
 	/**
