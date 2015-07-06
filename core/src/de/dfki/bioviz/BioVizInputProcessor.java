@@ -114,7 +114,7 @@ public class BioVizInputProcessor implements InputProcessor {
 		float mouseToLeftOriginal = current.width * mouseAtWidth;
 		float mouseToBottomOriginal = current.height * mouseAtHeight;
 		
-		float zoomFactor = (1 + (amount * 0.2f));
+		float zoomFactor = 1 + (amount * 0.2f);
 		current.height *= zoomFactor;
 		current.width *= zoomFactor;
 		
