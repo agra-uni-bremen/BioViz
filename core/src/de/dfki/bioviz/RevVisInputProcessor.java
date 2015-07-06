@@ -1,7 +1,6 @@
 package de.dfki.bioviz;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -22,7 +21,6 @@ public class RevVisInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean keyTyped (char character) {
-		DrawableCircuit dc; 
 		switch (character) {
 		case 's':
 			RevVisGDX.singleton.currentCircuit.shrinkToSquareAlignment();
