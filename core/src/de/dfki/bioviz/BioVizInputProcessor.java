@@ -24,13 +24,13 @@ public class BioVizInputProcessor implements InputProcessor {
 	public boolean keyTyped (char character) {
 		switch (character) {
 		case 's':
-			RevVisGDX.singleton.currentCircuit.shrinkToSquareAlignment();
+			BioVizGDX.singleton.currentCircuit.shrinkToSquareAlignment();
 			break;
 		case 'z':
-			RevVisGDX.singleton.currentCircuit.zoomTo1Px();
+			BioVizGDX.singleton.currentCircuit.zoomTo1Px();
 			break;
 		case 'Z':
-			RevVisGDX.singleton.currentCircuit.zoomExtents();
+			BioVizGDX.singleton.currentCircuit.zoomExtents();
 			break;
 		default:
 			break;
@@ -70,8 +70,8 @@ public class BioVizInputProcessor implements InputProcessor {
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
 		if (isMoving) {
-			RevVisGDX.singleton.currentCircuit.offsetX += (x - oldX) / RevVisGDX.singleton.currentCircuit.getScaleX();
-			RevVisGDX.singleton.currentCircuit.offsetY -= (y - oldY) / RevVisGDX.singleton.currentCircuit.getScaleY();
+			BioVizGDX.singleton.currentCircuit.offsetX += (x - oldX) / BioVizGDX.singleton.currentCircuit.getScaleX();
+			BioVizGDX.singleton.currentCircuit.offsetY -= (y - oldY) / BioVizGDX.singleton.currentCircuit.getScaleY();
 			oldX = x;
 			oldY = y;
 		} else if (multiTouchZoom) {
@@ -91,12 +91,12 @@ public class BioVizInputProcessor implements InputProcessor {
 				
 				if (oldX - oldX2 != 0) {
 					float zoomFactorX = (float)zoomX / Math.abs(oldX - oldX2);
-					RevVisGDX.singleton.currentCircuit.setScaleX(RevVisGDX.singleton.currentCircuit.getScaleX()
+					BioVizGDX.singleton.currentCircuit.setScaleX(BioVizGDX.singleton.currentCircuit.getScaleX()
 							* Math.max(1 - (zoomFactorX), 0.01f));
 				}
 				if (oldY - oldY2 != 0) {
 					float zoomFactorY = (float)zoomY / Math.abs(oldY - oldY2);
-					RevVisGDX.singleton.currentCircuit.setScaleY(RevVisGDX.singleton.currentCircuit.getScaleY()
+					BioVizGDX.singleton.currentCircuit.setScaleY(BioVizGDX.singleton.currentCircuit.getScaleY()
 							* Math.max(1 - (zoomFactorY), 0.01f));
 				}
 			}
@@ -109,7 +109,7 @@ public class BioVizInputProcessor implements InputProcessor {
 		float mouseAtWidth = (float)oldX / Gdx.graphics.getWidth();
 		float mouseAtHeight = (float)oldY / Gdx.graphics.getHeight();
 		
-		Rectangle current = RevVisGDX.singleton.currentCircuit.getViewBounds();
+		Rectangle current = BioVizGDX.singleton.currentCircuit.getViewBounds();
 		
 		float mouseToLeftOriginal = current.width * mouseAtWidth;
 		float mouseToBottomOriginal = current.height * mouseAtHeight;
@@ -126,7 +126,7 @@ public class BioVizInputProcessor implements InputProcessor {
 		float mouseDiffY = mouseToBottomOriginal - expectedMouseToBottom;
 		current.y += mouseDiffY;
 		
-		RevVisGDX.singleton.currentCircuit.setViewBounds(current);
+		BioVizGDX.singleton.currentCircuit.setViewBounds(current);
 		return false;
 	}
 

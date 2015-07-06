@@ -1,6 +1,5 @@
 package de.dfki.bioviz;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
@@ -21,16 +20,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class RevVisGDX implements ApplicationListener {
+
+// TODO Sinnvolleren Namen für diese Klasse finden
+public class BioVizGDX implements ApplicationListener {
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
 	
 	
 	public DrawableCircuit currentCircuit;
-	public static RevVisGDX singleton;
+	public static BioVizGDX singleton;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 	
 	AssetManager manager = new AssetManager();
@@ -44,14 +44,14 @@ public class RevVisGDX implements ApplicationListener {
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 	
-	public RevVisGDX() {
+	public BioVizGDX() {
 		super();
 		System.out.println("Starting without filename being specified; loading example.");
 		System.out.println("Usage: java -jar RevVisGDX.jar filename.real");
 		singleton = this;
 	}
 	
-	public RevVisGDX(String filename) {
+	public BioVizGDX(String filename) {
 		this();
 		System.out.println("Starting BiochipVis, loading currently disabled");// + filename);
 		this.filename = filename;
@@ -91,7 +91,7 @@ public class RevVisGDX implements ApplicationListener {
 			
 			@Override
 			public void bioVizEvent() {
-				RevVisGDX.singleton.callTimeChangedListeners();
+				BioVizGDX.singleton.callTimeChangedListeners();
 			}
 		});
 		
@@ -218,6 +218,7 @@ public class RevVisGDX implements ApplicationListener {
 		return pixmap;
 	}
 	
+	// TODO Hier irgendwann dann mal wirklich Dateien einlesen
 	public static void loadNewFile() {
 		final JFileChooser fc = new JFileChooser();
 		fc.showOpenDialog(null);
