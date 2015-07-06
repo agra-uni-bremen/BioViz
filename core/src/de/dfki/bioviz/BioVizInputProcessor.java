@@ -4,9 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 
-public class RevVisInputProcessor implements InputProcessor {
+public class BioVizInputProcessor implements InputProcessor {
 	boolean isMoving = false;
 	boolean multiTouchZoom = false;
+	
 	private int oldX, oldY, oldX2, oldY2, oldDistanceX, oldDistanceY;
 	
 	@Override

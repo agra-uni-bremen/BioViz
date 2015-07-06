@@ -101,7 +101,7 @@ public class RevVisGDX implements ApplicationListener {
 		b.addPosition(2, 1, 1);
 		b.addPosition(5, 2, 1);
 		
-		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
+		BioVizInputProcessor inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		//this.menu = new Menu();
