@@ -5,7 +5,7 @@ import java.util.Vector;
 
 public class Blob {
 	
-	private Vector<Blob.timedPosition> positions = new Vector<Blob.timedPosition>();
+	private Vector<Blob.TimedPosition> positions = new Vector<Blob.TimedPosition>();
 	
 	public float smoothX, smoothY, targetX, targetY;
 
@@ -16,7 +16,7 @@ public class Blob {
 	}
 	
 	public void addPosition(long time, int x, int y) {
-		positions.add(new timedPosition(time, x, y));
+		positions.add(new TimedPosition(time, x, y));
 		Collections.sort(positions);
 	}
 	
@@ -49,18 +49,26 @@ public class Blob {
 		smoothY += (targetY - smoothY) / movementDelay;
 	}
 	
-	class timedPosition implements Comparable<timedPosition> {
+	
+	
+	/**
+	 * 
+	 * @author jannis
+	 *
+	 * @note This class has a natural ordering that is inconsistent with equals.
+	 */
+	class TimedPosition implements Comparable<TimedPosition> {
 		long time;
 		int x, y;
 		
-		public timedPosition(long t, int x, int y) {
+		public TimedPosition(long t, int x, int y) {
 			this.time = t;
 			this.x = x;
 			this.y = y;
 		}
 		
 		@Override
-		public int compareTo(timedPosition t) {
+		public int compareTo(TimedPosition t) {
 			return Long.compare(this.time, t.time);
 		}
 	}
