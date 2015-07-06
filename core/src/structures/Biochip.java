@@ -2,7 +2,6 @@ package structures;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
 
 public class Biochip {
 
