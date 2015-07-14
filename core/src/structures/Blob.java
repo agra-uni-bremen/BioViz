@@ -44,6 +44,30 @@ public class Blob {
 		return result;
 	}
 	
+	/**
+	 * Calculates the time at which the <i>next</i> step is performed
+	 * for this blob. If a blob moves at timestamps 0, 1, 5, 10, calling
+	 * this method with current=4 would return 5. Calling it with current=5
+	 * would return 10. If current is at or after the last value, the last
+	 * value is returned.
+	 * @param current the current time
+	 * @return the timestamp at which the next step is performed.
+	 */
+	public long getNextStep(long current) {
+		long result = 0;
+		for (int i = 0; i < positions.size(); i++) {
+			if (positions.get(i).time <= current) {
+				result = positions.get(i).time;
+			} else {
+				if (i < positions.size()) {
+					result = positions.get(i).time;
+				}
+				return result;
+			}
+		}
+		return result;
+	}
+	
 	public void update() {
 		smoothX += (targetX - smoothX) / movementDelay;
 		smoothY += (targetY - smoothY) / movementDelay;

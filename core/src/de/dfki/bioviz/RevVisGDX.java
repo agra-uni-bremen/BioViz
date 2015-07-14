@@ -101,6 +101,14 @@ public class RevVisGDX implements ApplicationListener {
 		b.addPosition(2, 1, 1);
 		b.addPosition(5, 2, 1);
 		
+		Blob b2 = c.addBlob();
+		b2.addPosition(0, 0, 3);
+		b2.addPosition(1, 1, 3);
+		b2.addPosition(2, 2, 3);
+		b2.addPosition(3, 2, 2);
+		
+		c.recalculateAdjacency = true;
+		
 		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		

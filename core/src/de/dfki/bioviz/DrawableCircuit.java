@@ -2,6 +2,7 @@ package de.dfki.bioviz;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 import java.util.Vector;
 
 import structures.Biochip;
@@ -45,6 +46,9 @@ public class DrawableCircuit implements Drawable {
 	private long lastAutoStepAt = new Date().getTime();
 	
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
+	
+	Color fieldDefaultColor = new Color(0.8f, 0.9f, 1f, 1f);
+	Color fieldAdjacentActivationColor = new Color(1f, 0.3f, 0.2f, 1f);
 
 	/**
 	 * Creates a drawable entity based on the data given.
@@ -53,7 +57,7 @@ public class DrawableCircuit implements Drawable {
 	public DrawableCircuit(Biochip toDraw) {
 		this.data = toDraw;
 		field = new DrawableSprite("GridMarker.png", 1, 1);
-		field.color = new Color(0.8f, 0.9f, 1f, 1f);
+		field.color = fieldDefaultColor;
 		blob = new DrawableSprite("Blob.png", 1, 1);
 		blob.color = new Color(0.5f, 0.65f, 1f, 0.75f);
 	}
@@ -103,6 +107,12 @@ public class DrawableCircuit implements Drawable {
 					field.y = yCoord;
 					field.scaleX = this.smoothScaleX;
 					field.scaleY = this.smoothScaleY;
+					
+					if (this.data.getAdjacentActivations().contains(this.data.field[i][j]))
+						field.color = fieldAdjacentActivationColor;
+					else
+						field.color = fieldDefaultColor;
+					
 					field.draw();
 				}
 			}
@@ -314,5 +324,16 @@ public class DrawableCircuit implements Drawable {
 	
 	public void addTimeChangedListener(BioVizEvent listener) {
 		timeChangedListeners.add(listener);
+	}
+	
+	/**
+	 * Re-calculates the adjacency for all blobs and sets
+	 * the fields' colours accordingly.
+	 */
+	public void updateAdjacencyColours() {
+		Set<BiochipField> f = this.data.getAdjacentActivations();
+		for (BiochipField biochipField : f) {
+			
+		}
 	}
 }

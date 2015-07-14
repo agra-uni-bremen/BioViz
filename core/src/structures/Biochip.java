@@ -29,6 +29,13 @@ public class Biochip {
 	private HashSet<Blob> blobs = new HashSet<Blob>();
 	
 	/**
+	 * Caching data that does not need to be recalculated with each frame.
+	 */
+	private Set<BiochipField> adjacencyCache = null;
+	
+	public boolean recalculateAdjacency = false;
+	
+	/**
 	 * Creates a new 2D-Biochip with a certain field size.
 	 * @param dimensionX
 	 * @param dimensionY
@@ -88,6 +95,61 @@ public class Biochip {
 	 */
 	public Set<Blob> getBlobs() {
 		return this.blobs;
+	}
+	
+	/**
+	 * Calculates all fields that are at some point activated
+	 * with adjacently placed blobs.
+	 * @return
+	 */
+	public Set<BiochipField> getAdjacentActivations() {
+		if (adjacencyCache != null && !recalculateAdjacency) {
+			return adjacencyCache;
+		} else {
+			System.out.println("Recalculating adjacency...");
+			recalculateAdjacency = false;
+			HashSet<BiochipField> result = new HashSet<BiochipField>();
+			
+			boolean timeProceeds = true;
+			long currentTime = 0;
+			
+			while(timeProceeds) {
+				long minimumTimestep = Long.MAX_VALUE;
+				timeProceeds = false;
+				for (Blob b : this.getBlobs()) {
+					
+					int x1, y1;
+					x1 = b.getXAt(currentTime);
+					y1 = b.getYAt(currentTime);
+					for (Blob partner : this.getBlobs()) {
+						int x2, y2;
+						x2 = partner.getXAt(currentTime);
+						y2 = partner.getYAt(currentTime);
+						System.out.println("Checking " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime);
+						if (
+								(x1 == x2 && Math.abs(y1 - y2) == 1) ||
+								(y1 == y2 && Math.abs(x1 - x2) == 1)
+							) {
+							result.add(this.field[x1][y1]);
+							result.add(this.field[x2][y2]);
+							System.out.println("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2);
+						}
+					}
+					
+					long nextStep = b.getNextStep(currentTime);
+					if (nextStep > currentTime) {
+						timeProceeds = true;
+						if (nextStep - currentTime < minimumTimestep) {
+							minimumTimestep = nextStep - currentTime;
+						}
+					}
+				}
+				
+				currentTime += minimumTimestep;
+			}
+			adjacencyCache = result;
+			return result;
+		}
 	}
 
 }
