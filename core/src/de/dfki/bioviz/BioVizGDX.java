@@ -1,5 +1,6 @@
 package de.dfki.bioviz;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
@@ -100,6 +102,14 @@ public class BioVizGDX implements ApplicationListener {
 		b.addPosition(1, 1, 0);
 		b.addPosition(2, 1, 1);
 		b.addPosition(5, 2, 1);
+
+		Blob b2 = c.addBlob();
+		b2.addPosition(0, 0, 3);
+		b2.addPosition(1, 1, 3);
+		b2.addPosition(2, 2, 3);
+		b2.addPosition(3, 2, 2);
+		
+		c.recalculateAdjacency = true;
 		
 		BioVizInputProcessor inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
