@@ -23,7 +23,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import de.dfki.bioviz.BioVizEvent;
-import de.dfki.bioviz.RevVisGDX;
+import de.dfki.bioviz.BioViz;
 
 
 public class DesktopLauncher extends JFrame {
@@ -38,7 +38,7 @@ public class DesktopLauncher extends JFrame {
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 		
-		RevVisGDX revVis = new RevVisGDX();
+		BioViz revVis = new BioViz();
 
 		LwjglAWTCanvas canvas = new LwjglAWTCanvas(revVis);// LwjglAWTCanvas(revVis, false);
 		
@@ -54,7 +54,7 @@ public class DesktopLauncher extends JFrame {
 		defaultButton.addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	            RevVisGDX.singleton.currentCircuit.autoAdvance = !RevVisGDX.singleton.currentCircuit.autoAdvance;
+	            BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance;
 	        }
 	    });
 		
@@ -63,7 +63,7 @@ public class DesktopLauncher extends JFrame {
 		time.addChangeListener(new ChangeListener() {
 	        @Override
 	        public void stateChanged(ChangeEvent ce) {
-	            RevVisGDX.singleton.currentCircuit.currentTime = ((JSlider)ce.getSource()).getValue();
+	            BioViz.singleton.currentCircuit.currentTime = ((JSlider)ce.getSource()).getValue();
 	        }
 	    });
 		tc = new timerCallback(time);
@@ -73,7 +73,7 @@ public class DesktopLauncher extends JFrame {
 		adjacencyButton.addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	            RevVisGDX.singleton.currentCircuit.toggleHighlightAdjacency();
+	            BioViz.singleton.currentCircuit.toggleHighlightAdjacency();
 	        }
 	    });
 		
@@ -119,11 +119,11 @@ public class DesktopLauncher extends JFrame {
 		private JSlider time;
 		public timerCallback(JSlider slider) {
 			this.time = slider;
-			RevVisGDX.singleton.addTimeChangedListener(this);
+			BioViz.singleton.addTimeChangedListener(this);
 		}
 		@Override
 		public void bioVizEvent() {
-			this.time.setValue((int)RevVisGDX.singleton.currentCircuit.currentTime);
+			this.time.setValue((int)BioViz.singleton.currentCircuit.currentTime);
 		}
 		
 	}

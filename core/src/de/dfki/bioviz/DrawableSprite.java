@@ -47,7 +47,7 @@ public class DrawableSprite implements Drawable {
 		this.sprite.setScale(scaleX, scaleY);
 		this.sprite.setRotation(rotation);
 		this.sprite.setColor(color);
-		this.sprite.draw(RevVisGDX.singleton.batch);
+		this.sprite.draw(BioViz.singleton.batch);
 	}
 	
 	public void setDimensions(float dimX, float dimY) {

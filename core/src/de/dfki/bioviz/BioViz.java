@@ -24,13 +24,13 @@ import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class RevVisGDX implements ApplicationListener {
+public class BioViz implements ApplicationListener {
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
 	
 	
 	public DrawableCircuit currentCircuit;
-	public static RevVisGDX singleton;
+	public static BioViz singleton;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 	
 	AssetManager manager = new AssetManager();
@@ -44,14 +44,14 @@ public class RevVisGDX implements ApplicationListener {
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 	
-	public RevVisGDX() {
+	public BioViz() {
 		super();
 		System.out.println("Starting without filename being specified; loading example.");
 		System.out.println("Usage: java -jar RevVisGDX.jar filename.real");
 		singleton = this;
 	}
 	
-	public RevVisGDX(String filename) {
+	public BioViz(String filename) {
 		this();
 		System.out.println("Starting BiochipVis, loading currently disabled");// + filename);
 		this.filename = filename;
@@ -91,7 +91,7 @@ public class RevVisGDX implements ApplicationListener {
 			
 			@Override
 			public void bioVizEvent() {
-				RevVisGDX.singleton.callTimeChangedListeners();
+				BioViz.singleton.callTimeChangedListeners();
 			}
 		});
 		
@@ -109,7 +109,7 @@ public class RevVisGDX implements ApplicationListener {
 		
 		c.recalculateAdjacency = true;
 		
-		RevVisInputProcessor inputProcessor = new RevVisInputProcessor();
+		BioVizInputProcessor inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		//this.menu = new Menu();
