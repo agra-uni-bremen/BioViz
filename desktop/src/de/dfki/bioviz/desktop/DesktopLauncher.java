@@ -67,9 +67,21 @@ public class DesktopLauncher extends JFrame {
 	        }
 	    });
 		tc = new timerCallback(time);
+		
+		JButton adjacencyButton = new JButton();
+		adjacencyButton.setText("(A)djacency");
+		adjacencyButton.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            RevVisGDX.singleton.currentCircuit.toggleHighlightAdjacency();
+	        }
+	    });
+		
 		panel.add(label);
 		panel.add(defaultButton);
 		panel.add(time);
+		
+		panel.add(adjacencyButton);
 		
 		
 		container.add(panel, BorderLayout.WEST);

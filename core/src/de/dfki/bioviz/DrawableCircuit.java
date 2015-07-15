@@ -49,6 +49,24 @@ public class DrawableCircuit implements Drawable {
 	
 	Color fieldDefaultColor = new Color(0.8f, 0.9f, 1f, 1f);
 	Color fieldAdjacentActivationColor = new Color(1f, 0.3f, 0.2f, 1f);
+	
+	private boolean highlightAdjacency = true;
+
+	public boolean getHighlightAdjacency() {
+		return highlightAdjacency;
+	}
+
+	public void setHighlightAdjacency(boolean highlightAdjacency) {
+		this.highlightAdjacency = highlightAdjacency;
+		if (this.highlightAdjacency)
+			RevVisGDX.singleton.mc.addMessage("now highlighting fields with adjacent blobs");
+		else
+			RevVisGDX.singleton.mc.addMessage("no longer highlighting fields with adjacent blobs");
+	}
+	
+	public void toggleHighlightAdjacency() {
+		this.setHighlightAdjacency(!this.highlightAdjacency);
+	}
 
 	/**
 	 * Creates a drawable entity based on the data given.
@@ -108,7 +126,7 @@ public class DrawableCircuit implements Drawable {
 					field.scaleX = this.smoothScaleX;
 					field.scaleY = this.smoothScaleY;
 					
-					if (this.data.getAdjacentActivations().contains(this.data.field[i][j]))
+					if (highlightAdjacency && this.data.getAdjacentActivations().contains(this.data.field[i][j]))
 						field.color = fieldAdjacentActivationColor;
 					else
 						field.color = fieldDefaultColor;
