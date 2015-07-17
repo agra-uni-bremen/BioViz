@@ -3,22 +3,29 @@ import CommonLexerRules;
 
 
 
-bio : (grid|fluids|NEWLINE)+ ;
+
+
+
+// Definition of the grid
 
 grid : 'grid'  NEWLINE (gridblock NEWLINE)+ 'end' ;
+gridblock: position position;
+position: '(' ID ',' ID ')';
+
+
+// Definition of droplet movements
+routes : 'routes' NEWLINE (route NEWLINE)+ 'end';
+route: ID ('[' ID ']')? position+;
+
+
+
+// Definition of fluid types
+
 fluids: 'fluids'  NEWLINE (fluiddef NEWLINE)+ 'end';
-droplet_positions: 'droplet positions' NEWLINE (drop_movement NEWLINE)+ 'end';
+fluiddef: ID Identifier;
 
-
-drop_movement: ID spacing (ID spacing)? position+;
-
-fluiddef: ID spacing Identifier;
-
-
-spacing: ( ' '|'\t')+ ;
-optspacing: (' '|'\t')*;
-
-gridblock: position spacing position;
-position: '(' ID ',' ID ')' optspacing;
-
-
+ // Lexer rules
+ID: [0-9]+ ;
+Identifier: [a-zA-Z]+ ;
+NEWLINE: '\r'? '\n' ;
+WS: [ \t] -> skip;
