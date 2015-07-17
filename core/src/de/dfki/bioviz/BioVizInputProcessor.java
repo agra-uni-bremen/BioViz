@@ -1,36 +1,61 @@
 package de.dfki.bioviz;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 
 public class BioVizInputProcessor implements InputProcessor {
 	boolean isMoving = false;
 	boolean multiTouchZoom = false;
-	
 	private int oldX, oldY, oldX2, oldY2, oldDistanceX, oldDistanceY;
+	
+	private boolean ctrl, shift, alt;
 	
 	@Override
 	public boolean keyDown (int keycode) {
+		if (keycode == Keys.CONTROL_LEFT || keycode == Keys.CONTROL_RIGHT) {
+			ctrl = true;
+		} else if (keycode == Keys.ALT_LEFT || keycode == Keys.ALT_RIGHT) {
+			alt = true;
+		} else if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
+			shift = true;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean keyUp (int keycode) {
+		if (keycode == Keys.CONTROL_LEFT || keycode == Keys.CONTROL_RIGHT) {
+			ctrl = false;
+		} else if (keycode == Keys.ALT_LEFT || keycode == Keys.ALT_RIGHT) {
+			alt = false;
+		} else if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
+			shift = false;
+		} else if (keycode == Keys.O) {
+			if (ctrl) {
+				BioViz.loadNewFile();
+			}
+		} else if (keycode == Keys.A) {
+			BioViz.singleton.currentCircuit.toggleHighlightAdjacency();
+		}
+		
 		return false;
 	}
 
 	@Override
 	public boolean keyTyped (char character) {
+		DrawableCircuit dc; 
 		switch (character) {
 		case 's':
-			BioVizGDX.singleton.currentCircuit.shrinkToSquareAlignment();
+			BioViz.singleton.currentCircuit.shrinkToSquareAlignment();
 			break;
 		case 'z':
-			BioVizGDX.singleton.currentCircuit.zoomTo1Px();
+			BioViz.singleton.currentCircuit.zoomTo1Px();
 			break;
 		case 'Z':
-			BioVizGDX.singleton.currentCircuit.zoomExtents();
+			BioViz.singleton.currentCircuit.zoomExtents();
 			break;
 		default:
 			break;
@@ -70,8 +95,8 @@ public class BioVizInputProcessor implements InputProcessor {
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
 		if (isMoving) {
-			BioVizGDX.singleton.currentCircuit.offsetX += (x - oldX) / BioVizGDX.singleton.currentCircuit.getScaleX();
-			BioVizGDX.singleton.currentCircuit.offsetY -= (y - oldY) / BioVizGDX.singleton.currentCircuit.getScaleY();
+			BioViz.singleton.currentCircuit.offsetX += (x - oldX) / BioViz.singleton.currentCircuit.getScaleX();
+			BioViz.singleton.currentCircuit.offsetY -= (y - oldY) / BioViz.singleton.currentCircuit.getScaleY();
 			oldX = x;
 			oldY = y;
 		} else if (multiTouchZoom) {
@@ -91,12 +116,12 @@ public class BioVizInputProcessor implements InputProcessor {
 				
 				if (oldX - oldX2 != 0) {
 					float zoomFactorX = (float)zoomX / Math.abs(oldX - oldX2);
-					BioVizGDX.singleton.currentCircuit.setScaleX(BioVizGDX.singleton.currentCircuit.getScaleX()
+					BioViz.singleton.currentCircuit.setScaleX(BioViz.singleton.currentCircuit.getScaleX()
 							* Math.max(1 - (zoomFactorX), 0.01f));
 				}
 				if (oldY - oldY2 != 0) {
 					float zoomFactorY = (float)zoomY / Math.abs(oldY - oldY2);
-					BioVizGDX.singleton.currentCircuit.setScaleY(BioVizGDX.singleton.currentCircuit.getScaleY()
+					BioViz.singleton.currentCircuit.setScaleY(BioViz.singleton.currentCircuit.getScaleY()
 							* Math.max(1 - (zoomFactorY), 0.01f));
 				}
 			}
@@ -109,7 +134,7 @@ public class BioVizInputProcessor implements InputProcessor {
 		float mouseAtWidth = (float)oldX / Gdx.graphics.getWidth();
 		float mouseAtHeight = (float)oldY / Gdx.graphics.getHeight();
 		
-		Rectangle current = BioVizGDX.singleton.currentCircuit.getViewBounds();
+		Rectangle current = BioViz.singleton.currentCircuit.getViewBounds();
 		
 		float mouseToLeftOriginal = current.width * mouseAtWidth;
 		float mouseToBottomOriginal = current.height * mouseAtHeight;
