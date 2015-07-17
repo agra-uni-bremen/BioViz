@@ -2,6 +2,7 @@ lexer grammar CommonLexerRules;
 
 
 
-INTEGER: [0-9]+ ;
-ID : [a-zA-Z]+ ;
+ID: [0-9]+ ;
+Identifier: [a-zA-Z]+ ;
 NEWLINE: '\r'? '\n' ;
+SPACING: ' '| '\t';

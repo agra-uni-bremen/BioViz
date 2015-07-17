@@ -3,11 +3,18 @@ import CommonLexerRules;
 
 
 
-bio : grid ;
+bio : (grid|fluids|NEWLINE)+ ;
 
-grid : 'grid' NEWLINE (block NEWLINE)+ 'end' NEWLINE ;
+grid : 'grid'  NEWLINE (gridblock NEWLINE)+ 'end' ;
+fluids: 'fluids'  NEWLINE (fluiddef NEWLINE)+ 'end';
 
-block : position ' '+ position ;
-position: '(' INTEGER ',' INTEGER ')' ;
+fluiddef: ID spacing Identifier;
+
+
+spacing: ( ' '|'\t')+ ;
+optspacing: (' '|'\t')*;
+
+gridblock: position spacing position;
+position: '(' ID ',' ID ')' optspacing;
 
 
