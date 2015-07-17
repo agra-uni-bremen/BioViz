@@ -1,13 +1,13 @@
 package de.dfki.bioviz;
 
-import java.sql.Date;
-import java.util.HashMap;
-import java.util.Vector;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Matrix4;
+
+import java.sql.Date;
+import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * This class provides some methods to draw text.
