@@ -6,13 +6,17 @@ import java.util.Vector;
 public class Blob {
 	
 	private Vector<Blob.TimedPosition> positions = new Vector<Blob.TimedPosition>();
+
+	private int id=0;
 	
 	public float smoothX, smoothY, targetX, targetY;
 
-	private float movementDelay = 4f;
-	
 	public Blob() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public Blob(int id) {
+		this.id = id;
 	}
 	
 	public void addPosition(long time, int x, int y) {
@@ -22,9 +26,9 @@ public class Blob {
 	
 	public int getXAt(long t) {
 		int result = 0;
-		for (int i = 0; i < positions.size(); i++) {
-			if (positions.get(i).time <= t) {
-				result = positions.get(i).x;
+		for (TimedPosition position : positions) {
+			if (position.time <= t) {
+				result = position.x;
 			} else {
 				return result;
 			}
@@ -34,9 +38,9 @@ public class Blob {
 	
 	public int getYAt(long t) {
 		int result = 0;
-		for (int i = 0; i < positions.size(); i++) {
-			if (positions.get(i).time <= t) {
-				result = positions.get(i).y;
+		for (TimedPosition position : positions) {
+			if (position.time <= t) {
+				result = position.y;
 			} else {
 				return result;
 			}
@@ -69,12 +73,16 @@ public class Blob {
 	}
 	
 	public void update() {
+		float movementDelay = 4f;
 		smoothX += (targetX - smoothX) / movementDelay;
 		smoothY += (targetY - smoothY) / movementDelay;
 	}
-	
-	
-	
+
+	public int getId() {
+		return id;
+	}
+
+
 	/**
 	 * 
 	 * @author jannis
