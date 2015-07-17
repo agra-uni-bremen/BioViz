@@ -3,19 +3,19 @@ package structures;
 import java.util.Collections;
 import java.util.Vector;
 
-public class Blob {
+public class Droplet {
 	
-	private Vector<Blob.TimedPosition> positions = new Vector<Blob.TimedPosition>();
+	private Vector<Droplet.TimedPosition> positions = new Vector<Droplet.TimedPosition>();
 
 	private int id=0;
 	
 	public float smoothX, smoothY, targetX, targetY;
 
-	public Blob() {
+	public Droplet() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Blob(int id) {
+	public Droplet(int id) {
 		this.id = id;
 	}
 	

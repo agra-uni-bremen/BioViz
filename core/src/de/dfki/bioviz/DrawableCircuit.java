@@ -1,18 +1,16 @@
 package de.dfki.bioviz;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 import java.util.Vector;
 
 import structures.Biochip;
 import structures.BiochipField;
-import structures.Blob;
+import structures.Droplet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
@@ -76,7 +74,7 @@ public class DrawableCircuit implements Drawable {
 		this.data = toDraw;
 		field = new DrawableSprite("GridMarker.png", 1, 1);
 		field.color = fieldDefaultColor;
-		blob = new DrawableSprite("Blob.png", 1, 1);
+		blob = new DrawableSprite("Droplet.png", 1, 1);
 		blob.color = new Color(0.5f, 0.65f, 1f, 0.75f);
 	}
 
@@ -136,7 +134,7 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 		
-		for (Blob b : this.data.getBlobs()) {
+		for (Droplet b : this.data.getDroplets()) {
 			float xCoord = b.getXAt(currentTime);
 			float yCoord = b.getYAt(currentTime);
 			

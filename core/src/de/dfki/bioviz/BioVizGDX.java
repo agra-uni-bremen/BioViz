@@ -1,6 +1,5 @@
 package de.dfki.bioviz;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
@@ -8,7 +7,7 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 
 import structures.Biochip;
-import structures.Blob;
+import structures.Droplet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
@@ -21,7 +20,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
@@ -97,13 +95,13 @@ public class BioVizGDX implements ApplicationListener {
 			}
 		});
 		
-		Blob b = c.addBlob();
+		Droplet b = c.addBlob();
 		b.addPosition(0, 0, 0);
 		b.addPosition(1, 1, 0);
 		b.addPosition(2, 1, 1);
 		b.addPosition(5, 2, 1);
 
-		Blob b2 = c.addBlob();
+		Droplet b2 = c.addBlob();
 		b2.addPosition(0, 0, 3);
 		b2.addPosition(1, 1, 3);
 		b2.addPosition(2, 2, 3);

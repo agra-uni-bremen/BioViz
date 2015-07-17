@@ -5,7 +5,7 @@ import java.util.Set;
 
 /**
  * This class represents a biochip. It consists of a set of
- * blobs (the wobbly drops that travel around) and a set of
+ * droplets (the wobbly drops that travel around) and a set of
  * fields (i.e. the parts that they travel around on).
  * 
  * @author jannis
@@ -22,10 +22,10 @@ public class Biochip {
 	public BiochipField[][] field;
 	
 	/**
-	 * All blobs of this chip. Use the get-method to retrieve
+	 * All droplets of this chip. Use the get-method to retrieve
 	 * them from other classes.
 	 */
-	private HashSet<Blob> blobs = new HashSet<Blob>();
+	private HashSet<Droplet> droplets = new HashSet<Droplet>();
 	
 	/**
 	 * Caching data that does not need to be recalculated with each frame.
@@ -71,9 +71,9 @@ public class Biochip {
 	 * Adds a new blob to the circuit.
 	 * @return the newly created blob.
 	 */
-	public Blob addBlob() {
-		Blob b = new Blob();
-		this.blobs.add(b);
+	public Droplet addBlob() {
+		Droplet b = new Droplet();
+		this.droplets.add(b);
 		return b;
 	}
 	
@@ -84,21 +84,21 @@ public class Biochip {
 	 * according data is removed from the circuit altogether.</p>
 	 * @param b
 	 */
-	public void removeBlob(Blob b) {
-		if (this.blobs.contains(b))
-			this.blobs.remove(b);
+	public void removeBlob(Droplet b) {
+		if (this.droplets.contains(b))
+			this.droplets.remove(b);
 	}
 	
 	/**
-	 * Returns all blobs that are part of this chip.
+	 * Returns all droplets that are part of this chip.
 	 */
-	public Set<Blob> getBlobs() {
-		return this.blobs;
+	public Set<Droplet> getDroplets() {
+		return this.droplets;
 	}
 	
 	/**
 	 * Calculates all fields that are at some point activated
-	 * with adjacently placed blobs.
+	 * with adjacently placed droplets.
 	 * @return
 	 */
 	public Set<BiochipField> getAdjacentActivations() {
@@ -115,12 +115,12 @@ public class Biochip {
 			while(timeProceeds) {
 				long minimumTimestep = Long.MAX_VALUE;
 				timeProceeds = false;
-				for (Blob b : this.getBlobs()) {
+				for (Droplet b : this.getDroplets()) {
 					
 					int x1, y1;
 					x1 = b.getXAt(currentTime);
 					y1 = b.getYAt(currentTime);
-					for (Blob partner : this.getBlobs()) {
+					for (Droplet partner : this.getDroplets()) {
 						int x2, y2;
 						x2 = partner.getXAt(currentTime);
 						y2 = partner.getYAt(currentTime);
