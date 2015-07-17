@@ -24,6 +24,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioVizGDX;
+import de.dfki.bioviz.BioViz;
 
 
 public class DesktopLauncher extends JFrame {
