@@ -45,7 +45,7 @@ public class BioViz implements ApplicationListener {
 	public BioViz() {
 		super();
 		System.out.println("Starting without filename being specified; loading example.");
-		System.out.println("Usage: java -jar RevVisGDX.jar filename.real");
+		System.out.println("Usage: java -jar BioViz.jar <filename>");
 		singleton = this;
 	}
 	
