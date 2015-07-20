@@ -119,6 +119,8 @@ public class BioViz implements ApplicationListener {
 	@Override
 	public void dispose() {
 		batch.dispose();
+		manager.dispose();
+		Gdx.app.exit();
 	}
 
 	@Override

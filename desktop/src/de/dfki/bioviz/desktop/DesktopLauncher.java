@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,6 +30,8 @@ public class DesktopLauncher extends JFrame {
 	public JSlider time;
 	timerCallback tc;
 	public static DesktopLauncher singleton;
+	private BioViz bioViz;
+	LwjglAWTCanvas canvas;
 	
 	public DesktopLauncher(int timeMax) {
 		singleton = this;
@@ -36,8 +40,9 @@ public class DesktopLauncher extends JFrame {
 		container.setLayout(new BorderLayout());
 		
 		BioViz revVis = new BioViz();
+		bioViz = revVis;
 
-		LwjglAWTCanvas canvas = new LwjglAWTCanvas(revVis);// LwjglAWTCanvas(revVis, false);
+		canvas = new LwjglAWTCanvas(revVis);// LwjglAWTCanvas(revVis, false);
 		
 		
 		JPanel panel = new JPanel();
@@ -95,6 +100,13 @@ public class DesktopLauncher extends JFrame {
 		}
 
 		JFrame frame = new DesktopLauncher(10);
+
+
+		singleton.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				singleton.canvas.stop();
+			}
+		});
 	}
 	
 	private class timerCallback implements BioVizEvent {
