@@ -35,9 +35,9 @@ public class DesktopLauncher extends JFrame {
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 		
-		BioViz revVis = new BioViz();
+		BioViz bioViz = new BioViz();
 
-		LwjglAWTCanvas canvas = new LwjglAWTCanvas(revVis);// LwjglAWTCanvas(revVis, false);
+		LwjglAWTCanvas canvas = new LwjglAWTCanvas(bioViz);// LwjglAWTCanvas(revVis, false);
 		
 		
 		JPanel panel = new JPanel();
