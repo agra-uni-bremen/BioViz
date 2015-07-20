@@ -12,18 +12,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import de.dfki.bioviz.BioVizEvent;
-import de.dfki.bioviz.BioVizGDX;
 import de.dfki.bioviz.BioViz;
 
 
@@ -39,7 +35,7 @@ public class DesktopLauncher extends JFrame {
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 		
-		BioVizGDX revVis = new BioVizGDX();
+		BioViz revVis = new BioViz();
 
 		LwjglAWTCanvas canvas = new LwjglAWTCanvas(revVis);// LwjglAWTCanvas(revVis, false);
 		
@@ -55,28 +51,28 @@ public class DesktopLauncher extends JFrame {
 		defaultButton.addActionListener(new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
-	            BioVizGDX.singleton.currentCircuit.autoAdvance = !BioVizGDX.singleton.currentCircuit.autoAdvance;
+	            BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance;
 	        }
 	    });
 		
 		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
 		time.setPreferredSize(new Dimension(128, 64));
 		time.addChangeListener(new ChangeListener() {
-	        @Override
-	        public void stateChanged(ChangeEvent ce) {
-	            BioVizGDX.singleton.currentCircuit.currentTime = ((JSlider)ce.getSource()).getValue();
-	        }
-	    });
+			@Override
+			public void stateChanged(ChangeEvent ce) {
+				BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue();
+			}
+		});
 		tc = new timerCallback(time);
 		
 		JButton adjacencyButton = new JButton();
 		adjacencyButton.setText("(A)djacency");
 		adjacencyButton.addActionListener(new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            BioViz.singleton.currentCircuit.toggleHighlightAdjacency();
-	        }
-	    });
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				BioViz.singleton.currentCircuit.toggleHighlightAdjacency();
+			}
+		});
 		
 		panel.add(label);
 		panel.add(defaultButton);
@@ -120,11 +116,11 @@ public class DesktopLauncher extends JFrame {
 		private JSlider time;
 		public timerCallback(JSlider slider) {
 			this.time = slider;
-			BioVizGDX.singleton.addTimeChangedListener(this);
+			BioViz.singleton.addTimeChangedListener(this);
 		}
 		@Override
 		public void bioVizEvent() {
-			this.time.setValue((int)BioVizGDX.singleton.currentCircuit.currentTime);
+			this.time.setValue((int)BioViz.singleton.currentCircuit.currentTime);
 		}
 		
 	}

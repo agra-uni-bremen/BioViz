@@ -151,7 +151,7 @@ public class BioVizInputProcessor implements InputProcessor {
 		float mouseDiffY = mouseToBottomOriginal - expectedMouseToBottom;
 		current.y += mouseDiffY;
 		
-		BioVizGDX.singleton.currentCircuit.setViewBounds(current);
+		BioViz.singleton.currentCircuit.setViewBounds(current);
 		return false;
 	}
 

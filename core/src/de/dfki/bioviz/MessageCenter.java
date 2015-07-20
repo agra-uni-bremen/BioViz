@@ -75,7 +75,7 @@ public class MessageCenter {
 				font = new BitmapFont();
 
 			Matrix4 normalProjection = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
-			BioVizGDX.singleton.batch.setProjectionMatrix(normalProjection);
+			BioViz.singleton.batch.setProjectionMatrix(normalProjection);
 
 			int yCoord = Gdx.graphics.getHeight() - spacing;
 			for (Message m : this.messages) {
@@ -85,7 +85,7 @@ public class MessageCenter {
 					font.setColor(Color.WHITE);
 				int start_x = spacing;
 				int start_y = yCoord;
-				font.draw(BioVizGDX.singleton.batch, new Date(m.createdOn).toString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
+				font.draw(BioViz.singleton.batch, new Date(m.createdOn).toString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
 
 
 
@@ -96,7 +96,7 @@ public class MessageCenter {
 				font.setColor(s.color);
 				int x = (int) s.x;
 				int y = (int) s.y;
-				font.draw(BioVizGDX.singleton.batch, s.message, x, y);
+				font.draw(BioViz.singleton.batch, s.message, x, y);
 			}
 
 			long curTime = System.currentTimeMillis();
