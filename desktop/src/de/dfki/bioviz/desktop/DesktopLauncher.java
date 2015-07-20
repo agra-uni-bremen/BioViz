@@ -44,7 +44,7 @@ public class DesktopLauncher extends JFrame {
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(128, 600));
 
-		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/>for Olli &lt;3</body></html>");
+		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/></body></html>");
 
 		JButton defaultButton = new JButton();
 		defaultButton.setText("Autoplay");
