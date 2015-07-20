@@ -48,31 +48,16 @@ public class DesktopLauncher extends JFrame {
 
 		JButton defaultButton = new JButton();
 		defaultButton.setText("Autoplay");
-		defaultButton.addActionListener(new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance;
-	        }
-	    });
+		defaultButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 		
 		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
 		time.setPreferredSize(new Dimension(128, 64));
-		time.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent ce) {
-				BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue();
-			}
-		});
+		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
 		tc = new timerCallback(time);
 		
 		JButton adjacencyButton = new JButton();
 		adjacencyButton.setText("(A)djacency");
-		adjacencyButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				BioViz.singleton.currentCircuit.toggleHighlightAdjacency();
-			}
-		});
+		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
 		
 		panel.add(label);
 		panel.add(defaultButton);
