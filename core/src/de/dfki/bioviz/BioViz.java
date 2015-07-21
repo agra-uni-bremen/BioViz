@@ -1,5 +1,6 @@
 package de.dfki.bioviz;
 
+import java.awt.event.KeyEvent;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
@@ -12,6 +13,7 @@ import structures.Droplet;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 //import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.files.FileHandle;
@@ -35,6 +37,8 @@ public class BioViz implements ApplicationListener {
 	MessageCenter mc = new MessageCenter();
 	
 	private String filename;
+	private BioVizInputProcessor inputProcessor;
+	public InputProcessor getInputProcessor(){return inputProcessor;}
 	
 	boolean runFullPresetScreenshots = false;
 	float fullPresetScreenshotsScaling = 6f;
@@ -107,7 +111,7 @@ public class BioViz implements ApplicationListener {
 		
 		c.recalculateAdjacency = true;
 		
-		BioVizInputProcessor inputProcessor = new BioVizInputProcessor();
+		inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		//this.menu = new Menu();
