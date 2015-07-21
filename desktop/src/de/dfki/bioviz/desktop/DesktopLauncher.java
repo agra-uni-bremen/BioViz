@@ -51,19 +51,13 @@ public class DesktopLauncher extends JFrame {
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
         	if (input.getInputProcessor() == null) {
-        		System.out.println("ip: " + bioViz.getInputProcessor());
         		input.setInputProcessor(bioViz.getInputProcessor());
         	}
-        	System.out.println("dispatching event " + e.getKeyChar());
-        	//bioViz.singleton.getInputProcessor().keyTyped('a');
             if (e.getID() == KeyEvent.KEY_PRESSED) {
-            	//System.out.println("pressed");
                 bioViz.getInputProcessor().keyDown(translateKeyCode(e.getKeyCode()));
             } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-            	//System.out.println("released");
             	bioViz.getInputProcessor().keyUp(translateKeyCode(e.getKeyCode()));
             } else if (e.getID() == KeyEvent.KEY_TYPED) {
-            	//System.out.println("typed");
             	bioViz.getInputProcessor().keyTyped(e.getKeyChar());
             }
             return false;
