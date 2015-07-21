@@ -53,13 +53,16 @@ public class DesktopLauncher extends JFrame {
         	if (input.getInputProcessor() == null) {
         		input.setInputProcessor(bioViz.getInputProcessor());
         	}
-            if (e.getID() == KeyEvent.KEY_PRESSED) {
-                bioViz.getInputProcessor().keyDown(translateKeyCode(e.getKeyCode()));
-            } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-            	bioViz.getInputProcessor().keyUp(translateKeyCode(e.getKeyCode()));
-            } else if (e.getID() == KeyEvent.KEY_TYPED) {
-            	bioViz.getInputProcessor().keyTyped(e.getKeyChar());
-            }
+        	//Additional check to avoid having events fire twice (once from here and once from libgdx)
+        	if (DesktopLauncher.singleton.getFocusOwner() != DesktopLauncher.singleton.canvas.getCanvas()) {
+		        if (e.getID() == KeyEvent.KEY_PRESSED) {
+		            bioViz.getInputProcessor().keyDown(translateKeyCode(e.getKeyCode()));
+		        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
+		        	bioViz.getInputProcessor().keyUp(translateKeyCode(e.getKeyCode()));
+		        } else if (e.getID() == KeyEvent.KEY_TYPED) {
+		        	bioViz.getInputProcessor().keyTyped(e.getKeyChar());
+		        }
+        	}
             return false;
         }
     }
