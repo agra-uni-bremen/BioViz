@@ -1,6 +1,8 @@
 package de.dfki.bioviz;
 
 import java.sql.Date;
+import java.text.DateFormat;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -20,6 +22,14 @@ public class MessageCenter {
 	private BitmapFont font;
 	private int spacing = 18;
 	public boolean hidden = false;
+	
+	public static final int SEVERITY_DEBUG 		= 0b00001;
+	public static final int SEVERITY_INFO 		= 0b00010;
+	public static final int SEVERITY_WARNING 	= 0b00100;
+	public static final int SEVERITY_ERROR 		= 0b01000;
+	
+	final static int showInUI = SEVERITY_INFO | SEVERITY_WARNING | SEVERITY_ERROR;
+	final static int showInConsole = SEVERITY_DEBUG | SEVERITY_INFO | SEVERITY_WARNING | SEVERITY_ERROR;
 	
 	public BitmapFont getFont() {
 		if (font == null)
@@ -51,22 +61,44 @@ public class MessageCenter {
 	 * 
 	 * @param message the message to be displayed
 	 */
-	public void addMessage(String message) {
-		Message m = new Message();
-		m.message = message;
-		
-		// Meh. libgdx doesn't draw line breaks... 
-		if (message.contains("\n")) {
-			String[] lines = message.split("\n");
-			for (int i = 0; i < lines.length; i++) {
-				addMessage(lines[i]);
+	public void addMessage(String message, int severity) {
+		addMessage(message, severity, false);
+	}
+	
+	private void addMessage(String message, int severity, boolean recursion) {
+		if ((showInUI & severity) > 0) {
+			Message m = new Message();
+			m.message = getSeverityName(severity) + ": " + message;
+
+			// Meh. libgdx doesn't draw line breaks... 
+			if (message.contains("\n")) {
+				String[] lines = message.split("\n");
+				for (int i = 0; i < lines.length; i++) {
+					addMessage(lines[i], severity, true);
+				}
+			} else {
+				this.messages.add(m);
 			}
-		} else {
-			this.messages.add(m);
+
+			if (messages.size() > 50)
+				messages.remove(0);
 		}
-		
-		if (messages.size() > 50)
-			messages.remove(0);
+		if (!recursion && ((showInConsole & severity) > 0)) {
+			System.out.println("[" + new java.util.Date().getTime() + "] [" + getSeverityName(severity) + "] " + message);
+		}
+	}
+	
+	public static String getSeverityName(int severity) {
+		String result = "";
+		if ((severity & SEVERITY_DEBUG) > 0)
+			result += "Debug";
+		if ((severity & SEVERITY_INFO) > 0)
+			result += "Info";
+		if ((severity & SEVERITY_WARNING) > 0)
+			result += "Warning";
+		if ((severity & SEVERITY_ERROR) > 0)
+			result += "Error";
+		return result;
 	}
 
 	public void render() {

@@ -32,7 +32,7 @@ public class BioViz implements ApplicationListener {
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 	
 	AssetManager manager = new AssetManager();
-	MessageCenter mc = new MessageCenter();
+	public MessageCenter mc = new MessageCenter();
 	
 	private String filename;
 	
@@ -44,14 +44,13 @@ public class BioViz implements ApplicationListener {
 	
 	public BioViz() {
 		super();
-		System.out.println("Starting without filename being specified; loading example.");
-		System.out.println("Usage: java -jar BioViz.jar <filename>");
+		mc.addMessage("Starting without filename being specified; loading example.\nUsage: java -jar BioViz.jar <filename>", MessageCenter.SEVERITY_INFO);
 		singleton = this;
 	}
 	
 	public BioViz(String filename) {
 		this();
-		System.out.println("Starting BiochipVis, loading currently disabled");// + filename);
+		mc.addMessage("Starting BiochipVis, loading currently disabled", MessageCenter.SEVERITY_WARNING);
 		this.filename = filename;
 	}
 	
@@ -113,7 +112,7 @@ public class BioViz implements ApplicationListener {
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
 		
-		mc.addMessage("BiochipVis started");
+		mc.addMessage("BiochipVis started", MessageCenter.SEVERITY_INFO);
 	}
 
 	@Override
@@ -172,7 +171,7 @@ public class BioViz implements ApplicationListener {
 		FileHandle fh = Gdx.files.getFileHandle("screenshots/" + prefix + "" + new Date().getTime() + "_" + screenshotCount + ".png", FileType.Local);
 		screenshotCount++;
 		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		mc.addMessage("saved screenshot: " + fh.path());
+		mc.addMessage("saved screenshot: " + fh.path(), MessageCenter.SEVERITY_INFO);
 	}
 	public void saveScreenshotFull() {
 		saveScreenshotFull("");
