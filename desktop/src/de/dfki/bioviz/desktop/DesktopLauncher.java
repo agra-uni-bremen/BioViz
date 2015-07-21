@@ -73,10 +73,8 @@ public class DesktopLauncher extends JFrame {
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 		
-		BioViz revVis = new BioViz();
-		bioViz = revVis;
-
-		canvas = new LwjglAWTCanvas(revVis);// LwjglAWTCanvas(revVis, false);
+		bioViz = new BioViz();
+		canvas = new LwjglAWTCanvas(bioViz);
 		
 		/**
 		 * Needed to pipe through the keyboard events to the libgdx application
@@ -88,7 +86,7 @@ public class DesktopLauncher extends JFrame {
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(128, 600));
 
-		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/>for Olli &lt;3</body></html>");
+		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/></body></html>");
 
 		JButton defaultButton = new JButton();
 		defaultButton.setText("Autoplay");

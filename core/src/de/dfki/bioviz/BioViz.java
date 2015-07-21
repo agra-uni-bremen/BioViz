@@ -89,13 +89,7 @@ public class BioViz implements ApplicationListener {
 		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
 		
-		currentCircuit.addTimeChangedListener(new BioVizEvent() {
-			
-			@Override
-			public void bioVizEvent() {
-				BioViz.singleton.callTimeChangedListeners();
-			}
-		});
+		currentCircuit.addTimeChangedListener(() -> BioViz.singleton.callTimeChangedListeners());
 		
 		Droplet b = c.addBlob();
 		b.addPosition(0, 0, 0);
@@ -141,8 +135,8 @@ public class BioViz implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
-		for (int i = 0; i < drawables.size(); i++) {
-			drawables.get(i).draw();
+		for (Drawable drawable : drawables) {
+			drawable.draw();
 		}
 
 		mc.render();
@@ -236,7 +230,7 @@ public class BioViz implements ApplicationListener {
 		String filename = fc.getSelectedFile().toString();
 		try {
 			Biochip c;
-			if (filename != null && filename != "") {
+			if (filename != null && filename.equals("")) {
 //				c = RevlibFileReader.readRealFile(filename);
 //				RevVisGDX.singleton.drawables.remove(RevVisGDX.singleton.currentCircuit);
 //				RevVisGDX.singleton.currentCircuit = new DrawableCircuitReordered(c);
