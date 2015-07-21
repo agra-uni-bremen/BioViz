@@ -15,7 +15,6 @@ public class BioVizInputProcessor implements InputProcessor {
 	
 	@Override
 	public boolean keyDown (int keycode) {
-		System.out.println("key down: " + keycode);
 		if (keycode == Keys.CONTROL_LEFT || keycode == Keys.CONTROL_RIGHT) {
 			ctrl = true;
 		} else if (keycode == Keys.ALT_LEFT || keycode == Keys.ALT_RIGHT) {
@@ -28,7 +27,6 @@ public class BioVizInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean keyUp (int keycode) {
-		System.out.println("Received code " + keycode + "(" + Keys.toString(keycode) + ")");
 		if (keycode == Keys.CONTROL_LEFT || keycode == Keys.CONTROL_RIGHT) {
 			ctrl = false;
 		} else if (keycode == Keys.ALT_LEFT || keycode == Keys.ALT_RIGHT) {
@@ -48,7 +46,6 @@ public class BioVizInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean keyTyped (char character) {
-		System.out.println("key typed in bvip");
 		DrawableCircuit dc; 
 		switch (character) {
 		case 's':
