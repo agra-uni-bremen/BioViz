@@ -1,4 +1,4 @@
-grammar Bio;
+parser grammar Bio;
 
 options { tokenVocab=BioLexerGrammar; }
 
@@ -7,54 +7,52 @@ bio: (grid|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|d
 
 // Definition of the grid
 
-grid : 'grid'  NEWLINE (gridblock NEWLINE)+ END ;
+grid : Grid  NEWLINE (gridblock NEWLINE)+ END ;
 gridblock: position position;
 
 
 // Definition of droplet movements
-routes : 'routes' NEWLINE (route NEWLINE)+ END;
+routes : Routes NEWLINE (route NEWLINE)+ END;
 route: dropletID starttime? position+;
 
 
 // Definition of actuation vectors
 //
-pinActuations: 'pin actuations' NEWLINE (pinActuation NEWLINE)+ END ;
-pinActuation: pinID actuationVector;
+pinActuations: PinActuations NEWLINE (pinActuation NEWLINE)+ END ;
+pinActuation: pinID Colon ActuationVector;
 
 
-cellActuations: 'cell'? 'actuations' NEWLINE (cellActuation NEWLINE)+ END;
-cellActuation: position actuationVector;
-actuationVector: ('1'|'0'|'X')+;
+cellActuations: CellActuations NEWLINE (cellActuation NEWLINE)+ END;
+cellActuation: position Colon ActuationVector;
 
-nets: 'nets' NEWLINE (net NEWLINE)+ END;
-net: source (',' source)* '->' target;
+nets: Nets NEWLINE (net NEWLINE)+ END;
+net: source (Comma source)* Arrow target;
 source: position starttime?;
-// target position with possible timing constraint
 target: position timingConstraint?;
-timingConstraint: '[' Integer ']';
+timingConstraint: LBracket Integer RBracket;
 
 // Definition of blockages
-blockages: 'blockages' NEWLINE (blockage NEWLINE)+ END;
+blockages: Blockages NEWLINE (blockage NEWLINE)+ END;
 blockage: position position timing?;
-timing: '(' beginTiming ',' endTiming ')';
-beginTiming: Integer | '*';
-endTiming: Integer | '*';
+timing: LParen beginTiming Comma endTiming RParen;
+beginTiming: Integer | Asterisk;
+endTiming: Integer | Asterisk;
 
 // Definition of fluid types
 //
 // Here you define what type of fluid (e.g. blood, serum) a certain
 // fluid ID is
-fluids: 'fluids'  NEWLINE (fluiddef NEWLINE)+ END;
+fluids: Fluids  NEWLINE (fluiddef NEWLINE)+ END;
 fluiddef: Integer Identifier;
 
 
 // Pin assignment
-pinAssignments: 'pin assignments' NEWLINE (assignment NEWLINE)+ END;
+pinAssignments: PinAssignments NEWLINE (assignment NEWLINE)+ END;
 assignment: position pinID;
 
 
 // Mapping of droplet IDs to fluid IDs
-droplets: 'droplets' NEWLINE (dropToFluid NEWLINE)+ END;
+droplets: Droplets NEWLINE (dropToFluid NEWLINE)+ END;
 dropToFluid: dropletID fluidID;
 
 
@@ -63,22 +61,15 @@ dropToFluid: dropletID fluidID;
 dropletID: Integer;
 fluidID: Integer;
 pinID: Integer;
-position: '(' xpos ',' ypos ')';
+position: LParen xpos Comma ypos RParen;
 xpos: Integer;
 ypos: Integer;
-starttime: '[' Integer ']';
+starttime: LBracket Integer RBracket;
 
  // Lexer rules
-Integer: [0-9]+ ;
-Identifier: [a-zA-Z]+ ;
-Comment: '#' .*? '\r'? '\n' -> skip;
-NEWLINE: '\r'? '\n' ;
-WS: [ \t]+ -> skip;
+//Integer: [0-9]+ ;
+//Identifier: [a-zA-Z]+ ;
+//Comment: '#' .*? '\r'? '\n' -> skip;
+//NEWLINE: '\r'? '\n' ;
+//WS: [ \t]+ -> skip;
 
-END: 'end' ;//-> mode(DEFAULT_MODE);
-PinActuations: 'pin actuations' ;//-> mode(ACTUATION);
-CellActuations: 'cell'? 'actuations' ;//-> mode(ACTUATION);
-
-
-//mode ACTUATION;
-ActuationVector: ('1'|'0'|'X')+;
