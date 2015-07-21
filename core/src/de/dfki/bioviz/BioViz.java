@@ -62,6 +62,18 @@ public class BioViz implements ApplicationListener {
 	@Override
 	public void create() {
 		
+//	    File path = new File("assets/textures");
+//
+//	    File [] files = path.listFiles();
+//	    for (int i = 0; i < files.length; i++){
+//	        if (files[i].isFile() && files[i].getName().endsWith(".png")){
+//	            System.out.println("loading " + files[i].toString() + " as texture");
+//	            manager.load(files[i].toString(), Texture.class);
+//	        }
+//	    }
+	    
+//		manager.finishLoading();
+		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
