@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * @author jannis
  *
  */
-public class DrawableSprite implements Drawable {
+public abstract class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
 	private HashMap<String, TextureRegion> allTextures = new HashMap<>();

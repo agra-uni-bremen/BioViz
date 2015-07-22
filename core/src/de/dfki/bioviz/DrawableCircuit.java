@@ -72,9 +72,9 @@ public class DrawableCircuit implements Drawable {
 	 */
 	public DrawableCircuit(Biochip toDraw) {
 		this.data = toDraw;
-		field = new DrawableSprite("GridMarker.png", 1, 1);
+		field = new DrawableField(1, 1);
 		field.color = fieldDefaultColor;
-		blob = new DrawableSprite("Droplet.png", 1, 1);
+		blob = new DrawableDroplet(1, 1);
 		blob.color = new Color(0.5f, 0.65f, 1f, 0.75f);
 	}
 
@@ -351,5 +351,11 @@ public class DrawableCircuit implements Drawable {
 		for (BiochipField biochipField : f) {
 			
 		}
+	}
+
+	@Override
+	public String generateSVG() {
+		// TODO Auto-generated method stub
+		return "";
 	}
 }
