@@ -4,6 +4,7 @@ package de.dfki.bioviz.parser;
 import de.agra.dmfb.bioparser.antlr.Bio;
 import de.agra.dmfb.bioparser.antlr.BioBaseListener;
 import de.agra.dmfb.bioparser.antlr.BioLexerGrammar;
+import de.dfki.bioviz.structures.Biochip;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -18,9 +19,11 @@ import java.io.InputStream;
 public class BioParser  {
 
 
-    public static void parse(final String file) {
+
+
+    public static Biochip parse(final String inputString) {
         try {
-            ANTLRInputStream input = new ANTLRInputStream(new FileInputStream(file));
+            ANTLRInputStream input = new ANTLRInputStream(inputString);
             BioLexerGrammar lexer = new BioLexerGrammar(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             Bio parser = new Bio(tokens);
@@ -28,12 +31,17 @@ public class BioParser  {
 
             ParseTreeWalker walker = new ParseTreeWalker();
             // Walk the tree created during the parse, trigger callbacks
-            walker.walk(new BioParserListener(), tree);
-            System.out.println(tree.toStringTree(parser));
+            BioParserListener listener = new BioParserListener();
+            walker.walk(listener, tree);
+            System.out.println(listener.getBiochip());
+            return listener.getBiochip();
 
         } catch (Exception e) {
+            e.printStackTrace();
+            // TODO do something with this exception
             // ignore the stupid exception :)
         }
+        return null;
     }
 
 }
