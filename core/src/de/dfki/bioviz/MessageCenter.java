@@ -20,7 +20,6 @@ import com.badlogic.gdx.math.Matrix4;
 public class MessageCenter {
 	private Vector<Message> messages;
 	private BitmapFont font;
-	private int spacing = 18;
 	public boolean hidden = false;
 	
 	public static final int SEVERITY_DEBUG 		= 0b00001;
@@ -73,8 +72,8 @@ public class MessageCenter {
 			// Meh. libgdx doesn't draw line breaks... 
 			if (message.contains("\n")) {
 				String[] lines = message.split("\n");
-				for (int i = 0; i < lines.length; i++) {
-					addMessage(lines[i], severity, true);
+				for (String line : lines) {
+					addMessage(line, severity);
 				}
 			} else {
 				this.messages.add(m);
@@ -109,6 +108,7 @@ public class MessageCenter {
 			Matrix4 normalProjection = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
 			BioViz.singleton.batch.setProjectionMatrix(normalProjection);
 
+			int spacing = 18;
 			int yCoord = Gdx.graphics.getHeight() - spacing;
 			for (Message m : this.messages) {
 				if (m.color != null)

@@ -29,7 +29,7 @@ public class Biochip {
 	 * All droplets of this chip. Use the get-method to retrieve
 	 * them from other classes.
 	 */
-	private HashSet<Droplet> droplets = new HashSet<Droplet>();
+	private HashSet<Droplet> droplets = new HashSet<>();
 	
 	/**
 	 * Caching data that does not need to be recalculated with each frame.
@@ -40,8 +40,8 @@ public class Biochip {
 	
 	/**
 	 * Creates a new 2D-Biochip with a certain field size.
-	 * @param dimensionX
-	 * @param dimensionY
+	 * @param dimensionX The size of the chip along the x axis
+	 * @param dimensionY The size of the chip along the y axis
 	 */
 	public Biochip(int dimensionX, int dimensionY) {
 		field = new BiochipField[dimensionX][dimensionY];
@@ -86,11 +86,11 @@ public class Biochip {
 	 * <p>This does <i>not</i> mean that the blob is removed
 	 * at a certain time or something. Instead, this blob and its
 	 * according data is removed from the circuit altogether.</p>
-	 * @param b
+	 * @param drop The droplet that will be removed
 	 */
-	public void removeBlob(Droplet b) {
-		if (this.droplets.contains(b))
-			this.droplets.remove(b);
+	public void removeBlob(Droplet drop) {
+		if (this.droplets.contains(drop))
+			this.droplets.remove(drop);
 	}
 	
 	/**
@@ -103,7 +103,8 @@ public class Biochip {
 	/**
 	 * Calculates all fields that are at some point activated
 	 * with adjacently placed droplets.
-	 * @return
+	 *
+	 * @return Set of fields with adjacent droplets (at any point in time)
 	 */
 	public Set<BiochipField> getAdjacentActivations() {
 		if (adjacencyCache != null && !recalculateAdjacency) {
@@ -111,7 +112,7 @@ public class Biochip {
 		} else {
 			BioViz.singleton.mc.addMessage("Recalculating adjacency...", MessageCenter.SEVERITY_DEBUG);
 			recalculateAdjacency = false;
-			HashSet<BiochipField> result = new HashSet<BiochipField>();
+			HashSet<BiochipField> result = new HashSet<>();
 			
 			boolean timeProceeds = true;
 			long currentTime = 0;

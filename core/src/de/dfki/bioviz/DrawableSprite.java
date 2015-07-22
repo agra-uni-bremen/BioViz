@@ -18,7 +18,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
-	private HashMap<String, TextureRegion> allTextures = new HashMap<String, TextureRegion>();
+	private HashMap<String, TextureRegion> allTextures = new HashMap<>();
 	public Color color = Color.BLACK.cpy();
 	
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
@@ -69,8 +69,9 @@ public class DrawableSprite implements Drawable {
 	 * @param textureFilename
 	 */
 	public void setTexture(String textureFilename) {
-		if (!this.allTextures.containsKey(textureFilename))
+		if (!this.allTextures.containsKey(textureFilename)) {
 			this.loadTexture(textureFilename);
+		}
 		this.sprite.setRegion(this.allTextures.get(textureFilename));
 	}
 }
