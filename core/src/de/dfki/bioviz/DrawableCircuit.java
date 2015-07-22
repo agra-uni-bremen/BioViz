@@ -1,6 +1,7 @@
 package de.dfki.bioviz;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -21,9 +22,6 @@ import com.badlogic.gdx.math.Rectangle;
  */
 public class DrawableCircuit implements Drawable {
 	Biochip data;
-	
-	DrawableSprite field;
-	DrawableSprite blob;
 
 	private float scaleX = 1;
 	public float offsetX = 0;
@@ -45,10 +43,10 @@ public class DrawableCircuit implements Drawable {
 	
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 	
-	Color fieldDefaultColor = new Color(0.8f, 0.9f, 1f, 1f);
-	Color fieldAdjacentActivationColor = new Color(1f, 0.3f, 0.2f, 1f);
-	
 	private boolean highlightAdjacency = true;
+	
+	private Vector<DrawableField> fields = new Vector<>();
+	private Vector<DrawableDroplet> droplets = new Vector<>();
 
 	public boolean getHighlightAdjacency() {
 		return highlightAdjacency;
@@ -57,9 +55,9 @@ public class DrawableCircuit implements Drawable {
 	public void setHighlightAdjacency(boolean highlightAdjacency) {
 		this.highlightAdjacency = highlightAdjacency;
 		if (this.highlightAdjacency)
-			BioViz.singleton.mc.addMessage("now highlighting fields with adjacent blobs");
+			BioViz.singleton.mc.addMessage("now highlighting fields with adjacent blobs", MessageCenter.SEVERITY_INFO);
 		else
-			BioViz.singleton.mc.addMessage("no longer highlighting fields with adjacent blobs");
+			BioViz.singleton.mc.addMessage("no longer highlighting fields with adjacent blobs", MessageCenter.SEVERITY_INFO);
 	}
 	
 	public void toggleHighlightAdjacency() {
@@ -72,10 +70,32 @@ public class DrawableCircuit implements Drawable {
 	 */
 	public DrawableCircuit(Biochip toDraw) {
 		this.data = toDraw;
-		field = new DrawableSprite("GridMarker.png", 1, 1);
-		field.color = fieldDefaultColor;
-		blob = new DrawableSprite("Droplet.png", 1, 1);
-		blob.color = new Color(0.5f, 0.65f, 1f, 0.75f);
+		this.initializeDrawables();
+	}
+	
+	/**
+	 * Initializes the drawables according to the circuit stored in the data field
+	 */
+	private void initializeDrawables() {
+		// clear remaining old data first, if any
+		this.fields.clear();
+		this.droplets.clear();
+		
+		BioViz.singleton.mc.addMessage("Initializing drawables: " + (data.field.length * data.field[0].length) + " fields, " + data.getDroplets().size() + " droplets.", MessageCenter.SEVERITY_DEBUG);
+		
+		//setup fields
+		for (int i = 0; i < data.field.length; i++) {
+			for (int j = 0; j < data.field[i].length; j++) {
+				DrawableField f = new DrawableField(data.field[i][j]);
+				this.fields.add(f);
+			}
+		}
+		
+		//setup droplets
+		for (Droplet d : data.getDroplets()) {
+			DrawableDroplet dd = new DrawableDroplet(d);
+			this.droplets.add(dd);
+		}
 	}
 
 	@Override
@@ -113,44 +133,13 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 		
-		for (int i = 0; i < this.data.field.length; i++) {
-			for (int j = 0; j < this.data.field[i].length; j++) {
-				if (this.data.field[i][j].isEnabled) {
-					float xCoord = xCoordOnScreen(i);
-					float yCoord = yCoordOnScreen(j);
-					
-					field.x = xCoord;
-					field.y = yCoord;
-					field.scaleX = this.smoothScaleX;
-					field.scaleY = this.smoothScaleY;
-					
-					if (highlightAdjacency && this.data.getAdjacentActivations().contains(this.data.field[i][j]))
-						field.color = fieldAdjacentActivationColor;
-					else
-						field.color = fieldDefaultColor;
-					
-					field.draw();
-				}
-			}
+		for (DrawableField f : this.fields) {
+			f.draw();
 		}
 		
-		for (Droplet b : this.data.getDroplets()) {
-			float xCoord = b.getXAt(currentTime);
-			float yCoord = b.getYAt(currentTime);
-			
-			b.targetX = xCoord;
-			b.targetY = yCoord;
-			
-			b.update();
-			
-			
-			blob.x = xCoordOnScreen(b.smoothX);
-			blob.y = yCoordOnScreen(b.smoothY);
-			blob.scaleX = this.smoothScaleX;
-			blob.scaleY = this.smoothScaleY;
-			blob.draw();
+		for (DrawableDroplet d : this.droplets) {
+			d.draw();
 		}
-		
 	}
 
 	/**
@@ -351,5 +340,21 @@ public class DrawableCircuit implements Drawable {
 		for (BiochipField biochipField : f) {
 			
 		}
+	}
+
+	@Override
+	public String generateSVG() {
+		String result = "";
+		result += "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 " + this.data.field.length + " " + this.data.field[0].length + "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
+		
+		for (Drawable d : this.fields) {
+			result += d.generateSVG();
+		}
+		for (Drawable d : this.droplets) {
+			result += d.generateSVG();
+		}		
+		
+		result += "</svg>";
+		return result;
 	}
 }

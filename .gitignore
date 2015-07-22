@@ -66,3 +66,6 @@ build/
 ## Parser
 core/src/de/agra
 
+## Exported SVG
+*BioViz_*.svg
+
