@@ -1,4 +1,4 @@
-package structures;
+package de.dfki.bioviz.structures;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -71,10 +71,14 @@ public class Biochip {
 	 * Adds a new blob to the circuit.
 	 * @return the newly created blob.
 	 */
-	public Droplet addBlob() {
+	public Droplet addDroplet() {
 		Droplet b = new Droplet();
 		this.droplets.add(b);
 		return b;
+	}
+
+	public void addDroplet(Droplet drop) {
+		this.droplets.add(drop);
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package structures;
+package de.dfki.bioviz.structures;
 
 public class BiochipField {
 	public boolean isEnabled = true;

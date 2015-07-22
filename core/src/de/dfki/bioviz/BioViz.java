@@ -6,8 +6,8 @@ import java.util.Vector;
 
 import javax.swing.JFileChooser;
 
-import structures.Biochip;
-import structures.Droplet;
+import de.dfki.bioviz.structures.Biochip;
+import de.dfki.bioviz.structures.Droplet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
@@ -93,13 +93,13 @@ public class BioViz implements ApplicationListener {
 			}
 		});
 		
-		Droplet b = c.addBlob();
+		Droplet b = c.addDroplet();
 		b.addPosition(0, 0, 0);
 		b.addPosition(1, 1, 0);
 		b.addPosition(2, 1, 1);
 		b.addPosition(5, 2, 1);
 		
-		Droplet b2 = c.addBlob();
+		Droplet b2 = c.addDroplet();
 		b2.addPosition(0, 0, 3);
 		b2.addPosition(1, 1, 3);
 		b2.addPosition(2, 2, 3);

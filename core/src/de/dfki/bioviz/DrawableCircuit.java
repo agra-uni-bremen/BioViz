@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.Set;
 import java.util.Vector;
 
-import structures.Biochip;
-import structures.BiochipField;
-import structures.Droplet;
+import de.dfki.bioviz.structures.Biochip;
+import de.dfki.bioviz.structures.BiochipField;
+import de.dfki.bioviz.structures.Droplet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
