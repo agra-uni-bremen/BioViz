@@ -62,3 +62,7 @@ build/
 
 ## OS Specific
 .DS_Store
+
+## Parser
+core/src/de/agra
+
