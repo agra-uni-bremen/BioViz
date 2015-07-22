@@ -47,7 +47,7 @@ public class Biochip {
 		field = new BiochipField[dimensionX][dimensionY];
 		for (int i = 0; i < field.length; i++) {
 			for (int j = 0; j < field[i].length; j++) {
-				field[i][j] = new BiochipField();
+				field[i][j] = new BiochipField(i, j);
 			}
 		}
 	}

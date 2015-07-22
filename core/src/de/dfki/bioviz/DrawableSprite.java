@@ -19,7 +19,7 @@ public abstract class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
 	private HashMap<String, TextureRegion> allTextures = new HashMap<>();
-	public Color color = Color.BLACK.cpy();
+	public Color color = Color.WHITE.cpy();
 	
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 	

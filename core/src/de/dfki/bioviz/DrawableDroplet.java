@@ -1,18 +1,37 @@
 package de.dfki.bioviz;
 
-public class DrawableDroplet extends DrawableSprite {
+import structures.Droplet;
 
-	public DrawableDroplet() {
+public class DrawableDroplet extends DrawableSprite {
+	
+	public Droplet droplet;
+
+	public DrawableDroplet(Droplet droplet) {
 		super("Droplet.png");
-	}
-	public DrawableDroplet(float sizeX, float sizeY) {
-		super("Droplet.png", sizeX, sizeY);
+		this.droplet = droplet;
 	}
 
 	@Override
 	public String generateSVG() {
 		// TODO Auto-generated method stub
-		return "";
+		return "<image x=\"" + this.x + "\" y=\"" + this.y + "\" width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />";
 	}
 
+	@Override
+	public void draw() {		
+		droplet.targetX = droplet.getXAt(BioViz.singleton.currentCircuit.currentTime);
+		droplet.targetY = droplet.getYAt(BioViz.singleton.currentCircuit.currentTime);
+		
+		droplet.update();
+		
+		float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(droplet.smoothX);
+		float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(droplet.smoothY);
+		
+		this.x = xCoord;
+		this.y = yCoord;
+		this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
+		this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
+		
+		super.draw();
+	}
 }

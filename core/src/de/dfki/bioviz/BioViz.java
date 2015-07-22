@@ -85,10 +85,6 @@ public class BioViz implements ApplicationListener {
 		c.disableFieldAt(9, 4);
 		c.disableFieldAt(8, 4);
 		c.disableFieldAt(9, 3);
-		currentCircuit = new DrawableCircuit(c);
-		drawables.add(currentCircuit);
-		
-		currentCircuit.addTimeChangedListener(() -> BioViz.singleton.callTimeChangedListeners());
 		
 		Droplet b = c.addBlob();
 		b.addPosition(0, 0, 0);
@@ -106,6 +102,12 @@ public class BioViz implements ApplicationListener {
 		
 		inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
+		
+
+		currentCircuit = new DrawableCircuit(c);
+		drawables.add(currentCircuit);
+		
+		currentCircuit.addTimeChangedListener(() -> BioViz.singleton.callTimeChangedListeners());
 		
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
