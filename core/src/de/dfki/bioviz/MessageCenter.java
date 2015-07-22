@@ -118,7 +118,7 @@ public class MessageCenter {
 					font.setColor(Color.WHITE);
 				int start_x = spacing;
 				int start_y = yCoord;
-				font.draw(BioViz.singleton.batch, new Date(m.createdOn).toString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
+				font.draw(BioViz.singleton.batch, m.message, start_x, start_y); // TODO name of closestHit
 
 
 
