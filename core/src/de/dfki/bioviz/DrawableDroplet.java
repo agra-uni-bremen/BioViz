@@ -1,10 +1,12 @@
 package de.dfki.bioviz;
 
-import structures.Droplet;
+
+import de.dfki.bioviz.structures.Droplet;
 
 public class DrawableDroplet extends DrawableSprite {
 	
 	public Droplet droplet;
+
 
 	public DrawableDroplet(Droplet droplet) {
 		super("Droplet.png");
