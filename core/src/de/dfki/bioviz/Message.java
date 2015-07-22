@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 
 public class Message {
 	public String message;
-	public long displayTime = 100000;
+	public long displayTime = 5000;
 	public long createdOn;
 	public Color color;
 	
