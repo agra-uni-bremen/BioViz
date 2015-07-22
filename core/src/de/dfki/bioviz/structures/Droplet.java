@@ -5,7 +5,7 @@ import java.util.Vector;
 
 public class Droplet {
 	
-	private Vector<Droplet.TimedPosition> positions = new Vector<Droplet.TimedPosition>();
+	private Vector<Droplet.TimedPosition> positions = new Vector<>();
 
 	private int id=0;
 	

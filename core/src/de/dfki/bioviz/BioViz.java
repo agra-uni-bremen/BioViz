@@ -1,5 +1,6 @@
 package de.dfki.bioviz;
 
+import java.awt.event.KeyEvent;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
@@ -12,6 +13,7 @@ import de.dfki.bioviz.structures.Droplet;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 //import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.files.FileHandle;
@@ -32,9 +34,11 @@ public class BioViz implements ApplicationListener {
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 	
 	AssetManager manager = new AssetManager();
-	MessageCenter mc = new MessageCenter();
+	public MessageCenter mc = new MessageCenter();
 	
 	private String filename;
+	private BioVizInputProcessor inputProcessor;
+	public InputProcessor getInputProcessor(){return inputProcessor;}
 	
 	boolean runFullPresetScreenshots = false;
 	float fullPresetScreenshotsScaling = 6f;
@@ -44,14 +48,13 @@ public class BioViz implements ApplicationListener {
 	
 	public BioViz() {
 		super();
-		System.out.println("Starting without filename being specified; loading example.");
-		System.out.println("Usage: java -jar BioViz.jar <filename>");
+		mc.addMessage("Starting without filename being specified; loading example.\nUsage: java -jar BioViz.jar <filename>", MessageCenter.SEVERITY_INFO);
 		singleton = this;
 	}
 	
 	public BioViz(String filename) {
 		this();
-		System.out.println("Starting BiochipVis, loading currently disabled");// + filename);
+		mc.addMessage("Starting BiochipVis, loading currently disabled", MessageCenter.SEVERITY_WARNING);
 		this.filename = filename;
 	}
 	
@@ -85,13 +88,7 @@ public class BioViz implements ApplicationListener {
 		currentCircuit = new DrawableCircuit(c);
 		drawables.add(currentCircuit);
 		
-		currentCircuit.addTimeChangedListener(new BioVizEvent() {
-			
-			@Override
-			public void bioVizEvent() {
-				BioViz.singleton.callTimeChangedListeners();
-			}
-		});
+		currentCircuit.addTimeChangedListener(() -> BioViz.singleton.callTimeChangedListeners());
 		
 		Droplet b = c.addDroplet();
 		b.addPosition(0, 0, 0);
@@ -107,18 +104,20 @@ public class BioViz implements ApplicationListener {
 		
 		c.recalculateAdjacency = true;
 		
-		BioVizInputProcessor inputProcessor = new BioVizInputProcessor();
+		inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
 		
-		mc.addMessage("BiochipVis started");
+		mc.addMessage("BiochipVis started", MessageCenter.SEVERITY_INFO);
 	}
 
 	@Override
 	public void dispose() {
 		batch.dispose();
+		manager.dispose();
+		Gdx.app.exit();
 	}
 
 	@Override
@@ -135,8 +134,8 @@ public class BioViz implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 
-		for (int i = 0; i < drawables.size(); i++) {
-			drawables.get(i).draw();
+		for (Drawable drawable : drawables) {
+			drawable.draw();
 		}
 
 		mc.render();
@@ -170,7 +169,7 @@ public class BioViz implements ApplicationListener {
 		FileHandle fh = Gdx.files.getFileHandle("screenshots/" + prefix + "" + new Date().getTime() + "_" + screenshotCount + ".png", FileType.Local);
 		screenshotCount++;
 		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		mc.addMessage("saved screenshot: " + fh.path());
+		mc.addMessage("saved screenshot: " + fh.path(), MessageCenter.SEVERITY_INFO);
 	}
 	public void saveScreenshotFull() {
 		saveScreenshotFull("");
@@ -230,7 +229,7 @@ public class BioViz implements ApplicationListener {
 		String filename = fc.getSelectedFile().toString();
 		try {
 			Biochip c;
-			if (filename != null && filename != "") {
+			if (filename != null && filename.equals("")) {
 //				c = RevlibFileReader.readRealFile(filename);
 //				RevVisGDX.singleton.drawables.remove(RevVisGDX.singleton.currentCircuit);
 //				RevVisGDX.singleton.currentCircuit = new DrawableCircuitReordered(c);

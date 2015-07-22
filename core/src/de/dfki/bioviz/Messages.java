@@ -9,7 +9,9 @@ package de.dfki.bioviz;
 public class Messages {
 	public static String highlightBus = "Now highlighting bus $1";
 	public static String highlightNoBus = "How highlighting no bus";
-	
+
+	// TODO Use (probably: delete) this class
+
 	public static String helpText =
 			"b: highlight a bus\n"
 			+ "c: colorize constant inputs\n"

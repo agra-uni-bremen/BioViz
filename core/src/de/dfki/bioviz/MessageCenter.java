@@ -1,6 +1,8 @@
 package de.dfki.bioviz;
 
 import java.sql.Date;
+import java.text.DateFormat;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -18,8 +20,16 @@ import com.badlogic.gdx.math.Matrix4;
 public class MessageCenter {
 	private Vector<Message> messages;
 	private BitmapFont font;
-	private int spacing = 18;
 	public boolean hidden = false;
+	
+	public static final int SEVERITY_DEBUG 		= 0b00001;
+	public static final int SEVERITY_INFO 		= 0b00010;
+	public static final int SEVERITY_WARNING 	= 0b00100;
+	public static final int SEVERITY_ERROR 		= 0b01000;
+	public static final int MAX_MESSAGES_IN_UI	= 5;
+	
+	final static int showInUI = SEVERITY_INFO | SEVERITY_WARNING | SEVERITY_ERROR;
+	final static int showInConsole = SEVERITY_DEBUG | SEVERITY_INFO | SEVERITY_WARNING | SEVERITY_ERROR;
 	
 	public BitmapFont getFont() {
 		if (font == null)
@@ -51,22 +61,44 @@ public class MessageCenter {
 	 * 
 	 * @param message the message to be displayed
 	 */
-	public void addMessage(String message) {
-		Message m = new Message();
-		m.message = message;
-		
-		// Meh. libgdx doesn't draw line breaks... 
-		if (message.contains("\n")) {
-			String[] lines = message.split("\n");
-			for (int i = 0; i < lines.length; i++) {
-				addMessage(lines[i]);
+	public void addMessage(String message, int severity) {
+		addMessage(message, severity, false);
+	}
+	
+	private void addMessage(String message, int severity, boolean recursion) {
+		if ((showInUI & severity) > 0) {
+			Message m = new Message();
+			m.message = getSeverityName(severity) + ": " + message;
+
+			// Meh. libgdx doesn't draw line breaks... 
+			if (message.contains("\n")) {
+				String[] lines = message.split("\n");
+				for (String line : lines) {
+					addMessage(line, severity);
+				}
+			} else {
+				this.messages.add(m);
 			}
-		} else {
-			this.messages.add(m);
+
+			if (messages.size() > MAX_MESSAGES_IN_UI)
+				messages.remove(0);
 		}
-		
-		if (messages.size() > 50)
-			messages.remove(0);
+		if (!recursion && ((showInConsole & severity) > 0)) {
+			System.out.println("[" + new java.util.Date().getTime() + "] [" + getSeverityName(severity) + "] " + message);
+		}
+	}
+	
+	public static String getSeverityName(int severity) {
+		String result = "";
+		if ((severity & SEVERITY_DEBUG) > 0)
+			result += "Debug";
+		if ((severity & SEVERITY_INFO) > 0)
+			result += "Info";
+		if ((severity & SEVERITY_WARNING) > 0)
+			result += "Warning";
+		if ((severity & SEVERITY_ERROR) > 0)
+			result += "Error";
+		return result;
 	}
 
 	public void render() {
@@ -77,6 +109,7 @@ public class MessageCenter {
 			Matrix4 normalProjection = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
 			BioViz.singleton.batch.setProjectionMatrix(normalProjection);
 
+			int spacing = 18;
 			int yCoord = Gdx.graphics.getHeight() - spacing;
 			for (Message m : this.messages) {
 				if (m.color != null)
@@ -85,7 +118,7 @@ public class MessageCenter {
 					font.setColor(Color.WHITE);
 				int start_x = spacing;
 				int start_y = yCoord;
-				font.draw(BioViz.singleton.batch, new Date(m.createdOn).toString() + ": " + m.message, start_x, start_y); // TODO name of closestHit
+				font.draw(BioViz.singleton.batch, m.message, start_x, start_y); // TODO name of closestHit
 
 
 

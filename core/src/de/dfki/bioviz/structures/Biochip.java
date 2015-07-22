@@ -3,6 +3,10 @@ package de.dfki.bioviz.structures;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.dfki.bioviz.BioViz;
+import de.dfki.bioviz.BioVizEvent;
+import de.dfki.bioviz.MessageCenter;
+
 /**
  * This class represents a biochip. It consists of a set of
  * droplets (the wobbly drops that travel around) and a set of
@@ -25,7 +29,7 @@ public class Biochip {
 	 * All droplets of this chip. Use the get-method to retrieve
 	 * them from other classes.
 	 */
-	private HashSet<Droplet> droplets = new HashSet<Droplet>();
+	private HashSet<Droplet> droplets = new HashSet<>();
 	
 	/**
 	 * Caching data that does not need to be recalculated with each frame.
@@ -36,8 +40,8 @@ public class Biochip {
 	
 	/**
 	 * Creates a new 2D-Biochip with a certain field size.
-	 * @param dimensionX
-	 * @param dimensionY
+	 * @param dimensionX The size of the chip along the x axis
+	 * @param dimensionY The size of the chip along the y axis
 	 */
 	public Biochip(int dimensionX, int dimensionY) {
 		field = new BiochipField[dimensionX][dimensionY];
@@ -86,11 +90,11 @@ public class Biochip {
 	 * <p>This does <i>not</i> mean that the blob is removed
 	 * at a certain time or something. Instead, this blob and its
 	 * according data is removed from the circuit altogether.</p>
-	 * @param b
+	 * @param drop The droplet that will be removed
 	 */
-	public void removeBlob(Droplet b) {
-		if (this.droplets.contains(b))
-			this.droplets.remove(b);
+	public void removeBlob(Droplet drop) {
+		if (this.droplets.contains(drop))
+			this.droplets.remove(drop);
 	}
 	
 	/**
@@ -103,15 +107,16 @@ public class Biochip {
 	/**
 	 * Calculates all fields that are at some point activated
 	 * with adjacently placed droplets.
-	 * @return
+	 *
+	 * @return Set of fields with adjacent droplets (at any point in time)
 	 */
 	public Set<BiochipField> getAdjacentActivations() {
 		if (adjacencyCache != null && !recalculateAdjacency) {
 			return adjacencyCache;
 		} else {
-			System.out.println("Recalculating adjacency...");
+			BioViz.singleton.mc.addMessage("Recalculating adjacency...", MessageCenter.SEVERITY_DEBUG);
 			recalculateAdjacency = false;
-			HashSet<BiochipField> result = new HashSet<BiochipField>();
+			HashSet<BiochipField> result = new HashSet<>();
 			
 			boolean timeProceeds = true;
 			long currentTime = 0;
@@ -128,14 +133,13 @@ public class Biochip {
 						int x2, y2;
 						x2 = partner.getXAt(currentTime);
 						y2 = partner.getYAt(currentTime);
-						System.out.println("Checking " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime);
 						if (
 								(x1 == x2 && Math.abs(y1 - y2) == 1) ||
 								(y1 == y2 && Math.abs(x1 - x2) == 1)
 							) {
 							result.add(this.field[x1][y1]);
 							result.add(this.field[x2][y2]);
-							System.out.println("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2);
+							BioViz.singleton.mc.addMessage("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime, MessageCenter.SEVERITY_DEBUG);
 						}
 					}
 					
