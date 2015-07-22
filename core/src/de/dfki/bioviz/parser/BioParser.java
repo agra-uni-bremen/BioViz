@@ -33,7 +33,6 @@ public class BioParser  {
             // Walk the tree created during the parse, trigger callbacks
             BioParserListener listener = new BioParserListener();
             walker.walk(listener, tree);
-            System.out.println(listener.getBiochip());
             return listener.getBiochip();
 
         } catch (Exception e) {

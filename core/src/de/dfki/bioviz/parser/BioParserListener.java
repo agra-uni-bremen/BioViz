@@ -27,7 +27,6 @@ public class BioParserListener extends BioBaseListener {
     private Biochip chip;
 
     public Biochip getBiochip() {
-        System.out.println("Returning parsed biochip instance: "+ chip);
         return chip;
     }
 
@@ -76,9 +75,7 @@ public class BioParserListener extends BioBaseListener {
     public void exitBio(BioContext ctx) {
         // TODO issue warning if more than one grid has been parsed
 
-        System.out.println("Exiting Bio context");
         chip = new Biochip(maxX, maxY);
-        System.out.println("Chips instance: "+chip);
 
         for(Rectangle rect: rectangles) {
             for (Pair<Integer,Integer> cell: rect.positions()) {
