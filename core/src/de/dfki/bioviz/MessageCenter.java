@@ -26,6 +26,7 @@ public class MessageCenter {
 	public static final int SEVERITY_INFO 		= 0b00010;
 	public static final int SEVERITY_WARNING 	= 0b00100;
 	public static final int SEVERITY_ERROR 		= 0b01000;
+	public static final int MAX_MESSAGES_IN_UI	= 5;
 	
 	final static int showInUI = SEVERITY_INFO | SEVERITY_WARNING | SEVERITY_ERROR;
 	final static int showInConsole = SEVERITY_DEBUG | SEVERITY_INFO | SEVERITY_WARNING | SEVERITY_ERROR;
@@ -79,7 +80,7 @@ public class MessageCenter {
 				this.messages.add(m);
 			}
 
-			if (messages.size() > 50)
+			if (messages.size() > MAX_MESSAGES_IN_UI)
 				messages.remove(0);
 		}
 		if (!recursion && ((showInConsole & severity) > 0)) {
