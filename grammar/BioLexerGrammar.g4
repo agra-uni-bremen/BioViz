@@ -1,5 +1,7 @@
 lexer grammar BioLexerGrammar;
 
+@lexer::header {package de.agra.dmfb.bioparser.antlr;}
+
 
 Droplets: 'droplets';
 PinAssignments: 'pin assignments';
