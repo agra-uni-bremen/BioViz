@@ -90,10 +90,12 @@ public class DesktopLauncher extends JFrame {
 
 		JButton defaultButton = new JButton();
 		defaultButton.setText("Autoplay");
+		defaultButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
 		defaultButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 		
 		JButton zoomButton = new JButton();
 		zoomButton.setText("Reset camera");
+		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
 		
 		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
@@ -103,14 +105,15 @@ public class DesktopLauncher extends JFrame {
 		
 		JButton adjacencyButton = new JButton();
 		adjacencyButton.setText("(A)djacency");
+		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
 		
 		panel.add(label);
 		panel.add(defaultButton);
 		panel.add(zoomButton);
+		panel.add(adjacencyButton);
 		panel.add(time);
 		
-		panel.add(adjacencyButton);
 		
 		input = new LwjglAWTInput(canvas.getCanvas());
 		
