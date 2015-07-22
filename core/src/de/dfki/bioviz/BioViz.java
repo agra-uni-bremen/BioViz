@@ -82,6 +82,7 @@ public class BioViz implements ApplicationListener {
 		Biochip c;
 		//TODO loading stuff
 		c = new Biochip(10, 5);
+		c.enableAll();
 		c.disableFieldAt(9, 4);
 		c.disableFieldAt(8, 4);
 		c.disableFieldAt(9, 3);
