@@ -57,9 +57,9 @@ public class DrawableCircuit implements Drawable {
 	public void setHighlightAdjacency(boolean highlightAdjacency) {
 		this.highlightAdjacency = highlightAdjacency;
 		if (this.highlightAdjacency)
-			BioViz.singleton.mc.addMessage("now highlighting fields with adjacent blobs");
+			BioViz.singleton.mc.addMessage("now highlighting fields with adjacent blobs", MessageCenter.SEVERITY_INFO);
 		else
-			BioViz.singleton.mc.addMessage("no longer highlighting fields with adjacent blobs");
+			BioViz.singleton.mc.addMessage("no longer highlighting fields with adjacent blobs", MessageCenter.SEVERITY_INFO);
 	}
 	
 	public void toggleHighlightAdjacency() {
