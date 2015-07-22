@@ -92,6 +92,10 @@ public class DesktopLauncher extends JFrame {
 		defaultButton.setText("Autoplay");
 		defaultButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 		
+		JButton zoomButton = new JButton();
+		zoomButton.setText("Reset camera");
+		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
+		
 		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
 		time.setPreferredSize(new Dimension(128, 64));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
@@ -103,6 +107,7 @@ public class DesktopLauncher extends JFrame {
 		
 		panel.add(label);
 		panel.add(defaultButton);
+		panel.add(zoomButton);
 		panel.add(time);
 		
 		panel.add(adjacencyButton);
