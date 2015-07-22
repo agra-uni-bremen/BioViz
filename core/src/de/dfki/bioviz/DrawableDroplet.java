@@ -1,6 +1,7 @@
 package de.dfki.bioviz;
 
 import structures.Droplet;
+import com.badlogic.gdx.graphics.Color;
 
 public class DrawableDroplet extends DrawableSprite {
 	
@@ -9,6 +10,8 @@ public class DrawableDroplet extends DrawableSprite {
 	public DrawableDroplet(Droplet droplet) {
 		super("Droplet.png");
 		this.droplet = droplet;
+		super.addLOD(16, "BlackPixel.png");
+		super.color = new Color(0.75f, 0.85f, 0.9f, 1f);
 	}
 
 	@Override
