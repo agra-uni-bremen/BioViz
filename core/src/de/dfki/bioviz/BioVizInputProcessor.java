@@ -1,9 +1,12 @@
 package de.dfki.bioviz;
 
+import java.util.Date;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Rectangle;
 
 public class BioVizInputProcessor implements InputProcessor {
@@ -36,6 +39,17 @@ public class BioVizInputProcessor implements InputProcessor {
 		} else if (keycode == Keys.O) {
 			if (ctrl) {
 				BioViz.loadNewFile();
+			}
+		} else if (keycode == Keys.S) {
+			if (ctrl) {
+				try {
+					String svg = BioViz.singleton.currentCircuit.generateSVG();
+					FileHandle handle = Gdx.files.local("export/BioViz_" + new Date().getTime() + ".svg");
+					handle.writeString(svg, false);
+					BioViz.singleton.mc.addMessage("Stored SVG at " + handle.path(), MessageCenter.SEVERITY_INFO);
+				} catch (Exception e) {
+					BioViz.singleton.mc.addMessage("Could not store SVG: " + e.getMessage(), MessageCenter.SEVERITY_ERROR);
+				}
 			}
 		} else if (keycode == Keys.A) {
 			BioViz.singleton.currentCircuit.toggleHighlightAdjacency();

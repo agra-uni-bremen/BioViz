@@ -61,4 +61,10 @@ public class Button extends DrawableSprite {
 	public void UnHovered() {
 		this.color.a = 0.75f;
 	}
+
+	@Override
+	public String generateSVG() {
+		// TODO Auto-generated method stub
+		return "";
+	}
 }
