@@ -2,14 +2,25 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
     }
     dependencies {
+        classpath 'me.champeau.gradle:antlr4-gradle-plugin:0.1'
     }
+}
+
+apply plugin: 'me.champeau.gradle.antlr4'
+
+// add antlr4 to classpath
+configurations {
+   compile.extendsFrom antlr4
 }
 
 allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
+    antlr4.source = file('lib/parser')
+    antlr4.output = file('lib/parser/src/de/agra/dmfb/bioparser/antlr')
 
 
     version = '1.0'
@@ -44,7 +55,16 @@ project(":desktop") {
 
 project(":core") {
     apply plugin: "java"
+    
+    antlr4.source = file('../lib/parser')
+    antlr4.output = file('../lib/parser/src/de/agra/dmfb/bioparser/antlr')
 
+
+    // make the Java compile task depend on the antlr4 task
+    compileJava.dependsOn antlr4
+
+    // add the generated source files to the list of java sources
+    sourceSets.main.java.srcDirs += antlr4.output
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
