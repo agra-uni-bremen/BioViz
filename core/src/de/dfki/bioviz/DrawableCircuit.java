@@ -345,9 +345,16 @@ public class DrawableCircuit implements Drawable {
 	@Override
 	public String generateSVG() {
 		String result = "";
+		result += "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 " + this.data.field.length + " " + this.data.field[0].length + "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
 		
+		for (Drawable d : this.fields) {
+			result += d.generateSVG();
+		}
+		for (Drawable d : this.droplets) {
+			result += d.generateSVG();
+		}		
 		
-		// TODO Auto-generated method stub
-		return "";
+		result += "</svg>";
+		return result;
 	}
 }

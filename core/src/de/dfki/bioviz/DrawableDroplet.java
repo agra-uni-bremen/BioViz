@@ -13,8 +13,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 	@Override
 	public String generateSVG() {
-		// TODO Auto-generated method stub
-		return "<image x=\"" + this.x + "\" y=\"" + this.y + "\" width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />";
+		return "<image x=\"" + this.droplet.smoothX + "\" y=\"" + (-this.droplet.smoothY + BioViz.singleton.currentCircuit.data.field[0].length - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />";
 	}
 
 	@Override
