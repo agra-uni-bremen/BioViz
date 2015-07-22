@@ -18,6 +18,8 @@ END: 'end';
 Integer: [0-9]+ ;
 Identifier: [a-zA-Z]+ ;
 Comment: '#' .*? '\r'? '\n' -> skip;
+
+Newlines: NEWLINE+;
 NEWLINE: '\r'? '\n' ;
 WS: [ \t]+ -> skip;
 

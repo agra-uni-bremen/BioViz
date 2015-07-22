@@ -3,36 +3,36 @@ parser grammar Bio;
 options { tokenVocab=BioLexerGrammar; }
 
 
-bio: (grid|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|NEWLINE)+;
+bio: (grid|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
 
 // Definition of the grid
 
-grid : Grid  NEWLINE+ (gridblock NEWLINE+)+ END ;
+grid : Grid  Newlines (gridblock Newlines)+ END ;
 gridblock: position position;
 
 
 // Definition of droplet movements
-routes : Routes NEWLINE (route NEWLINE)+ END;
+routes : Routes Newlines (route Newlines)+ END;
 route: dropletID starttime? position+;
 
 
 // Definition of actuation vectors
 //
-pinActuations: PinActuations NEWLINE+ (pinActuation NEWLINE+)+ END ;
+pinActuations: PinActuations Newlines+ (pinActuation Newlines+)+ END ;
 pinActuation: pinID Colon ActuationVector;
 
 
-cellActuations: CellActuations NEWLINE (cellActuation NEWLINE)+ END;
+cellActuations: CellActuations Newlines (cellActuation Newlines)+ END;
 cellActuation: position Colon ActuationVector;
 
-nets: Nets NEWLINE (net NEWLINE)+ END;
+nets: Nets Newlines (net Newlines)+ END;
 net: source (Comma source)* Arrow target;
 source: position starttime?;
 target: position timingConstraint?;
 timingConstraint: LBracket Integer RBracket;
 
 // Definition of blockages
-blockages: Blockages NEWLINE (blockage NEWLINE)+ END;
+blockages: Blockages Newlines (blockage Newlines)+ END;
 blockage: position position timing?;
 timing: LParen beginTiming Comma endTiming RParen;
 beginTiming: Integer | Asterisk;
@@ -42,17 +42,17 @@ endTiming: Integer | Asterisk;
 //
 // Here you define what type of fluid (e.g. blood, serum) a certain
 // fluid ID is
-fluids: Fluids  NEWLINE (fluiddef NEWLINE)+ END;
+fluids: Fluids  Newlines (fluiddef Newlines)+ END;
 fluiddef: Integer Identifier;
 
 
 // Pin assignment
-pinAssignments: PinAssignments NEWLINE (assignment NEWLINE)+ END;
+pinAssignments: PinAssignments Newlines (assignment Newlines)+ END;
 assignment: position pinID;
 
 
 // Mapping of droplet IDs to fluid IDs
-droplets: Droplets NEWLINE (dropToFluid NEWLINE)+ END;
+droplets: Droplets Newlines (dropToFluid Newlines)+ END;
 dropToFluid: dropletID fluidID;
 
 
@@ -66,10 +66,4 @@ xpos: Integer;
 ypos: Integer;
 starttime: LBracket Integer RBracket;
 
- // Lexer rules
-//Integer: [0-9]+ ;
-//Identifier: [a-zA-Z]+ ;
-//Comment: '#' .*? '\r'? '\n' -> skip;
-//NEWLINE: '\r'? '\n' ;
-//WS: [ \t]+ -> skip;
 
