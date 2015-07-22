@@ -21,6 +21,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 
 import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioViz;
+import de.dfki.bioviz.parser.BioParser;
 
 
 public class DesktopLauncher extends JFrame {
@@ -75,6 +76,8 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	public static void main(String[] args) {
+
+		BioParser.parse("/home/keszocze/uni/workspaces/java-tools/bioParser/examples/real_life_like_grid.bio");
 
 		try {
 			// Set System L&F
