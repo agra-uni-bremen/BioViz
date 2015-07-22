@@ -7,6 +7,7 @@ import de.agra.dmfb.bioparser.antlr.BioLexerGrammar;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -14,12 +15,8 @@ import java.io.InputStream;
 /**
  * Created by keszocze on 21.07.15.
  */
-public class BioParser extends BioBaseListener {
+public class BioParser  {
 
-    @Override
-    public void enterGrid(Bio.GridContext ctx) {
-        System.out.println("Bin in einem Grid angekommen :)");
-    }
 
     public static void parse(final String file) {
         try {
@@ -28,10 +25,13 @@ public class BioParser extends BioBaseListener {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             Bio parser = new Bio(tokens);
             ParseTree tree = parser.bio(); // parse everything
+
+            ParseTreeWalker walker = new ParseTreeWalker();
+            // Walk the tree created during the parse, trigger callbacks
+            walker.walk(new BioParserListener(), tree);
             System.out.println(tree.toStringTree(parser));
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // ignore the stupid exception :)
         }
     }
