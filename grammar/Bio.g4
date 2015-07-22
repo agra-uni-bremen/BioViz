@@ -7,7 +7,7 @@ bio: (grid|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|d
 
 // Definition of the grid
 
-grid : Grid  NEWLINE (gridblock NEWLINE)+ END ;
+grid : Grid  NEWLINE+ (gridblock NEWLINE+)+ END ;
 gridblock: position position;
 
 
@@ -18,7 +18,7 @@ route: dropletID starttime? position+;
 
 // Definition of actuation vectors
 //
-pinActuations: PinActuations NEWLINE (pinActuation NEWLINE)+ END ;
+pinActuations: PinActuations NEWLINE+ (pinActuation NEWLINE+)+ END ;
 pinActuation: pinID Colon ActuationVector;
 
 
