@@ -22,6 +22,7 @@ allprojects {
     apply plugin: "me.champeau.gradle.antlr4"
     antlr4.source = file('lib/parser')
     antlr4.output = file('core/src/de/agra/dmfb/bioparser/antlr')
+    antlr4.extraArgs=['-package','de.agra.dmfb.bioparser.antlr']
 
 
     version = '1.0'
