@@ -175,6 +175,20 @@ public class DrawableCircuit implements Drawable {
 		return yCoord;
 	}
 	
+	protected float yCoordInGates(float i) {
+		float yCoord = i;
+		yCoord /= smoothScaleY;
+		yCoord -= smoothOffsetY;
+		return yCoord;
+	}
+	
+	protected float xCoordInGates(float i) {
+		float xCoord = i;
+		xCoord /= smoothScaleX;
+		xCoord -= smoothOffsetX;
+		return xCoord;
+	}
+	
 	/**
 	 * If the two scaling factors aren't equal, this sets the larger scaling factor to
 	 * the smaller one in order to display square elements on screen
@@ -258,7 +272,7 @@ public class DrawableCircuit implements Drawable {
 		float width = Gdx.graphics.getWidth() * (1f / scaleX);
 		float centerY = offsetY;
 		float height = Gdx.graphics.getHeight() * (1f / scaleY);
-		result.set(centerX - (width / 2f), centerY + (data.field.length / 2) - (height / 2f), width, height);
+		result.set(centerX - (width / 2f), centerY - (height / 2f), width, height);
 		return result;
 	}
 	
@@ -270,7 +284,7 @@ public class DrawableCircuit implements Drawable {
 		float targetHeight = Gdx.graphics.getHeight() / bounds.height;
 		float targetWidth = Gdx.graphics.getWidth() / bounds.width;
 		float targetOffsetX = (bounds.x + (bounds.width / 2f));
-		float targetOffsetY = bounds.y - (data.field.length / 2) + (bounds.height / 2f);
+		float targetOffsetY = bounds.y + (bounds.height / 2f);
 				
 		setScaleX(targetWidth);
 		setScaleY(targetHeight);
