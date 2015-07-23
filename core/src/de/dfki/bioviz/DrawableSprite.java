@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * This is a wrapper for the 2d drawing methods. 
@@ -100,5 +101,26 @@ public abstract class DrawableSprite implements Drawable {
 	public void addLOD(float scaleFactorMax, String textureFilename) {
 		loadTexture(textureFilename);
 		this.LevelOfDetailTextures.put(scaleFactorMax, textureFilename);
+	}
+	
+	public boolean isHovered() {
+		int mouseX = Gdx.input.getX();
+		int mouseY = Gdx.input.getY();
+		int resX = Gdx.graphics.getWidth();
+		int resY = Gdx.graphics.getHeight();
+		
+		Rectangle viewport = BioViz.singleton.currentCircuit.getViewBounds();
+		System.out.print(viewport + " ### ");
+		
+		float viewMouseX = (((float)mouseX / (float)resX) * viewport.width + viewport.x);
+		float viewMouseY = -(((float)mouseY / (float)resY) * viewport.height + viewport.y);
+		
+		System.out.println(mouseX + " / " + mouseY + " --> " + viewMouseX + " / " + viewMouseY + " <<-->> " + BioViz.singleton.currentCircuit.xCoordInGates(this.x) + " / " + BioViz.singleton.currentCircuit.yCoordInGates(this.y));
+		
+		if (viewMouseX > BioViz.singleton.currentCircuit.xCoordInGates(this.x) - 0.5f && viewMouseX < BioViz.singleton.currentCircuit.xCoordInGates(this.x) + 0.5f &&
+			viewMouseY > BioViz.singleton.currentCircuit.yCoordInGates(this.y) - 0.5f && viewMouseY < BioViz.singleton.currentCircuit.yCoordInGates(this.y) + 0.5f) {
+			return true;
+		}
+		return false;
 	}
 }

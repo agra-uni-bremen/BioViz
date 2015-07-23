@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 public class DrawableRoute extends DrawableSprite {
 
 	public static int timesteps = 4;
+	public static int hoverTimesteps = 8;
+	
 	private DrawableDroplet parent;
 	
 	public Color baseColor = Color.BLACK;
@@ -22,7 +24,7 @@ public class DrawableRoute extends DrawableSprite {
 		
 		for(int i = -timesteps; i < timesteps; i++) {
 			
-			float alpha = 1 - (Math.abs((float)i) / ((float)this.timesteps));
+			float alpha = 1 - (Math.abs((float)i) / ((float)timesteps));
 			displayAt = currentTime + i;
 			int x1 = parent.droplet.getXAt(displayAt);
 			int x2 = parent.droplet.getXAt(displayAt + 1);
@@ -51,10 +53,15 @@ public class DrawableRoute extends DrawableSprite {
 		long currentTime = BioViz.singleton.currentCircuit.currentTime;
 		long displayAt;
 		
-		for(int i = -timesteps; i < timesteps; i++) {
+		int stepsToUse = timesteps;
+		if (this.parent.isHovered()) {
+			stepsToUse = hoverTimesteps;
+		}
+		
+		for(int i = -stepsToUse; i < stepsToUse; i++) {
 			
 			this.color = this.baseColor.cpy();
-			this.color.a = 1 - (Math.abs((float)i) / ((float)this.timesteps));
+			this.color.a = 1 - (Math.abs((float)i) / ((float)stepsToUse));
 			
 			displayAt = currentTime + i;
 			int x1 = parent.droplet.getXAt(displayAt);
