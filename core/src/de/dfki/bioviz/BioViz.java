@@ -1,6 +1,5 @@
 package de.dfki.bioviz;
 
-import java.awt.event.KeyEvent;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
@@ -10,9 +9,9 @@ import javax.swing.JFileChooser;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.badlogic.gdx.Files;
+import de.dfki.bioviz.messages.MessageCenter;
 import de.dfki.bioviz.parser.BioParser;
 import de.dfki.bioviz.structures.Biochip;
-import de.dfki.bioviz.structures.Droplet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
@@ -162,7 +161,7 @@ public class BioViz implements ApplicationListener {
 		FileHandle fh = Gdx.files.getFileHandle("screenshots/" + prefix + "" + new Date().getTime() + "_" + screenshotCount + ".png", FileType.Local);
 		screenshotCount++;
 		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		logger.info("Saved screenshot to {}",fh.path());
+		logger.info("Saved screenshot to {}", fh.path());
 	}
 	public void saveScreenshotFull() {
 		saveScreenshotFull("");
@@ -233,7 +232,7 @@ public class BioViz implements ApplicationListener {
 				System.out.println("Error: could not load " + filename);
 			}
 		} catch (Exception e) {
-			logger.error("Could not load {}",filename);
+			logger.error("Could not load {}", filename);
 		}
 	}
 	

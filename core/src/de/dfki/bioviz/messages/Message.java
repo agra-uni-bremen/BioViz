@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.messages;
 
 import com.badlogic.gdx.graphics.Color;
 

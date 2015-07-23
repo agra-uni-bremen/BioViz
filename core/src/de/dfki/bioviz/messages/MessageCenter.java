@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.messages;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Matrix4;
+import de.dfki.bioviz.BioViz;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -16,7 +17,7 @@ import java.util.Vector;
  * @author jannis
  *
  */
-public class MessageCenter extends AppenderBase<ILoggingEvent> {
+public class MessageCenter  {
 
 
 	private Vector<Message> messages;
@@ -50,10 +51,10 @@ public class MessageCenter extends AppenderBase<ILoggingEvent> {
 		messages = new Vector<Message>();
 	}
 
-	@Override
-	protected void append(ILoggingEvent eventObject) {
-		addMessage(eventObject.getFormattedMessage());
+	public boolean isHidden() {
+		return hidden;
 	}
+
 
 	/**
 	 * Add a message that is shown for some time and then disappears.
@@ -65,7 +66,6 @@ public class MessageCenter extends AppenderBase<ILoggingEvent> {
 	}
 	
 	private void addMessage(String message,boolean recursion) {
-		System.out.println("addMessage "+message);
 			Message m = new Message(message);
 
 			// Meh. libgdx doesn't draw line breaks... 
@@ -81,7 +81,6 @@ public class MessageCenter extends AppenderBase<ILoggingEvent> {
 			if (messages.size() > MAX_MESSAGES_IN_UI) {
 				messages.remove(0);
 			}
-		System.out.println(messages.size());
 	}
 
 	public void render() {

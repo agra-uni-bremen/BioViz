@@ -63,8 +63,8 @@ public class DrawableCircuit implements Drawable {
 		if (this.highlightAdjacency) {
 			logger.info("Highlighting fields with adjacent droplets");
 		} else {
+			logger.info("Stop highlighting fields with adjacent droplets");
 		}
-			logger.info("Stop highilghting fields with adjacent droplets");
 	}
 	
 	public void toggleHighlightAdjacency() {

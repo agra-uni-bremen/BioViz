@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.dfki.bioviz.BioViz;
-import de.dfki.bioviz.BioVizEvent;
-import de.dfki.bioviz.MessageCenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
