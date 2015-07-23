@@ -28,10 +28,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
-
 import com.badlogic.gdx.files.FileHandle;
+
 import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioViz;
+import de.dfki.bioviz.DrawableRoute;
 import de.dfki.bioviz.parser.BioParser;
 
 
@@ -102,10 +103,19 @@ public class DesktopLauncher extends JFrame {
 		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
 		
+		JLabel timeInfo = new JLabel("<html><body>Time</body></html>");
+		
 		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
 		time.setPreferredSize(new Dimension(128, 64));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
 		tc = new timerCallback(time);
+		
+		JLabel routeInfo = new JLabel("<html><body>Route length</body></html>");
+		
+		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, 0);
+		routes.setPreferredSize(new Dimension(128, 64));
+		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
+		//tc = new timerCallback(time);
 		
 		JButton adjacencyButton = new JButton();
 		adjacencyButton.setText("(A)djacency");
@@ -116,7 +126,10 @@ public class DesktopLauncher extends JFrame {
 		panel.add(defaultButton);
 		panel.add(zoomButton);
 		panel.add(adjacencyButton);
+		panel.add(timeInfo);
 		panel.add(time);
+		panel.add(routeInfo);
+		panel.add(routes);
 		
 		
 		input = new LwjglAWTInput(canvas.getCanvas());
