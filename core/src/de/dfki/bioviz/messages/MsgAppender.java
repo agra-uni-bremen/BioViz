@@ -5,7 +5,8 @@ import ch.qos.logback.core.AppenderBase;
 import de.dfki.bioviz.BioViz;
 
 /**
- * Created by keszocze on 23.07.15.
+ * @author keszocze
+ * @brief A wrapper that makes the MessageCenter a valid appender for the logback framework
  */
 public class MsgAppender extends AppenderBase<ILoggingEvent> {
 
@@ -13,6 +14,9 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
 
 
     @Override
+    /**
+     * @brief Forwards a log message to the MessageCenter that will display it on the HUD
+     */
     protected void append(ILoggingEvent eventObject) {
         if (isStarted()) {
             mc.addMessage(eventObject.getFormattedMessage());
@@ -20,6 +24,11 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
     }
 
     @Override
+    /**
+     * @brief Checks whether this appender is ready to append messages
+     *
+     * The idea is to check whether a GUI is present. If so, messages can be appended.
+     */
     public boolean isStarted() {
         if (mc == null) {
             if (BioViz.singleton != null && BioViz.singleton.mc != null) {
