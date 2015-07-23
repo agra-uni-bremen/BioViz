@@ -110,12 +110,9 @@ public abstract class DrawableSprite implements Drawable {
 		int resY = Gdx.graphics.getHeight();
 		
 		Rectangle viewport = BioViz.singleton.currentCircuit.getViewBounds();
-		System.out.print(viewport + " ### ");
 		
 		float viewMouseX = (((float)mouseX / (float)resX) * viewport.width + viewport.x);
 		float viewMouseY = -(((float)mouseY / (float)resY) * viewport.height + viewport.y);
-		
-		System.out.println(mouseX + " / " + mouseY + " --> " + viewMouseX + " / " + viewMouseY + " <<-->> " + BioViz.singleton.currentCircuit.xCoordInGates(this.x) + " / " + BioViz.singleton.currentCircuit.yCoordInGates(this.y));
 		
 		if (viewMouseX > BioViz.singleton.currentCircuit.xCoordInGates(this.x) - 0.5f && viewMouseX < BioViz.singleton.currentCircuit.xCoordInGates(this.x) + 0.5f &&
 			viewMouseY > BioViz.singleton.currentCircuit.yCoordInGates(this.y) - 0.5f && viewMouseY < BioViz.singleton.currentCircuit.yCoordInGates(this.y) + 0.5f) {

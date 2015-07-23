@@ -63,7 +63,10 @@ public class DrawableRoute extends DrawableSprite {
 		for(int i = -stepsToUse; i < stepsToUse; i++) {
 			
 			this.color = this.baseColor.cpy();
-			this.color.a = 1 - (Math.abs((float)i) / ((float)stepsToUse));
+			if (i >= 0)
+				this.color.a = 1 - (Math.abs((float)i + 1) / ((float)stepsToUse + 1));
+			else
+				this.color.a = 1 - (Math.abs((float)i) / ((float)stepsToUse + 1));
 			
 			displayAt = currentTime + i;
 			int x1 = parent.droplet.getXAt(displayAt);
