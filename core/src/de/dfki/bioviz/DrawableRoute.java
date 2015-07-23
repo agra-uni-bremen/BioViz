@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 
 public class DrawableRoute extends DrawableSprite {
 
-	public int timesteps = 4;
+	public static int timesteps = 4;
 	private DrawableDroplet parent;
 	
 	public Color baseColor = Color.BLACK;
@@ -23,9 +23,7 @@ public class DrawableRoute extends DrawableSprite {
 	@Override
 	public void draw() {
 		long currentTime = BioViz.singleton.currentCircuit.currentTime;
-		long displayAt; 
-		
-		System.out.println("Drwaring route");
+		long displayAt;
 		
 		for(int i = -timesteps; i < timesteps; i++) {
 			
