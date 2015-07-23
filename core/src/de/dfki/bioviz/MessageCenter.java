@@ -23,15 +23,8 @@ public class MessageCenter extends AppenderBase<ILoggingEvent> {
 	private BitmapFont font;
 	public boolean hidden = false;
 
-	public static final int SEVERITY_DEBUG 		= 0b00001;
-	public static final int SEVERITY_INFO 		= 0b00010;
-	public static final int SEVERITY_WARNING 	= 0b00100;
-	public static final int SEVERITY_ERROR 		= 0b01000;
 	public static final int MAX_MESSAGES_IN_UI	= 5;
-	
-	final static int showInUI = SEVERITY_INFO | SEVERITY_WARNING | SEVERITY_ERROR;
-	final static int showInConsole = SEVERITY_DEBUG | SEVERITY_INFO | SEVERITY_WARNING | SEVERITY_ERROR;
-	
+
 	public BitmapFont getFont() {
 		if (font == null)
 			font = new BitmapFont();
