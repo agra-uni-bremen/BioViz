@@ -20,10 +20,6 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: "me.champeau.gradle.antlr4"
-    antlr4.source = file('lib/parser')
-    antlr4.output = file('core/src/de/agra/dmfb/bioparser/antlr')
-    antlr4.extraArgs=['-package','de.agra.dmfb.bioparser.antlr']
-
 
     version = '1.0'
     ext {
@@ -46,35 +42,21 @@ allprojects {
 
 project(":desktop") {
     apply plugin: "java"
-    apply plugin: "me.champeau.gradle.antlr4"
-    antlr4.source = file('../lib/parser')
-    antlr4.output = file('../core/src/de/agra/dmfb/bioparser/antlr')
 
-    // make the Java compile task depend on the antlr4 task
-    compileJava.dependsOn antlr4
-
-    // add the generated source files to the list of java sources
-    sourceSets.main.java.srcDirs += '../lib/parser/src'
 
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     }
-    
-    configurations {
-        compile.extendsFrom antlr4
-    }
 }
 
 project(":core") {
     apply plugin: "java"
-    apply plugin: "me.champeau.gradle.antlr4"
-    
+
     antlr4.source = file('../lib/parser')
     antlr4.output = file('src/de/agra/dmfb/bioparser/antlr')
-
-
+    antlr4.extraArgs=['-package','de.agra.dmfb.bioparser.antlr']
     // make the Java compile task depend on the antlr4 task
     compileJava.dependsOn antlr4
 
