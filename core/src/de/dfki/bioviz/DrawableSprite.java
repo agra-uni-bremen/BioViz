@@ -20,6 +20,10 @@ public abstract class DrawableSprite implements Drawable {
 	protected Sprite sprite;
 	private HashMap<String, TextureRegion> allTextures = new HashMap<>();
 	public Color color = Color.WHITE.cpy();
+	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
+	private String defaultTextureName;
+	
+	public static final float defaultLODThreshold = 8f;
 	
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 	
@@ -30,6 +34,7 @@ public abstract class DrawableSprite implements Drawable {
 	 * @param textureFilename the texture to use
 	 */
 	public DrawableSprite(String textureFilename, float sizeX, float sizeY) {
+		defaultTextureName = textureFilename;
 		TextureRegion region = loadTexture(textureFilename);
 		Texture currentTexture = region.getTexture();
 		sprite = new Sprite(region);
@@ -43,6 +48,23 @@ public abstract class DrawableSprite implements Drawable {
 	}
 	
 	public void draw() {
+	
+		// if LOD is set, enable LOD calculation and set
+		// sprite accordingly
+		if (this.LevelOfDetailTextures.size() > 0) {
+			float bestLODFactor = 0;
+			boolean foundLOD = false;
+			for (Float factor : LevelOfDetailTextures.keySet()) {
+				if (factor >= this.scaleX && factor >= bestLODFactor) {
+					bestLODFactor = factor;
+					foundLOD = true;
+				}
+			}
+			if (foundLOD)
+				this.setTexture(LevelOfDetailTextures.get(bestLODFactor));
+			else
+				this.setTexture(defaultTextureName);
+		}
 		this.sprite.setPosition(x-sprite.getWidth()/2f, y-sprite.getHeight()/2f);
 		this.sprite.setScale(scaleX, scaleY);
 		this.sprite.setRotation(rotation);
@@ -73,5 +95,10 @@ public abstract class DrawableSprite implements Drawable {
 			this.loadTexture(textureFilename);
 		}
 		this.sprite.setRegion(this.allTextures.get(textureFilename));
+	}
+	
+	public void addLOD(float scaleFactorMax, String textureFilename) {
+		loadTexture(textureFilename);
+		this.LevelOfDetailTextures.put(scaleFactorMax, textureFilename);
 	}
 }

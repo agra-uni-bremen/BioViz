@@ -8,12 +8,13 @@ public class DrawableField extends DrawableSprite {
 	
 	public BiochipField field;
 	
-	static final Color fieldDefaultColor = new Color(0.8f, 0.9f, 1f, 1f);
+	static final Color fieldDefaultColor = new Color(0.5f, 0.5f, 0.75f, 1f);
 	static final Color fieldAdjacentActivationColor = new Color(1f, 0.3f, 0.2f, 1f);
 
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
 		this.field = field;
+		super.addLOD(8, "BlackPixel.png");
 	}
 
 	@Override
