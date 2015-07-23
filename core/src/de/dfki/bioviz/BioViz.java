@@ -1,24 +1,11 @@
 package de.dfki.bioviz;
 
-import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.Vector;
-
-import javax.swing.JFileChooser;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
-import com.badlogic.gdx.Files;
-import de.dfki.bioviz.messages.MessageCenter;
-import de.dfki.bioviz.parser.BioParser;
-import de.dfki.bioviz.structures.Biochip;
-
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
-//import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -26,9 +13,16 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import de.dfki.bioviz.messages.MessageCenter;
+import de.dfki.bioviz.parser.BioParser;
+import de.dfki.bioviz.structures.Biochip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+import java.nio.ByteBuffer;
+import java.util.Date;
+import java.util.Vector;
 
 
 
@@ -59,10 +53,6 @@ public class BioViz implements ApplicationListener {
 		super();
 		logger.info("Starting withouth filename being specified; loading example");
 		logger.info("Usage: java -jar BioViz.jar <filename>");
-
-		// TODO das hier wieder rausnehmen, sobald das mit dem Einlesen der Config klappt
-		    LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-    		StatusPrinter.print(lc);
 
 		singleton = this;
 	}

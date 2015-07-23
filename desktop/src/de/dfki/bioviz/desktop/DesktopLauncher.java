@@ -175,12 +175,11 @@ public class DesktopLauncher extends JFrame {
             // Call context.reset() to clear any previous configuration, e.g. default
             // configuration. For multi-step configuration, omit calling context.reset().
             context.reset();
-            System.out.println(System.getProperty("user.dir"));
             configurator.doConfigure("logback.xml");
         } catch (JoranException je) {
             // StatusPrinter will handle this
         }
-        StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+        //StatusPrinter.printInCaseOfErrorsOrWarnings(context);
 
     }
 
