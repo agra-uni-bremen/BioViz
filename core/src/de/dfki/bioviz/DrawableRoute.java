@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 
 public class DrawableRoute extends DrawableSprite {
 
-	public static int timesteps = 4;
-	public static int hoverTimesteps = 8;
+	public static int timesteps = 0;
+	public static int hoverTimesteps = 2 * timesteps + 8;
 	
 	private DrawableDroplet parent;
 	
@@ -52,6 +52,8 @@ public class DrawableRoute extends DrawableSprite {
 	public void draw() {
 		long currentTime = BioViz.singleton.currentCircuit.currentTime;
 		long displayAt;
+		
+		hoverTimesteps = 2 * timesteps + 8;
 		
 		int stepsToUse = timesteps;
 		if (this.parent.isHovered()) {
