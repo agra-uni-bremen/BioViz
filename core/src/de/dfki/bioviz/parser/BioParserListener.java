@@ -1,20 +1,21 @@
 package de.dfki.bioviz.parser;
 
 import de.agra.dmfb.bioparser.antlr.Bio;
+import de.agra.dmfb.bioparser.antlr.Bio.GridContext;
+import de.agra.dmfb.bioparser.antlr.Bio.PositionContext;
+import de.agra.dmfb.bioparser.antlr.Bio.GridblockContext;
+import de.agra.dmfb.bioparser.antlr.Bio.RouteContext;
 import de.agra.dmfb.bioparser.antlr.BioBaseListener;
+import de.agra.dmfb.bioparser.antlr.Bio.BioContext;
 import de.dfki.bioviz.structures.Biochip;
 import de.dfki.bioviz.structures.Droplet;
 import de.dfki.bioviz.structures.Rectangle;
 import org.antlr.v4.runtime.misc.Pair;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.agra.dmfb.bioparser.antlr.Bio.PositionContext;
-import static de.agra.dmfb.bioparser.antlr.Bio.GridContext;
-import static de.agra.dmfb.bioparser.antlr.Bio.GridblockContext;
-import static de.agra.dmfb.bioparser.antlr.Bio.RouteContext;
-import static de.agra.dmfb.bioparser.antlr.Bio.BioContext;
 
 public class BioParserListener extends BioBaseListener {
 
