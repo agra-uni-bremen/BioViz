@@ -22,13 +22,17 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
+import com.badlogic.gdx.files.FileHandle;
 import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioViz;
+import de.dfki.bioviz.parser.BioParser;
 
 
 public class DesktopLauncher extends JFrame {
@@ -126,6 +130,7 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	public static void main(String[] args) {
+
 
 		try {
 			// Set System L&F

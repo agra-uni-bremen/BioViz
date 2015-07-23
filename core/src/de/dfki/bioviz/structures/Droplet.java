@@ -1,4 +1,4 @@
-package structures;
+package de.dfki.bioviz.structures;
 
 import java.util.Collections;
 import java.util.Vector;
