@@ -19,7 +19,7 @@ END: 'end';
 
 Integer: [0-9]+ ;
 Identifier: [a-zA-Z]+ ;
-Comment: '#' .*? '\r'? '\n' -> channel(HIDDEN);
+Comment: '#' .*? Newlines -> skip;
 
 Newlines: NEWLINE+;
 NEWLINE: '\r'? '\n' ;
