@@ -16,8 +16,34 @@ public class DrawableRoute extends DrawableSprite {
 
 	@Override
 	public String generateSVG() {
-		// TODO Auto-generated method stub
-		return null;
+		String result = "";
+		long currentTime = BioViz.singleton.currentCircuit.currentTime;
+		long displayAt;
+		
+		for(int i = -timesteps; i < timesteps; i++) {
+			
+			float alpha = 1 - (Math.abs((float)i) / ((float)this.timesteps));
+			displayAt = currentTime + i;
+			int x1 = parent.droplet.getXAt(displayAt);
+			int x2 = parent.droplet.getXAt(displayAt + 1);
+			int y1 = parent.droplet.getYAt(displayAt);
+			int y2 = parent.droplet.getYAt(displayAt + 1);
+			
+			float targetX = x1 + 0.5f;
+			float targetY = -y1 + BioViz.singleton.currentCircuit.data.field[0].length - 1;
+			if (y1 == y2 && x2 > x1) {
+				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" xlink:href=\"StepMarker.svg\" />";
+			} else if (y1 == y2 && x2 < x1) {
+				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(180 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />";
+			} else if (x1 == x2 && y2 > y1) {
+				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(270 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />";
+			} else if (x1 == x2 && y2 < y1) {
+				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(90 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />";
+			} else {
+				continue;
+			}
+		}
+		return result;
 	}
 	
 	@Override
