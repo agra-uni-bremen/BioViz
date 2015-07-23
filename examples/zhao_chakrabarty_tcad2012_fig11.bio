@@ -1,0 +1,37 @@
+grid
+# horizontal bar in the detection region
+(1,12) (9,12)
+# vertical bars of the detection region
+(1,12) (1,51)
+(9,12) (9,51)
+
+# vertical bars of the reaction region
+(17,4) (17,51)
+(25,1) (25,48)
+(33,4) (33,51)
+(41,1) (41,48)
+
+# vertical bars of the routing region
+(48,1) (48,51)
+(57,1) (57,51)
+(65,1) (65,51)
+(73,1) (73,51)
+
+
+# horizontal bars
+# top row
+(9,48) (76,48)
+# other rows
+(17,4) (76,4)
+(17,8) (76,8)
+(17,12) (76,12)
+(17,16) (76,16)
+(17,20) (76,20)
+(17,24) (76,24)
+(17,28) (76,28)
+(17,32) (76,32)
+(17,36) (76,36)
+(17,40) (76,40)
+(17,44) (76,44)
+end
+

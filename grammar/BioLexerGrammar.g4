@@ -17,7 +17,7 @@ END: 'end';
 
 Integer: [0-9]+ ;
 Identifier: [a-zA-Z]+ ;
-Comment: '#' .*? '\r'? '\n' -> skip;
+Comment: '#' .*? '\r'? '\n' -> channel(HIDDEN);
 
 Newlines: NEWLINE+;
 NEWLINE: '\r'? '\n' ;
@@ -41,5 +41,3 @@ ActuationVector: ('1'|'0'|'X')+ -> mode(DEFAULT_MODE);
 // Antlr4 is annoying, I have to specify all lexer rules again as
 // no sharing between modes seems possible
 WhiteSpaceInActuationMode: [ \t]+ -> skip;
-//CommentInActuationMode: '#' .*? '\r'? '\n' -> skip;
-//NL: '\r'? '\n' -> mode(DEFAULT_MODE);
