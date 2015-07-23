@@ -1,8 +1,8 @@
 package de.dfki.bioviz;
 
 import com.badlogic.gdx.graphics.Color;
+import de.dfki.bioviz.structures.BiochipField;
 
-import structures.BiochipField;
 
 public class DrawableField extends DrawableSprite {
 	

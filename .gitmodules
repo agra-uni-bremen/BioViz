@@ -1,0 +1,3 @@
+[submodule "lib/parser"]
+	path = lib/parser
+	url = git@gitlab.informatik.uni-bremen.de:biochips/BioParser.git

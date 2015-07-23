@@ -74,7 +74,7 @@ public class MessageCenter {
 			if (message.contains("\n")) {
 				String[] lines = message.split("\n");
 				for (String line : lines) {
-					addMessage(line, severity);
+					addMessage(line, severity,true);
 				}
 			} else {
 				this.messages.add(m);

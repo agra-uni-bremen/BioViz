@@ -7,8 +7,10 @@ import java.util.Vector;
 
 import javax.swing.JFileChooser;
 
-import structures.Biochip;
-import structures.Droplet;
+import com.badlogic.gdx.Files;
+import de.dfki.bioviz.parser.BioParser;
+import de.dfki.bioviz.structures.Biochip;
+import de.dfki.bioviz.structures.Droplet;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files.FileType;
@@ -61,53 +63,29 @@ public class BioViz implements ApplicationListener {
 	@Override
 	public void create() {
 		
-//	    File path = new File("assets/textures");
-//
-//	    File [] files = path.listFiles();
-//	    for (int i = 0; i < files.length; i++){
-//	        if (files[i].isFile() && files[i].getName().endsWith(".png")){
-//	            System.out.println("loading " + files[i].toString() + " as texture");
-//	            manager.load(files[i].toString(), Texture.class);
-//	        }
-//	    }
-	    
-//		manager.finishLoading();
-		
+
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
 		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
+
+		FileHandle fh = Gdx.files.getFileHandle("default_grid.bio", Files.FileType.Internal);
+		Biochip c = BioParser.parse(fh.readString());
+
+
+		currentCircuit = new DrawableCircuit(c);
+
+
+		drawables.add(currentCircuit);
 		
-		Biochip c;
-		//TODO loading stuff
-		c = new Biochip(10, 5);
-		c.disableFieldAt(9, 4);
-		c.disableFieldAt(8, 4);
-		c.disableFieldAt(9, 3);
+		currentCircuit.addTimeChangedListener(() -> BioViz.singleton.callTimeChangedListeners());
 		
-		Droplet b = c.addBlob();
-		b.addPosition(0, 0, 0);
-		b.addPosition(1, 1, 0);
-		b.addPosition(2, 1, 1);
-		b.addPosition(5, 2, 1);
-		
-		Droplet b2 = c.addBlob();
-		b2.addPosition(0, 0, 3);
-		b2.addPosition(1, 1, 3);
-		b2.addPosition(2, 2, 3);
-		b2.addPosition(3, 2, 2);
-		
+
 		c.recalculateAdjacency = true;
 		
 		inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
-		
-
-		currentCircuit = new DrawableCircuit(c);
-		drawables.add(currentCircuit);
-		
-		currentCircuit.addTimeChangedListener(() -> BioViz.singleton.callTimeChangedListeners());
 		
 		//this.menu = new Menu();
 		//this.drawables.add(menu);

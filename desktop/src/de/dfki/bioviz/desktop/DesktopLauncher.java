@@ -22,13 +22,17 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
+import com.badlogic.gdx.files.FileHandle;
 import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioViz;
+import de.dfki.bioviz.parser.BioParser;
 
 
 public class DesktopLauncher extends JFrame {
@@ -90,7 +94,13 @@ public class DesktopLauncher extends JFrame {
 
 		JButton defaultButton = new JButton();
 		defaultButton.setText("Autoplay");
+		defaultButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
 		defaultButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
+		
+		JButton zoomButton = new JButton();
+		zoomButton.setText("Reset camera");
+		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
+		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
 		
 		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
 		time.setPreferredSize(new Dimension(128, 64));
@@ -99,13 +109,15 @@ public class DesktopLauncher extends JFrame {
 		
 		JButton adjacencyButton = new JButton();
 		adjacencyButton.setText("(A)djacency");
+		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
 		
 		panel.add(label);
 		panel.add(defaultButton);
+		panel.add(zoomButton);
+		panel.add(adjacencyButton);
 		panel.add(time);
 		
-		panel.add(adjacencyButton);
 		
 		input = new LwjglAWTInput(canvas.getCanvas());
 		
@@ -118,6 +130,7 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	public static void main(String[] args) {
+
 
 		try {
 			// Set System L&F
