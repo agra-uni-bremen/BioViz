@@ -1,15 +1,14 @@
 package de.dfki.bioviz;
 
-import java.sql.Date;
-import java.text.DateFormat;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Vector;
-
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.AppenderBase;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Matrix4;
+
+import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * This class provides some methods to draw text.
@@ -17,11 +16,13 @@ import com.badlogic.gdx.math.Matrix4;
  * @author jannis
  *
  */
-public class MessageCenter {
+public class MessageCenter extends AppenderBase<ILoggingEvent> {
+
+
 	private Vector<Message> messages;
 	private BitmapFont font;
 	public boolean hidden = false;
-	
+
 	public static final int SEVERITY_DEBUG 		= 0b00001;
 	public static final int SEVERITY_INFO 		= 0b00010;
 	public static final int SEVERITY_WARNING 	= 0b00100;
@@ -55,56 +56,46 @@ public class MessageCenter {
 	public MessageCenter() {
 		messages = new Vector<Message>();
 	}
-	
+
+	@Override
+	protected void append(ILoggingEvent eventObject) {
+		addMessage(eventObject.getFormattedMessage());
+	}
+
 	/**
 	 * Add a message that is shown for some time and then disappears.
 	 * 
 	 * @param message the message to be displayed
 	 */
-	public void addMessage(String message, int severity) {
-		addMessage(message, severity, false);
+	public void addMessage(String message) {
+		addMessage(message,false);
 	}
 	
-	private void addMessage(String message, int severity, boolean recursion) {
-		if ((showInUI & severity) > 0) {
-			Message m = new Message();
-			m.message = getSeverityName(severity) + ": " + message;
+	private void addMessage(String message,boolean recursion) {
+		System.out.println("addMessage "+message);
+			Message m = new Message(message);
 
 			// Meh. libgdx doesn't draw line breaks... 
 			if (message.contains("\n")) {
 				String[] lines = message.split("\n");
 				for (String line : lines) {
-					addMessage(line, severity,true);
+					addMessage(line, true);
 				}
 			} else {
 				this.messages.add(m);
 			}
 
-			if (messages.size() > MAX_MESSAGES_IN_UI)
+			if (messages.size() > MAX_MESSAGES_IN_UI) {
 				messages.remove(0);
-		}
-		if (!recursion && ((showInConsole & severity) > 0)) {
-			System.out.println("[" + new java.util.Date().getTime() + "] [" + getSeverityName(severity) + "] " + message);
-		}
-	}
-	
-	public static String getSeverityName(int severity) {
-		String result = "";
-		if ((severity & SEVERITY_DEBUG) > 0)
-			result += "Debug";
-		if ((severity & SEVERITY_INFO) > 0)
-			result += "Info";
-		if ((severity & SEVERITY_WARNING) > 0)
-			result += "Warning";
-		if ((severity & SEVERITY_ERROR) > 0)
-			result += "Error";
-		return result;
+			}
+		System.out.println(messages.size());
 	}
 
 	public void render() {
 		if (!hidden) {
-			if (font == null)
+			if (font == null) {
 				font = new BitmapFont();
+			}
 
 			Matrix4 normalProjection = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
 			BioViz.singleton.batch.setProjectionMatrix(normalProjection);

@@ -54,7 +54,7 @@ public class BioViz implements ApplicationListener {
 	
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
-	static Logger logger = LoggerFactory.getLogger("bioviz.BioViz");
+	static Logger logger = LoggerFactory.getLogger(BioViz.class);
 
 	public BioViz() {
 		super();
