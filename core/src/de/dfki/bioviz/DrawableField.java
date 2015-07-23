@@ -14,7 +14,7 @@ public class DrawableField extends DrawableSprite {
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
 		this.field = field;
-		super.addLOD(16, "BlackPixel.png");
+		super.addLOD(8, "BlackPixel.png");
 	}
 
 	@Override

@@ -23,6 +23,8 @@ public abstract class DrawableSprite implements Drawable {
 	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
 	private String defaultTextureName;
 	
+	public static final float defaultLODThreshold = 8f;
+	
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 	
 	/**
