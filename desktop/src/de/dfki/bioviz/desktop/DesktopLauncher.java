@@ -112,7 +112,7 @@ public class DesktopLauncher extends JFrame {
 		
 		JLabel routeInfo = new JLabel("<html><body>Route length</body></html>");
 		
-		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, 0);
+		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
 		routes.setPreferredSize(new Dimension(128, 64));
 		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
 		//tc = new timerCallback(time);
