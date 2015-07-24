@@ -115,6 +115,11 @@ public class DesktopLauncher extends JFrame {
         defaultButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
         defaultButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 
+        JButton openButton = new JButton();
+        openButton.setText("Open File");
+        openButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
+        openButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
+
         JButton zoomButton = new JButton();
         zoomButton.setText("Reset camera");
         zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
@@ -141,6 +146,7 @@ public class DesktopLauncher extends JFrame {
 
         panel.add(label);
         panel.add(defaultButton);
+        panel.add(openButton);
         panel.add(zoomButton);
         panel.add(adjacencyButton);
         panel.add(timeInfo);
