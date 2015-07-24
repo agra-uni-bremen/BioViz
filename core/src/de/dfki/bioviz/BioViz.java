@@ -1,23 +1,11 @@
 package de.dfki.bioviz;
 
-import java.awt.event.KeyEvent;
-import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.Vector;
-
-import javax.swing.JFileChooser;
-
-import com.badlogic.gdx.Files;
-import de.dfki.bioviz.parser.BioParser;
-import de.dfki.bioviz.structures.Biochip;
-import de.dfki.bioviz.structures.Droplet;
-
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
-//import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -25,6 +13,18 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import de.dfki.bioviz.messages.MessageCenter;
+import de.dfki.bioviz.parser.BioParser;
+import de.dfki.bioviz.structures.Biochip;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.nio.ByteBuffer;
+import java.util.Date;
+import java.util.Vector;
+
+
 
 public class BioViz implements ApplicationListener {
 	public OrthographicCamera camera;
@@ -47,16 +47,19 @@ public class BioViz implements ApplicationListener {
 	
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
-	
+	static Logger logger = LoggerFactory.getLogger(BioViz.class);
+
 	public BioViz() {
 		super();
-		mc.addMessage("Starting without filename being specified; loading example.\nUsage: java -jar BioViz.jar <filename>", MessageCenter.SEVERITY_INFO);
+		logger.info("Starting withouth filename being specified; loading example");
+		logger.info("Usage: java -jar BioViz.jar <filename>");
+
 		singleton = this;
 	}
 	
 	public BioViz(String filename) {
 		this();
-		mc.addMessage("Starting BiochipVis, loading currently disabled", MessageCenter.SEVERITY_WARNING);
+		logger.info("Starting BiochipVis, loading currently disabled");
 		this.filename = filename;
 	}
 	
@@ -89,8 +92,7 @@ public class BioViz implements ApplicationListener {
 		
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
-		
-		mc.addMessage("BiochipVis started", MessageCenter.SEVERITY_INFO);
+		logger.trace("BioViz started");
 	}
 
 	@Override
@@ -149,7 +151,7 @@ public class BioViz implements ApplicationListener {
 		FileHandle fh = Gdx.files.getFileHandle("screenshots/" + prefix + "" + new Date().getTime() + "_" + screenshotCount + ".png", FileType.Local);
 		screenshotCount++;
 		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		mc.addMessage("saved screenshot: " + fh.path(), MessageCenter.SEVERITY_INFO);
+		logger.info("Saved screenshot to {}", fh.path());
 	}
 	public void saveScreenshotFull() {
 		saveScreenshotFull("");
@@ -216,10 +218,11 @@ public class BioViz implements ApplicationListener {
 //				RevVisGDX.singleton.drawables.add(RevVisGDX.singleton.currentCircuit);
 //				RevVisGDX.singleton.currentCircuit.zoomExtents();
 			} else {
+				logger.error("Could not load {}",filename);
 				System.out.println("Error: could not load " + filename);
 			}
 		} catch (Exception e) {
-			System.out.println("Error: could not load " + filename);
+			logger.error("Could not load {}", filename);
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.messages;
 
 /**
  * Just a collection of strings that are used somewhere in this application.
