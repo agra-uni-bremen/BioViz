@@ -24,11 +24,12 @@ public class DrawableDroplet extends DrawableSprite {
 
 	@Override
 	public void draw() {
-		if (droplet.getXAt(BioViz.singleton.currentCircuit.currentTime) >= 0) {
-			droplet.targetX = droplet.getXAt(BioViz.singleton.currentCircuit.currentTime);
-			droplet.targetY = droplet.getYAt(BioViz.singleton.currentCircuit.currentTime);
+		droplet.targetX = droplet.getXAt(BioViz.singleton.currentCircuit.currentTime);
+		droplet.targetY = droplet.getYAt(BioViz.singleton.currentCircuit.currentTime);
 
-			droplet.update();
+		droplet.update();
+		
+		if (droplet.getXAt(BioViz.singleton.currentCircuit.currentTime) >= 0) {
 
 			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(droplet.smoothX);
 			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(droplet.smoothY);
