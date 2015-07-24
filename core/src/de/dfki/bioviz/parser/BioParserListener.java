@@ -61,7 +61,7 @@ public class BioParserListener extends BioBaseListener {
         int dropletID = Integer.parseInt(ctx.dropletID().getText());
         int offset = 0;
         if (ctx.starttime() != null) {
-        	offset = Integer.parseInt(ctx.starttime().Integer().getText());
+        	offset = Integer.parseInt(ctx.starttime().Integer().getText()) - 1;
         }
         System.out.println("offset " + offset);
         Droplet drop = new Droplet(dropletID);
