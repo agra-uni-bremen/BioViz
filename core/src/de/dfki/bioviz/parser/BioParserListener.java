@@ -10,10 +10,13 @@ import de.agra.dmfb.bioparser.antlr.Bio.BioContext;
 import de.dfki.bioviz.structures.Biochip;
 import de.dfki.bioviz.structures.Droplet;
 import de.dfki.bioviz.structures.Rectangle;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Pair;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -26,6 +29,16 @@ public class BioParserListener extends BioBaseListener {
     private int nGrids = 0;
 
     private Biochip chip;
+
+    public HashMap<Integer, String> getFluidTypes() {
+        return fluidTypes;
+    }
+
+    private HashMap<Integer,String> fluidTypes;
+
+
+    private static Logger logger = LoggerFactory.getLogger(BioParserListener.class);
+
 
     public Biochip getBiochip() {
         return chip;
@@ -54,6 +67,13 @@ public class BioParserListener extends BioBaseListener {
         rectangles.add(new Rectangle(x1,y1,x2,y2));
 
         super.enterGridblock(ctx);
+    }
+
+    @Override
+    public void enterFluiddef(@NotNull FluiddefContext ctx) {
+        int fluidID = Integer.parseInt(ctx.Integer().getText());
+        String fluid = ctx.Identifier().getText();
+        fluidTypes.put(fluidID,fluid);
     }
 
     @Override
@@ -86,6 +106,10 @@ public class BioParserListener extends BioBaseListener {
             for (Pair<Integer,Integer> cell: rect.positions()) {
                 chip.enableFieldAt(cell.a, cell.b);
             }
+        }
+
+        if (nGrids>1) {
+            logger.warn("There were {} grid definitions in the file. The cells were merged",nGrids);
         }
 
         droplets.forEach(chip::addDroplet);
