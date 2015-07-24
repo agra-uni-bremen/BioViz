@@ -63,7 +63,6 @@ public class BioParserListener extends BioBaseListener {
         if (ctx.starttime() != null) {
         	offset = Integer.parseInt(ctx.starttime().Integer().getText()) - 1;
         }
-        System.out.println("offset " + offset);
         Droplet drop = new Droplet(dropletID);
         List<PositionContext> positions = ctx.position();
 
