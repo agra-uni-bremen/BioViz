@@ -13,7 +13,7 @@ public class DrawableDroplet extends DrawableSprite {
 		super("Droplet.png");
 		this.droplet = droplet;
 		super.addLOD(defaultLODThreshold, "BlackPixel.png");
-		super.color = new Color(0.75f, 0.85f, 0.9f, 1f);
+		super.color = new Color(0.85f, 0.95f, 1f, 1f);
 		route = new DrawableRoute(this);
 	}
 
