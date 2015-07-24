@@ -25,7 +25,7 @@ public class Droplet {
 	}
 	
 	public int getXAt(long t) {
-		int result = 0;
+		int result = -1;
 		for (TimedPosition position : positions) {
 			if (position.time <= t) {
 				result = position.x;
@@ -37,7 +37,7 @@ public class Droplet {
 	}
 	
 	public int getYAt(long t) {
-		int result = 0;
+		int result = -1;
 		for (TimedPosition position : positions) {
 			if (position.time <= t) {
 				result = position.y;

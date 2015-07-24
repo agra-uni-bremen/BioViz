@@ -23,22 +23,24 @@ public class DrawableDroplet extends DrawableSprite {
 	}
 
 	@Override
-	public void draw() {		
-		droplet.targetX = droplet.getXAt(BioViz.singleton.currentCircuit.currentTime);
-		droplet.targetY = droplet.getYAt(BioViz.singleton.currentCircuit.currentTime);
-		
-		droplet.update();
-		
-		float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(droplet.smoothX);
-		float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(droplet.smoothY);
-		
-		this.x = xCoord;
-		this.y = yCoord;
-		this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
-		this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
-		
-		route.draw();
-		
-		super.draw();
+	public void draw() {
+		if (droplet.getXAt(BioViz.singleton.currentCircuit.currentTime) >= 0) {
+			droplet.targetX = droplet.getXAt(BioViz.singleton.currentCircuit.currentTime);
+			droplet.targetY = droplet.getYAt(BioViz.singleton.currentCircuit.currentTime);
+
+			droplet.update();
+
+			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(droplet.smoothX);
+			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(droplet.smoothY);
+
+			this.x = xCoord;
+			this.y = yCoord;
+			this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
+			this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
+
+			route.draw();
+
+			super.draw();
+		}
 	}
 }
