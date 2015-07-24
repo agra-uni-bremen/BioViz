@@ -8,6 +8,8 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Rectangle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BioVizInputProcessor implements InputProcessor {
 	boolean isMoving = false;
@@ -15,6 +17,8 @@ public class BioVizInputProcessor implements InputProcessor {
 	private int oldX, oldY, oldX2, oldY2, oldDistanceX, oldDistanceY;
 	
 	private boolean ctrl, shift, alt;
+
+	static Logger logger = LoggerFactory.getLogger((BioVizInputProcessor.class));
 	
 	@Override
 	public boolean keyDown (int keycode) {
@@ -46,9 +50,9 @@ public class BioVizInputProcessor implements InputProcessor {
 					String svg = BioViz.singleton.currentCircuit.generateSVG();
 					FileHandle handle = Gdx.files.local("export/BioViz_" + new Date().getTime() + ".svg");
 					handle.writeString(svg, false);
-					BioViz.singleton.mc.addMessage("Stored SVG at " + handle.path(), MessageCenter.SEVERITY_INFO);
+					logger.info("Stored SVG at {}", handle.path());
 				} catch (Exception e) {
-					BioViz.singleton.mc.addMessage("Could not store SVG: " + e.getMessage(), MessageCenter.SEVERITY_ERROR);
+					logger.error("Could not store SVG: {}", e.getMessage());
 				}
 			}
 		} else if (keycode == Keys.A) {

@@ -22,18 +22,23 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
-import com.badlogic.gdx.files.FileHandle;
 
+import com.badlogic.gdx.files.FileHandle;
 import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioViz;
 import de.dfki.bioviz.DrawableRoute;
 import de.dfki.bioviz.parser.BioParser;
+import org.slf4j.LoggerFactory;
 
 
 public class DesktopLauncher extends JFrame {
@@ -52,26 +57,26 @@ public class DesktopLauncher extends JFrame {
 	 * @author jannis
 	 *
 	 */
-    private class MyDispatcher implements KeyEventDispatcher {
-        @Override
-        public boolean dispatchKeyEvent(KeyEvent e) {
-        	if (input.getInputProcessor() == null) {
-        		input.setInputProcessor(bioViz.getInputProcessor());
-        	}
-        	//Additional check to avoid having events fire twice (once from here and once from libgdx)
-        	if (DesktopLauncher.singleton.getFocusOwner() != DesktopLauncher.singleton.canvas.getCanvas()) {
-		        if (e.getID() == KeyEvent.KEY_PRESSED) {
-		            bioViz.getInputProcessor().keyDown(translateKeyCode(e.getKeyCode()));
-		        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-		        	bioViz.getInputProcessor().keyUp(translateKeyCode(e.getKeyCode()));
-		        } else if (e.getID() == KeyEvent.KEY_TYPED) {
-		        	bioViz.getInputProcessor().keyTyped(e.getKeyChar());
-		        }
-        	}
-            return false;
-        }
-    }
-	
+	private class MyDispatcher implements KeyEventDispatcher {
+		@Override
+		public boolean dispatchKeyEvent(KeyEvent e) {
+			if (input.getInputProcessor() == null) {
+				input.setInputProcessor(bioViz.getInputProcessor());
+			}
+			//Additional check to avoid having events fire twice (once from here and once from libgdx)
+			if (DesktopLauncher.singleton.getFocusOwner() != DesktopLauncher.singleton.canvas.getCanvas()) {
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					bioViz.getInputProcessor().keyDown(translateKeyCode(e.getKeyCode()));
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+					bioViz.getInputProcessor().keyUp(translateKeyCode(e.getKeyCode()));
+				} else if (e.getID() == KeyEvent.KEY_TYPED) {
+					bioViz.getInputProcessor().keyTyped(e.getKeyChar());
+				}
+			}
+			return false;
+		}
+	}
+
 	public DesktopLauncher(int timeMax) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,8 +90,8 @@ public class DesktopLauncher extends JFrame {
 		 * Needed to pipe through the keyboard events to the libgdx application
 		 */
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        manager.addKeyEventDispatcher(new MyDispatcher());
-		
+		manager.addKeyEventDispatcher(new MyDispatcher());
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(128, 600));
@@ -144,6 +149,7 @@ public class DesktopLauncher extends JFrame {
 
 	public static void main(String[] args) {
 
+		initializeLogback();
 
 		try {
 			// Set System L&F
@@ -166,14 +172,35 @@ public class DesktopLauncher extends JFrame {
 		JFrame frame = new DesktopLauncher(10);
 
 
-		singleton.addWindowListener(new WindowAdapter(){
-			public void windowClosing(WindowEvent e){
+		singleton.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
 				singleton.canvas.stop();
 			}
 		});
 	}
-	
-	protected static int translateKeyCode (int keyCode) {
+
+	private static void initializeLogback() {
+
+
+		// TODO hier dann nicht mehr hardcoden
+		// assume SLF4J is bound to logback in the current environment
+		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+		try {
+			JoranConfigurator configurator = new JoranConfigurator();
+			configurator.setContext(context);
+			// Call context.reset() to clear any previous configuration, e.g. default
+			// configuration. For multi-step configuration, omit calling context.reset().
+			context.reset();
+			configurator.doConfigure("logback.xml");
+		} catch (JoranException je) {
+			// StatusPrinter will handle this
+		}
+		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+
+	}
+
+	protected static int translateKeyCode(int keyCode) {
 		if (keyCode == java.awt.event.KeyEvent.VK_ADD) return Input.Keys.PLUS;
 		if (keyCode == java.awt.event.KeyEvent.VK_SUBTRACT) return Input.Keys.MINUS;
 		if (keyCode == java.awt.event.KeyEvent.VK_0) return Input.Keys.NUM_0;
@@ -274,7 +301,7 @@ public class DesktopLauncher extends JFrame {
 		}
 		@Override
 		public void bioVizEvent() {
-			this.time.setValue((int)BioViz.singleton.currentCircuit.currentTime);
+			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
 		}
 		
 	}

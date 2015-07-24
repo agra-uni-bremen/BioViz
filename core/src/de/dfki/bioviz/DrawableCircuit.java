@@ -11,6 +11,8 @@ import de.dfki.bioviz.structures.Droplet;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
@@ -47,16 +49,22 @@ public class DrawableCircuit implements Drawable {
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
 
+
+	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
+
+
+
 	public boolean getHighlightAdjacency() {
 		return highlightAdjacency;
 	}
 
 	public void setHighlightAdjacency(boolean highlightAdjacency) {
 		this.highlightAdjacency = highlightAdjacency;
-		if (this.highlightAdjacency)
-			BioViz.singleton.mc.addMessage("now highlighting fields with adjacent blobs", MessageCenter.SEVERITY_INFO);
-		else
-			BioViz.singleton.mc.addMessage("no longer highlighting fields with adjacent blobs", MessageCenter.SEVERITY_INFO);
+		if (this.highlightAdjacency) {
+			logger.info("Highlighting fields with adjacent droplets");
+		} else {
+			logger.info("Stop highlighting fields with adjacent droplets");
+		}
 	}
 	
 	public void toggleHighlightAdjacency() {
@@ -79,9 +87,9 @@ public class DrawableCircuit implements Drawable {
 		// clear remaining old data first, if any
 		this.fields.clear();
 		this.droplets.clear();
-		
-		BioViz.singleton.mc.addMessage("Initializing drawables: " + (data.field.length * data.field[0].length) + " fields, " + data.getDroplets().size() + " droplets.", MessageCenter.SEVERITY_DEBUG);
-		
+
+		logger.debug("Initializing drawables: {} fields, {} droplets", (data.field.length * data.field[0].length), data.getDroplets().size() );
+
 		//setup fields
 		for (int i = 0; i < data.field.length; i++) {
 			for (int j = 0; j < data.field[i].length; j++) {

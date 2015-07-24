@@ -4,9 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.dfki.bioviz.BioViz;
-import de.dfki.bioviz.BioVizEvent;
-import de.dfki.bioviz.MessageCenter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a biochip. It consists of a set of
@@ -17,6 +16,9 @@ import de.dfki.bioviz.MessageCenter;
  *
  */
 public class Biochip {
+
+
+	static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
 	/**
 	 * The fields that are part of this biochip.
@@ -123,7 +125,7 @@ public class Biochip {
 		if (adjacencyCache != null && !recalculateAdjacency) {
 			return adjacencyCache;
 		} else {
-			BioViz.singleton.mc.addMessage("Recalculating adjacency...", MessageCenter.SEVERITY_DEBUG);
+			logger.debug("Recalculation adjacency");
 			recalculateAdjacency = false;
 			HashSet<BiochipField> result = new HashSet<>();
 			
@@ -148,7 +150,7 @@ public class Biochip {
 							) {
 							result.add(this.field[x1][y1]);
 							result.add(this.field[x2][y2]);
-							BioViz.singleton.mc.addMessage("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime, MessageCenter.SEVERITY_DEBUG);
+							//BioViz.singleton.mc.addMessage("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime, MessageCenter.SEVERITY_DEBUG);
 						}
 					}
 					
