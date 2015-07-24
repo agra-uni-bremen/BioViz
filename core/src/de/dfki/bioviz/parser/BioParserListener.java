@@ -59,6 +59,10 @@ public class BioParserListener extends BioBaseListener {
     @Override
     public void enterRoute(RouteContext ctx) {
         int dropletID = Integer.parseInt(ctx.dropletID().getText());
+        int offset = 0;
+        if (ctx.starttime() != null) {
+        	offset = Integer.parseInt(ctx.starttime().Integer().getText()) - 1;
+        }
         Droplet drop = new Droplet(dropletID);
         List<PositionContext> positions = ctx.position();
 
@@ -66,7 +70,7 @@ public class BioParserListener extends BioBaseListener {
             PositionContext pos = positions.get(i);
             int x = Integer.parseInt(pos.xpos().getText())-1;
             int y = Integer.parseInt(pos.ypos().getText())-1;
-            drop.addPosition(i,x,y);
+            drop.addPosition(i + offset,x,y);
         }
         droplets.add(drop);
 
