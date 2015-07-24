@@ -120,8 +120,7 @@ public class DesktopLauncher extends JFrame {
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
 		routes.setPreferredSize(new Dimension(128, 64));
 		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
-		//tc = new timerCallback(time);
-		
+
 		JButton adjacencyButton = new JButton();
 		adjacencyButton.setText("(A)djacency");
 		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
@@ -135,7 +134,6 @@ public class DesktopLauncher extends JFrame {
 		panel.add(time);
 		panel.add(routeInfo);
 		panel.add(routes);
-		
 		
 		input = new LwjglAWTInput(canvas.getCanvas());
 		

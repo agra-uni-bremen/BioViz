@@ -1,7 +1,12 @@
 package de.dfki.bioviz.parser;
 
-import de.agra.dmfb.bioparser.antlr.Bio.*;
+import de.agra.dmfb.bioparser.antlr.Bio;
+import de.agra.dmfb.bioparser.antlr.Bio.GridContext;
+import de.agra.dmfb.bioparser.antlr.Bio.PositionContext;
+import de.agra.dmfb.bioparser.antlr.Bio.GridblockContext;
+import de.agra.dmfb.bioparser.antlr.Bio.RouteContext;
 import de.agra.dmfb.bioparser.antlr.BioBaseListener;
+import de.agra.dmfb.bioparser.antlr.Bio.BioContext;
 import de.dfki.bioviz.structures.Biochip;
 import de.dfki.bioviz.structures.Droplet;
 import de.dfki.bioviz.structures.Rectangle;
@@ -74,22 +79,18 @@ public class BioParserListener extends BioBaseListener {
     @Override
     public void enterRoute(RouteContext ctx) {
         int dropletID = Integer.parseInt(ctx.dropletID().getText());
-        Droplet drop = new Droplet(dropletID);
-
-
-        int offset=0;
-
+        int offset = 0;
         if (ctx.starttime() != null) {
-            offset=Integer.parseInt(ctx.starttime().Integer().getText())-1;
+        	offset = Integer.parseInt(ctx.starttime().Integer().getText()) - 1;
         }
-
+        Droplet drop = new Droplet(dropletID);
         List<PositionContext> positions = ctx.position();
 
         for (int i = 0; i < positions.size(); i++) {
             PositionContext pos = positions.get(i);
             int x = Integer.parseInt(pos.xpos().getText())-1;
             int y = Integer.parseInt(pos.ypos().getText())-1;
-            drop.addPosition(i+offset,x,y);
+            drop.addPosition(i + offset,x,y);
         }
         droplets.add(drop);
 
@@ -97,6 +98,7 @@ public class BioParserListener extends BioBaseListener {
 
     @Override
     public void exitBio(BioContext ctx) {
+        // TODO issue warning if more than one grid has been parsed
 
         chip = new Biochip(maxX, maxY);
 
