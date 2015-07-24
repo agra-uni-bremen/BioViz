@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
@@ -38,12 +39,13 @@ public class BioViz implements ApplicationListener {
 	AssetManager manager = new AssetManager();
 	public MessageCenter mc = new MessageCenter();
 	
-	private String filename;
+	private File filename;
 	private BioVizInputProcessor inputProcessor;
 	public InputProcessor getInputProcessor(){return inputProcessor;}
 	
 	boolean runFullPresetScreenshots = false;
 	float fullPresetScreenshotsScaling = 6f;
+	Biochip c;
 	
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
@@ -54,12 +56,14 @@ public class BioViz implements ApplicationListener {
 		logger.info("Starting withouth filename being specified; loading example");
 		logger.info("Usage: java -jar BioViz.jar <filename>");
 
+		this.filename = null;
+
 		singleton = this;
 	}
 	
-	public BioViz(String filename) {
+	public BioViz(File filename) {
 		this();
-		logger.info("Starting BiochipVis, loading currently disabled");
+		logger.info("Starting with file \"{}\"",filename.getAbsolutePath());
 		this.filename = filename;
 	}
 	
@@ -73,8 +77,17 @@ public class BioViz implements ApplicationListener {
 		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
 
-		FileHandle fh = Gdx.files.getFileHandle("default_grid.bio", Files.FileType.Internal);
-		Biochip c = BioParser.parse(fh.readString());
+		if (filename == null) {
+			FileHandle fh = Gdx.files.getFileHandle("default_grid.bio", Files.FileType.Internal);
+			c = BioParser.parse(fh.readString());
+
+		}
+		else {
+			c = BioParser.parseFile(filename);
+		}
+
+		// TODO what happens in case when parsing fails?
+
 
 
 		currentCircuit = new DrawableCircuit(c);

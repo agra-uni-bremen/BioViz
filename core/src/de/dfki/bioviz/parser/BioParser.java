@@ -8,14 +8,32 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Created by keszocze on 21.07.15.
  */
 public class BioParser  {
 
+    static private Logger logger = LoggerFactory.getLogger(BioParser.class);
 
 
+    public static Biochip parseFile(final File file) {
+        String content = null;
+        try {
+            content = new String(Files.readAllBytes(Paths.get(file.toURI())));
+        } catch (IOException e) {
+            logger.error("Failde to parse file \"{}\".", file);
+            return null;
+        }
+        return parse(content);
+    }
 
     public static Biochip parse(final String inputString) {
         try {
