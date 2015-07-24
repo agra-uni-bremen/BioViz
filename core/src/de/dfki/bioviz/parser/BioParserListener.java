@@ -1,19 +1,16 @@
 package de.dfki.bioviz.parser;
 
-import de.agra.dmfb.bioparser.antlr.Bio;
-import de.agra.dmfb.bioparser.antlr.Bio.GridContext;
-import de.agra.dmfb.bioparser.antlr.Bio.PositionContext;
-import de.agra.dmfb.bioparser.antlr.Bio.GridblockContext;
-import de.agra.dmfb.bioparser.antlr.Bio.RouteContext;
+import de.agra.dmfb.bioparser.antlr.Bio.*;
 import de.agra.dmfb.bioparser.antlr.BioBaseListener;
-import de.agra.dmfb.bioparser.antlr.Bio.BioContext;
 import de.dfki.bioviz.structures.Biochip;
 import de.dfki.bioviz.structures.Droplet;
 import de.dfki.bioviz.structures.Rectangle;
 import org.antlr.v4.runtime.misc.Pair;
-
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -26,6 +23,11 @@ public class BioParserListener extends BioBaseListener {
     private int nGrids = 0;
 
     private Biochip chip;
+    private HashMap<Integer,String> fluidTypes;
+
+
+//    private static Logger logger = LoggerFactory.getLogger(BioParserListener.class);
+
 
     public Biochip getBiochip() {
         return chip;
@@ -59,6 +61,9 @@ public class BioParserListener extends BioBaseListener {
     @Override
     public void enterRoute(RouteContext ctx) {
         int dropletID = Integer.parseInt(ctx.dropletID().getText());
+        int offset=0;
+
+//        logger.debug("Droplet {} has starttime.isEmpty(): {}",dropletID,ctx.starttime().isEmpty());
         Droplet drop = new Droplet(dropletID);
         List<PositionContext> positions = ctx.position();
 
@@ -74,7 +79,6 @@ public class BioParserListener extends BioBaseListener {
 
     @Override
     public void exitBio(BioContext ctx) {
-        // TODO issue warning if more than one grid has been parsed
 
         chip = new Biochip(maxX, maxY);
 
@@ -82,6 +86,10 @@ public class BioParserListener extends BioBaseListener {
             for (Pair<Integer,Integer> cell: rect.positions()) {
                 chip.enableFieldAt(cell.a, cell.b);
             }
+        }
+
+        if (nGrids>1) {
+//            logger.warn("There were {} grid definitions in the file. The cells were merged",nGrids);
         }
 
         droplets.forEach(chip::addDroplet);
