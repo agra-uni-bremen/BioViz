@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.messages;
 
 import com.badlogic.gdx.graphics.Color;
 
@@ -8,7 +8,8 @@ public class Message {
 	public long createdOn;
 	public Color color;
 	
-	public Message() {
+	public Message(String msg) {
 		this.createdOn = System.currentTimeMillis();
+		this.message=msg;
 	}
 }

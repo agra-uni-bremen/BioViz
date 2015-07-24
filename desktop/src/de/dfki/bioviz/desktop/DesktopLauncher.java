@@ -22,6 +22,10 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -34,6 +38,7 @@ import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioViz;
 import de.dfki.bioviz.DrawableRoute;
 import de.dfki.bioviz.parser.BioParser;
+import org.slf4j.LoggerFactory;
 
 
 public class DesktopLauncher extends JFrame {
@@ -44,49 +49,49 @@ public class DesktopLauncher extends JFrame {
 	private BioViz bioViz;
 	LwjglAWTCanvas canvas;
 	LwjglAWTInput input;
-	
+
 	/**
 	 * Needed to fetch *all* pressed keys that are caught somewhere
 	 * in this frame in order to pipe them through to the libgdx
 	 * program within.
-	 * @author jannis
 	 *
+	 * @author jannis
 	 */
-    private class MyDispatcher implements KeyEventDispatcher {
-        @Override
-        public boolean dispatchKeyEvent(KeyEvent e) {
-        	if (input.getInputProcessor() == null) {
-        		input.setInputProcessor(bioViz.getInputProcessor());
-        	}
-        	//Additional check to avoid having events fire twice (once from here and once from libgdx)
-        	if (DesktopLauncher.singleton.getFocusOwner() != DesktopLauncher.singleton.canvas.getCanvas()) {
-		        if (e.getID() == KeyEvent.KEY_PRESSED) {
-		            bioViz.getInputProcessor().keyDown(translateKeyCode(e.getKeyCode()));
-		        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-		        	bioViz.getInputProcessor().keyUp(translateKeyCode(e.getKeyCode()));
-		        } else if (e.getID() == KeyEvent.KEY_TYPED) {
-		        	bioViz.getInputProcessor().keyTyped(e.getKeyChar());
-		        }
-        	}
-            return false;
-        }
-    }
-	
+	private class MyDispatcher implements KeyEventDispatcher {
+		@Override
+		public boolean dispatchKeyEvent(KeyEvent e) {
+			if (input.getInputProcessor() == null) {
+				input.setInputProcessor(bioViz.getInputProcessor());
+			}
+			//Additional check to avoid having events fire twice (once from here and once from libgdx)
+			if (DesktopLauncher.singleton.getFocusOwner() != DesktopLauncher.singleton.canvas.getCanvas()) {
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					bioViz.getInputProcessor().keyDown(translateKeyCode(e.getKeyCode()));
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+					bioViz.getInputProcessor().keyUp(translateKeyCode(e.getKeyCode()));
+				} else if (e.getID() == KeyEvent.KEY_TYPED) {
+					bioViz.getInputProcessor().keyTyped(e.getKeyChar());
+				}
+			}
+			return false;
+		}
+	}
+
 	public DesktopLauncher(int timeMax) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
-		
+
 		bioViz = new BioViz();
 		canvas = new LwjglAWTCanvas(bioViz);
-		
+
 		/**
 		 * Needed to pipe through the keyboard events to the libgdx application
 		 */
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        manager.addKeyEventDispatcher(new MyDispatcher());
-		
+		manager.addKeyEventDispatcher(new MyDispatcher());
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(128, 600));
@@ -97,14 +102,14 @@ public class DesktopLauncher extends JFrame {
 		defaultButton.setText("Autoplay");
 		defaultButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
 		defaultButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
-		
+
 		JButton zoomButton = new JButton();
 		zoomButton.setText("Reset camera");
 		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
-		
+
 		JLabel timeInfo = new JLabel("<html><body>Time</body></html>");
-		
+
 		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
 		time.setPreferredSize(new Dimension(128, 64));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
@@ -115,13 +120,12 @@ public class DesktopLauncher extends JFrame {
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
 		routes.setPreferredSize(new Dimension(128, 64));
 		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
-		//tc = new timerCallback(time);
-		
+
 		JButton adjacencyButton = new JButton();
 		adjacencyButton.setText("(A)djacency");
 		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
-		
+
 		panel.add(label);
 		panel.add(defaultButton);
 		panel.add(zoomButton);
@@ -131,9 +135,8 @@ public class DesktopLauncher extends JFrame {
 		panel.add(routeInfo);
 		panel.add(routes);
 		
-		
 		input = new LwjglAWTInput(canvas.getCanvas());
-		
+
 		container.add(panel, BorderLayout.WEST);
 		container.add(canvas.getCanvas(), BorderLayout.CENTER);
 
@@ -144,36 +147,54 @@ public class DesktopLauncher extends JFrame {
 
 	public static void main(String[] args) {
 
+		initializeLogback();
 
 		try {
 			// Set System L&F
 			UIManager.setLookAndFeel(
 					UIManager.getSystemLookAndFeelClassName());
-		} 
-		catch (UnsupportedLookAndFeelException e) {
+		} catch (UnsupportedLookAndFeelException e) {
 			// handle exception
-		}
-		catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			// handle exception
-		}
-		catch (InstantiationException e) {
+		} catch (InstantiationException e) {
 			// handle exception
-		}
-		catch (IllegalAccessException e) {
+		} catch (IllegalAccessException e) {
 			// handle exception
 		}
 
 		JFrame frame = new DesktopLauncher(10);
 
 
-		singleton.addWindowListener(new WindowAdapter(){
-			public void windowClosing(WindowEvent e){
+		singleton.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
 				singleton.canvas.stop();
 			}
 		});
 	}
-	
-	protected static int translateKeyCode (int keyCode) {
+
+	private static void initializeLogback() {
+
+
+		// TODO hier dann nicht mehr hardcoden
+		// assume SLF4J is bound to logback in the current environment
+		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+		try {
+			JoranConfigurator configurator = new JoranConfigurator();
+			configurator.setContext(context);
+			// Call context.reset() to clear any previous configuration, e.g. default
+			// configuration. For multi-step configuration, omit calling context.reset().
+			context.reset();
+			configurator.doConfigure("logback.xml");
+		} catch (JoranException je) {
+			// StatusPrinter will handle this
+		}
+		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+
+	}
+
+	protected static int translateKeyCode(int keyCode) {
 		if (keyCode == java.awt.event.KeyEvent.VK_ADD) return Input.Keys.PLUS;
 		if (keyCode == java.awt.event.KeyEvent.VK_SUBTRACT) return Input.Keys.MINUS;
 		if (keyCode == java.awt.event.KeyEvent.VK_0) return Input.Keys.NUM_0;
@@ -265,17 +286,19 @@ public class DesktopLauncher extends JFrame {
 
 		return Input.Keys.UNKNOWN;
 	}
-	
+
 	private class timerCallback implements BioVizEvent {
 		private JSlider time;
+
 		public timerCallback(JSlider slider) {
 			this.time = slider;
 			BioViz.singleton.addTimeChangedListener(this);
 		}
+
 		@Override
 		public void bioVizEvent() {
-			this.time.setValue((int)BioViz.singleton.currentCircuit.currentTime);
+			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
 		}
-		
+
 	}
 }
