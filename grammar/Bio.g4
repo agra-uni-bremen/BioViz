@@ -1,8 +1,5 @@
 parser grammar Bio;
 
-@header {
-    package de.agra.dmfb.bioparser.antlr;
-}
 
 options { tokenVocab=BioLexerGrammar; }
 
