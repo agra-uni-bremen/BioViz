@@ -32,8 +32,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
-import com.badlogic.gdx.files.FileHandle;
 
+import com.badlogic.gdx.files.FileHandle;
 import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioViz;
 import de.dfki.bioviz.DrawableRoute;
@@ -49,13 +49,13 @@ public class DesktopLauncher extends JFrame {
 	private BioViz bioViz;
 	LwjglAWTCanvas canvas;
 	LwjglAWTInput input;
-
+	
 	/**
 	 * Needed to fetch *all* pressed keys that are caught somewhere
 	 * in this frame in order to pipe them through to the libgdx
 	 * program within.
-	 *
 	 * @author jannis
+	 *
 	 */
 	private class MyDispatcher implements KeyEventDispatcher {
 		@Override
@@ -82,10 +82,10 @@ public class DesktopLauncher extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
-
+		
 		bioViz = new BioViz();
 		canvas = new LwjglAWTCanvas(bioViz);
-
+		
 		/**
 		 * Needed to pipe through the keyboard events to the libgdx application
 		 */
@@ -102,14 +102,14 @@ public class DesktopLauncher extends JFrame {
 		defaultButton.setText("Autoplay");
 		defaultButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
 		defaultButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
-
+		
 		JButton zoomButton = new JButton();
 		zoomButton.setText("Reset camera");
 		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
-
+		
 		JLabel timeInfo = new JLabel("<html><body>Time</body></html>");
-
+		
 		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
 		time.setPreferredSize(new Dimension(128, 64));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
@@ -125,7 +125,7 @@ public class DesktopLauncher extends JFrame {
 		adjacencyButton.setText("(A)djacency");
 		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
-
+		
 		panel.add(label);
 		panel.add(defaultButton);
 		panel.add(zoomButton);
@@ -136,7 +136,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(routes);
 		
 		input = new LwjglAWTInput(canvas.getCanvas());
-
+		
 		container.add(panel, BorderLayout.WEST);
 		container.add(canvas.getCanvas(), BorderLayout.CENTER);
 
@@ -153,13 +153,17 @@ public class DesktopLauncher extends JFrame {
 			// Set System L&F
 			UIManager.setLookAndFeel(
 					UIManager.getSystemLookAndFeelClassName());
-		} catch (UnsupportedLookAndFeelException e) {
+		} 
+		catch (UnsupportedLookAndFeelException e) {
 			// handle exception
-		} catch (ClassNotFoundException e) {
+		}
+		catch (ClassNotFoundException e) {
 			// handle exception
-		} catch (InstantiationException e) {
+		}
+		catch (InstantiationException e) {
 			// handle exception
-		} catch (IllegalAccessException e) {
+		}
+		catch (IllegalAccessException e) {
 			// handle exception
 		}
 
@@ -286,19 +290,17 @@ public class DesktopLauncher extends JFrame {
 
 		return Input.Keys.UNKNOWN;
 	}
-
+	
 	private class timerCallback implements BioVizEvent {
 		private JSlider time;
-
 		public timerCallback(JSlider slider) {
 			this.time = slider;
 			BioViz.singleton.addTimeChangedListener(this);
 		}
-
 		@Override
 		public void bioVizEvent() {
 			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
 		}
-
+		
 	}
 }
