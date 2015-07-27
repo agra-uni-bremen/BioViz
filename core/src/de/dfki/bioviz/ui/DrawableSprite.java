@@ -19,7 +19,7 @@ import com.badlogic.gdx.math.Rectangle;
 public abstract class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
-	private HashMap<String, TextureRegion> allTextures = new HashMap<>();
+	private static HashMap<String, TextureRegion> allTextures;
 	public Color color = Color.WHITE.cpy();
 	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
 	private String defaultTextureName;
@@ -36,6 +36,9 @@ public abstract class DrawableSprite implements Drawable {
 	 */
 	public DrawableSprite(String textureFilename, float sizeX, float sizeY) {
 		defaultTextureName = textureFilename;
+		if (allTextures == null) {
+			allTextures = new HashMap<>();
+		}
 	}
 
 	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
