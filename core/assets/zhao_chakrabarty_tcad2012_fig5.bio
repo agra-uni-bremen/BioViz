@@ -30,3 +30,40 @@ grid
 (1,46) (76,46)
 (1,50) (76,50)
 end
+
+# The choice between sink and dispenser is based on the size of the rectangle drawn in
+# the paper. So this, probably, does not make much sense :(
+
+sinks
+(9,53) S
+(17,53) S
+(29,53) S
+(33,53) S
+
+(76,6) W
+(76,10) W
+(76,14) W
+(76,18) W
+(76,22) W
+(76,26) W
+(76,30) W
+(76,34) W
+(76,38) W
+(76,42) W
+(76,46) W
+(76,50) W
+end
+
+
+dispensers
+(41,53) S
+(49,53) S
+(57,53) S
+(65,53) S
+(73,53) S
+
+(49,1) N
+(57,1) N
+(65,1) N
+(73,1) N
+end

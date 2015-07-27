@@ -35,3 +35,44 @@ grid
 (17,44) (76,44)
 end
 
+
+# sinks and dispensers are put 'on top' of the last elements of the rows
+# when looking at the images, this seems to be what is intended
+
+sinks
+(1,51) S
+(25,1) N
+(41,1) N
+end
+
+# the fluid types are chosen by enumerating from the top left and going clockwise
+dispensers
+1 (9,51) S
+
+2 (17,51) S
+2 (33,51) S
+
+3 (49,51) S
+3 (57,51) S
+3 (65,51) S
+3 (73,51) S
+
+4 (76,48) W
+4 (76,44) W
+4 (76,40) W
+4 (76,36) W
+4 (76,32) W
+4 (76,28) W
+4 (76,24) W
+4 (76,20) W
+4 (76,16) W
+4 (76,12) W
+4 (76,8) W
+4 (76,4) W
+
+5 (73,1) N
+5 (65,1) N
+5 (57,1) N
+5 (49,1) N
+end
+
