@@ -26,7 +26,7 @@ public class BioParserListener extends BioBaseListener {
 
     private Biochip chip;
     private HashMap<Integer,String> fluidTypes = new HashMap<Integer,String>();
-	private ArrayList<Net> nets;
+	private ArrayList<Net> nets = new ArrayList<Net>();
 
 
     public Biochip getBiochip() {

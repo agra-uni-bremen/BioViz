@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class Net {
 	private Point target;
-	private ArrayList<Source> sources;
+	private ArrayList<Source> sources=new ArrayList<Source>();
 
 	public Net(ArrayList<Source> sources, Point target) {
 		this.target = target;
