@@ -27,6 +27,7 @@ public class BioParserListener extends BioBaseListener {
     private Biochip chip;
     private HashMap<Integer,String> fluidTypes = new HashMap<Integer,String>();
 	private ArrayList<Net> nets = new ArrayList<Net>();
+	private HashMap<Integer,Integer> dropletIDsToFluidTypes = new HashMap<>();
 
 
     public Biochip getBiochip() {
@@ -45,7 +46,9 @@ public class BioParserListener extends BioBaseListener {
 	private int getDropletID(DropletIDContext ctx) {
 		return Integer.parseInt(ctx.Integer().getText());
 	}
-
+	private int getFluidID(FluidIDContext ctx) {
+		return Integer.parseInt(ctx.Integer().getText());
+	}
 	private Source getSource(SourceContext ctx) {
 		Point pos = getPositionContext(ctx.position());
 		int id = getDropletID(ctx.dropletID());
@@ -61,6 +64,13 @@ public class BioParserListener extends BioBaseListener {
     public void enterGrid(GridContext ctx) {
         ++nGrids;
     }
+
+	@Override
+	public void enterDropToFluid(@NotNull DropToFluidContext ctx) {
+		int dropID = getDropletID(ctx.dropletID());
+		int fluidID = getFluidID(ctx.fluidID());
+		dropletIDsToFluidTypes.put(dropID,fluidID);
+	}
 
 	@Override
 	public void enterNet(@NotNull Bio.NetContext ctx) {
@@ -144,5 +154,6 @@ public class BioParserListener extends BioBaseListener {
         droplets.forEach(chip::addDroplet);
 		chip.addFluidTypes(fluidTypes);
 		chip.addNets(nets);
+		dropletIDsToFluidTypes.forEach((k,v) -> chip.addDropToFluid(k,v));
     }
 }

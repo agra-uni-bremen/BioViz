@@ -45,6 +45,11 @@ public class Biochip {
 		this.nets.addAll(nets);
 	}
 
+	private HashMap<Integer,Integer> dropletIDsToFluidTypes = new HashMap<>();
+	public void addDropToFluid(int dropletID, int fluidID) {
+		dropletIDsToFluidTypes.put(dropletID,fluidID);
+	}
+
 
 	/**
 	 * All droplets of this chip. Use the get-method to retrieve
