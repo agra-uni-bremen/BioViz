@@ -45,10 +45,10 @@ public class BioViz implements ApplicationListener {
 	
 	boolean runFullPresetScreenshots = false;
 	float fullPresetScreenshotsScaling = 6f;
-	Biochip c;
 	
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
+	private Vector<BioVizEvent> loadFileListeners = new Vector<BioVizEvent>();
 	static Logger logger = LoggerFactory.getLogger(BioViz.class);
 
 	public BioViz() {
@@ -77,14 +77,7 @@ public class BioViz implements ApplicationListener {
 		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
 
-		if (filename == null) {
-			FileHandle fh = Gdx.files.getFileHandle("default_grid.bio", Files.FileType.Internal);
-			c = BioParser.parse(fh.readString());
-
-		}
-		else {
-			c = BioParser.parseFile(filename);
-		}
+		Biochip c = loadFile();
 
 		// TODO what happens in case when parsing fails?
 
@@ -106,6 +99,17 @@ public class BioViz implements ApplicationListener {
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
 		logger.trace("BioViz started");
+	}
+
+	private Biochip loadFile() {
+		if (filename == null) {
+			FileHandle fh = Gdx.files.getFileHandle("default_grid.bio", Files.FileType.Internal);
+			return BioParser.parse(fh.readString());
+
+		}
+		else {
+			return BioParser.parseFile(filename);
+		}
 	}
 
 	@Override
@@ -218,24 +222,12 @@ public class BioViz implements ApplicationListener {
 		return pixmap;
 	}
 	
-	public static void loadNewFile() {
-		final JFileChooser fc = new JFileChooser();
-		fc.showOpenDialog(null);
-		String filename = fc.getSelectedFile().toString();
+	public static void loadNewFile(File f) {
+		BioViz.singleton.filename = f;
 		try {
-			Biochip c;
-			if (filename != null && filename.equals("")) {
-//				c = RevlibFileReader.readRealFile(filename);
-//				RevVisGDX.singleton.drawables.remove(RevVisGDX.singleton.currentCircuit);
-//				RevVisGDX.singleton.currentCircuit = new DrawableCircuitReordered(c);
-//				RevVisGDX.singleton.drawables.add(RevVisGDX.singleton.currentCircuit);
-//				RevVisGDX.singleton.currentCircuit.zoomExtents();
-			} else {
-				logger.error("Could not load {}",filename);
-				System.out.println("Error: could not load " + filename);
-			}
+			BioViz.singleton.loadFile();
 		} catch (Exception e) {
-			logger.error("Could not load {}", filename);
+			logger.error("Could not load {}", f);
 		}
 	}
 	
@@ -245,6 +237,16 @@ public class BioViz implements ApplicationListener {
 	
 	private void callTimeChangedListeners() {
 		for (BioVizEvent listener : this.timeChangedListeners) {
+			listener.bioVizEvent();
+		}
+	}
+	
+	public void addLoadFileListener(BioVizEvent listener) {
+		loadFileListeners.add(listener);
+	}
+	
+	void callLoadFileListeners() {
+		for (BioVizEvent listener : this.loadFileListeners) {
 			listener.bioVizEvent();
 		}
 	}

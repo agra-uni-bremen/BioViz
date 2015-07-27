@@ -23,18 +23,21 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
-
 import com.badlogic.gdx.files.FileHandle;
+import com.sun.org.apache.bcel.internal.generic.LoadClass;
+
 import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioViz;
 import de.dfki.bioviz.DrawableRoute;
 import de.dfki.bioviz.parser.BioParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +46,7 @@ public class DesktopLauncher extends JFrame {
 
 	public JSlider time;
 	timerCallback tc;
+	loadFileCallback load_cb;
 	public static DesktopLauncher singleton;
 	private BioViz bioViz;
 	LwjglAWTCanvas canvas;
@@ -116,7 +120,8 @@ public class DesktopLauncher extends JFrame {
 		JButton openButton = new JButton();
 		openButton.setText("Open File");
 		openButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
-		openButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
+		load_cb = new loadFileCallback();
+		openButton.addActionListener(e -> load_cb.bioVizEvent());
 		
 		JButton zoomButton = new JButton();
 		zoomButton.setText("Reset camera");
@@ -333,6 +338,15 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
+		}
+		
+	}
+	
+	private class loadFileCallback implements BioVizEvent {
+		public loadFileCallback() {	}
+		@Override
+		public void bioVizEvent() {
+			File f = askForFile();
 		}
 		
 	}
