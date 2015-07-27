@@ -4,7 +4,7 @@ parser grammar Bio;
 options { tokenVocab=BioLexerGrammar; }
 
 
-bio: (grid|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
+bio: (grid|nets|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
 
 // Definition of the grid
 
