@@ -1,15 +1,9 @@
 package de.dfki.bioviz.parser;
 
 import de.agra.dmfb.bioparser.antlr.Bio;
-import de.agra.dmfb.bioparser.antlr.Bio.FluiddefContext;
-import de.agra.dmfb.bioparser.antlr.Bio.GridContext;
-import de.agra.dmfb.bioparser.antlr.Bio.PositionContext;
-import de.agra.dmfb.bioparser.antlr.Bio.GridblockContext;
-import de.agra.dmfb.bioparser.antlr.Bio.RouteContext;
+import de.agra.dmfb.bioparser.antlr.Bio.*;
 import de.agra.dmfb.bioparser.antlr.BioBaseListener;
-import de.agra.dmfb.bioparser.antlr.Bio.BioContext;
 import de.dfki.bioviz.structures.*;
-
 import de.dfki.bioviz.util.Pair;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -35,23 +29,32 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Net> nets;
 
 
-
-
-
-	public HashMap<Integer, String> getFluidTypes() {
-		return fluidTypes;
-	}
     public Biochip getBiochip() {
         return chip;
     }
 
-	private int getTimeConstraint(Bio.TimeConstraintContext ctx) {
+	private int getTimeConstraint(TimeConstraintContext ctx) {
 		return Integer.parseInt(ctx.Integer().getText())-1;
 	}
 	private Point getPositionContext(PositionContext ctx) {
 		Integer x = Integer.parseInt(ctx.xpos().getText())-1;
 		Integer y = Integer.parseInt(ctx.ypos().getText())-1;
 		return new Point(x,y);
+	}
+
+	private int getDropletID(DropletIDContext ctx) {
+		return Integer.parseInt(ctx.Integer().getText());
+	}
+
+	private Source getSource(SourceContext ctx) {
+		Point pos = getPositionContext(ctx.position());
+		int id = getDropletID(ctx.dropletID());
+		if (ctx.timeConstraint() != null) {
+			return new Source(id,pos,getTimeConstraint(ctx.timeConstraint()));
+		}
+		else {
+			return new Source(id,pos);
+		}
 	}
 
     @Override
@@ -63,17 +66,22 @@ public class BioParserListener extends BioBaseListener {
 	public void enterNet(@NotNull Bio.NetContext ctx) {
 		Point target = getPositionContext(ctx.target().position());
 
-		ArrayList<Pair<Integer,Point>> sources;
+		ArrayList<Source> sources=new ArrayList<Source>();
 
 		for (ParseTree child: ctx.children) {
-			if (child instanceof Bio.SourceContext) {
-				logger.debug("Found source child {}",(Bio.SourceContext)child);
+			if (child instanceof SourceContext) {
+				sources.add(getSource((SourceContext) child));
+				logger.debug("Found source child {}",(SourceContext)child);
 			}
 		}
 
+		nets.add(new Net(sources,target));
+
 	}
 
-    @Override
+
+
+	@Override
     public void enterGridblock(GridblockContext ctx) {
 
 
@@ -134,7 +142,7 @@ public class BioParserListener extends BioBaseListener {
         }
 
         droplets.forEach(chip::addDroplet);
-
 		chip.addFluidTypes(fluidTypes);
+		chip.addNets(nets);
     }
 }
