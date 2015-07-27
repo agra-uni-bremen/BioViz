@@ -2,7 +2,7 @@ package de.dfki.bioviz.messages;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
-import de.dfki.bioviz.BioViz;
+import de.dfki.bioviz.ui.BioViz;
 
 /**
  * @author keszocze
