@@ -28,7 +28,7 @@ cellActuation: position Colon ActuationVector;
 
 nets: Nets Newlines (net Newlines)+ END;
 net: source (Comma source)* Arrow target;
-source: position timeConstraint?;
+source: dropletID position timeConstraint?;
 target: position timeConstraint?;
 
 // Definition of blockages
