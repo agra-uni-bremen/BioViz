@@ -1,8 +1,6 @@
 package de.dfki.bioviz.structures;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +25,32 @@ public class Biochip {
 	 * at any given time.
 	 */
 	public BiochipField[][] field;
-	
+
+
+
+	private HashMap<Integer,String> fluidTypes = new HashMap<Integer,String>();
+	public void addFluidType(int fluidID, String fluidDescription) {
+		fluidTypes.put(fluidID,fluidDescription);
+	}
+	public void addFluidTypes(HashMap<Integer,String> types) {
+		fluidTypes.putAll(types);
+	}
+
+
+	private ArrayList<Net> nets = new ArrayList<Net>();
+	public void addNet(Net n) {
+		nets.add(n);
+	}
+	public void addNets(Collection<Net> nets) {
+		this.nets.addAll(nets);
+	}
+
+	private HashMap<Integer,Integer> dropletIDsToFluidTypes = new HashMap<>();
+	public void addDropToFluid(int dropletID, int fluidID) {
+		dropletIDsToFluidTypes.put(dropletID,fluidID);
+	}
+
+
 	/**
 	 * All droplets of this chip. Use the get-method to retrieve
 	 * them from other classes.
