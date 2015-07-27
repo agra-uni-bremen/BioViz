@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 import java.util.HashMap;
 

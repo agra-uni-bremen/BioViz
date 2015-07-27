@@ -33,10 +33,10 @@ import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 import com.badlogic.gdx.files.FileHandle;
 import com.sun.org.apache.bcel.internal.generic.LoadClass;
 
-import de.dfki.bioviz.BioVizEvent;
-import de.dfki.bioviz.BioViz;
-import de.dfki.bioviz.DrawableRoute;
 import de.dfki.bioviz.parser.BioParser;
+import de.dfki.bioviz.ui.BioViz;
+import de.dfki.bioviz.ui.BioVizEvent;
+import de.dfki.bioviz.ui.DrawableRoute;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -339,7 +339,6 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
 		}
-		
 	}
 	
 	private class loadFileCallback implements BioVizEvent {

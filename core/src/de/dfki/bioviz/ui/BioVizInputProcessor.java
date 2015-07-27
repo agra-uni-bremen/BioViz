@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 import java.util.Date;
 
@@ -8,6 +8,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Rectangle;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

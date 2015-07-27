@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 

@@ -1,6 +1,7 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 import de.dfki.bioviz.structures.Droplet;
+
 import com.badlogic.gdx.graphics.Color;
 
 public class DrawableDroplet extends DrawableSprite {

@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files;
@@ -13,13 +13,16 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import de.dfki.bioviz.messages.MessageCenter;
 import de.dfki.bioviz.parser.BioParser;
 import de.dfki.bioviz.structures.Biochip;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
