@@ -36,8 +36,9 @@ public abstract class DrawableSprite implements Drawable {
 	 */
 	public DrawableSprite(String textureFilename, float sizeX, float sizeY) {
 		defaultTextureName = textureFilename;
-		TextureRegion region = loadTexture(textureFilename);
-		Texture currentTexture = region.getTexture();
+	}
+
+	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
 		sprite = new Sprite(region);
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight()/2f);
@@ -49,6 +50,11 @@ public abstract class DrawableSprite implements Drawable {
 	}
 	
 	public void draw() {
+		
+		if (sprite== null) {
+			TextureRegion region = loadTexture(defaultTextureName);
+			initializeSprite(1, 1, region);
+		}
 	
 		// if LOD is set, enable LOD calculation and set
 		// sprite accordingly
