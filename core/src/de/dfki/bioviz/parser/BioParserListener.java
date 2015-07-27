@@ -14,7 +14,6 @@ import de.dfki.bioviz.structures.Point;
 import de.dfki.bioviz.structures.Rectangle;
 
 import org.antlr.v4.runtime.misc.NotNull;
-import org.antlr.v4.runtime.misc.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,27 +48,36 @@ public class BioParserListener extends BioBaseListener {
         return chip;
     }
 
+	private int getTimeConstraint(Bio.TimeConstraintContext ctx) {
+		return Integer.parseInt(ctx.Integer().getText())-1;
+	}
+	private Point getPositionContext(PositionContext ctx) {
+		Integer x = Integer.parseInt(ctx.xpos().getText())-1;
+		Integer y = Integer.parseInt(ctx.ypos().getText())-1;
+		return new Point(x,y);
+	}
+
     @Override
     public void enterGrid(GridContext ctx) {
         ++nGrids;
     }
 
+	@Override
+	public void enterNet(@NotNull Bio.NetContext ctx) {
+		Point target = getPositionContext(ctx.target().position());
+	}
+
     @Override
     public void enterGridblock(GridblockContext ctx) {
 
 
-        PositionContext pos1 = (PositionContext)ctx.getChild(0);
-        PositionContext pos2 = (PositionContext)ctx.getChild(1);
+		Point p1 = getPositionContext((PositionContext)ctx.getChild(0));
+		Point p2 = getPositionContext((PositionContext)ctx.getChild(1));
 
-        int x1 = Integer.parseInt(pos1.xpos().getText())-1;
-        int y1 = Integer.parseInt(pos1.ypos().getText())-1;
-        int x2 = Integer.parseInt(pos2.xpos().getText())-1;
-        int y2 = Integer.parseInt(pos2.ypos().getText())-1;
+        maxX = Math.max(Math.max(p1.first()+1,p2.first()+1),maxX);
+        maxY = Math.max(Math.max(p1.second()+1,p2.second()+1),maxY);
 
-        maxX = Math.max(Math.max(x1+1,x2+1),maxX);
-        maxY = Math.max(Math.max(y1+1,y2+1),maxY);
-
-        rectangles.add(new Rectangle(x1,y1,x2,y2));
+        rectangles.add(new Rectangle(p1,p2));
 
         super.enterGridblock(ctx);
     }
@@ -78,24 +86,26 @@ public class BioParserListener extends BioBaseListener {
     public void enterFluiddef(@NotNull FluiddefContext ctx) {
         int fluidID = Integer.parseInt(ctx.Integer().getText());
         String fluid = ctx.Identifier().getText();
-        fluidTypes.put(fluidID,fluid);
+        fluidTypes.put(fluidID, fluid);
     }
+
+
+
 
     @Override
     public void enterRoute(RouteContext ctx) {
         int dropletID = Integer.parseInt(ctx.dropletID().getText());
         int offset = 0;
-        if (ctx.starttime() != null) {
-        	offset = Integer.parseInt(ctx.starttime().Integer().getText()) - 1;
+        if (ctx.timeConstraint() != null) {
+        	offset = getTimeConstraint(ctx.timeConstraint());
         }
         Droplet drop = new Droplet(dropletID);
         List<PositionContext> positions = ctx.position();
 
         for (int i = 0; i < positions.size(); i++) {
             PositionContext pos = positions.get(i);
-            int x = Integer.parseInt(pos.xpos().getText())-1;
-            int y = Integer.parseInt(pos.ypos().getText())-1;
-            drop.addPosition(i + offset,x,y);
+			Point p = getPositionContext(pos);
+            drop.addPosition(i + offset,p.first(),p.second());
         }
         droplets.add(drop);
 
