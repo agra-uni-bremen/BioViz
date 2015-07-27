@@ -4,7 +4,7 @@ parser grammar Bio;
 options { tokenVocab=BioLexerGrammar; }
 
 
-bio: (grid|nets|sinks|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
+bio: (grid|nets|sinks|dispensers|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
 
 
 
@@ -14,6 +14,8 @@ sink: ioport;
 dispensers: Dispensers Newlines (dispenser Newlines)+ END;
 dispenser: fluidID? ioport;
 
+// first position: position of the sink/dispenser
+// second position: where the droplet is removed from/dispensed to
 ioport: position Direction;
 
 // Definition of the grid
