@@ -4,7 +4,13 @@ parser grammar Bio;
 options { tokenVocab=BioLexerGrammar; }
 
 
-bio: (grid|nets|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
+bio: (grid|nets|sinks|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
+
+
+
+sinks: Sinks Newlines (ioport Newlines)+ END;
+dispensers: Dispensers Newlines (fluidID? ioport Newlines)+ END;
+ioport: position Direction;
 
 // Definition of the grid
 
@@ -19,7 +25,7 @@ route: dropletID timeConstraint? position+;
 
 // Definition of actuation vectors
 //
-pinActuations: PinActuations Newlines+ (pinActuation Newlines+)+ END ;
+pinActuations: PinActuations Newlines (pinActuation Newlines+)+ END ;
 pinActuation: pinID Colon ActuationVector;
 
 

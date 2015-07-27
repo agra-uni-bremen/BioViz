@@ -3,6 +3,7 @@ lexer grammar BioLexerGrammar;
 
 
 
+Sinks: 'sinks';
 Droplets: 'droplets';
 PinAssignments: 'pin assignments';
 Fluids: 'fluids';
@@ -10,9 +11,12 @@ Blockages: 'blockages';
 Nets: 'nets';
 Routes: 'routes';
 Grid: 'grid';
+Dispensers: 'dispensers';
 
 CellActuations: 'cell actuations';
 PinActuations: 'pin actuations';
+
+Direction: 'L' | 'R' | 'U' | 'D' | 'N' | 'S' | 'E' | 'W';
 
 
 END: 'end';
