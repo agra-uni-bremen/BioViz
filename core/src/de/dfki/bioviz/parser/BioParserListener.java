@@ -1,6 +1,7 @@
 package de.dfki.bioviz.parser;
 
 import de.agra.dmfb.bioparser.antlr.Bio;
+import de.agra.dmfb.bioparser.antlr.Bio.FluiddefContext;
 import de.agra.dmfb.bioparser.antlr.Bio.GridContext;
 import de.agra.dmfb.bioparser.antlr.Bio.PositionContext;
 import de.agra.dmfb.bioparser.antlr.Bio.GridblockContext;
@@ -10,6 +11,7 @@ import de.agra.dmfb.bioparser.antlr.Bio.BioContext;
 import de.dfki.bioviz.structures.Biochip;
 import de.dfki.bioviz.structures.Droplet;
 import de.dfki.bioviz.structures.Rectangle;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Pair;
 import org.slf4j.Logger;
