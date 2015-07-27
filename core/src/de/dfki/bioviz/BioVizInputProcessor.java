@@ -42,7 +42,7 @@ public class BioVizInputProcessor implements InputProcessor {
 			shift = false;
 		} else if (keycode == Keys.O) {
 			if (ctrl) {
-				BioViz.loadNewFile();
+				BioViz.singleton.callLoadFileListeners();
 			}
 		} else if (keycode == Keys.S) {
 			if (ctrl) {

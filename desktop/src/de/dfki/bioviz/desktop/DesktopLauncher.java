@@ -11,14 +11,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -26,18 +23,22 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
-
 import com.badlogic.gdx.files.FileHandle;
+import com.sun.org.apache.bcel.internal.generic.LoadClass;
+
 import de.dfki.bioviz.BioVizEvent;
 import de.dfki.bioviz.BioViz;
 import de.dfki.bioviz.DrawableRoute;
 import de.dfki.bioviz.parser.BioParser;
+
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
@@ -45,10 +46,13 @@ public class DesktopLauncher extends JFrame {
 
 	public JSlider time;
 	timerCallback tc;
+	loadFileCallback load_cb;
 	public static DesktopLauncher singleton;
 	private BioViz bioViz;
 	LwjglAWTCanvas canvas;
 	LwjglAWTInput input;
+	
+	private static Logger logger = LoggerFactory.getLogger(DesktopLauncher.class);
 	
 	/**
 	 * Needed to fetch *all* pressed keys that are caught somewhere
@@ -78,12 +82,22 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	public DesktopLauncher(int timeMax) {
+		this(timeMax, null);
+	}
+
+	public DesktopLauncher(int timeMax, File file) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 		
-		bioViz = new BioViz();
+		logger.debug("Starting DesktopLauncher with file \"{}\"",file);
+		
+		if (file == null) {
+			bioViz = new BioViz();
+		} else {
+			bioViz = new BioViz(file);
+		}
 		canvas = new LwjglAWTCanvas(bioViz);
 		
 		/**
@@ -103,6 +117,12 @@ public class DesktopLauncher extends JFrame {
 		defaultButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
 		defaultButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 		
+		JButton openButton = new JButton();
+		openButton.setText("Open File");
+		openButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
+		load_cb = new loadFileCallback();
+		openButton.addActionListener(e -> load_cb.bioVizEvent());
+		
 		JButton zoomButton = new JButton();
 		zoomButton.setText("Reset camera");
 		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
@@ -120,7 +140,8 @@ public class DesktopLauncher extends JFrame {
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
 		routes.setPreferredSize(new Dimension(128, 64));
 		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
-
+		//tc = new timerCallback(time);
+		
 		JButton adjacencyButton = new JButton();
 		adjacencyButton.setText("(A)djacency");
 		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
@@ -128,12 +149,14 @@ public class DesktopLauncher extends JFrame {
 		
 		panel.add(label);
 		panel.add(defaultButton);
+		panel.add(openButton);
 		panel.add(zoomButton);
 		panel.add(adjacencyButton);
 		panel.add(timeInfo);
 		panel.add(time);
 		panel.add(routeInfo);
 		panel.add(routes);
+		
 		
 		input = new LwjglAWTInput(canvas.getCanvas());
 		
@@ -167,7 +190,8 @@ public class DesktopLauncher extends JFrame {
 			// handle exception
 		}
 
-		JFrame frame = new DesktopLauncher(10);
+		File file = askForFile();
+		JFrame frame = new DesktopLauncher(10,file);
 
 
 		singleton.addWindowListener(new WindowAdapter() {
@@ -175,6 +199,20 @@ public class DesktopLauncher extends JFrame {
 				singleton.canvas.stop();
 			}
 		});
+	}
+	
+	private static File askForFile() {
+		// TODO Irgendwie den letzten Pfad merken
+		File path = null;
+		if (path == null) {
+			path = new File(System.getProperty("user.dir"));
+		}
+
+		final JFileChooser fc = new JFileChooser(path);
+		fc.showOpenDialog(null);
+		File sFile = fc.getSelectedFile();
+
+		return sFile;
 	}
 
 	private static void initializeLogback() {
@@ -300,6 +338,17 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
+		}
+		
+	}
+	
+	private class loadFileCallback implements BioVizEvent {
+		public loadFileCallback() {	}
+		@Override
+		public void bioVizEvent() {
+			File f = askForFile();
+			if (f != null)
+				BioViz.loadNewFile(f);
 		}
 		
 	}
