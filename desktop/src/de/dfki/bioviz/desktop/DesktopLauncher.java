@@ -347,7 +347,8 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			File f = askForFile();
-			BioViz.loadNewFile(f);
+			if (f != null)
+				BioViz.loadNewFile(f);
 		}
 		
 	}
