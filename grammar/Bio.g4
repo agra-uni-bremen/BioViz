@@ -14,7 +14,7 @@ gridblock: position position;
 
 // Definition of droplet movements
 routes : Routes Newlines (route Newlines)+ END;
-route: dropletID starttime? position+;
+route: dropletID timeConstraint? position+;
 
 
 // Definition of actuation vectors
@@ -28,9 +28,8 @@ cellActuation: position Colon ActuationVector;
 
 nets: Nets Newlines (net Newlines)+ END;
 net: source (Comma source)* Arrow target;
-source: position starttime?;
-target: position timingConstraint?;
-timingConstraint: LBracket Integer RBracket;
+source: position timeConstraint?;
+target: position timeConstraint?;
 
 // Definition of blockages
 blockages: Blockages Newlines (blockage Newlines)+ END;
@@ -65,6 +64,6 @@ pinID: Integer;
 position: LParen xpos Comma ypos RParen;
 xpos: Integer;
 ypos: Integer;
-starttime: LBracket Integer RBracket;
+timeConstraint: LBracket Integer RBracket;
 
 
