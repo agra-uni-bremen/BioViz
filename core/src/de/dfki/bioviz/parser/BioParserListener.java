@@ -8,12 +8,11 @@ import de.agra.dmfb.bioparser.antlr.Bio.GridblockContext;
 import de.agra.dmfb.bioparser.antlr.Bio.RouteContext;
 import de.agra.dmfb.bioparser.antlr.BioBaseListener;
 import de.agra.dmfb.bioparser.antlr.Bio.BioContext;
-import de.dfki.bioviz.structures.Biochip;
-import de.dfki.bioviz.structures.Droplet;
-import de.dfki.bioviz.structures.Point;
-import de.dfki.bioviz.structures.Rectangle;
+import de.dfki.bioviz.structures.*;
 
+import de.dfki.bioviz.util.Pair;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +22,7 @@ import java.util.List;
 
 
 public class BioParserListener extends BioBaseListener {
+    private static Logger logger = LoggerFactory.getLogger(BioParserListener.class);
 
     private ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
     private ArrayList<Droplet> droplets = new ArrayList<Droplet>();
@@ -31,19 +31,16 @@ public class BioParserListener extends BioBaseListener {
     private int nGrids = 0;
 
     private Biochip chip;
-
-    public HashMap<Integer, String> getFluidTypes() {
-        return fluidTypes;
-    }
+    private HashMap<Integer,String> fluidTypes = new HashMap<Integer,String>();
+	private ArrayList<Net> nets;
 
 
 
-    private HashMap<Integer,String> fluidTypes;
 
 
-    private static Logger logger = LoggerFactory.getLogger(BioParserListener.class);
-
-
+	public HashMap<Integer, String> getFluidTypes() {
+		return fluidTypes;
+	}
     public Biochip getBiochip() {
         return chip;
     }
@@ -65,6 +62,15 @@ public class BioParserListener extends BioBaseListener {
 	@Override
 	public void enterNet(@NotNull Bio.NetContext ctx) {
 		Point target = getPositionContext(ctx.target().position());
+
+		ArrayList<Pair<Integer,Point>> sources;
+
+		for (ParseTree child: ctx.children) {
+			if (child instanceof Bio.SourceContext) {
+				logger.debug("Found source child {}",(Bio.SourceContext)child);
+			}
+		}
+
 	}
 
     @Override
@@ -128,5 +134,7 @@ public class BioParserListener extends BioBaseListener {
         }
 
         droplets.forEach(chip::addDroplet);
+
+		chip.addFluidTypes(fluidTypes);
     }
 }
