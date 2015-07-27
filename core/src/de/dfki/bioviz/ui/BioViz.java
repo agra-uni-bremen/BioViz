@@ -232,6 +232,7 @@ public class BioViz implements ApplicationListener {
 			logger.error("Could not load " + BioViz.singleton.filename + ": " + e.getMessage());
 			e.printStackTrace();
 		}
+		logger.debug("Done loading file " + filename);
 	}
 	
 	public static void loadNewFile(File f) {
