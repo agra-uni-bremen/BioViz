@@ -2,11 +2,13 @@ package de.dfki.bioviz.messages;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Matrix4;
-import de.dfki.bioviz.BioViz;
+
+import de.dfki.bioviz.ui.BioViz;
 
 import java.util.HashMap;
 import java.util.Vector;

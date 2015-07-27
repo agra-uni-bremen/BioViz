@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 /**
  * All things that can get drawn should implement a draw() method. That's
