@@ -10,6 +10,7 @@ import de.agra.dmfb.bioparser.antlr.BioBaseListener;
 import de.agra.dmfb.bioparser.antlr.Bio.BioContext;
 import de.dfki.bioviz.structures.Biochip;
 import de.dfki.bioviz.structures.Droplet;
+import de.dfki.bioviz.structures.Point;
 import de.dfki.bioviz.structures.Rectangle;
 
 import org.antlr.v4.runtime.misc.NotNull;
@@ -35,6 +36,8 @@ public class BioParserListener extends BioBaseListener {
     public HashMap<Integer, String> getFluidTypes() {
         return fluidTypes;
     }
+
+
 
     private HashMap<Integer,String> fluidTypes;
 
@@ -105,8 +108,8 @@ public class BioParserListener extends BioBaseListener {
         chip = new Biochip(maxX, maxY);
 
         for(Rectangle rect: rectangles) {
-            for (Pair<Integer,Integer> cell: rect.positions()) {
-                chip.enableFieldAt(cell.a, cell.b);
+            for (Point cell: rect.positions()) {
+                chip.enableFieldAt(cell.first(), cell.second());
             }
         }
 
