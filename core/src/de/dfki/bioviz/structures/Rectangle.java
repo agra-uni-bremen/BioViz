@@ -18,6 +18,10 @@ public class Rectangle {
         return new Point(x2,y2);
     }
 
+    public Rectangle(Point p1, Point p2) {
+        this(p1.first(),p1.second(),p2.first(),p2.second());
+    }
+
     public Rectangle(int x1, int y1, int x2, int y2) {
         this.x1=x1;
         this.x2=x2;
