@@ -15,6 +15,7 @@ public class BiochipField {
 
 	public void setSink(Direction removeFrom) {
 		isDispenser=false;
+		isEnabled=true;
 		isSink=true;
 		fluidID=0;
 		direction = removeFrom;
@@ -22,6 +23,7 @@ public class BiochipField {
 
 	public void setDispenser(int fluidID, Direction dispenseTo) {
 		isSink=false;
+		isEnabled=true;
 		isDispenser=true;
 		this.fluidID=fluidID;
 		direction=dispenseTo;

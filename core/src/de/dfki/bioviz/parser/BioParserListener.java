@@ -30,6 +30,7 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Net> nets = new ArrayList<Net>();
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 	private ArrayList<Pair<Point, Direction>> sinks = new ArrayList<>();
+	private ArrayList<Pair<Integer,Pair<Point,Direction>>> dispensers= new ArrayList<>();
 
 
 	public Biochip getBiochip() {
@@ -51,7 +52,11 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	private int getFluidID(FluidIDContext ctx) {
-		return Integer.parseInt(ctx.Integer().getText());
+		if (ctx == null) {
+			return 0;
+		} else {
+			return Integer.parseInt(ctx.Integer().getText());
+		}
 	}
 
 	private Source getSource(SourceContext ctx) {
@@ -62,6 +67,21 @@ public class BioParserListener extends BioBaseListener {
 		} else {
 			return new Source(id, pos);
 		}
+	}
+
+
+	@Override
+	public void enterDispenser(@NotNull DispenserContext ctx) {
+		int fluidID = getFluidID(ctx.fluidID());
+
+		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
+		if (dispenser != null) {
+			updateMaxDimension(dispenser.first());
+			dispensers.add(new Pair(fluidID, dispenser));
+		} else {
+			logger.error("Skipping definition of dispenser");
+		}
+
 	}
 
 	@Nullable
@@ -152,7 +172,7 @@ public class BioParserListener extends BioBaseListener {
 		Point p1 = getPositionContext((PositionContext) ctx.getChild(0));
 		Point p2 = getPositionContext((PositionContext) ctx.getChild(1));
 
-		updateMaxDimension(p1,p2);
+		updateMaxDimension(p1, p2);
 
 		rectangles.add(new Rectangle(p1, p2));
 
@@ -204,10 +224,19 @@ public class BioParserListener extends BioBaseListener {
 		droplets.forEach(chip::addDroplet);
 		chip.addFluidTypes(fluidTypes);
 		chip.addNets(nets);
-		dropletIDsToFluidTypes.forEach((k, v) -> chip.addDropToFluid(k, v));
+		dropletIDsToFluidTypes.forEach(chip::addDropToFluid);
 		sinks.forEach(sink -> {
 			Point p = sink.first();
 			chip.field[p.first()][p.second()].setSink(sink.second());
 		});
+
+
+		dispensers.forEach(dispenser -> {
+			int fluidID=dispenser.first();
+			Point p = dispenser.second().first();
+			Direction dir = dispenser.second().second();
+			chip.field[p.first()][p.second()].setDispenser(fluidID,dir);
+		});
+
 	}
 }
