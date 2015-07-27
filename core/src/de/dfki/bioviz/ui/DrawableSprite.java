@@ -79,11 +79,15 @@ public abstract class DrawableSprite implements Drawable {
 	}
 	
 	private TextureRegion loadTexture(String textureFilename) {
-		Texture t = new Texture(Gdx.files.internal(textureFilename));
-		t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-		TextureRegion region = new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
-		allTextures.put(textureFilename, region);
-		return region;
+		if (!allTextures.containsKey(textureFilename)) {
+			Texture t = new Texture(Gdx.files.internal(textureFilename));
+			t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+			TextureRegion region = new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
+			allTextures.put(textureFilename, region);
+			return region;
+		} else {
+			return allTextures.get(textureFilename);
+		}
 	}
 	
 	/**
