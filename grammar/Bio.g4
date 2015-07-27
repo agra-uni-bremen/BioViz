@@ -8,8 +8,12 @@ bio: (grid|nets|sinks|routes|pinActuations|cellActuations|blockages|pinAssignmen
 
 
 
-sinks: Sinks Newlines (ioport Newlines)+ END;
-dispensers: Dispensers Newlines (fluidID? ioport Newlines)+ END;
+sinks: Sinks Newlines (sink Newlines)+ END;
+sink: ioport;
+
+dispensers: Dispensers Newlines (dispenser Newlines)+ END;
+dispenser: fluidID? ioport;
+
 ioport: position Direction;
 
 // Definition of the grid
