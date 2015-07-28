@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 import java.util.Date;
 import java.util.Set;
@@ -76,8 +76,10 @@ public class DrawableCircuit implements Drawable {
 	 * @param toDraw the data to draw
 	 */
 	public DrawableCircuit(Biochip toDraw) {
+		logger.debug("Creating new drawable chip based on " + toDraw);
 		this.data = toDraw;
 		this.initializeDrawables();
+		logger.debug("New DrawableCircuit created successfully.");
 	}
 	
 	/**
@@ -98,11 +100,17 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 		
+		logger.debug("Fields set up.");
+		
 		//setup droplets
 		for (Droplet d : data.getDroplets()) {
 			DrawableDroplet dd = new DrawableDroplet(d);
 			this.droplets.add(dd);
 		}
+		
+		logger.debug("Droplets set up.");
+		
+		logger.debug("Drawable initialization successfully done.");
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 import java.util.HashMap;
 
@@ -19,7 +19,7 @@ import com.badlogic.gdx.math.Rectangle;
 public abstract class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
-	private HashMap<String, TextureRegion> allTextures = new HashMap<>();
+	private static HashMap<String, TextureRegion> allTextures;
 	public Color color = Color.WHITE.cpy();
 	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
 	private String defaultTextureName;
@@ -36,8 +36,12 @@ public abstract class DrawableSprite implements Drawable {
 	 */
 	public DrawableSprite(String textureFilename, float sizeX, float sizeY) {
 		defaultTextureName = textureFilename;
-		TextureRegion region = loadTexture(textureFilename);
-		Texture currentTexture = region.getTexture();
+		if (allTextures == null) {
+			allTextures = new HashMap<>();
+		}
+	}
+
+	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
 		sprite = new Sprite(region);
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight()/2f);
@@ -49,6 +53,11 @@ public abstract class DrawableSprite implements Drawable {
 	}
 	
 	public void draw() {
+		
+		if (sprite== null) {
+			TextureRegion region = loadTexture(defaultTextureName);
+			initializeSprite(1, 1, region);
+		}
 	
 		// if LOD is set, enable LOD calculation and set
 		// sprite accordingly
@@ -79,11 +88,15 @@ public abstract class DrawableSprite implements Drawable {
 	}
 	
 	private TextureRegion loadTexture(String textureFilename) {
-		Texture t = new Texture(Gdx.files.internal(textureFilename));
-		t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-		TextureRegion region = new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
-		allTextures.put(textureFilename, region);
-		return region;
+		if (!allTextures.containsKey(textureFilename)) {
+			Texture t = new Texture(Gdx.files.internal(textureFilename));
+			t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+			TextureRegion region = new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
+			allTextures.put(textureFilename, region);
+			return region;
+		} else {
+			return allTextures.get(textureFilename);
+		}
 	}
 	
 	/**

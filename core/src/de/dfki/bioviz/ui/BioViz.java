@@ -1,4 +1,4 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files;
@@ -13,13 +13,17 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import de.dfki.bioviz.messages.MessageCenter;
 import de.dfki.bioviz.parser.BioParser;
 import de.dfki.bioviz.structures.Biochip;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
@@ -38,7 +42,7 @@ public class BioViz implements ApplicationListener {
 	AssetManager manager = new AssetManager();
 	public MessageCenter mc = new MessageCenter();
 	
-	private String filename;
+	private File filename;
 	private BioVizInputProcessor inputProcessor;
 	public InputProcessor getInputProcessor(){return inputProcessor;}
 	
@@ -47,19 +51,24 @@ public class BioViz implements ApplicationListener {
 	
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
+	private Vector<BioVizEvent> loadFileListeners = new Vector<BioVizEvent>();
 	static Logger logger = LoggerFactory.getLogger(BioViz.class);
+	
+	private boolean loadFileOnUpdate = true;
 
 	public BioViz() {
 		super();
 		logger.info("Starting withouth filename being specified; loading example");
 		logger.info("Usage: java -jar BioViz.jar <filename>");
 
+		this.filename = null;
+
 		singleton = this;
 	}
 	
-	public BioViz(String filename) {
+	public BioViz(File filename) {
 		this();
-		logger.info("Starting BiochipVis, loading currently disabled");
+		logger.info("Starting with file \"{}\"",filename.getAbsolutePath());
 		this.filename = filename;
 	}
 	
@@ -72,20 +81,6 @@ public class BioViz implements ApplicationListener {
 		
 		camera = new OrthographicCamera(1, h/w);
 		batch = new SpriteBatch();
-
-		FileHandle fh = Gdx.files.getFileHandle("default_grid.bio", Files.FileType.Internal);
-		Biochip c = BioParser.parse(fh.readString());
-
-
-		currentCircuit = new DrawableCircuit(c);
-
-
-		drawables.add(currentCircuit);
-		
-		currentCircuit.addTimeChangedListener(() -> BioViz.singleton.callTimeChangedListeners());
-		
-
-		c.recalculateAdjacency = true;
 		
 		inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
@@ -104,6 +99,12 @@ public class BioViz implements ApplicationListener {
 
 	@Override
 	public void render() {
+		
+		if (loadFileOnUpdate) {
+			loadNewFileNow();
+			loadFileOnUpdate = false;
+		}
+		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
@@ -130,7 +131,7 @@ public class BioViz implements ApplicationListener {
 	public void resize(int width, int height) {
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;
-		if (firstRun) {
+		if (firstRun && currentCircuit != null) {
 			currentCircuit.zoomExtents();
 			firstRun = false;
 		}
@@ -205,25 +206,39 @@ public class BioViz implements ApplicationListener {
 		return pixmap;
 	}
 	
-	public static void loadNewFile() {
-		final JFileChooser fc = new JFileChooser();
-		fc.showOpenDialog(null);
-		String filename = fc.getSelectedFile().toString();
-		try {
-			Biochip c;
-			if (filename != null && filename.equals("")) {
-//				c = RevlibFileReader.readRealFile(filename);
-//				RevVisGDX.singleton.drawables.remove(RevVisGDX.singleton.currentCircuit);
-//				RevVisGDX.singleton.currentCircuit = new DrawableCircuitReordered(c);
-//				RevVisGDX.singleton.drawables.add(RevVisGDX.singleton.currentCircuit);
-//				RevVisGDX.singleton.currentCircuit.zoomExtents();
-			} else {
-				logger.error("Could not load {}",filename);
-				System.out.println("Error: could not load " + filename);
-			}
-		} catch (Exception e) {
-			logger.error("Could not load {}", filename);
+	private void loadNewFileNow() {
+		logger.debug("Now loading file " + filename);
+		Biochip bc;
+		if (BioViz.singleton.filename == null) {
+			FileHandle fh = Gdx.files.getFileHandle("default_grid.bio", Files.FileType.Internal);
+			bc = BioParser.parse(fh.readString());
+		} else {
+			bc = BioParser.parseFile(filename);
 		}
+		
+		try {
+			logger.debug("loaded file, creating drawable elements...");
+			DrawableCircuit newCircuit = new DrawableCircuit(bc);
+			logger.debug("drawable created, replacing old elements...");
+			drawables.remove(currentCircuit);
+			currentCircuit = newCircuit;
+			drawables.add(currentCircuit);
+			logger.debug("Initializing circuit");
+			currentCircuit.addTimeChangedListener(() -> callTimeChangedListeners());
+			currentCircuit.data.recalculateAdjacency = true;
+			logger.info("Done loading file");
+			currentCircuit.zoomExtents();
+		} catch (Exception e) {
+			logger.error("Could not load " + BioViz.singleton.filename + ": " + e.getMessage());
+			e.printStackTrace();
+		}
+		logger.debug("Done loading file " + filename);
+	}
+	
+	public static void loadNewFile(File f) {
+		logger.info("Scheduling loading of file " + f);
+		BioViz.singleton.filename = f;
+		BioViz.singleton.loadFileOnUpdate = true;
 	}
 	
 	public void addTimeChangedListener(BioVizEvent listener) {
@@ -232,6 +247,16 @@ public class BioViz implements ApplicationListener {
 	
 	private void callTimeChangedListeners() {
 		for (BioVizEvent listener : this.timeChangedListeners) {
+			listener.bioVizEvent();
+		}
+	}
+	
+	public void addLoadFileListener(BioVizEvent listener) {
+		loadFileListeners.add(listener);
+	}
+	
+	void callLoadFileListeners() {
+		for (BioVizEvent listener : this.loadFileListeners) {
 			listener.bioVizEvent();
 		}
 	}

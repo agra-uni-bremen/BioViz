@@ -1,6 +1,7 @@
-package de.dfki.bioviz;
+package de.dfki.bioviz.ui;
 
 import de.dfki.bioviz.structures.Droplet;
+
 import com.badlogic.gdx.graphics.Color;
 
 public class DrawableDroplet extends DrawableSprite {
@@ -13,7 +14,7 @@ public class DrawableDroplet extends DrawableSprite {
 		super("Droplet.png");
 		this.droplet = droplet;
 		super.addLOD(defaultLODThreshold, "BlackPixel.png");
-		super.color = new Color(0.75f, 0.85f, 0.9f, 1f);
+		super.color = new Color(0.85f, 0.95f, 1f, 1f);
 		route = new DrawableRoute(this);
 	}
 
@@ -23,22 +24,25 @@ public class DrawableDroplet extends DrawableSprite {
 	}
 
 	@Override
-	public void draw() {		
+	public void draw() {
 		droplet.targetX = droplet.getXAt(BioViz.singleton.currentCircuit.currentTime);
 		droplet.targetY = droplet.getYAt(BioViz.singleton.currentCircuit.currentTime);
-		
+
 		droplet.update();
 		
-		float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(droplet.smoothX);
-		float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(droplet.smoothY);
-		
-		this.x = xCoord;
-		this.y = yCoord;
-		this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
-		this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
-		
-		route.draw();
-		
-		super.draw();
+		if (droplet.getXAt(BioViz.singleton.currentCircuit.currentTime) >= 0) {
+
+			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(droplet.smoothX);
+			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(droplet.smoothY);
+
+			this.x = xCoord;
+			this.y = yCoord;
+			this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
+			this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
+
+			route.draw();
+
+			super.draw();
+		}
 	}
 }
