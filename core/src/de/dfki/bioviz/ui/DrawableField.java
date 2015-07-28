@@ -15,8 +15,9 @@ public class DrawableField extends DrawableSprite {
 	static final Color sinkDefaultColor = new Color(0.5f, 0.75f, 0.75f, 1f);
 	static final Color sourceDefaultColor = new Color(0.75f, 0.5f, 0.75f, 1f);
 	static final Color fieldAdjacentActivationColor = new Color(1f, 0.3f, 0.2f, 1f);
+	static final Color blockedColor = new Color(1f, 0f, 0f, 1f);
 	
-	private boolean drawSink = false, drawSource = false;
+	private boolean drawSink = false, drawSource = false, drawBlockage = false;
 
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
@@ -43,6 +44,9 @@ public class DrawableField extends DrawableSprite {
 			else if (this.field.isDispenser && ! drawSource) {
 				this.addLOD(Float.MAX_VALUE, "Source.png");
 				drawSource = true;
+			} else if (this.field.isPotentiallyBlocked() && ! drawBlockage) {
+				this.addLOD(Float.MAX_VALUE, "Blockage.png");
+				drawBlockage = true;
 			}
 			
 			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(field.x);
@@ -67,6 +71,10 @@ public class DrawableField extends DrawableSprite {
 			}
 			if (BioViz.singleton.currentCircuit.getHighlightAdjacency() && BioViz.singleton.currentCircuit.data.getAdjacentActivations().contains(this.field)) {
 				this.color.add(fieldAdjacentActivationColor);
+				colorOverlayCount++;
+			}
+			if (field.isBlocked((int)BioViz.singleton.currentCircuit.currentTime)) {
+				this.color.add(blockedColor);
 				colorOverlayCount++;
 			}
 			
