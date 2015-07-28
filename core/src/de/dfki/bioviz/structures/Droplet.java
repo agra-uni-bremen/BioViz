@@ -114,5 +114,9 @@ public class Droplet {
 	public long getMaxTime() {
 		return this.positions.lastElement().time;
 	}
+	
+	public int getID() {
+		return this.id;
+	}
 
 }

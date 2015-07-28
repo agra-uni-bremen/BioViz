@@ -1,7 +1,7 @@
 package de.dfki.bioviz.ui;
 
 import de.dfki.bioviz.structures.Droplet;
-
+import java.util.Random;
 import com.badlogic.gdx.graphics.Color;
 
 public class DrawableDroplet extends DrawableSprite {
@@ -9,12 +9,19 @@ public class DrawableDroplet extends DrawableSprite {
 	public Droplet droplet;
 	
 	private DrawableRoute route;
+	
+	private static Random randnum = null;
 
 	public DrawableDroplet(Droplet droplet) {
 		super("Droplet.png");
+		if (randnum == null)
+			randnum = new Random();
 		this.droplet = droplet;
 		super.addLOD(defaultLODThreshold, "BlackPixel.png");
-		super.color = new Color(0.85f, 0.95f, 1f, 1f);
+		randnum.setSeed(droplet.getID());
+		super.color = new Color(randnum.nextInt());
+		super.color.a = 1f;
+		System.out.println(super.color);
 		route = new DrawableRoute(this);
 	}
 
