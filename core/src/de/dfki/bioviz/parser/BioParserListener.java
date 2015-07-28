@@ -171,10 +171,12 @@ public class BioParserListener extends BioBaseListener {
 	public void enterBlockage(@NotNull BlockageContext ctx) {
 		Point p1 = getPositionContext((PositionContext) ctx.getChild(0));
 		Point p2 = getPositionContext((PositionContext) ctx.getChild(1));
-
+		Rectangle rect = new Rectangle(p1,p2);
 		Range timing = getTiming((TimingContext)ctx.getChild(2));
 
-		blockages.add(new Pair(new Rectangle(p1,p2),timing));
+		logger.debug("Found blockage {} with timing {}",rect,timing);
+
+		blockages.add(new Pair(rect,timing));
 	}
 
 	private Range getTiming(TimingContext ctx) {
