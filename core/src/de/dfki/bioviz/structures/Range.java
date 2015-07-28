@@ -9,7 +9,13 @@ public class Range {
 	private int begin;
 	private int end;
 
-	public Range(final int begin,final int end) {
+	public Range(int begin,int end) {
+
+		if (begin < end) {
+			int tmp = begin;
+			begin=end;
+			end=tmp;
+		}
 
 		this.begin = (begin<1) ? DONTCARE:begin;
 		this.end = (end<1) ? DONTCARE: begin;
