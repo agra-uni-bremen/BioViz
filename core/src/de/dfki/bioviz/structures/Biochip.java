@@ -2,6 +2,7 @@ package de.dfki.bioviz.structures;
 
 import java.util.*;
 
+import de.dfki.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,8 @@ public class Biochip {
 	 * at any given time.
 	 */
 	public BiochipField[][] field;
+
+	public ArrayList<Pair<Rectangle, Range>> blockages;
 
 
 
