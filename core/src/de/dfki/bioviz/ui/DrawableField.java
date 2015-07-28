@@ -14,7 +14,7 @@ public class DrawableField extends DrawableSprite {
 	static final Color fieldDefaultColor = new Color(0.5f, 0.5f, 0.75f, 1f);
 	static final Color sinkDefaultColor = new Color(0.5f, 0.75f, 0.75f, 1f);
 	static final Color sourceDefaultColor = new Color(0.75f, 0.5f, 0.75f, 1f);
-	static final Color fieldAdjacentActivationColor = new Color(1f, 0.3f, 0.2f, 1f);
+	static final Color fieldAdjacentActivationColor = new Color(0.75f, 0.5f, 0f, 1f);
 	static final Color blockedColor = new Color(1f, 0f, 0f, 1f);
 	
 	private boolean drawSink = false, drawSource = false, drawBlockage = false;
@@ -58,17 +58,8 @@ public class DrawableField extends DrawableSprite {
 			this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
 
 			int colorOverlayCount = 0;
-			this.color = Color.BLACK.cpy();
-			if (this.field.isSink) {
-				this.color.add(sinkDefaultColor);
-				colorOverlayCount++;
-			} else if (this.field.isDispenser) {
-				this.color.add(sourceDefaultColor);
-				colorOverlayCount++;
-			} else {
-				this.color.add(fieldDefaultColor);
-				colorOverlayCount++;				
-			}
+			this.color = new Color(0,0,0,1);
+
 			if (BioViz.singleton.currentCircuit.getHighlightAdjacency() && BioViz.singleton.currentCircuit.data.getAdjacentActivations().contains(this.field)) {
 				this.color.add(fieldAdjacentActivationColor);
 				colorOverlayCount++;
@@ -78,8 +69,23 @@ public class DrawableField extends DrawableSprite {
 				colorOverlayCount++;
 			}
 			
-			this.color.mul(1f / (float)colorOverlayCount);
+			if (colorOverlayCount == 0) {
+				if (this.field.isSink) {
+					this.color.add(sinkDefaultColor);
+					colorOverlayCount++;
+				} else if (this.field.isDispenser) {
+					this.color.add(sourceDefaultColor);
+					colorOverlayCount++;
+				} else {
+					this.color.add(fieldDefaultColor);
+					colorOverlayCount++;				
+				}
+			}
+			
+			//this.color.mul(1f / (float)colorOverlayCount);
 
+			this.color.clamp();
+			
 			super.draw();
 		}
 	}
