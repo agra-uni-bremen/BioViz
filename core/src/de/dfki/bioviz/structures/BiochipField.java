@@ -5,6 +5,7 @@ public class BiochipField {
 	public boolean isSink = false;
 	public boolean isDispenser = false;
 	public int x, y;
+	private Range blockage;
 
 	// if the field is either a sink or a dispenser this field stores the information from which
 	// field the fluid is removed from or dispensed to
@@ -12,6 +13,20 @@ public class BiochipField {
 
 	// if the field is a dispenser, this variable stores the fluid type that is dispensed
 	public int fluidID = 0;
+
+
+	public void attachBlockage(Range blockage) {
+		this.blockage=blockage;
+	}
+
+	public boolean isBlocked(int timeStep) {
+		if (blockage == null) {
+			return false;
+		}
+		else {
+			return blockage.inRange(timeStep);
+		}
+	}
 
 	public void setSink(Direction removeFrom) {
 		isDispenser=false;
