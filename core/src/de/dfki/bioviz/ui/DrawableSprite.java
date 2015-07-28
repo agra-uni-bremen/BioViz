@@ -22,7 +22,7 @@ public abstract class DrawableSprite implements Drawable {
 	private static HashMap<String, TextureRegion> allTextures;
 	public Color color = Color.WHITE.cpy();
 	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
-	private String defaultTextureName;
+	private String currentTextureName;
 	
 	public static final float defaultLODThreshold = 8f;
 	
@@ -35,10 +35,11 @@ public abstract class DrawableSprite implements Drawable {
 	 * @param textureFilename the texture to use
 	 */
 	public DrawableSprite(String textureFilename, float sizeX, float sizeY) {
-		defaultTextureName = textureFilename;
+		currentTextureName = textureFilename;
 		if (allTextures == null) {
 			allTextures = new HashMap<>();
 		}
+		this.addLOD(Float.MAX_VALUE, textureFilename);
 	}
 
 	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
@@ -55,25 +56,25 @@ public abstract class DrawableSprite implements Drawable {
 	public void draw() {
 		
 		if (sprite== null) {
-			TextureRegion region = loadTexture(defaultTextureName);
+			TextureRegion region = loadTexture(currentTextureName);
 			initializeSprite(1, 1, region);
 		}
 	
 		// if LOD is set, enable LOD calculation and set
 		// sprite accordingly
 		if (this.LevelOfDetailTextures.size() > 0) {
-			float bestLODFactor = 0;
+			float bestLODFactor = Float.MAX_VALUE;
 			boolean foundLOD = false;
 			for (Float factor : LevelOfDetailTextures.keySet()) {
-				if (factor >= this.scaleX && factor >= bestLODFactor) {
+				if (factor >= this.scaleX && factor <= bestLODFactor) {
 					bestLODFactor = factor;
 					foundLOD = true;
 				}
 			}
 			if (foundLOD)
 				this.setTexture(LevelOfDetailTextures.get(bestLODFactor));
-			else
-				this.setTexture(defaultTextureName);
+			
+			this.setTexture();
 		}
 		this.sprite.setPosition(x-sprite.getWidth()/2f, y-sprite.getHeight()/2f);
 		this.sprite.setScale(scaleX, scaleY);
@@ -87,7 +88,7 @@ public abstract class DrawableSprite implements Drawable {
 		this.scaleY = dimY / this.sprite.getHeight();
 	}
 	
-	private TextureRegion loadTexture(String textureFilename) {
+	protected TextureRegion loadTexture(String textureFilename) {
 		if (!allTextures.containsKey(textureFilename)) {
 			Texture t = new Texture(Gdx.files.internal(textureFilename));
 			t.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
@@ -99,16 +100,22 @@ public abstract class DrawableSprite implements Drawable {
 		}
 	}
 	
+	public void setTexture(String filename) {
+		this.currentTextureName = filename;
+	}
+	
 	/**
 	 * Set the texture to something different.
 	 * 
 	 * @param textureFilename
 	 */
-	public void setTexture(String textureFilename) {
-		if (!this.allTextures.containsKey(textureFilename)) {
-			this.loadTexture(textureFilename);
+	private void setTexture() {
+		if (!this.allTextures.containsKey(currentTextureName)) {
+			this.loadTexture(currentTextureName);
 		}
-		this.sprite.setRegion(this.allTextures.get(textureFilename));
+		if (this.sprite != null) {
+			this.sprite.setRegion(this.allTextures.get(currentTextureName));
+		}
 	}
 	
 	public void addLOD(float scaleFactorMax, String textureFilename) {

@@ -10,10 +10,12 @@ public class DrawableField extends DrawableSprite {
 	public BiochipField field;
 	
 	static final Color fieldDefaultColor = new Color(0.5f, 0.5f, 0.75f, 1f);
+	static final Color sinkDefaultColor = new Color(0.5f, 0.75f, 0.75f, 1f);
 	static final Color fieldAdjacentActivationColor = new Color(1f, 0.3f, 0.2f, 1f);
 
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
+		this.loadTexture("Sink.png");
 		this.field = field;
 		super.addLOD(8, "BlackPixel.png");
 	}
@@ -30,6 +32,9 @@ public class DrawableField extends DrawableSprite {
 	@Override
 	public void draw() {
 		if (this.field.isEnabled) {
+			if (this.field.isSink)
+				this.setTexture("Sink.png");
+			
 			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(field.x);
 			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(field.y);
 
@@ -38,10 +43,21 @@ public class DrawableField extends DrawableSprite {
 			this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
 			this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
 
-			if (BioViz.singleton.currentCircuit.getHighlightAdjacency() && BioViz.singleton.currentCircuit.data.getAdjacentActivations().contains(this.field))
-				this.color = fieldAdjacentActivationColor;
-			else
-				this.color = fieldDefaultColor;
+			int colorOverlayCount = 0;
+			this.color = Color.BLACK.cpy();
+			if (this.field.isSink) {
+				this.color.add(sinkDefaultColor);
+				colorOverlayCount++;
+			} else {
+				this.color.add(fieldDefaultColor);
+				colorOverlayCount++;				
+			}
+			if (BioViz.singleton.currentCircuit.getHighlightAdjacency() && BioViz.singleton.currentCircuit.data.getAdjacentActivations().contains(this.field)) {
+				this.color.add(fieldAdjacentActivationColor);
+				colorOverlayCount++;
+			}
+			
+			this.color.mul(1f / (float)colorOverlayCount);
 
 			super.draw();
 		}
