@@ -11,12 +11,6 @@ public class Range {
 
 	public Range(int begin,int end) {
 
-		if (begin < end) {
-			int tmp = begin;
-			begin=end;
-			end=tmp;
-		}
-
 		this.begin = (begin<1) ? DONTCARE:begin;
 		this.end = (end<1) ? DONTCARE: begin;
 	}
@@ -28,5 +22,13 @@ public class Range {
 		else {
 			return (i >= begin && (end == DONTCARE || i <=end));
 		}
+	}
+
+
+	public String toString() {
+		String fst = (begin == DONTCARE) ? "*" : String.valueOf(begin);
+		String snd = (end== DONTCARE) ? "*" : String.valueOf(end);
+
+		return "("+ fst+ "," +snd+ ")";
 	}
 }

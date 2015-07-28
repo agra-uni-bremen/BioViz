@@ -27,6 +27,10 @@ public class BiochipField {
 			return blockage.inRange(timeStep);
 		}
 	}
+	
+	public boolean isPotentiallyBlocked() {
+		return !(blockage == null);
+	}
 
 	public void setSink(Direction removeFrom) {
 		isDispenser=false;

@@ -25,4 +25,9 @@ public class Pair<K, V> {
 		return second;
 	}
 
+
+	public String toString() {
+		return "(" + first + "," + second + ")";
+	}
+
 }
