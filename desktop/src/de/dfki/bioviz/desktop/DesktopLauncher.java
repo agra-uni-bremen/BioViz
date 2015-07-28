@@ -47,6 +47,7 @@ public class DesktopLauncher extends JFrame {
 	public JSlider time;
 	timerCallback tc;
 	loadFileCallback load_cb;
+	loadedFileCallback loaded_cb;
 	public static DesktopLauncher singleton;
 	private BioViz bioViz;
 	LwjglAWTCanvas canvas;
@@ -162,6 +163,9 @@ public class DesktopLauncher extends JFrame {
 		
 		container.add(panel, BorderLayout.WEST);
 		container.add(canvas.getCanvas(), BorderLayout.CENTER);
+		
+		loaded_cb = new loadedFileCallback();
+		BioViz.singleton.addLoadedFileListener(loaded_cb);
 
 		pack();
 		setVisible(true);
@@ -349,6 +353,14 @@ public class DesktopLauncher extends JFrame {
 			if (f != null)
 				BioViz.loadNewFile(f);
 		}
-		
+	}
+	
+	private class loadedFileCallback implements BioVizEvent {
+		public loadedFileCallback() {	}
+		@Override
+		public void bioVizEvent() {
+			logger.debug("Desktop received loaded event, setting slider...");
+			DesktopLauncher.singleton.time.setMaximum((int)BioViz.singleton.currentCircuit.data.getMaxTime());
+		}
 	}
 }

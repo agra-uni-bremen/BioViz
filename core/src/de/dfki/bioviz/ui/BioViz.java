@@ -52,6 +52,7 @@ public class BioViz implements ApplicationListener {
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> loadFileListeners = new Vector<BioVizEvent>();
+	private Vector<BioVizEvent> loadedFileListeners = new Vector<BioVizEvent>();
 	static Logger logger = LoggerFactory.getLogger(BioViz.class);
 	
 	private boolean loadFileOnUpdate = true;
@@ -233,6 +234,8 @@ public class BioViz implements ApplicationListener {
 			e.printStackTrace();
 		}
 		logger.debug("Done loading file " + filename);
+		
+		this.callLoadedFileListeners();
 	}
 	
 	public static void loadNewFile(File f) {
@@ -246,6 +249,7 @@ public class BioViz implements ApplicationListener {
 	}
 	
 	private void callTimeChangedListeners() {
+		logger.debug("Calling " + this.loadedFileListeners.size() + " listeners for timeChanged");
 		for (BioVizEvent listener : this.timeChangedListeners) {
 			listener.bioVizEvent();
 		}
@@ -256,7 +260,18 @@ public class BioViz implements ApplicationListener {
 	}
 	
 	void callLoadFileListeners() {
+		logger.debug("Calling " + this.loadedFileListeners.size() + " listeners for load");
 		for (BioVizEvent listener : this.loadFileListeners) {
+			listener.bioVizEvent();
+		}
+	}
+	public void addLoadedFileListener(BioVizEvent listener) {
+		loadedFileListeners.add(listener);
+	}
+	
+	void callLoadedFileListeners() {
+		logger.debug("Calling " + this.loadedFileListeners.size() + " listeners for loaded");
+		for (BioVizEvent listener : this.loadedFileListeners) {
 			listener.bioVizEvent();
 		}
 	}

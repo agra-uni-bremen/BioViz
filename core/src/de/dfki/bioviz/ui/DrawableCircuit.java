@@ -22,7 +22,7 @@ import org.slf4j.Logger;
  *
  */
 public class DrawableCircuit implements Drawable {
-	Biochip data;
+	public Biochip data;
 
 	private float scaleX = 1;
 	public float offsetX = 0;
