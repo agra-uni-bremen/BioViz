@@ -106,5 +106,13 @@ public class Droplet {
 			return Long.compare(this.time, t.time);
 		}
 	}
+	
+	/**
+	 * Retrieves the last timestamp at which this droplet moves.
+	 * @return the time at which the droplet's last movement is performed
+	 */
+	public long getMaxTime() {
+		return this.positions.lastElement().time;
+	}
 
 }

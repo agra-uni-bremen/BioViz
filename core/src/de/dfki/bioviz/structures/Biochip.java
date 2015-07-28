@@ -195,5 +195,19 @@ public class Biochip {
 			return result;
 		}
 	}
+	
+	/**
+	 * Calculates the last timestamp at which a droplet is moved
+	 * @return the last timestamp of the currently loaded simulation
+	 */
+	public long getMaxTime() {
+		long maxTime = 0;
+		for (Droplet d : this.droplets) {
+			long dTime = d.getMaxTime();
+			if (dTime > maxTime)
+				maxTime = dTime;
+		}
+		return maxTime;
+	}
 
 }
