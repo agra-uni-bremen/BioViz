@@ -46,4 +46,10 @@ public class Rectangle {
         return result;
     }
 
+    public String toString() {
+        return "Rect["+ new Point(x1,y1) + " " + new Point(x2,y2)+"]";
+    }
+
+
+
 }
