@@ -54,3 +54,7 @@ fluids
 1 blood
 end
 
+
+blockages
+(17,4) (20,4) (4,*)
+end

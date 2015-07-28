@@ -8,6 +8,7 @@ import de.dfki.bioviz.util.Pair;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Nullable;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,8 @@ public class BioParserListener extends BioBaseListener {
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 	private ArrayList<Pair<Point, Direction>> sinks = new ArrayList<>();
 	private ArrayList<Pair<Integer,Pair<Point,Direction>>> dispensers= new ArrayList<>();
+	private ArrayList<Pair<Rectangle,Range>> blockages = new ArrayList<>();
+
 
 
 	public Biochip getBiochip() {
@@ -164,6 +167,35 @@ public class BioParserListener extends BioBaseListener {
 
 	}
 
+	@Override
+	public void enterBlockage(@NotNull BlockageContext ctx) {
+		Point p1 = getPositionContext((PositionContext) ctx.getChild(0));
+		Point p2 = getPositionContext((PositionContext) ctx.getChild(1));
+
+		Range timing = getTiming((TimingContext)ctx.getChild(2));
+
+		blockages.add(new Pair(new Rectangle(p1,p2),timing));
+	}
+
+	private Range getTiming(TimingContext ctx) {
+		if (ctx == null) {
+			return new Range(Range.DONTCARE,Range.DONTCARE);
+		}
+		else {
+			int begin = Range.DONTCARE;
+			int end = Range.DONTCARE;
+
+			TerminalNode beginTerm = ctx.beginTiming().Integer();
+			TerminalNode endTerm = ctx.endTiming().Integer();
+			if (beginTerm != null) {
+				begin = Integer.parseInt(beginTerm.getText());
+			}
+			if (endTerm != null) {
+				end = Integer.parseInt(endTerm.getText());
+			}
+			return new Range(begin,end);
+		}
+	}
 
 	@Override
 	public void enterGridblock(GridblockContext ctx) {
@@ -235,8 +267,16 @@ public class BioParserListener extends BioBaseListener {
 			int fluidID=dispenser.first();
 			Point p = dispenser.second().first();
 			Direction dir = dispenser.second().second();
-			chip.field[p.first()][p.second()].setDispenser(fluidID,dir);
+			chip.field[p.first()][p.second()].setDispenser(fluidID, dir);
 		});
+
+		for (Pair<Rectangle, Range> b : blockages) {
+			Rectangle rect = b.first();
+			Range rng = b.second();
+			rect.positions().forEach(pos -> chip.field[pos.first()][pos.second()].attachBlockage(rng));
+		}
+
+		chip.blockages=blockages;
 
 	}
 }
