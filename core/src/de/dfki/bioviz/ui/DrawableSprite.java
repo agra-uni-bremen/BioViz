@@ -72,7 +72,7 @@ public abstract class DrawableSprite implements Drawable {
 				}
 			}
 			if (foundLOD)
-				this.setTexture(LevelOfDetailTextures.get(bestLODFactor));
+				currentTextureName = LevelOfDetailTextures.get(bestLODFactor);
 			
 			this.setTexture();
 		}
@@ -98,10 +98,6 @@ public abstract class DrawableSprite implements Drawable {
 		} else {
 			return allTextures.get(textureFilename);
 		}
-	}
-	
-	public void setTexture(String filename) {
-		this.currentTextureName = filename;
 	}
 	
 	/**

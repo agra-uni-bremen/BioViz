@@ -1,5 +1,7 @@
 package de.dfki.bioviz.ui;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
 import com.badlogic.gdx.graphics.Color;
 
 import de.dfki.bioviz.structures.BiochipField;
@@ -11,11 +13,13 @@ public class DrawableField extends DrawableSprite {
 	
 	static final Color fieldDefaultColor = new Color(0.5f, 0.5f, 0.75f, 1f);
 	static final Color sinkDefaultColor = new Color(0.5f, 0.75f, 0.75f, 1f);
+	static final Color sourceDefaultColor = new Color(0.75f, 0.5f, 0.75f, 1f);
 	static final Color fieldAdjacentActivationColor = new Color(1f, 0.3f, 0.2f, 1f);
+	
+	private boolean drawSink = false, drawSource = false;
 
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
-		this.loadTexture("Sink.png");
 		this.field = field;
 		super.addLOD(8, "BlackPixel.png");
 	}
@@ -32,8 +36,14 @@ public class DrawableField extends DrawableSprite {
 	@Override
 	public void draw() {
 		if (this.field.isEnabled) {
-			if (this.field.isSink)
-				this.setTexture("Sink.png");
+			if (this.field.isSink && !drawSink) {
+				this.addLOD(Float.MAX_VALUE, "Sink.png");
+				drawSink = true;
+			}
+			else if (this.field.isDispenser && ! drawSource) {
+				this.addLOD(Float.MAX_VALUE, "Source.png");
+				drawSource = true;
+			}
 			
 			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(field.x);
 			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(field.y);
@@ -47,6 +57,9 @@ public class DrawableField extends DrawableSprite {
 			this.color = Color.BLACK.cpy();
 			if (this.field.isSink) {
 				this.color.add(sinkDefaultColor);
+				colorOverlayCount++;
+			} else if (this.field.isDispenser) {
+				this.color.add(sourceDefaultColor);
 				colorOverlayCount++;
 			} else {
 				this.color.add(fieldDefaultColor);
