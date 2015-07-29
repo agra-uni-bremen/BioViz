@@ -28,6 +28,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Vector;
+import java.util.logging.FileHandler;
 
 
 
@@ -312,5 +313,10 @@ public class BioViz implements ApplicationListener {
 		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
 		if (shader.isCompiled() == false) throw new IllegalArgumentException("Error compiling shader: " + shader.getLog());
 		return shader;
+	}
+	
+	public FileHandle getApplicationIcon() {
+		FileHandle handle = Gdx.files.internal("Droplet.png");
+		return handle;
 	}
 }
