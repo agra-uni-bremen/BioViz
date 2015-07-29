@@ -241,7 +241,7 @@ public class BioViz implements ApplicationListener {
 	}
 	
 	public static void loadNewFile(File f) {
-		logger.info("Scheduling loading of file " + f);
+		logger.debug("Scheduling loading of file " + f);
 		BioViz.singleton.filename = f;
 		BioViz.singleton.loadFileOnUpdate = true;
 	}
