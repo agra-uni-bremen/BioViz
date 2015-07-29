@@ -18,11 +18,14 @@ public class DrawableField extends DrawableSprite {
 	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
 	
 	private boolean drawSink = false, drawSource = false, drawBlockage = false;
+	
+	private DrawableSprite adjacencyOverlay;
 
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
 		this.field = field;
 		super.addLOD(8, "BlackPixel.png");
+		adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 
 	@Override
@@ -60,10 +63,6 @@ public class DrawableField extends DrawableSprite {
 			int colorOverlayCount = 0;
 			this.color = new Color(0,0,0,1);
 
-			if (BioViz.singleton.currentCircuit.getHighlightAdjacency() && BioViz.singleton.currentCircuit.data.getAdjacentActivations().contains(this.field)) {
-				this.color.add(fieldAdjacentActivationColor);
-				colorOverlayCount++;
-			}
 			if (field.isBlocked((int)BioViz.singleton.currentCircuit.currentTime)) {
 				this.color.add(blockedColor);
 				colorOverlayCount++;
@@ -87,6 +86,28 @@ public class DrawableField extends DrawableSprite {
 			this.color.clamp();
 			
 			super.draw();
+			
+			if (BioViz.singleton.currentCircuit.getHighlightAdjacency() && BioViz.singleton.currentCircuit.data.getAdjacentActivations().contains(this.field)) {
+				this.adjacencyOverlay.x = this.x;
+				this.adjacencyOverlay.y = this.y;
+				this.adjacencyOverlay.scaleX = this.scaleX;
+				this.adjacencyOverlay.scaleY = this.scaleY;
+				this.adjacencyOverlay.color = Color.RED.cpy();
+				this.adjacencyOverlay.draw();
+			}
 		}
+	}
+	
+	private class AdjacencyOverlay extends DrawableSprite {
+
+		public AdjacencyOverlay(String textureFilename) {
+			super(textureFilename);
+		}
+
+		@Override
+		public String generateSVG() {
+			return null;
+		}
+		
 	}
 }

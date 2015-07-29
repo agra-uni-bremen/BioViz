@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,8 +14,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URL;
+import java.util.Random;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -89,8 +93,16 @@ public class DesktopLauncher extends JFrame {
 	public DesktopLauncher(int timeMax, File file) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
+		int rnd = new Random().nextInt(21);
+		if (rnd <= 9)
+			this.setTitle("Olli's BioViz");
+		else if (rnd <= 19)
+			this.setTitle("Jannis' BioViz");
+		else
+			this.setTitle("Organic Visualization");
 		
 		logger.debug("Starting DesktopLauncher with file \"{}\"",file);
 		
@@ -167,6 +179,12 @@ public class DesktopLauncher extends JFrame {
 		loaded_cb = new loadedFileCallback();
 		BioViz.singleton.addLoadedFileListener(loaded_cb);
 
+		try {
+			this.setIconImage(ImageIO.read(BioViz.singleton.getApplicationIcon().file()));
+		} catch (Exception e) {
+			logger.error("Could not set application icon: " + e.getMessage());
+		}
+		
 		pack();
 		setVisible(true);
 		setSize(800, 600);
