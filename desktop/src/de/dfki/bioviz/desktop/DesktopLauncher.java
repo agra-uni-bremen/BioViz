@@ -13,6 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Random;
 import java.util.Scanner;
 
 import javax.swing.*;
@@ -91,6 +92,13 @@ public class DesktopLauncher extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
+		int rnd = new Random().nextInt(21);
+		if (rnd <= 9)
+			this.setTitle("Olli's BioViz");
+		else if (rnd <= 19)
+			this.setTitle("Jannis' BioViz");
+		else
+			this.setTitle("Organic Visualization");
 		
 		logger.debug("Starting DesktopLauncher with file \"{}\"",file);
 		
