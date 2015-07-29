@@ -27,6 +27,7 @@ import javax.swing.*;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.Random;
 import java.util.Vector;
 import java.util.logging.FileHandler;
 
@@ -316,7 +317,15 @@ public class BioViz implements ApplicationListener {
 	}
 	
 	public FileHandle getApplicationIcon() {
-		FileHandle handle = Gdx.files.internal("Droplet.png");
+		Random rnd = new Random();
+		int r = rnd.nextInt(3);
+		FileHandle handle;
+		if (r == 0)
+			handle = Gdx.files.internal("Droplet.png");
+		else if (r == 1)
+			handle = Gdx.files.internal("Source.png");
+		else
+			handle = Gdx.files.internal("Sink.png");
 		return handle;
 	}
 }
