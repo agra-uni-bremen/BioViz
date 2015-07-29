@@ -48,6 +48,7 @@ public class DesktopLauncher extends JFrame {
 	timerCallback tc;
 	loadFileCallback load_cb;
 	loadedFileCallback loaded_cb;
+	saveFileCallback save_cb;
 	public static DesktopLauncher singleton;
 	private BioViz bioViz;
 	LwjglAWTCanvas canvas;
@@ -166,6 +167,9 @@ public class DesktopLauncher extends JFrame {
 		
 		loaded_cb = new loadedFileCallback();
 		BioViz.singleton.addLoadedFileListener(loaded_cb);
+		
+		save_cb = new saveFileCallback();
+		BioViz.singleton.addSaveFileListener(save_cb);
 
 		pack();
 		setVisible(true);
@@ -361,6 +365,20 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			logger.debug("Desktop received loaded event, setting slider...");
 			DesktopLauncher.singleton.time.setMaximum((int)BioViz.singleton.currentCircuit.data.getMaxTime());
+		}
+	}
+	
+	private class saveFileCallback implements BioVizEvent {
+		public saveFileCallback() {	}
+		@Override
+		public void bioVizEvent() {
+			logger.debug("Desktop received save event, opening dialog...");
+			JFileChooser fc = new JFileChooser();
+			int fcresult = fc.showSaveDialog(null);
+			
+			if (fcresult == JFileChooser.APPROVE_OPTION) {
+				BioViz.singleton.saveSVG(fc.getSelectedFile().getAbsolutePath());	
+			}
 		}
 	}
 }
