@@ -12,6 +12,7 @@ Nets: 'nets';
 Routes: 'routes';
 Grid: 'grid';
 Dispensers: 'dispensers';
+Detectors: 'detectors';
 
 CellActuations: 'cell actuations';
 PinActuations: 'pin actuations';
