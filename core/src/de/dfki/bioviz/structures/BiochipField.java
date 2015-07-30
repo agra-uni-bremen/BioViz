@@ -6,7 +6,17 @@ public class BiochipField {
 	public boolean isDispenser = false;
 	public int x, y;
 	private Range blockage;
+	private Detector detector;
 
+
+
+	public void setDetector(Detector det) {
+		detector = det;
+	}
+
+
+	// ############################################################################################################
+	// TODO put Information about sink/dispenser in
 	// if the field is either a sink or a dispenser this field stores the information from which
 	// field the fluid is removed from or dispensed to
 	Direction direction = null;
@@ -15,18 +25,7 @@ public class BiochipField {
 	public int fluidID = 0;
 
 
-	public void attachBlockage(Range blockage) {
-		this.blockage=blockage;
-	}
 
-	public boolean isBlocked(int timeStep) {
-		if (blockage == null) {
-			return false;
-		}
-		else {
-			return blockage.inRange(timeStep);
-		}
-	}
 	
 	public boolean isPotentiallyBlocked() {
 		return !(blockage == null);
@@ -59,6 +58,21 @@ public class BiochipField {
 		this.y=y;
 		setSink(removeFrom);
 
+	}
+	// end of TODO
+	// ############################################################################################################
+
+	public void attachBlockage(Range blockage) {
+		this.blockage=blockage;
+	}
+
+	public boolean isBlocked(int timeStep) {
+		if (blockage == null) {
+			return false;
+		}
+		else {
+			return blockage.inRange(timeStep);
+		}
 	}
 
 	public BiochipField(int x, int y) {

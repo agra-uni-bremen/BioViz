@@ -10,8 +10,12 @@ public class Point extends Pair<Integer,Integer> {
 		super(x,y);
 	}
 
+	public Point(Point p) {
+		this(new Integer(p.first),new Integer(p.second));
+	}
+
 	public Point add(Point p) {
-		return new Point(first()+p.first(),second()+p.second());
+		return new Point(first+p.first,second+p.second);
 	}
 
 	public static Point pointFromDirection(Direction dir) {
