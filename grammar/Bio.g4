@@ -4,7 +4,7 @@ parser grammar Bio;
 options { tokenVocab=BioLexerGrammar; }
 
 
-bio: (grid|nets|sinks|dispensers|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
+bio: (grid|nets|sinks|detectors|dispensers|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
 
 
 
