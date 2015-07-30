@@ -6,6 +6,9 @@ public class BiochipField {
 	public boolean isDispenser = false;
 	public int x, y;
 	private Range blockage;
+	public int usage;
+
+
 
 	// if the field is either a sink or a dispenser this field stores the information from which
 	// field the fluid is removed from or dispensed to

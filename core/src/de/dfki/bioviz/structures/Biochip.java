@@ -105,7 +105,6 @@ public class Biochip {
 	 */
 	public void enableAll() {
 		Arrays.stream(field).forEach(flds -> Arrays.stream(flds).forEach(f -> f.isEnabled=true));
-
 	}
 
 	/**
@@ -140,7 +139,23 @@ public class Biochip {
 	public Set<Droplet> getDroplets() {
 		return this.droplets;
 	}
-	
+
+
+	public void computeCellUsage() {
+		logger.debug("Computing cell usage");
+
+		// first we set the usage of each field to zero
+		Arrays.stream(field).forEach(flds -> Arrays.stream(flds).forEach(f -> f.usage=0));
+
+
+		for (Droplet drop: droplets) {
+			for(TimedPosition pos: drop.getPositions()) {
+				field[pos.getX()][pos.getY()].usage++;
+			}
+		}
+	}
+
+
 	/**
 	 * Calculates all fields that are at some point activated
 	 * with adjacently placed droplets.
