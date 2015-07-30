@@ -21,7 +21,6 @@ public class DrawableDroplet extends DrawableSprite {
 		randnum.setSeed(droplet.getID());
 		super.color = new Color(randnum.nextInt());
 		super.color.a = 1f;
-		System.out.println(super.color);
 		route = new DrawableRoute(this);
 	}
 
