@@ -1,5 +1,6 @@
 package de.dfki.bioviz.messages;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import de.dfki.bioviz.ui.BioViz;
@@ -18,7 +19,7 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
      * @brief Forwards a log message to the MessageCenter that will display it on the HUD
      */
     protected void append(ILoggingEvent eventObject) {
-        if (isStarted()) {
+        if (isStarted() && eventObject.getLevel().isGreaterOrEqual(Level.INFO)) {
             mc.addMessage(eventObject.getFormattedMessage());
         }
     }
