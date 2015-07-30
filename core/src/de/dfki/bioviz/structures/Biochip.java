@@ -28,6 +28,7 @@ public class Biochip {
 	public BiochipField[][] field;
 
 	public ArrayList<Pair<Rectangle, Range>> blockages;
+	public ArrayList<Detector> detectors;
 
 
 

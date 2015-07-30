@@ -19,7 +19,7 @@ public class Rectangle {
     }
 
     public Rectangle(Point p1, Point p2) {
-        this(p1.first(),p1.second(),p2.first(),p2.second());
+        this(p1.first,p1.second,p2.first,p2.second);
     }
 
     public Rectangle(int x1, int y1, int x2, int y2) {
