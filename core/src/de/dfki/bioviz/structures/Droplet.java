@@ -5,10 +5,14 @@ import java.util.Vector;
 
 public class Droplet {
 	
-	private Vector<Droplet.TimedPosition> positions = new Vector<>();
+	private Vector<TimedPosition> positions = new Vector<>();
 
 	private int id=0;
-	
+
+	public Vector<TimedPosition> getPositions() {
+		return positions;
+	}
+
 	public float smoothX, smoothY, targetX, targetY;
 
 	public Droplet() {
@@ -85,34 +89,14 @@ public class Droplet {
 	}
 
 
-	/**
-	 * 
-	 * @author jannis
-	 *
-	 * @note This class has a natural ordering that is inconsistent with equals.
-	 */
-	class TimedPosition implements Comparable<TimedPosition> {
-		long time;
-		int x, y;
-		
-		public TimedPosition(long t, int x, int y) {
-			this.time = t;
-			this.x = x;
-			this.y = y;
-		}
-		
-		@Override
-		public int compareTo(TimedPosition t) {
-			return Long.compare(this.time, t.time);
-		}
-	}
+
 	
 	/**
 	 * Retrieves the last timestamp at which this droplet moves.
 	 * @return the time at which the droplet's last movement is performed
 	 */
 	public long getMaxTime() {
-		return this.positions.lastElement().time;
+		return this.positions.lastElement().getTime();
 	}
 	
 	public int getID() {
