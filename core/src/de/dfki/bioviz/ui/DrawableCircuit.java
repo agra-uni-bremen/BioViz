@@ -45,6 +45,7 @@ public class DrawableCircuit implements Drawable {
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 	
 	private boolean highlightAdjacency = true;
+	private boolean showUsage = false;
 	
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
@@ -53,6 +54,22 @@ public class DrawableCircuit implements Drawable {
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 
 
+	public boolean getShowUsage() { return showUsage; };
+	public void toggleShowUsage() {
+		this.setShowUsage(!this.showUsage);
+	}
+
+	public void setShowUsage(boolean showUsage) {
+		this.showUsage=showUsage;
+		if (this.showUsage) {
+
+			// TODO I always recompute the usage, this might be a waste of computation time -> check this
+			data.computeCellUsage();
+			logger.info("Showing cell usage");
+		} else {
+			logger.info("Stop showing cell usage");
+		}
+	}
 
 	public boolean getHighlightAdjacency() {
 		return highlightAdjacency;
