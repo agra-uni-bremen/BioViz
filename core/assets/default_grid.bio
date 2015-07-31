@@ -71,3 +71,8 @@ pin assignments
 (25,20) 2
 (17,4) 2
 end
+
+pin actuations
+3 : 1101010X
+1 : XX010
+end
