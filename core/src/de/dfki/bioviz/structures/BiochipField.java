@@ -4,7 +4,7 @@ public class BiochipField {
 	public boolean isEnabled = false;
 	public boolean isSink = false;
 	public boolean isDispenser = false;
-	public int x, y;
+	public final int x, y;
 	private Range blockage;
 	private Detector detector;
 	public Pin pin;
