@@ -36,6 +36,7 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Pair<Rectangle,Range>> blockages = new ArrayList<>();
 	private ArrayList<Detector> detectors = new ArrayList<>();
 	private HashMap<Integer,Pin> pins = new HashMap<>();
+	public HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
 
 
 
@@ -163,7 +164,7 @@ public class BioParserListener extends BioBaseListener {
 			pins.get(pinID).cells.add(pos);
 		}
 		else {
-		pins.put(pinID,new Pin(pinID,pos));
+		pins.put(pinID, new Pin(pinID, pos));
 		}
 	}
 
@@ -180,7 +181,7 @@ public class BioParserListener extends BioBaseListener {
 			}
 		}
 
-		detectors.add(new Detector(pos,duration,fluidType));
+		detectors.add(new Detector(pos, duration, fluidType));
 	}
 
 	@Override
@@ -212,7 +213,7 @@ public class BioParserListener extends BioBaseListener {
 		Rectangle rect = new Rectangle(p1,p2);
 		Range timing = getTiming((TimingContext)ctx.getChild(2));
 
-		logger.debug("Found blockage {} with timing {}",rect,timing);
+		logger.debug("Found blockage {} with timing {}", rect, timing);
 
 		blockages.add(new Pair<Rectangle,Range>(rect,timing));
 	}
@@ -256,6 +257,16 @@ public class BioParserListener extends BioBaseListener {
 		int fluidID = Integer.parseInt(ctx.Integer().getText());
 		String fluid = ctx.Identifier().getText();
 		fluidTypes.put(fluidID, fluid);
+	}
+
+
+	@Override
+	public void enterPinActuation(@NotNull PinActuationContext ctx) {
+		int pinID = getPinID(ctx.pinID());
+		logger.debug("(PinActuationContext)ctx.ActuationVector()={}",ctx.ActuationVector());
+		ActuationVector actVec = new ActuationVector(ctx.ActuationVector().getText());
+		pinActuations.put(pinID,actVec);
+
 	}
 
 
@@ -326,10 +337,11 @@ public class BioParserListener extends BioBaseListener {
 
 		pins.values().forEach(pin -> {
 			pin.cells.forEach(pos -> {
-				chip.field[pos.first][pos.second].pin=pin;
+				chip.field[pos.first][pos.second].pin = pin;
 			});
 		});
 		chip.pins=pins;
+		chip.pinActuations.putAll(pinActuations);
 
 	}
 }
