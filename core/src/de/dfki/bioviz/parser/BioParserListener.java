@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
+@SuppressWarnings("Convert2Diamond")
 public class BioParserListener extends BioBaseListener {
 	private static Logger logger = LoggerFactory.getLogger(BioParserListener.class);
 
@@ -34,6 +35,7 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Pair<Integer,Pair<Point,Direction>>> dispensers= new ArrayList<>();
 	private ArrayList<Pair<Rectangle,Range>> blockages = new ArrayList<>();
 	private ArrayList<Detector> detectors = new ArrayList<>();
+	private HashMap<Integer,Pin> pins = new HashMap<>();
 
 
 
@@ -81,7 +83,7 @@ public class BioParserListener extends BioBaseListener {
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
 		if (dispenser != null) {
 			updateMaxDimension(dispenser.first);
-			dispensers.add(new Pair(fluidID, dispenser));
+			dispensers.add(new Pair<Integer,Pair<Point,Direction>>(fluidID, dispenser));
 		} else {
 			logger.error("Skipping definition of dispenser");
 		}
@@ -114,7 +116,7 @@ public class BioParserListener extends BioBaseListener {
 			return null;
 		}
 
-		return new Pair(pos, dir);
+		return new Pair<Point,Direction>(pos, dir);
 	}
 
 	private void updateMaxDimension(Point p) {
@@ -173,12 +175,10 @@ public class BioParserListener extends BioBaseListener {
 
 		ArrayList<Source> sources = new ArrayList<Source>();
 
-		for (ParseTree child : ctx.children) {
-			if (child instanceof SourceContext) {
-				sources.add(getSource((SourceContext) child));
-				logger.debug("Found source child {}", (SourceContext) child);
-			}
-		}
+		ctx.children.stream().filter(child -> child instanceof SourceContext).forEach(child -> {
+			sources.add(getSource((SourceContext) child));
+			logger.debug("Found source child {}", child);
+		});
 
 		nets.add(new Net(sources, target));
 
@@ -193,7 +193,7 @@ public class BioParserListener extends BioBaseListener {
 
 		logger.debug("Found blockage {} with timing {}",rect,timing);
 
-		blockages.add(new Pair(rect,timing));
+		blockages.add(new Pair<Rectangle,Range>(rect,timing));
 	}
 
 	private Range getTiming(TimingContext ctx) {
