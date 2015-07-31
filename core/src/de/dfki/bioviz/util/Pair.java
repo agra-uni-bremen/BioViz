@@ -5,8 +5,8 @@ package de.dfki.bioviz.util;
  */
 public class Pair<K, V> {
 
-	private final K first;
-	private final V second;
+	public final K first;
+	public final V second;
 
 	public static <K, V> Pair<K, V> mkPair(K first, V second) {
 		return new Pair<K, V>(first, second);
@@ -16,15 +16,6 @@ public class Pair<K, V> {
 		this.first = first;
 		this.second = second;
 	}
-
-	public K first() {
-		return first;
-	}
-
-	public V second() {
-		return second;
-	}
-
 
 	public String toString() {
 		return "(" + first + "," + second + ")";

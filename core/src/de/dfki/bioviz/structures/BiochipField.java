@@ -6,10 +6,18 @@ public class BiochipField {
 	public boolean isDispenser = false;
 	public int x, y;
 	private Range blockage;
+	private Detector detector;
 	public int usage;
 
 
 
+	public void setDetector(Detector det) {
+		detector = det;
+	}
+
+
+	// ############################################################################################################
+	// TODO put Information about sink/dispenser in
 	// if the field is either a sink or a dispenser this field stores the information from which
 	// field the fluid is removed from or dispensed to
 	Direction direction = null;
@@ -63,7 +71,8 @@ public class BiochipField {
 		setSink(removeFrom);
 
 	}
-
+	// end of TODO
+	// ############################################################################################################
 	public BiochipField(int x, int y) {
 		this.x = x;
 		this.y = y;
