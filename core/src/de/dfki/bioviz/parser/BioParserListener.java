@@ -37,6 +37,7 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Detector> detectors = new ArrayList<>();
 	private HashMap<Integer,Pin> pins = new HashMap<>();
 	private  HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
+	private  HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
 
 
 
@@ -263,12 +264,17 @@ public class BioParserListener extends BioBaseListener {
 	@Override
 	public void enterPinActuation(@NotNull PinActuationContext ctx) {
 		int pinID = getPinID(ctx.pinID());
-		logger.debug("(PinActuationContext)ctx.ActuationVector()={}",ctx.ActuationVector());
 		ActuationVector actVec = new ActuationVector(ctx.ActuationVector().getText());
 		pinActuations.put(pinID,actVec);
 
 	}
 
+	@Override
+	public void enterCellActuation(@NotNull CellActuationContext ctx) {
+		Point pos = getPosition(ctx.position());
+		ActuationVector actVec = new ActuationVector(ctx.ActuationVector().getText());
+		cellActuations.put(pos, actVec);
+	}
 
 	@Override
 	public void enterRoute(RouteContext ctx) {
@@ -315,7 +321,7 @@ public class BioParserListener extends BioBaseListener {
 
 
 		dispensers.forEach(dispenser -> {
-			int fluidID=dispenser.first;
+			int fluidID = dispenser.first;
 			Point p = dispenser.second.first;
 			Direction dir = dispenser.second.second;
 			chip.field[p.first][p.second].setDispenser(fluidID, dir);
@@ -327,21 +333,27 @@ public class BioParserListener extends BioBaseListener {
 			rect.positions().forEach(pos -> chip.field[pos.first][pos.second].attachBlockage(rng));
 		}
 
-		chip.blockages=blockages;
+		chip.blockages.addAll(blockages);
 
 		detectors.forEach(det -> {
 			Point pos = det.position();
 			chip.field[pos.first][pos.second].setDetector(det);
 		});
-		chip.detectors=detectors;
+		chip.detectors.addAll(detectors);
 
 		pins.values().forEach(pin -> {
 			pin.cells.forEach(pos -> {
 				chip.field[pos.first][pos.second].pin = pin;
 			});
 		});
-		chip.pins=pins;
+		chip.pins.putAll(pins);
+
 		chip.pinActuations.putAll(pinActuations);
+
+		cellActuations.forEach((pos,vec) -> {
+			chip.field[pos.first][pos.second].actVec=vec;
+		});
+		chip.cellActuations.putAll(cellActuations);
 
 	}
 }
