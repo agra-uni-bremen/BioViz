@@ -27,10 +27,10 @@ public class Biochip {
 	 */
 	public BiochipField[][] field;
 
-	public ArrayList<Pair<Rectangle, Range>> blockages;
-	public ArrayList<Detector> detectors;
-	public HashMap<Integer,Pin> pins = new HashMap<>();
-	public HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
+	public final ArrayList<Pair<Rectangle, Range>> blockages= new ArrayList<Pair<Rectangle,Range>>();
+	public final ArrayList<Detector> detectors=new ArrayList<Detector>();
+	public final HashMap<Integer,Pin> pins = new HashMap<>();
+	public final HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
 
 
 

@@ -36,7 +36,7 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Pair<Rectangle,Range>> blockages = new ArrayList<>();
 	private ArrayList<Detector> detectors = new ArrayList<>();
 	private HashMap<Integer,Pin> pins = new HashMap<>();
-	public HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
+	private  HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
 
 
 
