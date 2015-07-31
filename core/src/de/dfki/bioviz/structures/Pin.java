@@ -15,8 +15,15 @@ public class Pin {
 		this.pinID=pinID;
 	}
 
+	public Pin(int pinID, Point pos) {
+		this(pinID);
+		cells.add(pos);
+	}
+
 	public Pin(int pinID, ArrayList<Point> cells) {
 		this(pinID);
 		this.cells.addAll(cells);
 	}
+
+
 }
