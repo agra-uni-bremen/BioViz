@@ -8,6 +8,7 @@ public class BiochipField {
 	private Range blockage;
 	private Detector detector;
 	public Pin pin;
+	public ActuationVector actVec;
 
 
 
