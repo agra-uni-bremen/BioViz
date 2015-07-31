@@ -29,6 +29,7 @@ public class Biochip {
 
 	public ArrayList<Pair<Rectangle, Range>> blockages;
 	public ArrayList<Detector> detectors;
+	public HashMap<Integer,Pin> pins = new HashMap<>();
 
 
 

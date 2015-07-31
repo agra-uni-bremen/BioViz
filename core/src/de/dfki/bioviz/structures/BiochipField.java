@@ -7,6 +7,7 @@ public class BiochipField {
 	public int x, y;
 	private Range blockage;
 	private Detector detector;
+	public Pin pin;
 
 
 
