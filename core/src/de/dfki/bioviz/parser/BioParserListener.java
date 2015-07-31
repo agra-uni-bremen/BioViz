@@ -65,6 +65,14 @@ public class BioParserListener extends BioBaseListener {
 		}
 	}
 
+	private int getPinID(PinIDContext ctx) {
+		if (ctx == null) {
+			return 0;
+		} else {
+			return Integer.parseInt(ctx.Integer().getText());
+		}
+	}
+
 	private Source getSource(SourceContext ctx) {
 		Point pos = getPosition(ctx.position());
 		int id = getDropletID(ctx.dropletID());
@@ -144,6 +152,19 @@ public class BioParserListener extends BioBaseListener {
 			logger.error("Skipping definition of sink");
 		}
 
+	}
+
+	@Override
+	public void enterAssignment(@NotNull AssignmentContext ctx) {
+		Point pos = getPosition(ctx.position());
+		int pinID = getPinID(ctx.pinID());
+
+		if (pins.containsKey(pinID)) {
+			pins.get(pinID).cells.add(pos);
+		}
+		else {
+		pins.put(pinID,new Pin(pinID,pos));
+		}
 	}
 
 	@Override
@@ -302,6 +323,13 @@ public class BioParserListener extends BioBaseListener {
 			chip.field[pos.first][pos.second].setDetector(det);
 		});
 		chip.detectors=detectors;
+
+		pins.values().forEach(pin -> {
+			pin.cells.forEach(pos -> {
+				chip.field[pos.first][pos.second].pin=pin;
+			});
+		});
+		chip.pins=pins;
 
 	}
 }
