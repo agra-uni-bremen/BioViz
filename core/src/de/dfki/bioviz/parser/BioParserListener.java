@@ -302,8 +302,7 @@ public class BioParserListener extends BioBaseListener {
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {
-				chip.field.put(cell,new BiochipField(cell.first,cell.second));
-				chip.enableFieldAt(cell.first, cell.second);
+				chip.field.put(cell,new BiochipField(cell));
 			}
 		}
 

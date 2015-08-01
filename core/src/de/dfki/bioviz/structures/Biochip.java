@@ -73,33 +73,6 @@ public class Biochip {
 	public Biochip(int dimensionX, int dimensionY) {
 
 	}
-	
-	/**
-	 * Sets a field's disabled flag so it is no longer
-	 * drawn as part of this circuit. As the fields are
-	 * currently stored using a 2-dimensional array, this
-	 * does not actually remove anything. It really just
-	 * sets a flag.
-	 */
-	public void disableFieldAt(int x, int y) {
-		field.get(new Point(x,y)).isEnabled = false;
-	}
-	
-	/**
-	 * (Re-)Enables a field at certain coordinates after
-	 * it has been disabled (e.g. using disableFieldAt(x,y)).
-	 */
-	public void enableFieldAt(int x, int y) {
-		field.get(new Point(x,y)).isEnabled = true;
-	}
-
-	/**
-	 * Enables all fields of the chip
-	 */
-	public void enableAll() {
-		// TODO hier wieder heile machen
-		field.values().forEach(fld -> fld.isEnabled=true);
-	}
 
 	/**
 	 * Adds a new blob to the circuit.
