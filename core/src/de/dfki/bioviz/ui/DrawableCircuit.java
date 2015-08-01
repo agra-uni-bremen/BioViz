@@ -217,10 +217,12 @@ public class DrawableCircuit implements Drawable {
 	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
 	private static Color hsvToRgb(float hue, float saturation, float value) {
 
-		while (hue >= 1)
+		while (hue >= 1) {
 			hue -= 1;
-		while (hue < 0)
+		}
+		while (hue < 0) {
 			hue += 1;
+		}
 		int h = (int)(hue * 6);
 		float f = hue * 6 - h;
 		float p = value * (1 - saturation);

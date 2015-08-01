@@ -5,6 +5,7 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 import com.badlogic.gdx.graphics.Color;
 
 import de.dfki.bioviz.structures.BiochipField;
+import de.dfki.bioviz.structures.Point;
 
 
 public class DrawableField extends DrawableSprite {
@@ -54,9 +55,8 @@ public class DrawableField extends DrawableSprite {
 				this.addLOD(Float.MAX_VALUE, "Blockage.png");
 				drawBlockage = true;
 			}
-			
-			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(field.x);
-			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(field.y);
+			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(field.x());
+			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(field.y());
 
 			this.x = xCoord;
 			this.y = yCoord;
