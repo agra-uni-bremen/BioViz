@@ -26,7 +26,9 @@ public class DrawableDroplet extends DrawableSprite {
 
 	@Override
 	public String generateSVG() {
-		return "<image x=\"" + this.droplet.smoothX + "\" y=\"" + (-this.droplet.smoothY + BioViz.singleton.currentCircuit.data.field[0].length - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" + this.route.generateSVG();
+		// FIXME
+//		return "<image x=\"" + this.droplet.smoothX + "\" y=\"" + (-this.droplet.smoothY + BioViz.singleton.currentCircuit.data.field[0].length - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" + this.route.generateSVG();
+		return "";
 	}
 
 	@Override

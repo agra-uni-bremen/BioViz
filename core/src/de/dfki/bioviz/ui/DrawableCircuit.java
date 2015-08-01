@@ -90,15 +90,13 @@ public class DrawableCircuit implements Drawable {
 		this.fields.clear();
 		this.droplets.clear();
 
-		logger.debug("Initializing drawables: {} fields, {} droplets", (data.field.length * data.field[0].length), data.getDroplets().size() );
+		logger.debug("Initializing drawables: {} fields, {} droplets", data.field.size(), data.getDroplets().size() );
 
 		//setup fields
-		for (int i = 0; i < data.field.length; i++) {
-			for (int j = 0; j < data.field[i].length; j++) {
-				DrawableField f = new DrawableField(data.field[i][j]);
-				this.fields.add(f);
-			}
-		}
+		data.field.values().forEach(fld -> {
+			DrawableField f= new DrawableField(fld);
+			this.fields.add(f);
+		});
 		
 		logger.debug("Fields set up.");
 		
@@ -324,15 +322,16 @@ public class DrawableCircuit implements Drawable {
 	 * Resets the zoom so that the whole circuit is shown.
 	 */
 	public void zoomExtents() {
-		float x = 1f / this.data.field.length;
-		float y = 1f / this.data.field[0].length;
-		float xFactor = Gdx.graphics.getWidth();
-		float yFactor = Gdx.graphics.getHeight();
-		float maxScale = Math.min(x * xFactor, y * yFactor);
-		this.scaleX = maxScale;
-		this.scaleY = maxScale;
-		this.offsetY = this.data.field[0].length / -2f + 0.5f;
-		this.offsetX = this.data.field.length / -2f + 0.5f;
+		// FIXME the length does not make much sens anymore
+//		float x = 1f / this.data.field.length;
+//		float y = 1f / this.data.field[0].length;
+//		float xFactor = Gdx.graphics.getWidth();
+//		float yFactor = Gdx.graphics.getHeight();
+//		float maxScale = Math.min(x * xFactor, y * yFactor);
+//		this.scaleX = maxScale;
+//		this.scaleY = maxScale;
+//		this.offsetY = this.data.field[0].length / -2f + 0.5f;
+//		this.offsetX = this.data.field.length / -2f + 0.5f;
 	}
 	
 	/**
@@ -373,8 +372,9 @@ public class DrawableCircuit implements Drawable {
 
 	@Override
 	public String generateSVG() {
+		// FIXME just commented it
 		String result = "";
-		result += "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 " + this.data.field.length + " " + this.data.field[0].length + "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
+//		result += "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 " + this.data.field.length + " " + this.data.field[0].length + "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
 		
 		for (Drawable d : this.fields) {
 			result += d.generateSVG();

@@ -31,7 +31,10 @@ public class DrawableField extends DrawableSprite {
 	@Override
 	public String generateSVG() {
 		if (field.isEnabled) {
-			return "<image x=\"" + this.field.x + "\" y=\"" + (-this.field.y + BioViz.singleton.currentCircuit.data.field[0].length - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
+			// FIXME why would we need to acces " (-this.field.y + BioViz.singleton.currentCircuit.data.field[0].length - 1)"?
+			// @jannis please check and fix
+//			return "<image x=\"" + this.field.x + "\" y=\"" + (-this.field.y + BioViz.singleton.currentCircuit.data.field[0].length - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
+			return "";
 		} else {
 			return "";
 		}

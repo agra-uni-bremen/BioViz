@@ -19,13 +19,7 @@ public class Biochip {
 
 	static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
-	/**
-	 * The fields that are part of this biochip.
-	 * While this is currently public I'm not really sure
-	 * if this is a good idea, so it may be set to private
-	 * at any given time.
-	 */
-	public BiochipField[][] field;
+	public HashMap<Point,BiochipField> field = new HashMap<Point,BiochipField>();
 
 	public final ArrayList<Pair<Rectangle, Range>> blockages= new ArrayList<Pair<Rectangle,Range>>();
 	public final ArrayList<Detector> detectors=new ArrayList<Detector>();
@@ -77,12 +71,7 @@ public class Biochip {
 	 * @param dimensionY The size of the chip along the y axis
 	 */
 	public Biochip(int dimensionX, int dimensionY) {
-		field = new BiochipField[dimensionX][dimensionY];
-		for (int i = 0; i < field.length; i++) {
-			for (int j = 0; j < field[i].length; j++) {
-				field[i][j] = new BiochipField(i, j);
-			}
-		}
+
 	}
 	
 	/**
@@ -93,7 +82,7 @@ public class Biochip {
 	 * sets a flag.
 	 */
 	public void disableFieldAt(int x, int y) {
-		field[x][y].isEnabled = false;
+		field.get(new Point(x,y)).isEnabled = false;
 	}
 	
 	/**
@@ -101,15 +90,15 @@ public class Biochip {
 	 * it has been disabled (e.g. using disableFieldAt(x,y)).
 	 */
 	public void enableFieldAt(int x, int y) {
-		field[x][y].isEnabled = true;
+		field.get(new Point(x,y)).isEnabled = true;
 	}
 
 	/**
 	 * Enables all fields of the chip
 	 */
 	public void enableAll() {
-		Arrays.stream(field).forEach(flds -> Arrays.stream(flds).forEach(f -> f.isEnabled = true));
-
+		// TODO hier wieder heile machen
+		field.values().forEach(fld -> fld.isEnabled=true);
 	}
 
 	/**
@@ -178,8 +167,8 @@ public class Biochip {
 								(x1 == x2 && Math.abs(y1 - y2) == 1) ||
 								(y1 == y2 && Math.abs(x1 - x2) == 1)
 							) {
-							result.add(this.field[x1][y1]);
-							result.add(this.field[x2][y2]);
+							result.add(this.field.get(new Point(x1,y1)));
+							result.add(this.field.get(new Point(x2,y2)));
 							//BioViz.singleton.mc.addMessage("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime, MessageCenter.SEVERITY_DEBUG);
 						}
 					}

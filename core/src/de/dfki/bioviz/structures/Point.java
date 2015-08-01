@@ -18,6 +18,15 @@ public class Point extends Pair<Integer, Integer> {
 		return new Point(first + p.first, second + p.second);
 	}
 
+
+	/*
+	This hashCode method has been taken from http://stackoverflow.com/a/26981910
+	 */
+	@Override
+	public int hashCode() {
+		return (first << 16) + second;
+	}
+
 	public static Point pointFromDirection(Direction dir) {
 		switch (dir) {
 			case NORTH:

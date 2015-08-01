@@ -302,6 +302,7 @@ public class BioParserListener extends BioBaseListener {
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {
+				chip.field.put(cell,new BiochipField(cell.first,cell.second));
 				chip.enableFieldAt(cell.first, cell.second);
 			}
 		}
@@ -316,7 +317,7 @@ public class BioParserListener extends BioBaseListener {
 		dropletIDsToFluidTypes.forEach(chip::addDropToFluid);
 		sinks.forEach(sink -> {
 			Point p = sink.first;
-			chip.field[p.first][p.second].setSink(sink.second);
+			chip.field.get(p).setSink(sink.second);
 		});
 
 
@@ -324,26 +325,26 @@ public class BioParserListener extends BioBaseListener {
 			int fluidID = dispenser.first;
 			Point p = dispenser.second.first;
 			Direction dir = dispenser.second.second;
-			chip.field[p.first][p.second].setDispenser(fluidID, dir);
+			chip.field.get(p).setDispenser(fluidID, dir);
 		});
 
 		for (Pair<Rectangle, Range> b : blockages) {
 			Rectangle rect = b.first;
 			Range rng = b.second;
-			rect.positions().forEach(pos -> chip.field[pos.first][pos.second].attachBlockage(rng));
+			rect.positions().forEach(pos -> chip.field.get(pos).attachBlockage(rng));
 		}
 
 		chip.blockages.addAll(blockages);
 
 		detectors.forEach(det -> {
 			Point pos = det.position();
-			chip.field[pos.first][pos.second].setDetector(det);
+			chip.field.get(pos).setDetector(det);
 		});
 		chip.detectors.addAll(detectors);
 
 		pins.values().forEach(pin -> {
 			pin.cells.forEach(pos -> {
-				chip.field[pos.first][pos.second].pin = pin;
+				chip.field.get(pos).pin = pin;
 			});
 		});
 		chip.pins.putAll(pins);
@@ -351,7 +352,7 @@ public class BioParserListener extends BioBaseListener {
 		chip.pinActuations.putAll(pinActuations);
 
 		cellActuations.forEach((pos,vec) -> {
-			chip.field[pos.first][pos.second].actVec=vec;
+			chip.field.get(pos).actVec=vec;
 		});
 		chip.cellActuations.putAll(cellActuations);
 
