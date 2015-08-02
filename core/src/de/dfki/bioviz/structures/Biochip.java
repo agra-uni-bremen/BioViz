@@ -69,9 +69,16 @@ public class Biochip {
 	 * Creates a new 2D-Biochip with a certain field size.
 	 * @param dimensionX The size of the chip along the x axis
 	 * @param dimensionY The size of the chip along the y axis
+	 * @deprecated The chip no longer relies on a fixed field size.
+	 * Use {@link #new()} instead.
 	 */
+	@Deprecated
 	public Biochip(int dimensionX, int dimensionY) {
 
+	}
+
+	public Biochip() {
+		
 	}
 
 	/**
