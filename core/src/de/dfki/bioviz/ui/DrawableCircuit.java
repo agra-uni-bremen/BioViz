@@ -90,10 +90,10 @@ public class DrawableCircuit implements Drawable {
 		this.fields.clear();
 		this.droplets.clear();
 
-		logger.debug("Initializing drawables: {} fields, {} droplets", data.field.size(), data.getDroplets().size() );
+		logger.debug("Initializing drawables: {} fields, {} droplets", data.getAllCoordinates().size(), data.getDroplets().size() );
 
 		//setup fields
-		data.field.values().forEach(fld -> {
+		data.getAllFields().forEach(fld -> {
 			DrawableField f= new DrawableField(fld);
 			this.fields.add(f);
 		});

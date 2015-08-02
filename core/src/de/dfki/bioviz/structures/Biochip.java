@@ -19,7 +19,7 @@ public class Biochip {
 
 	static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
-	public HashMap<Point,BiochipField> field = new HashMap<Point,BiochipField>();
+	private HashMap<Point,BiochipField> field = new HashMap<Point,BiochipField>();
 
 	public final ArrayList<Pair<Rectangle, Range>> blockages= new ArrayList<Pair<Rectangle,Range>>();
 	public final ArrayList<Detector> detectors=new ArrayList<Detector>();
@@ -78,7 +78,7 @@ public class Biochip {
 	}
 
 	public Biochip() {
-		
+
 	}
 
 	/**
@@ -181,6 +181,47 @@ public class Biochip {
 				maxTime = dTime;
 		}
 		return maxTime;
+	}
+
+	/**
+	 * Retrieves field that is located at given coordinates.
+	 * @param coords the coordinates at which the field is located
+	 * @return the field
+	 * @throws RuntimeException if there is no field at given coordinates
+	 */
+	public BiochipField getFieldAt(Point coords) {
+		if (this.field.containsKey(coords)) {
+			return this.field.get(coords);
+		} else {
+			throw new RuntimeException("Could not retrieve field at " + coords);
+		}
+	}
+
+	/**
+	 * Retrieves the coordinates of all the fields that are currently set
+	 * @return all valid coordinates
+	 */
+	public Set<Point> getAllCoordinates() {
+		return this.field.keySet();
+	}
+
+	/**
+	 * Retrieves all fields of this chip
+	 * @return all field instances being used on this chip
+	 */
+	public Collection<BiochipField> getAllFields() {
+		return this.field.values();
+	}
+
+	public void addField(Point coordinates, BiochipField field) {
+		if (field.x() != coordinates.first || field.y() != coordinates.second) {
+			logger.error("Field coordinates differ from those transmitted to the chip for this instance");
+			coordinates = new Point(field.x(), field.y());
+		}
+		if (this.field.containsKey(coordinates)) {
+			logger.warn("Field added twice at " + coordinates + ", removed older instance");
+		}
+		this.field.put(coordinates, field);
 	}
 
 }
