@@ -31,7 +31,7 @@ public class Biochip {
 
 	private HashMap<Integer,String> fluidTypes = new HashMap<Integer,String>();
 	public void addFluidType(int fluidID, String fluidDescription) {
-		fluidTypes.put(fluidID,fluidDescription);
+		fluidTypes.put(fluidID, fluidDescription);
 	}
 	public void addFluidTypes(HashMap<Integer,String> types) {
 		fluidTypes.putAll(types);
@@ -64,13 +64,14 @@ public class Biochip {
 	private Set<BiochipField> adjacencyCache = null;
 	
 	public boolean recalculateAdjacency = false;
+	private int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
 	
 	/**
 	 * Creates a new 2D-Biochip with a certain field size.
 	 * @param dimensionX The size of the chip along the x axis
 	 * @param dimensionY The size of the chip along the y axis
 	 * @deprecated The chip no longer relies on a fixed field size.
-	 * Use {@link #new()} instead.
+	 * Use {@link #Biochip()} instead.
 	 */
 	@Deprecated
 	public Biochip(int dimensionX, int dimensionY) {
@@ -222,6 +223,28 @@ public class Biochip {
 			logger.warn("Field added twice at " + coordinates + ", removed older instance");
 		}
 		this.field.put(coordinates, field);
+	}
+
+	public Point getMaxCoord() {
+		int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+		for (Point coord: this.field.keySet()) {
+			if (maxX < coord.first)
+				maxX = coord.first;
+			if (maxY < coord.second)
+				maxY = coord.second;
+		}
+		return new Point(maxX, maxY);
+	}
+
+	public Point getMinCoord() {
+		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+		for (Point coord: this.field.keySet()) {
+			if (minX > coord.first)
+				minX = coord.first;
+			if (minY > coord.second)
+				minY = coord.second;
+		}
+		return new Point(minX, minY);
 	}
 
 }

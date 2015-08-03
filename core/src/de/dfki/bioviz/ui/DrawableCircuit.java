@@ -11,6 +11,7 @@ import de.dfki.bioviz.structures.Droplet;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import de.dfki.bioviz.structures.Point;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -112,7 +113,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	@Override
-	public void draw() {		
+	public void draw() {
 		smoothScaleX += (getScaleX() - smoothScaleX) / scalingDelay;
 		smoothScaleY += (getScaleY() - smoothScaleY) / scalingDelay;
 		smoothOffsetX += (offsetX - smoothOffsetX) / scalingDelay;
@@ -324,16 +325,23 @@ public class DrawableCircuit implements Drawable {
 	 * Resets the zoom so that the whole circuit is shown.
 	 */
 	public void zoomExtents() {
-		// FIXME the length does not make much sens anymore
-//		float x = 1f / this.data.field.length;
-//		float y = 1f / this.data.field[0].length;
-//		float xFactor = Gdx.graphics.getWidth();
-//		float yFactor = Gdx.graphics.getHeight();
-//		float maxScale = Math.min(x * xFactor, y * yFactor);
-//		this.scaleX = maxScale;
-//		this.scaleY = maxScale;
-//		this.offsetY = this.data.field[0].length / -2f + 0.5f;
-//		this.offsetX = this.data.field.length / -2f + 0.5f;
+		// FIXME Does not properly handle non-0 minimum coordinates yet
+		Point max = this.data.getMaxCoord();
+		Point min = this.data.getMinCoord();
+		logger.debug("Auto zoom around " + min + " <--/--> " + max);
+
+		float x = 1f / (max.first);
+		float y = 1f / (max.second);
+		float xFactor = Gdx.graphics.getWidth();
+		float yFactor = Gdx.graphics.getHeight();
+		float maxScale = Math.min(x * xFactor, y * yFactor);
+		this.scaleX = maxScale;
+		this.scaleY = maxScale;
+		this.offsetY = (max.first) / -2f;
+		this.offsetX = (max.second) / -2f;
+
+
+		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
 	}
 	
 	/**
