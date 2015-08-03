@@ -330,8 +330,8 @@ public class DrawableCircuit implements Drawable {
 		Point min = this.data.getMinCoord();
 		logger.debug("Auto zoom around " + min + " <--/--> " + max);
 
-		float x = 1f / (max.first);
-		float y = 1f / (max.second);
+		float x = 1f / (max.first + 3);
+		float y = 1f / (max.second + 3);
 		float xFactor = Gdx.graphics.getWidth();
 		float yFactor = Gdx.graphics.getHeight();
 		float maxScale = Math.min(x * xFactor, y * yFactor);
