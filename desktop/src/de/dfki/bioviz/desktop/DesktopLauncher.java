@@ -142,9 +142,9 @@ public class DesktopLauncher extends JFrame {
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
 
 		JButton usageButton = new JButton();
-		zoomButton.setText("Show Cell Usage");
-		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
-		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
+		usageButton.setText("Show Cell Usage");
+		usageButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
+		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
 		
 		JLabel timeInfo = new JLabel("<html><body>Time</body></html>");
 		

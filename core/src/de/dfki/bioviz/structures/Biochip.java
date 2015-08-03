@@ -125,7 +125,7 @@ public class Biochip {
 
 		for (Droplet drop: droplets) {
 			for(TimedPosition pos: drop.getPositions()) {
-				field.get(pos).usage++;
+				field.get(pos.getPos()).usage++;
 			}
 		}
 	}

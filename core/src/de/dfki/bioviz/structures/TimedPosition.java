@@ -3,10 +3,9 @@ package de.dfki.bioviz.structures;
 /**
  * Created by keszocze on 30.07.15.
  */
+
 /**
- *
  * @author jannis
- *
  * @note This class has a natural ordering that is inconsistent with equals.
  */
 class TimedPosition implements Comparable<TimedPosition> {
@@ -23,6 +22,10 @@ class TimedPosition implements Comparable<TimedPosition> {
 
 	public int getY() {
 		return y;
+	}
+
+	public Point getPos() {
+		return new Point(x, y);
 	}
 
 	public TimedPosition(long t, int x, int y) {

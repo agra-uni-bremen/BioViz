@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 
 import de.dfki.bioviz.structures.BiochipField;
 import de.dfki.bioviz.structures.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class DrawableField extends DrawableSprite {
@@ -19,7 +21,7 @@ public class DrawableField extends DrawableSprite {
 	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
 
 	private boolean drawSink = false, drawSource = false, drawBlockage = false;
-
+	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 	private DrawableSprite adjacencyOverlay;
 
 	public DrawableField(BiochipField field) {
@@ -27,6 +29,7 @@ public class DrawableField extends DrawableSprite {
 		this.field = field;
 		super.addLOD(8, "BlackPixel.png");
 		adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
+
 	}
 
 	@Override
@@ -38,11 +41,13 @@ public class DrawableField extends DrawableSprite {
 		//		then add the total height of the circuit to have the element put
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
-			return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
+		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
 	@Override
 	public void draw() {
+
+		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 		if (this.field.isSink && !drawSink) {
 			this.addLOD(Float.MAX_VALUE, "Sink.png");
 			drawSink = true;
@@ -53,20 +58,32 @@ public class DrawableField extends DrawableSprite {
 			this.addLOD(Float.MAX_VALUE, "Blockage.png");
 			drawBlockage = true;
 		}
-		float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(field.x());
-		float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(field.y());
+		float xCoord = circ.xCoordOnScreen(field.x());
+		float yCoord = circ.yCoordOnScreen(field.y());
 
 		this.x = xCoord;
 		this.y = yCoord;
-		this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
-		this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
+		this.scaleX = circ.smoothScaleX;
+		this.scaleY = circ.smoothScaleY;
+
 
 		int colorOverlayCount = 0;
 		this.color = new Color(0, 0, 0, 1);
 
-		if (field.isBlocked((int) BioViz.singleton.currentCircuit.currentTime)) {
+		if (field.isBlocked((int) circ.currentTime)) {
 			this.color.add(blockedColor);
 			colorOverlayCount++;
+		}
+
+
+		if (circ.getShowUsage()) {
+//			logger.debug("Usage count of {}: {}", this.field.pos, this.field.usage);
+
+			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max Usage verwenden)
+			float scalingFactor = 4f;
+
+			this.color.add(new Color(0, this.field.usage / scalingFactor, 0, 0));
+			++colorOverlayCount;
 		}
 
 		if (colorOverlayCount == 0) {

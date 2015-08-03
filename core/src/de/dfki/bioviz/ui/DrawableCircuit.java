@@ -38,7 +38,7 @@ public class DrawableCircuit implements Drawable {
 	private float scalingDelay = 4f;
 	
 	public long currentTime = 0;
-	
+
 	public boolean autoAdvance = false;
 	public float autoSpeed = 2f;
 	private long lastAutoStepAt = new Date().getTime();
