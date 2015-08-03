@@ -80,10 +80,6 @@ public class Droplet {
 		smoothY += (targetY - smoothY) / movementDelay;
 	}
 
-	public int getId() {
-		return id;
-	}
-
 
 	/**
 	 * 
