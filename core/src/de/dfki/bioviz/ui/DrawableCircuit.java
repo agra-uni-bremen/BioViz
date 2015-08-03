@@ -337,8 +337,8 @@ public class DrawableCircuit implements Drawable {
 		float maxScale = Math.min(x * xFactor, y * yFactor);
 		this.scaleX = maxScale;
 		this.scaleY = maxScale;
-		this.offsetY = (max.first) / -2f;
-		this.offsetX = (max.second) / -2f;
+		this.offsetX = (max.first) / -2f;
+		this.offsetY = (max.second) / -2f;
 
 
 		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
