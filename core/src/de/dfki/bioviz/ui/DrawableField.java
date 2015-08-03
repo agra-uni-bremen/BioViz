@@ -33,8 +33,12 @@ public class DrawableField extends DrawableSprite {
 	public String generateSVG() {
 		// FIXME why would we need to acces " (-this.field.y + BioViz.singleton.currentCircuit.data.field[0].length - 1)"?
 		// @jannis please check and fix
-//			return "<image x=\"" + this.field.x + "\" y=\"" + (-this.field.y + BioViz.singleton.currentCircuit.data.field[0].length - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
-		return "";
+		// @keszocze Because the coordinate system in SVG is inverted on its
+		//		y-axis. I need to first put it upside down (-this.field.y) and
+		//		then add the total height of the circuit to have the element put
+		//		back into the positive coordinate range in order to be placed
+		//		on the canvas.
+			return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
 	@Override

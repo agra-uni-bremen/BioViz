@@ -382,9 +382,14 @@ public class DrawableCircuit implements Drawable {
 
 	@Override
 	public String generateSVG() {
-		// FIXME just commented it
 		String result = "";
-//		result += "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 " + this.data.field.length + " " + this.data.field[0].length + "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
+		result +=
+			"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
+			this.data.getMinCoord().first + " " +
+			(this.data.getMinCoord().second - 1) + " " +
+			(this.data.getMaxCoord().first + 1) + " " +
+			(this.data.getMaxCoord().second + 1) +
+			"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
 		
 		for (Drawable d : this.fields) {
 			result += d.generateSVG();
