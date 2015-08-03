@@ -14,8 +14,9 @@ public class DrawableDroplet extends DrawableSprite {
 
 	public DrawableDroplet(Droplet droplet) {
 		super("Droplet.png");
-		if (randnum == null)
+		if (randnum == null) {
 			randnum = new Random();
+		}
 		this.droplet = droplet;
 		super.addLOD(defaultLODThreshold, "BlackPixel.png");
 		randnum.setSeed(droplet.getID());
