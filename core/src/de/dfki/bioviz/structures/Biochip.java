@@ -104,8 +104,9 @@ public class Biochip {
 	 * @param drop The droplet that will be removed
 	 */
 	public void removeBlob(Droplet drop) {
-		if (this.droplets.contains(drop))
+		if (this.droplets.contains(drop)) {
 			this.droplets.remove(drop);
+		}
 	}
 	
 	/**
@@ -178,8 +179,9 @@ public class Biochip {
 		long maxTime = 0;
 		for (Droplet d : this.droplets) {
 			long dTime = d.getMaxTime();
-			if (dTime > maxTime)
+			if (dTime > maxTime) {
 				maxTime = dTime;
+			}
 		}
 		return maxTime;
 	}
@@ -228,10 +230,12 @@ public class Biochip {
 	public Point getMaxCoord() {
 		int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
 		for (Point coord: this.field.keySet()) {
-			if (maxX < coord.first)
+			if (maxX < coord.first) {
 				maxX = coord.first;
-			if (maxY < coord.second)
+			}
+			if (maxY < coord.second) {
 				maxY = coord.second;
+			}
 		}
 		return new Point(maxX, maxY);
 	}
@@ -239,10 +243,12 @@ public class Biochip {
 	public Point getMinCoord() {
 		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
 		for (Point coord: this.field.keySet()) {
-			if (minX > coord.first)
+			if (minX > coord.first) {
 				minX = coord.first;
-			if (minY > coord.second)
+			}
+			if (minY > coord.second) {
 				minY = coord.second;
+			}
 		}
 		return new Point(minX, minY);
 	}
