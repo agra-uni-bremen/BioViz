@@ -18,7 +18,7 @@ public class DrawableField extends DrawableSprite {
 	static final Color fieldAdjacentActivationColor = new Color(1f / 2f, 1f / 3f, 0, 1); //218-165-32
 	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
 
-	private boolean drawSink = false, drawSource = false, drawBlockage = false;
+	private boolean drawSink = false, drawSource = false, drawBlockage = false, drawDetector=false;
 
 	private DrawableSprite adjacencyOverlay;
 
@@ -52,19 +52,25 @@ public class DrawableField extends DrawableSprite {
 		} else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
 			this.addLOD(Float.MAX_VALUE, "Blockage.png");
 			drawBlockage = true;
+		} else if (this.field.getDetector() != null && !drawDetector) {
+			this.addLOD(Float.MAX_VALUE, "Detector.png");
+			drawDetector = true;
 		}
-		float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(field.x());
-		float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(field.y());
+
+		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+
+		float xCoord = circ.xCoordOnScreen(field.x());
+		float yCoord = circ.yCoordOnScreen(field.y());
 
 		this.x = xCoord;
 		this.y = yCoord;
-		this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
-		this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
+		this.scaleX = circ.smoothScaleX;
+		this.scaleY = circ.smoothScaleY;
 
 		int colorOverlayCount = 0;
 		this.color = new Color(0, 0, 0, 1);
 
-		if (field.isBlocked((int) BioViz.singleton.currentCircuit.currentTime)) {
+		if (field.isBlocked((int) circ.currentTime)) {
 			this.color.add(blockedColor);
 			colorOverlayCount++;
 		}
@@ -76,7 +82,8 @@ public class DrawableField extends DrawableSprite {
 			} else if (this.field.isDispenser) {
 				this.color.add(sourceDefaultColor);
 				colorOverlayCount++;
-			} else {
+			}
+			else {
 				this.color.add(fieldDefaultColor);
 				colorOverlayCount++;
 			}
@@ -88,7 +95,7 @@ public class DrawableField extends DrawableSprite {
 
 		super.draw();
 
-		if (BioViz.singleton.currentCircuit.getHighlightAdjacency() && BioViz.singleton.currentCircuit.data.getAdjacentActivations().contains(this.field)) {
+		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
 			this.adjacencyOverlay.x = this.x;
 			this.adjacencyOverlay.y = this.y;
 			this.adjacencyOverlay.scaleX = this.scaleX;
