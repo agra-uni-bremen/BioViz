@@ -36,22 +36,27 @@ public class DrawableDroplet extends DrawableSprite {
 
 	@Override
 	public void draw() {
-		droplet.targetX = droplet.getXAt(BioViz.singleton.currentCircuit.currentTime);
-		droplet.targetY = droplet.getYAt(BioViz.singleton.currentCircuit.currentTime);
+
+		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+
+		droplet.targetX = droplet.getXAt(circ.currentTime);
+		droplet.targetY = droplet.getYAt(circ.currentTime);
 
 		droplet.update();
 		
-		if (droplet.getXAt(BioViz.singleton.currentCircuit.currentTime) >= 0) {
+		if (droplet.getXAt(circ.currentTime) >= 0) {
 
-			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(droplet.smoothX);
-			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(droplet.smoothY);
+			float xCoord = circ.xCoordOnScreen(droplet.smoothX);
+			float yCoord = circ.yCoordOnScreen(droplet.smoothY);
 
 			this.x = xCoord;
 			this.y = yCoord;
-			this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
-			this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
+			this.scaleX = circ.smoothScaleX;
+			this.scaleY = circ.smoothScaleY;
 
 			route.draw();
+
+			BioViz.singleton.mc.addHUDMessage(1, new Integer(droplet.getID()).toString(),xCoord,yCoord);
 
 			super.draw();
 		}
