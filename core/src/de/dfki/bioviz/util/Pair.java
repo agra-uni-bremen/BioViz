@@ -17,6 +17,20 @@ public class Pair<K, V> {
 		this.second = second;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		return first.equals(((Pair)o).first) && second.equals(((Pair)o).second);
+	}
+
 	public String toString() {
 		return "(" + first + "," + second + ")";
 	}

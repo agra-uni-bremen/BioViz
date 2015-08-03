@@ -27,8 +27,11 @@ public class Biochip {
 	 */
 	public BiochipField[][] field;
 
-	public ArrayList<Pair<Rectangle, Range>> blockages;
-	public ArrayList<Detector> detectors;
+	public final ArrayList<Pair<Rectangle, Range>> blockages= new ArrayList<Pair<Rectangle,Range>>();
+	public final ArrayList<Detector> detectors=new ArrayList<Detector>();
+	public final HashMap<Integer,Pin> pins = new HashMap<>();
+	public final HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
+	public final  HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
 
 
 
@@ -105,7 +108,7 @@ public class Biochip {
 	 * Enables all fields of the chip
 	 */
 	public void enableAll() {
-		Arrays.stream(field).forEach(flds -> Arrays.stream(flds).forEach(f -> f.isEnabled=true));
+		Arrays.stream(field).forEach(flds -> Arrays.stream(flds).forEach(f -> f.isEnabled = true));
 
 	}
 
