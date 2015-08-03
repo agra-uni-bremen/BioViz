@@ -11,6 +11,7 @@ import de.dfki.bioviz.structures.Droplet;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import de.dfki.bioviz.structures.Point;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -90,15 +91,13 @@ public class DrawableCircuit implements Drawable {
 		this.fields.clear();
 		this.droplets.clear();
 
-		logger.debug("Initializing drawables: {} fields, {} droplets", (data.field.length * data.field[0].length), data.getDroplets().size() );
+		logger.debug("Initializing drawables: {} fields, {} droplets", data.getAllCoordinates().size(), data.getDroplets().size() );
 
 		//setup fields
-		for (int i = 0; i < data.field.length; i++) {
-			for (int j = 0; j < data.field[i].length; j++) {
-				DrawableField f = new DrawableField(data.field[i][j]);
-				this.fields.add(f);
-			}
-		}
+		data.getAllFields().forEach(fld -> {
+			DrawableField f= new DrawableField(fld);
+			this.fields.add(f);
+		});
 		
 		logger.debug("Fields set up.");
 		
@@ -114,7 +113,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	@Override
-	public void draw() {		
+	public void draw() {
 		smoothScaleX += (getScaleX() - smoothScaleX) / scalingDelay;
 		smoothScaleY += (getScaleY() - smoothScaleY) / scalingDelay;
 		smoothOffsetX += (offsetX - smoothOffsetX) / scalingDelay;
@@ -219,10 +218,12 @@ public class DrawableCircuit implements Drawable {
 	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
 	private static Color hsvToRgb(float hue, float saturation, float value) {
 
-		while (hue >= 1)
+		while (hue >= 1) {
 			hue -= 1;
-		while (hue < 0)
+		}
+		while (hue < 0) {
 			hue += 1;
+		}
 		int h = (int)(hue * 6);
 		float f = hue * 6 - h;
 		float p = value * (1 - saturation);
@@ -324,15 +325,23 @@ public class DrawableCircuit implements Drawable {
 	 * Resets the zoom so that the whole circuit is shown.
 	 */
 	public void zoomExtents() {
-		float x = 1f / this.data.field.length;
-		float y = 1f / this.data.field[0].length;
+		// FIXME Does not properly handle non-0 minimum coordinates yet
+		Point max = this.data.getMaxCoord();
+		Point min = this.data.getMinCoord();
+		logger.debug("Auto zoom around " + min + " <--/--> " + max);
+
+		float x = 1f / (max.first + 3);
+		float y = 1f / (max.second + 3);
 		float xFactor = Gdx.graphics.getWidth();
 		float yFactor = Gdx.graphics.getHeight();
 		float maxScale = Math.min(x * xFactor, y * yFactor);
 		this.scaleX = maxScale;
 		this.scaleY = maxScale;
-		this.offsetY = this.data.field[0].length / -2f + 0.5f;
-		this.offsetX = this.data.field.length / -2f + 0.5f;
+		this.offsetX = (max.first) / -2f;
+		this.offsetY = (max.second) / -2f;
+
+
+		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
 	}
 	
 	/**
@@ -374,7 +383,13 @@ public class DrawableCircuit implements Drawable {
 	@Override
 	public String generateSVG() {
 		String result = "";
-		result += "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 " + this.data.field.length + " " + this.data.field[0].length + "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
+		result +=
+			"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
+			this.data.getMinCoord().first + " " +
+			(this.data.getMinCoord().second - 1) + " " +
+			(this.data.getMaxCoord().first + 1) + " " +
+			(this.data.getMaxCoord().second + 1) +
+			"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
 		
 		for (Drawable d : this.fields) {
 			result += d.generateSVG();

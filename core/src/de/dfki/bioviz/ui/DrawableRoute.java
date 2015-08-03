@@ -33,7 +33,8 @@ public class DrawableRoute extends DrawableSprite {
 			int y2 = parent.droplet.getYAt(displayAt + 1);
 			
 			float targetX = x1 + 0.5f;
-			float targetY = -y1 + BioViz.singleton.currentCircuit.data.field[0].length - 1;
+			float targetY = -y1 +
+				BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1;
 			if (y1 == y2 && x2 > x1) {
 				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" xlink:href=\"StepMarker.svg\" />";
 			} else if (y1 == y2 && x2 < x1) {
