@@ -112,8 +112,8 @@ public class MessageCenter  {
 
 			for (HUDMessage s: this.HUDMessages.values()) {
 				font.setColor(s.color);
-				int x = (int) s.x;
-				int y = (int) s.y;
+				int x = (int) s.x + Gdx.graphics.getWidth() / 2;
+				int y = (int) s.y + Gdx.graphics.getHeight() / 2;
 				font.draw(BioViz.singleton.batch, s.message, x, y);
 			}
 
