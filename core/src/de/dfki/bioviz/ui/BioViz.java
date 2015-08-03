@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 import de.dfki.bioviz.messages.MessageCenter;
 import de.dfki.bioviz.parser.BioParser;
@@ -26,7 +27,9 @@ import javax.swing.*;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.Random;
 import java.util.Vector;
+import java.util.logging.FileHandler;
 
 
 
@@ -82,7 +85,7 @@ public class BioViz implements ApplicationListener {
 		float h = Gdx.graphics.getHeight();
 		
 		camera = new OrthographicCamera(1, h/w);
-		batch = new SpriteBatch();
+		batch = new SpriteBatch(1000, this.createDefaultShader());
 		
 		inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
@@ -240,7 +243,7 @@ public class BioViz implements ApplicationListener {
 	}
 	
 	public static void loadNewFile(File f) {
-		logger.info("Scheduling loading of file " + f);
+		logger.debug("Scheduling loading of file " + f);
 		BioViz.singleton.filename = f;
 		BioViz.singleton.loadFileOnUpdate = true;
 	}
@@ -297,5 +300,55 @@ public class BioViz implements ApplicationListener {
 		} catch (Exception e) {
 			logger.error("Could not store SVG: {}", e.getMessage());
 		}
+	}
+
+	static public ShaderProgram createDefaultShader () {
+		String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+				+ "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
+				+ "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+				+ "uniform mat4 u_projTrans;\n" //
+				+ "varying vec4 v_color;\n" //
+				+ "varying vec2 v_texCoords;\n" //
+				+ "\n" //
+				+ "void main()\n" //
+				+ "{\n" //
+				+ "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
+				+ "   v_color.a = v_color.a * (255.0/254.0);\n" //
+				+ "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+				+ "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+				+ "}\n";
+		String fragmentShader = "#ifdef GL_ES\n" //
+				+ "#define LOWP lowp\n" //
+				+ "precision mediump float;\n" //
+				+ "#else\n" //
+				+ "#define LOWP \n" //
+				+ "#endif\n" //
+				+ "varying LOWP vec4 v_color;\n" //
+				+ "varying vec2 v_texCoords;\n" //
+				+ "uniform sampler2D u_texture;\n" //
+				+ "void main()\n"//
+				+ "{\n" //
+				+ "  vec4 fctr = texture2D(u_texture, v_texCoords);" //
+				+ "  fctr = abs(fctr - 0.5) * -2.0 + 1.0;" //
+				+ "  gl_FragColor = v_color * fctr + texture2D(u_texture, v_texCoords) * (1.0 - fctr);\n" //
+				+ "  gl_FragColor.a = texture2D(u_texture, v_texCoords).a * v_color.a;"//
+				+ "}";
+
+		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
+		if (shader.isCompiled() == false) throw new IllegalArgumentException("Error compiling shader: " + shader.getLog());
+		return shader;
+	}
+	
+	public FileHandle getApplicationIcon() {
+		Random rnd = new Random();
+		int r = rnd.nextInt(3);
+		FileHandle handle;
+		if (r == 0)
+			handle = Gdx.files.internal("Droplet.png");
+		else if (r == 1)
+			handle = Gdx.files.internal("Source.png");
+		else
+			handle = Gdx.files.internal("Sink.png");
+		return handle;
 	}
 }

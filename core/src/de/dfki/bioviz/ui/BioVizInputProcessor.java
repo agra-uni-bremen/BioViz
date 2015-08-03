@@ -99,7 +99,7 @@ public class BioVizInputProcessor implements InputProcessor {
 			multiTouchZoom = false;
 		}
 		
-		//RevVisGDX.singleton.menu.click(x, y);
+		logger.debug("TouchUp at " + x + "/" + y + " with " + pointer + "/" + button);
 		
 		return false;
 	}

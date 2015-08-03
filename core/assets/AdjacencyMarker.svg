@@ -14,8 +14,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="GridMarker.svg"
-   inkscape:export-filename="/media/data/LocalSources/BioVizGradle/core/assets/GridMarker.png"
+   sodipodi:docname="AdjacencyMarker.svg"
+   inkscape:export-filename="/media/data/LocalSources/BioVizGradle/core/assets/AdjacencyMarker.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -28,7 +28,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="-5.5579954"
+     inkscape:cx="29.544805"
      inkscape:cy="133.10555"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -56,7 +56,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -66,7 +66,7 @@
      id="layer1"
      transform="translate(0,-796.36218)">
     <rect
-       style="fill:#808080;stroke:#4d4d4d;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;fill-opacity:1"
+       style="fill:none;stroke:#4d4d4d;stroke-width:32;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:32,64;stroke-dashoffset:0;fill-opacity:1"
        id="rect2987"
        width="224"
        height="224"

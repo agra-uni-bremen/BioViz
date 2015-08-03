@@ -5,8 +5,8 @@ package de.dfki.bioviz.util;
  */
 public class Pair<K, V> {
 
-	private final K first;
-	private final V second;
+	public final K first;
+	public final V second;
 
 	public static <K, V> Pair<K, V> mkPair(K first, V second) {
 		return new Pair<K, V>(first, second);
@@ -17,14 +17,19 @@ public class Pair<K, V> {
 		this.second = second;
 	}
 
-	public K first() {
-		return first;
-	}
+	@Override
+	public boolean equals(Object o) {
 
-	public V second() {
-		return second;
-	}
+		if (this == o) {
+			return true;
+		}
 
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		return first.equals(((Pair)o).first) && second.equals(((Pair)o).second);
+	}
 
 	public String toString() {
 		return "(" + first + "," + second + ")";
