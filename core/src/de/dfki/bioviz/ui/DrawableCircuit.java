@@ -209,10 +209,12 @@ public class DrawableCircuit implements Drawable {
 	 * the smaller one in order to display square elements on screen
 	 */
 	public void shrinkToSquareAlignment() {
-		if (getScaleY() < getScaleX())
+		if (getScaleY() < getScaleX()) {
 			setScaleX(getScaleY());
-		else
+		}
+		else {
 			setScaleY(getScaleX());
+		}
 	}
 
 	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
