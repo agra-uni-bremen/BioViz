@@ -1,14 +1,18 @@
 package de.dfki.bioviz.structures;
 
 public class BiochipField {
-	public boolean isEnabled = false;
 	public boolean isSink = false;
 	public boolean isDispenser = false;
-	public int x, y;
+	public final Point pos;
 	private Range blockage;
 	private Detector detector;
 	public int usage;
+	public Pin pin;
+	public ActuationVector actVec;
 
+
+	public int x() { return pos.first;}
+	public int y() { return pos.second;}
 
 
 	public void setDetector(Detector det) {
@@ -45,7 +49,6 @@ public class BiochipField {
 
 	public void setSink(Direction removeFrom) {
 		isDispenser=false;
-		isEnabled=true;
 		isSink=true;
 		fluidID=0;
 		direction = removeFrom;
@@ -53,29 +56,29 @@ public class BiochipField {
 
 	public void setDispenser(int fluidID, Direction dispenseTo) {
 		isSink=false;
-		isEnabled=true;
 		isDispenser=true;
 		this.fluidID=fluidID;
 		direction=dispenseTo;
 	}
 
-	public BiochipField(int x, int y, int fluidID, Direction dispenseTo) {
-		this.x=x;
-		this.y=y;
+	public BiochipField(Point pos, int fluidID, Direction dispenseTo) {
+		this.pos=pos;
 		setDispenser(fluidID,dispenseTo);
 	}
 
-	public BiochipField(int x, int y, Direction removeFrom) {
-		this.x=x;
-		this.y=y;
+	public BiochipField(Point pos, Direction removeFrom) {
+		this.pos=pos;
 		setSink(removeFrom);
 
 	}
 	// end of TODO
 	// ############################################################################################################
 	public BiochipField(int x, int y) {
-		this.x = x;
-		this.y = y;
+		this.pos = new Point(x,y);
+	}
+
+	public BiochipField(Point p) {
+		this.pos = p;
 	}
 
 

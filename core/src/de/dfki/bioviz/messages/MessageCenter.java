@@ -156,8 +156,9 @@ public class MessageCenter  {
 			hm.x = x;
 			hm.y = y;
 		}
-		if(col != null)
+		if(col != null) {
 			hm.color = col;
+		}
 	}
 	
 	public void removeHUDMessage(int key) {

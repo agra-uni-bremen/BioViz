@@ -19,22 +19,19 @@ public class Biochip {
 
 	static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
-	/**
-	 * The fields that are part of this biochip.
-	 * While this is currently public I'm not really sure
-	 * if this is a good idea, so it may be set to private
-	 * at any given time.
-	 */
-	public BiochipField[][] field;
+	private HashMap<Point,BiochipField> field = new HashMap<Point,BiochipField>();
 
-	public ArrayList<Pair<Rectangle, Range>> blockages;
-	public ArrayList<Detector> detectors;
+	public final ArrayList<Pair<Rectangle, Range>> blockages= new ArrayList<Pair<Rectangle,Range>>();
+	public final ArrayList<Detector> detectors=new ArrayList<Detector>();
+	public final HashMap<Integer,Pin> pins = new HashMap<>();
+	public final HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
+	public final  HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
 
 
 
 	private HashMap<Integer,String> fluidTypes = new HashMap<Integer,String>();
 	public void addFluidType(int fluidID, String fluidDescription) {
-		fluidTypes.put(fluidID,fluidDescription);
+		fluidTypes.put(fluidID, fluidDescription);
 	}
 	public void addFluidTypes(HashMap<Integer,String> types) {
 		fluidTypes.putAll(types);
@@ -67,45 +64,21 @@ public class Biochip {
 	private Set<BiochipField> adjacencyCache = null;
 	
 	public boolean recalculateAdjacency = false;
+	private int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
 	
 	/**
 	 * Creates a new 2D-Biochip with a certain field size.
 	 * @param dimensionX The size of the chip along the x axis
 	 * @param dimensionY The size of the chip along the y axis
+	 * @deprecated The chip no longer relies on a fixed field size.
+	 * Use {@link #Biochip()} instead.
 	 */
+	@Deprecated
 	public Biochip(int dimensionX, int dimensionY) {
-		field = new BiochipField[dimensionX][dimensionY];
-		for (int i = 0; i < field.length; i++) {
-			for (int j = 0; j < field[i].length; j++) {
-				field[i][j] = new BiochipField(i, j);
-			}
-		}
-	}
-	
-	/**
-	 * Sets a field's disabled flag so it is no longer
-	 * drawn as part of this circuit. As the fields are
-	 * currently stored using a 2-dimensional array, this
-	 * does not actually remove anything. It really just
-	 * sets a flag.
-	 */
-	public void disableFieldAt(int x, int y) {
-		field[x][y].isEnabled = false;
-	}
-	
-	/**
-	 * (Re-)Enables a field at certain coordinates after
-	 * it has been disabled (e.g. using disableFieldAt(x,y)).
-	 */
-	public void enableFieldAt(int x, int y) {
-		field[x][y].isEnabled = true;
+
 	}
 
-	/**
-	 * Enables all fields of the chip
-	 */
-	public void enableAll() {
-		Arrays.stream(field).forEach(flds -> Arrays.stream(flds).forEach(f -> f.isEnabled=true));
+	public Biochip() {
 	}
 
 	/**
@@ -130,8 +103,9 @@ public class Biochip {
 	 * @param drop The droplet that will be removed
 	 */
 	public void removeBlob(Droplet drop) {
-		if (this.droplets.contains(drop))
+		if (this.droplets.contains(drop)) {
 			this.droplets.remove(drop);
+		}
 	}
 	
 	/**
@@ -146,12 +120,12 @@ public class Biochip {
 		logger.debug("Computing cell usage");
 
 		// first we set the usage of each field to zero
-		Arrays.stream(field).forEach(flds -> Arrays.stream(flds).forEach(f -> f.usage=0));
+		field.values().forEach(f -> f.usage=0);
 
 
 		for (Droplet drop: droplets) {
 			for(TimedPosition pos: drop.getPositions()) {
-				field[pos.getX()][pos.getY()].usage++;
+				field.get(pos).usage++;
 			}
 		}
 	}
@@ -190,8 +164,8 @@ public class Biochip {
 								(x1 == x2 && Math.abs(y1 - y2) == 1) ||
 								(y1 == y2 && Math.abs(x1 - x2) == 1)
 							) {
-							result.add(this.field[x1][y1]);
-							result.add(this.field[x2][y2]);
+							result.add(this.field.get(new Point(x1,y1)));
+							result.add(this.field.get(new Point(x2,y2)));
 							//BioViz.singleton.mc.addMessage("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime, MessageCenter.SEVERITY_DEBUG);
 						}
 					}
@@ -220,10 +194,78 @@ public class Biochip {
 		long maxTime = 0;
 		for (Droplet d : this.droplets) {
 			long dTime = d.getMaxTime();
-			if (dTime > maxTime)
+			if (dTime > maxTime) {
 				maxTime = dTime;
+			}
 		}
 		return maxTime;
+	}
+
+	/**
+	 * Retrieves field that is located at given coordinates.
+	 * @param coords the coordinates at which the field is located
+	 * @return the field
+	 * @throws RuntimeException if there is no field at given coordinates
+	 */
+	public BiochipField getFieldAt(Point coords) {
+		if (this.field.containsKey(coords)) {
+			return this.field.get(coords);
+		} else {
+			throw new RuntimeException("Could not retrieve field at " + coords);
+		}
+	}
+
+	/**
+	 * Retrieves the coordinates of all the fields that are currently set
+	 * @return all valid coordinates
+	 */
+	public Set<Point> getAllCoordinates() {
+		return this.field.keySet();
+	}
+
+	/**
+	 * Retrieves all fields of this chip
+	 * @return all field instances being used on this chip
+	 */
+	public Collection<BiochipField> getAllFields() {
+		return this.field.values();
+	}
+
+	public void addField(Point coordinates, BiochipField field) {
+		if (field.x() != coordinates.first || field.y() != coordinates.second) {
+			logger.error("Field coordinates differ from those transmitted to the chip for this instance");
+			coordinates = new Point(field.x(), field.y());
+		}
+		if (this.field.containsKey(coordinates)) {
+			logger.warn("Field added twice at " + coordinates + ", removed older instance");
+		}
+		this.field.put(coordinates, field);
+	}
+
+	public Point getMaxCoord() {
+		int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+		for (Point coord: this.field.keySet()) {
+			if (maxX < coord.first) {
+				maxX = coord.first;
+			}
+			if (maxY < coord.second) {
+				maxY = coord.second;
+			}
+		}
+		return new Point(maxX, maxY);
+	}
+
+	public Point getMinCoord() {
+		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+		for (Point coord: this.field.keySet()) {
+			if (minX > coord.first) {
+				minX = coord.first;
+			}
+			if (minY > coord.second) {
+				minY = coord.second;
+			}
+		}
+		return new Point(minX, minY);
 	}
 
 }

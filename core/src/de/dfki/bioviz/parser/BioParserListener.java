@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
+@SuppressWarnings("Convert2Diamond")
 public class BioParserListener extends BioBaseListener {
 	private static Logger logger = LoggerFactory.getLogger(BioParserListener.class);
 
@@ -34,6 +35,9 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Pair<Integer,Pair<Point,Direction>>> dispensers= new ArrayList<>();
 	private ArrayList<Pair<Rectangle,Range>> blockages = new ArrayList<>();
 	private ArrayList<Detector> detectors = new ArrayList<>();
+	private HashMap<Integer,Pin> pins = new HashMap<>();
+	private  HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
+	private  HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
 
 
 
@@ -63,6 +67,14 @@ public class BioParserListener extends BioBaseListener {
 		}
 	}
 
+	private int getPinID(PinIDContext ctx) {
+		if (ctx == null) {
+			return 0;
+		} else {
+			return Integer.parseInt(ctx.Integer().getText());
+		}
+	}
+
 	private Source getSource(SourceContext ctx) {
 		Point pos = getPosition(ctx.position());
 		int id = getDropletID(ctx.dropletID());
@@ -81,7 +93,7 @@ public class BioParserListener extends BioBaseListener {
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
 		if (dispenser != null) {
 			updateMaxDimension(dispenser.first);
-			dispensers.add(new Pair(fluidID, dispenser));
+			dispensers.add(new Pair<Integer,Pair<Point,Direction>>(fluidID, dispenser));
 		} else {
 			logger.error("Skipping definition of dispenser");
 		}
@@ -114,7 +126,7 @@ public class BioParserListener extends BioBaseListener {
 			return null;
 		}
 
-		return new Pair(pos, dir);
+		return new Pair<Point,Direction>(pos, dir);
 	}
 
 	private void updateMaxDimension(Point p) {
@@ -145,6 +157,19 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
+	public void enterAssignment(@NotNull AssignmentContext ctx) {
+		Point pos = getPosition(ctx.position());
+		int pinID = getPinID(ctx.pinID());
+
+		if (pins.containsKey(pinID)) {
+			pins.get(pinID).cells.add(pos);
+		}
+		else {
+		pins.put(pinID, new Pin(pinID, pos));
+		}
+	}
+
+	@Override
 	public void enterDetector(@NotNull DetectorContext ctx) {
 		Point pos = getPosition(ctx.position());
 		int duration = 0;
@@ -157,7 +182,7 @@ public class BioParserListener extends BioBaseListener {
 			}
 		}
 
-		detectors.add(new Detector(pos,duration,fluidType));
+		detectors.add(new Detector(pos, duration, fluidType));
 	}
 
 	@Override
@@ -173,12 +198,10 @@ public class BioParserListener extends BioBaseListener {
 
 		ArrayList<Source> sources = new ArrayList<Source>();
 
-		for (ParseTree child : ctx.children) {
-			if (child instanceof SourceContext) {
-				sources.add(getSource((SourceContext) child));
-				logger.debug("Found source child {}", (SourceContext) child);
-			}
-		}
+		ctx.children.stream().filter(child -> child instanceof SourceContext).forEach(child -> {
+			sources.add(getSource((SourceContext) child));
+			logger.debug("Found source child {}", child);
+		});
 
 		nets.add(new Net(sources, target));
 
@@ -191,9 +214,9 @@ public class BioParserListener extends BioBaseListener {
 		Rectangle rect = new Rectangle(p1,p2);
 		Range timing = getTiming((TimingContext)ctx.getChild(2));
 
-		logger.debug("Found blockage {} with timing {}",rect,timing);
+		logger.debug("Found blockage {} with timing {}", rect, timing);
 
-		blockages.add(new Pair(rect,timing));
+		blockages.add(new Pair<Rectangle,Range>(rect,timing));
 	}
 
 	private Range getTiming(TimingContext ctx) {
@@ -239,6 +262,21 @@ public class BioParserListener extends BioBaseListener {
 
 
 	@Override
+	public void enterPinActuation(@NotNull PinActuationContext ctx) {
+		int pinID = getPinID(ctx.pinID());
+		ActuationVector actVec = new ActuationVector(ctx.ActuationVector().getText());
+		pinActuations.put(pinID,actVec);
+
+	}
+
+	@Override
+	public void enterCellActuation(@NotNull CellActuationContext ctx) {
+		Point pos = getPosition(ctx.position());
+		ActuationVector actVec = new ActuationVector(ctx.ActuationVector().getText());
+		cellActuations.put(pos, actVec);
+	}
+
+	@Override
 	public void enterRoute(RouteContext ctx) {
 		int dropletID = Integer.parseInt(ctx.dropletID().getText());
 		int offset = 0;
@@ -264,7 +302,7 @@ public class BioParserListener extends BioBaseListener {
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {
-				chip.enableFieldAt(cell.first, cell.second);
+				chip.addField(cell, new BiochipField(cell));
 			}
 		}
 
@@ -278,30 +316,44 @@ public class BioParserListener extends BioBaseListener {
 		dropletIDsToFluidTypes.forEach(chip::addDropToFluid);
 		sinks.forEach(sink -> {
 			Point p = sink.first;
-			chip.field[p.first][p.second].setSink(sink.second);
+			chip.getFieldAt(p).setSink(sink.second);
 		});
 
 
 		dispensers.forEach(dispenser -> {
-			int fluidID=dispenser.first;
+			int fluidID = dispenser.first;
 			Point p = dispenser.second.first;
 			Direction dir = dispenser.second.second;
-			chip.field[p.first][p.second].setDispenser(fluidID, dir);
+			chip.getFieldAt(p).setDispenser(fluidID, dir);
 		});
 
 		for (Pair<Rectangle, Range> b : blockages) {
 			Rectangle rect = b.first;
 			Range rng = b.second;
-			rect.positions().forEach(pos -> chip.field[pos.first][pos.second].attachBlockage(rng));
+			rect.positions().forEach(pos -> chip.getFieldAt(pos).attachBlockage(rng));
 		}
 
-		chip.blockages=blockages;
+		chip.blockages.addAll(blockages);
 
 		detectors.forEach(det -> {
 			Point pos = det.position();
-			chip.field[pos.first][pos.second].setDetector(det);
+			chip.getFieldAt(pos).setDetector(det);
 		});
-		chip.detectors=detectors;
+		chip.detectors.addAll(detectors);
+
+		pins.values().forEach(pin -> {
+			pin.cells.forEach(pos -> {
+				chip.getFieldAt(pos).pin = pin;
+			});
+		});
+		chip.pins.putAll(pins);
+
+		chip.pinActuations.putAll(pinActuations);
+
+		cellActuations.forEach((pos,vec) -> {
+			chip.getFieldAt(pos).actVec=vec;
+		});
+		chip.cellActuations.putAll(cellActuations);
 
 	}
 }
