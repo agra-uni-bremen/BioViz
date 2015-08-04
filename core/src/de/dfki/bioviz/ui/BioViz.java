@@ -294,7 +294,7 @@ public class BioViz implements ApplicationListener {
 	public void saveSVG(String path) {
 		try {
 			String svg = BioViz.singleton.currentCircuit.generateSVG();
-			FileHandle handle = Gdx.files.local(path);
+			FileHandle handle = Gdx.files.absolute(path);
 			handle.writeString(svg, false);
 			logger.info("Stored SVG at {}", handle.path());
 		} catch (Exception e) {

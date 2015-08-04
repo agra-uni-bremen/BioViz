@@ -32,6 +32,7 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 import com.badlogic.gdx.files.FileHandle;
@@ -57,6 +58,8 @@ public class DesktopLauncher extends JFrame {
 	private BioViz bioViz;
 	LwjglAWTCanvas canvas;
 	LwjglAWTInput input;
+
+	private static JFileChooser fileDialogs = null;
 	
 	private static Logger logger = LoggerFactory.getLogger(DesktopLauncher.class);
 	
@@ -234,9 +237,11 @@ public class DesktopLauncher extends JFrame {
 			path = new File(System.getProperty("user.dir"));
 		}
 
-		final JFileChooser fc = new JFileChooser(path);
-		fc.showOpenDialog(null);
-		File sFile = fc.getSelectedFile();
+		if (fileDialogs == null) {
+			fileDialogs = new JFileChooser(path);
+		}
+		fileDialogs.showOpenDialog(null);
+		File sFile = fileDialogs.getSelectedFile();
 
 		return sFile;
 	}
@@ -390,12 +395,18 @@ public class DesktopLauncher extends JFrame {
 		public saveFileCallback() {	}
 		@Override
 		public void bioVizEvent() {
+			Preferences prefs = Gdx.app.getPreferences("BioVizPreferences");
 			logger.debug("Desktop received save event, opening dialog...");
-			JFileChooser fc = new JFileChooser();
-			int fcresult = fc.showSaveDialog(null);
+
+			String name = prefs.getString("saveFolder", ".");
+			if (fileDialogs == null) {
+				fileDialogs = new JFileChooser();
+			}
+			int fcresult = fileDialogs.showSaveDialog(null) ;
 			
 			if (fcresult == JFileChooser.APPROVE_OPTION) {
-				BioViz.singleton.saveSVG(fc.getSelectedFile().getAbsolutePath());	
+				prefs.putString("saveFolder", fileDialogs.getSelectedFile().getAbsolutePath());
+				BioViz.singleton.saveSVG(fileDialogs.getSelectedFile().getAbsolutePath());
 			}
 		}
 	}
