@@ -3,6 +3,8 @@ package de.dfki.bioviz.ui;
 import com.badlogic.gdx.graphics.Color;
 import de.dfki.bioviz.structures.BiochipField;
 
+import java.util.ArrayList;
+
 
 public class DrawableField extends DrawableSprite {
 
@@ -17,7 +19,7 @@ public class DrawableField extends DrawableSprite {
 	private boolean drawSink = false;
 	private boolean drawSource = false;
 	private boolean drawBlockage = false;
-	private boolean drawDetector=false;
+	private boolean drawDetector = false;
 	private boolean drawRoutingSource = false;
 	private boolean drawRoutingTarget = false;
 
@@ -39,16 +41,26 @@ public class DrawableField extends DrawableSprite {
 		//		then add the total height of the circuit to have the element put
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
-			return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
+		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
 	@Override
 	public void draw() {
+		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+		float xCoord = circ.xCoordOnScreen(field.x());
+		float yCoord = circ.yCoordOnScreen(field.y());
+
+		this.x = xCoord;
+		this.y = yCoord;
+		this.scaleX = circ.smoothScaleX;
+		this.scaleY = circ.smoothScaleY;
+
+		String fieldHUDMsg = null;
+
 
 		// TODO what happens if some of these options overlap?
 		// Right now only the first occurrence according the order below is taken. This might not be what is intended
 		// In general, a detector, for example, is a very valid routing target
-		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 		if (this.field.isSink && !drawSink) {
 			this.addLOD(Float.MAX_VALUE, "Sink.png");
 			drawSink = true;
@@ -63,21 +75,30 @@ public class DrawableField extends DrawableSprite {
 			drawDetector = true;
 		} else if (!this.field.source_ids.isEmpty() && !drawRoutingSource) {
 			this.addLOD(Float.MAX_VALUE, "Start.png");
-			drawRoutingSource=true;
-
+			drawRoutingSource = true;
+			ArrayList<Integer> sources = this.field.source_ids;
+			fieldHUDMsg = sources.get(0).toString();
+			if (sources.size() > 1) {
+				for (int i = 2; i < sources.size(); i++) {
+					fieldHUDMsg += ", " + sources.get(i);
+				}
+			}
 		} else if (!this.field.target_ids.isEmpty() && !drawRoutingTarget) {
 			this.addLOD(Float.MAX_VALUE, "Target.png");
-			drawRoutingTarget=true;
+			drawRoutingTarget = true;
+			ArrayList<Integer> targets = this.field.target_ids;
+			fieldHUDMsg = targets.get(0).toString();
+			if (targets.size() > 1) {
+				for (int i = 2; i < targets.size(); i++) {
+					fieldHUDMsg += ", " + targets.get(i);
+				}
+			}
 		}
 
+		if (fieldHUDMsg != null) {
+			BioViz.singleton.mc.addHUDMessage(1, fieldHUDMsg, xCoord, yCoord);
 
-		float xCoord = circ.xCoordOnScreen(field.x());
-		float yCoord = circ.yCoordOnScreen(field.y());
-
-		this.x = xCoord;
-		this.y = yCoord;
-		this.scaleX = circ.smoothScaleX;
-		this.scaleY = circ.smoothScaleY;
+		}
 
 
 		int colorOverlayCount = 0;
