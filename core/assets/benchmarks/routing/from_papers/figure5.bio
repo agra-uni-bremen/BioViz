@@ -1,0 +1,26 @@
+# Routing problem in Figure 5 from
+# Minsik Cho and David Pan
+# "A High-Performance Droplet Routing Algorithm
+# for Digital Microfluidic Biochips"
+# IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF 
+# INTEGRATED CIRCUITS AND SYSTEMS, VOL. 27, NO. 10, OCTOBER 2008
+
+
+grid
+(1,1) (14,10)
+end
+
+blockages
+(3,1) (4,5)
+(9,1) (10,4)
+(8,8) (12,9)
+end
+
+nets
+1 (1,6) -> (1,1)
+2 (1,4) -> (4,10)
+3 (1,8) -> (10,6)
+4 (14,4) -> (5,8)
+5 (14,10) -> (2,7)
+6 (7,1) -> (13,3)
+end

@@ -1,0 +1,30 @@
+# Routing problem in Figure1, Subfigure Test d from
+# Huang, Ho (2009):
+# A Fast Routability- and Performance-Driven Droplet Routing Algorithm
+# for Digital Microfluidic Biochips
+
+
+grid
+(1,1) (16,16)
+end
+
+blockages
+(1,4) (6,10)
+(2,13) (5,15)
+(8,6) (12,11)
+(12,1) (16,4)
+(15,7) (16,10)
+(10,14) (16,16)
+end
+
+nets
+1 (1,16) -> (9,3)
+2 (4,16) -> (7,10)
+3 (7,16) -> (12,5)
+4 (1,13) -> (6,3)
+5 (2,11) -> (11,13)
+6 (7,8) -> (1,2)
+7 (3,2) -> (14,8)
+8 (16,11) -> (11,1)
+9 (5,1) -> (16,5)
+end
