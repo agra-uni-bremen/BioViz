@@ -19,8 +19,8 @@ import org.slf4j.Logger;
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
  * Create a ReversibleCircuit first (e.g. by loading a given .real file), then
  * create a DrawableCircuit instance for the ReversibleCircuit to draw the latter.
- * @author jannis
  *
+ * @author jannis
  */
 public class DrawableCircuit implements Drawable {
 	public Biochip data;
@@ -29,25 +29,26 @@ public class DrawableCircuit implements Drawable {
 	public float offsetX = 0;
 	private float scaleY = 1;
 	public float offsetY = 0;
-	
+
 	protected float smoothScaleX = 1;
 	protected float smoothScaleY = 1;
 	protected float smoothOffsetX = 0;
 	protected float smoothOffsetY = 0;
-	
+
 	private float scalingDelay = 4f;
-	
+
 	public long currentTime = 0;
 
 	public boolean autoAdvance = false;
 	public float autoSpeed = 2f;
 	private long lastAutoStepAt = new Date().getTime();
-	
+
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
-	
-	private boolean highlightAdjacency = true;
+
 	private boolean showUsage = false;
-	
+	private boolean highlightAdjacency = false;
+	private boolean displayDropletIDs = false;
+
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
 
@@ -71,10 +72,20 @@ public class DrawableCircuit implements Drawable {
 			logger.info("Stop showing cell usage");
 		}
 	}
-
-	public boolean getHighlightAdjacency() {
-		return highlightAdjacency;
+	public void setDisplayDropletIDs(boolean displayDrops) {
+		this.displayDropletIDs = displayDrops;
+		if (this.displayDropletIDs) {
+			logger.info("Displaying droplet IDs");
+		} else {
+			logger.info("Stop displaying droplet IDs");
+		}
 	}
+
+	public boolean getDisplayDropletIDs() { return displayDropletIDs;	}
+	public void toggleDisplayDropletIDs() {
+		this.setDisplayDropletIDs(!this.displayDropletIDs);
+	}
+
 
 	public void setHighlightAdjacency(boolean highlightAdjacency) {
 		this.highlightAdjacency = highlightAdjacency;
@@ -84,13 +95,15 @@ public class DrawableCircuit implements Drawable {
 			logger.info("Stop highlighting fields with adjacent droplets");
 		}
 	}
-	
+
+	public boolean getHighlightAdjacency() { return highlightAdjacency;	}
 	public void toggleHighlightAdjacency() {
 		this.setHighlightAdjacency(!this.highlightAdjacency);
 	}
 
 	/**
 	 * Creates a drawable entity based on the data given.
+	 *
 	 * @param toDraw the data to draw
 	 */
 	public DrawableCircuit(Biochip toDraw) {
@@ -99,7 +112,7 @@ public class DrawableCircuit implements Drawable {
 		this.initializeDrawables();
 		logger.debug("New DrawableCircuit created successfully.");
 	}
-	
+
 	/**
 	 * Initializes the drawables according to the circuit stored in the data field
 	 */
@@ -108,24 +121,24 @@ public class DrawableCircuit implements Drawable {
 		this.fields.clear();
 		this.droplets.clear();
 
-		logger.debug("Initializing drawables: {} fields, {} droplets", data.getAllCoordinates().size(), data.getDroplets().size() );
+		logger.debug("Initializing drawables: {} fields, {} droplets", data.getAllCoordinates().size(), data.getDroplets().size());
 
 		//setup fields
 		data.getAllFields().forEach(fld -> {
-			DrawableField f= new DrawableField(fld);
+			DrawableField f = new DrawableField(fld);
 			this.fields.add(f);
 		});
-		
+
 		logger.debug("Fields set up.");
-		
+
 		//setup droplets
 		for (Droplet d : data.getDroplets()) {
 			DrawableDroplet dd = new DrawableDroplet(d);
 			this.droplets.add(dd);
 		}
-		
+
 		logger.debug("Droplets set up.");
-		
+
 		logger.debug("Drawable initialization successfully done.");
 	}
 
@@ -137,7 +150,7 @@ public class DrawableCircuit implements Drawable {
 		smoothOffsetY += (offsetY - smoothOffsetY) / scalingDelay;
 
 		drawGates();
-		
+
 		drawOverlay();
 	}
 
@@ -152,10 +165,10 @@ public class DrawableCircuit implements Drawable {
 	 * Draws the gates
 	 */
 	private void drawGates() {
-		
+
 		if (autoAdvance) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long)((1f / this.autoSpeed) * 1000) < current) {
+			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
 				lastAutoStepAt = current;
 				currentTime++;
 				for (BioVizEvent listener : this.timeChangedListeners) {
@@ -163,11 +176,11 @@ public class DrawableCircuit implements Drawable {
 				}
 			}
 		}
-		
+
 		for (DrawableField f : this.fields) {
 			f.draw();
 		}
-		
+
 		for (DrawableDroplet d : this.droplets) {
 			d.draw();
 		}
@@ -175,17 +188,19 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Calculates the x coordinate of a given gate
+	 *
 	 * @param i the gate index
 	 * @return the x coordinate on screen
 	 */
 	protected float xCoordOnScreen(int i) {
-		return xCoordOnScreen((float)i);
+		return xCoordOnScreen((float) i);
 	}
-	
+
 	/**
 	 * Calculates the x coordinate of a given value. Keep in mind that
 	 * this is still in gate-space, so a value of 0 would be at the center
 	 * of the circuit's first gate.
+	 *
 	 * @param i the value to translate
 	 * @return the x coordinate on screen
 	 */
@@ -195,32 +210,32 @@ public class DrawableCircuit implements Drawable {
 		xCoord *= smoothScaleX;
 		return xCoord;
 	}
-	
+
 	protected float yCoordOnScreen(int i) {
-		return yCoordOnScreen((float)i);
+		return yCoordOnScreen((float) i);
 	}
-	
+
 	protected float yCoordOnScreen(float i) {
 		float yCoord = i;
 		yCoord += smoothOffsetY;
 		yCoord *= smoothScaleY;
 		return yCoord;
 	}
-	
+
 	protected float yCoordInGates(float i) {
 		float yCoord = i;
 		yCoord /= smoothScaleY;
 		yCoord -= smoothOffsetY;
 		return yCoord;
 	}
-	
+
 	protected float xCoordInGates(float i) {
 		float xCoord = i;
 		xCoord /= smoothScaleX;
 		xCoord -= smoothOffsetX;
 		return xCoord;
 	}
-	
+
 	/**
 	 * If the two scaling factors aren't equal, this sets the larger scaling factor to
 	 * the smaller one in order to display square elements on screen
@@ -228,8 +243,7 @@ public class DrawableCircuit implements Drawable {
 	public void shrinkToSquareAlignment() {
 		if (getScaleY() < getScaleX()) {
 			setScaleX(getScaleY());
-		}
-		else {
+		} else {
 			setScaleY(getScaleX());
 		}
 	}
@@ -243,23 +257,30 @@ public class DrawableCircuit implements Drawable {
 		while (hue < 0) {
 			hue += 1;
 		}
-		int h = (int)(hue * 6);
+		int h = (int) (hue * 6);
 		float f = hue * 6 - h;
 		float p = value * (1 - saturation);
 		float q = value * (1 - f * saturation);
 		float t = value * (1 - (1 - f) * saturation);
 
 		switch (h) {
-		case 0: return new Color(value, t, p, 1);
-		case 1: return new Color(q, value, p, 1);
-		case 2: return new Color(p, value, t, 1);
-		case 3: return new Color(p, q, value, 1);
-		case 4: return new Color(t, p, value, 1);
-		case 5: return new Color(value, p, q, 1);
-		default: throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
+			case 0:
+				return new Color(value, t, p, 1);
+			case 1:
+				return new Color(q, value, p, 1);
+			case 2:
+				return new Color(p, value, t, 1);
+			case 3:
+				return new Color(p, q, value, 1);
+			case 4:
+				return new Color(t, p, value, 1);
+			case 5:
+				return new Color(value, p, q, 1);
+			default:
+				throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
 		}
 	}
-	
+
 
 	/**
 	 * retrieves the current x scaling factor
@@ -278,7 +299,7 @@ public class DrawableCircuit implements Drawable {
 	public void setScaleX(float scaleX) {
 		this.scaleX = scaleX;
 	}
-	
+
 	/**
 	 * retrieves the current y scaling factor
 	 */
@@ -296,14 +317,15 @@ public class DrawableCircuit implements Drawable {
 	public void setScaleY(float scaleY) {
 		this.scaleY = scaleY;
 	}
-	
+
 	/**
 	 * Calculates the screen bounds in gate-space
+	 *
 	 * @return the screen bounds
 	 */
 	public Rectangle getViewBounds() {
 		Rectangle result = new Rectangle();
-		
+
 		float centerX = -offsetX;
 		float width = Gdx.graphics.getWidth() * (1f / scaleX);
 		float centerY = offsetY;
@@ -311,9 +333,10 @@ public class DrawableCircuit implements Drawable {
 		result.set(centerX - (width / 2f), centerY - (height / 2f), width, height);
 		return result;
 	}
-	
+
 	/**
 	 * Sets the screen bounds in gate-space
+	 *
 	 * @param bounds the area the viewport is supposed to show.
 	 */
 	public void setViewBounds(Rectangle bounds) {
@@ -321,16 +344,16 @@ public class DrawableCircuit implements Drawable {
 		float targetWidth = Gdx.graphics.getWidth() / bounds.width;
 		float targetOffsetX = (bounds.x + (bounds.width / 2f));
 		float targetOffsetY = bounds.y + (bounds.height / 2f);
-				
+
 		setScaleX(targetWidth);
 		setScaleY(targetHeight);
 		this.offsetX = -targetOffsetX;
 		this.offsetY = targetOffsetY;
 	}
-	
+
 	private int busDrawn = 0;
-	
-	
+
+
 	/**
 	 * Resets the zoom to 1 px per element
 	 */
@@ -338,7 +361,7 @@ public class DrawableCircuit implements Drawable {
 		this.scaleX = 1;
 		this.scaleY = 1;
 	}
-	
+
 
 	/**
 	 * Resets the zoom so that the whole circuit is shown.
@@ -362,7 +385,7 @@ public class DrawableCircuit implements Drawable {
 
 		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
 	}
-	
+
 	/**
 	 * Resets the zoom so that the whole circuit is shown without
 	 * smoothly zooming to those settings.
@@ -372,7 +395,7 @@ public class DrawableCircuit implements Drawable {
 		this.smoothScaleX = scaleX;
 		this.smoothScaleY = scaleY;
 	}
-	
+
 	/**
 	 * Sets the zoom to the given values without smoothly approaching
 	 * those target values (instead sets them immediately).
@@ -383,11 +406,11 @@ public class DrawableCircuit implements Drawable {
 		this.scaleY = scaleY;
 		this.smoothScaleY = scaleY;
 	}
-	
+
 	public void addTimeChangedListener(BioVizEvent listener) {
 		timeChangedListeners.add(listener);
 	}
-	
+
 	/**
 	 * Re-calculates the adjacency for all blobs and sets
 	 * the fields' colours accordingly.
@@ -395,7 +418,7 @@ public class DrawableCircuit implements Drawable {
 	public void updateAdjacencyColours() {
 		Set<BiochipField> f = this.data.getAdjacentActivations();
 		for (BiochipField biochipField : f) {
-			
+
 		}
 	}
 
@@ -403,20 +426,20 @@ public class DrawableCircuit implements Drawable {
 	public String generateSVG() {
 		String result = "";
 		result +=
-			"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-			this.data.getMinCoord().first + " " +
-			(this.data.getMinCoord().second - 1) + " " +
-			(this.data.getMaxCoord().first + 1) + " " +
-			(this.data.getMaxCoord().second + 1) +
-			"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
-		
+				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
+						this.data.getMinCoord().first + " " +
+						(this.data.getMinCoord().second - 1) + " " +
+						(this.data.getMaxCoord().first + 1) + " " +
+						(this.data.getMaxCoord().second + 1) +
+						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
+
 		for (Drawable d : this.fields) {
 			result += d.generateSVG();
 		}
 		for (Drawable d : this.droplets) {
 			result += d.generateSVG();
-		}		
-		
+		}
+
 		result += "</svg>";
 		return result;
 	}

@@ -6,6 +6,7 @@ import ch.qos.logback.core.AppenderBase;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.math.Matrix4;
 
 import de.dfki.bioviz.ui.BioViz;
@@ -112,8 +113,9 @@ public class MessageCenter  {
 
 			for (HUDMessage s: this.HUDMessages.values()) {
 				font.setColor(s.color);
-				int x = (int) s.x;
-				int y = (int) s.y;
+				TextBounds tb = font.getBounds(s.message);
+				int x = (int) ((s.x - tb.width / 2f) + Gdx.graphics.getWidth() / 2);
+				int y = (int) ((s.y + tb.height / 2f) + Gdx.graphics.getHeight() / 2);
 				font.draw(BioViz.singleton.batch, s.message, x, y);
 			}
 
