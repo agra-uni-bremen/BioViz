@@ -20,7 +20,11 @@ public class DrawableField extends DrawableSprite {
 	static final Color fieldAdjacentActivationColor = new Color(1f / 2f, 1f / 3f, 0, 1); //218-165-32
 	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
 
-	private boolean drawSink = false, drawSource = false, drawBlockage = false, drawDetector=false;
+	private boolean drawSink = false;
+	private boolean drawSource = false;
+	private boolean drawBlockage = false;
+	private boolean drawDetector=false;
+	
 	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 	private DrawableSprite adjacencyOverlay;
 
