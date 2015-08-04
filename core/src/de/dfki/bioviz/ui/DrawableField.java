@@ -24,6 +24,7 @@ public class DrawableField extends DrawableSprite {
 	private boolean drawRoutingTarget = false;
 
 	private DrawableSprite adjacencyOverlay;
+	String fieldHUDMsg = null;
 
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
@@ -54,8 +55,6 @@ public class DrawableField extends DrawableSprite {
 		this.y = yCoord;
 		this.scaleX = circ.smoothScaleX;
 		this.scaleY = circ.smoothScaleY;
-
-		String fieldHUDMsg = null;
 
 
 		// TODO what happens if some of these options overlap?
@@ -96,8 +95,9 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		if (fieldHUDMsg != null) {
-			BioViz.singleton.mc.addHUDMessage(1, fieldHUDMsg, xCoord, yCoord);
-
+			BioViz.singleton.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);
+		} else {
+			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
 		}
 
 
