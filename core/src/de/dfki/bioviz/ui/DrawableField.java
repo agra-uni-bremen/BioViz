@@ -1,13 +1,7 @@
 package de.dfki.bioviz.ui;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
-
 import com.badlogic.gdx.graphics.Color;
-
 import de.dfki.bioviz.structures.BiochipField;
-import de.dfki.bioviz.structures.Point;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class DrawableField extends DrawableSprite {
@@ -27,7 +21,6 @@ public class DrawableField extends DrawableSprite {
 	private boolean drawRoutingSource = false;
 	private boolean drawRoutingTarget = false;
 
-	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 	private DrawableSprite adjacencyOverlay;
 
 	public DrawableField(BiochipField field) {
