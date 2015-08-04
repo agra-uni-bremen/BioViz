@@ -298,7 +298,7 @@ public class BioParserListener extends BioBaseListener {
 	@Override
 	public void exitBio(BioContext ctx) {
 
-		chip = new Biochip(maxX, maxY);
+		chip = new Biochip();
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {

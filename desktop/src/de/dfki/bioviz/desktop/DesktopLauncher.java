@@ -104,7 +104,7 @@ public class DesktopLauncher extends JFrame {
 		else
 			this.setTitle("Organic Visualization");
 		
-		logger.debug("Starting DesktopLauncher with file \"{}\"",file);
+		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
 		
 		if (file == null) {
 			bioViz = new BioViz();
@@ -125,14 +125,14 @@ public class DesktopLauncher extends JFrame {
 
 		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/></body></html>");
 
-		JButton defaultButton = new JButton();
-		defaultButton.setText("Autoplay");
-		defaultButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
-		defaultButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
+		JButton autoplaytButton = new JButton();
+		autoplaytButton.setText("Autoplay");
+		autoplaytButton.setPreferredSize(new Dimension(112, autoplaytButton.getPreferredSize().height));
+		autoplaytButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 		
 		JButton openButton = new JButton();
 		openButton.setText("Open File");
-		openButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
+		openButton.setPreferredSize(new Dimension(112, autoplaytButton.getPreferredSize().height));
 		load_cb = new loadFileCallback();
 		openButton.addActionListener(e -> load_cb.bioVizEvent());
 		
@@ -140,6 +140,11 @@ public class DesktopLauncher extends JFrame {
 		zoomButton.setText("Reset camera");
 		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
+
+		JButton usageButton = new JButton();
+		usageButton.setText("Show Cell Usage");
+		usageButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
+		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
 		
 		JLabel timeInfo = new JLabel("<html><body>Time</body></html>");
 		
@@ -161,10 +166,11 @@ public class DesktopLauncher extends JFrame {
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
 		
 		panel.add(label);
-		panel.add(defaultButton);
+		panel.add(autoplaytButton);
 		panel.add(openButton);
 		panel.add(zoomButton);
 		panel.add(adjacencyButton);
+		panel.add(usageButton);
 		panel.add(timeInfo);
 		panel.add(time);
 		panel.add(routeInfo);
@@ -240,7 +246,6 @@ public class DesktopLauncher extends JFrame {
 	private static void initializeLogback() {
 
 
-		// TODO hier dann nicht mehr hardcoden
 		// assume SLF4J is bound to logback in the current environment
 		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 

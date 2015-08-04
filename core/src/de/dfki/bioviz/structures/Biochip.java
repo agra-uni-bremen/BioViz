@@ -79,7 +79,6 @@ public class Biochip {
 	}
 
 	public Biochip() {
-
 	}
 
 	/**
@@ -115,7 +114,23 @@ public class Biochip {
 	public Set<Droplet> getDroplets() {
 		return this.droplets;
 	}
-	
+
+
+	public void computeCellUsage() {
+		logger.debug("Computing cell usage");
+
+		// first we set the usage of each field to zero
+		field.values().forEach(f -> f.usage=0);
+
+
+		for (Droplet drop: droplets) {
+			for(TimedPosition pos: drop.getPositions()) {
+				field.get(pos.getPos()).usage++;
+			}
+		}
+	}
+
+
 	/**
 	 * Calculates all fields that are at some point activated
 	 * with adjacently placed droplets.

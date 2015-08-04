@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 
 import de.dfki.bioviz.structures.BiochipField;
 import de.dfki.bioviz.structures.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class DrawableField extends DrawableSprite {
@@ -19,7 +21,7 @@ public class DrawableField extends DrawableSprite {
 	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
 
 	private boolean drawSink = false, drawSource = false, drawBlockage = false, drawDetector=false;
-
+	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 	private DrawableSprite adjacencyOverlay;
 
 	public DrawableField(BiochipField field) {
@@ -43,6 +45,8 @@ public class DrawableField extends DrawableSprite {
 
 	@Override
 	public void draw() {
+
+		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 		if (this.field.isSink && !drawSink) {
 			this.addLOD(Float.MAX_VALUE, "Sink.png");
 			drawSink = true;
@@ -56,9 +60,6 @@ public class DrawableField extends DrawableSprite {
 			this.addLOD(Float.MAX_VALUE, "Detector.png");
 			drawDetector = true;
 		}
-
-		DrawableCircuit circ = BioViz.singleton.currentCircuit;
-
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
 
@@ -66,6 +67,7 @@ public class DrawableField extends DrawableSprite {
 		this.y = yCoord;
 		this.scaleX = circ.smoothScaleX;
 		this.scaleY = circ.smoothScaleY;
+
 
 		int colorOverlayCount = 0;
 		this.color = new Color(0, 0, 0, 1);
@@ -75,6 +77,17 @@ public class DrawableField extends DrawableSprite {
 			colorOverlayCount++;
 		}
 
+
+		if (circ.getShowUsage()) {
+//			logger.debug("Usage count of {}: {}", this.field.pos, this.field.usage);
+
+			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max Usage verwenden)
+			float scalingFactor = 4f;
+
+			this.color.add(new Color(0, this.field.usage / scalingFactor, 0, 0));
+			++colorOverlayCount;
+		}
+
 		if (colorOverlayCount == 0) {
 			if (this.field.isSink) {
 				this.color.add(sinkDefaultColor);
@@ -82,8 +95,7 @@ public class DrawableField extends DrawableSprite {
 			} else if (this.field.isDispenser) {
 				this.color.add(sourceDefaultColor);
 				colorOverlayCount++;
-			}
-			else {
+			} else {
 				this.color.add(fieldDefaultColor);
 				colorOverlayCount++;
 			}

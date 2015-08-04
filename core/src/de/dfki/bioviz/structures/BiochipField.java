@@ -6,6 +6,7 @@ public class BiochipField {
 	public final Point pos;
 	private Range blockage;
 	private Detector detector;
+	public int usage;
 	public Pin pin;
 	public ActuationVector actVec;
 
@@ -33,7 +34,18 @@ public class BiochipField {
 	public int fluidID = 0;
 
 
+	public void attachBlockage(Range blockage) {
+		this.blockage=blockage;
+	}
 
+	public boolean isBlocked(int timeStep) {
+		if (blockage == null) {
+			return false;
+		}
+		else {
+			return blockage.inRange(timeStep);
+		}
+	}
 	
 	public boolean isPotentiallyBlocked() {
 		return !(blockage == null);
@@ -65,20 +77,6 @@ public class BiochipField {
 	}
 	// end of TODO
 	// ############################################################################################################
-
-	public void attachBlockage(Range blockage) {
-		this.blockage=blockage;
-	}
-
-	public boolean isBlocked(int timeStep) {
-		if (blockage == null) {
-			return false;
-		}
-		else {
-			return blockage.inRange(timeStep);
-		}
-	}
-
 	public BiochipField(int x, int y) {
 		this.pos = new Point(x,y);
 	}
