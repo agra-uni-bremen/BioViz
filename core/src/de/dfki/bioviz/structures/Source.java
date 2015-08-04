@@ -5,9 +5,9 @@ package de.dfki.bioviz.structures;
  */
 public class Source {
 
-	Point startPosition;
-	int dropletID;
-	int spawnTime;
+	public final Point startPosition;
+	public final int dropletID;
+	public final int spawnTime;
 
 	public Source(int dropletID, Point pos) {
 		this(dropletID,pos,1);
