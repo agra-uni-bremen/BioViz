@@ -79,8 +79,6 @@ public class DrawableField extends DrawableSprite {
 
 
 		if (circ.getShowUsage()) {
-//			logger.debug("Usage count of {}: {}", this.field.pos, this.field.usage);
-
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max Usage verwenden)
 			float scalingFactor = 4f;
 
