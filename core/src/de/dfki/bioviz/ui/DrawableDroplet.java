@@ -58,7 +58,9 @@ public class DrawableDroplet extends DrawableSprite {
 
 			route.draw();
 			if (circ.getDisplayDropletIDs()) {
-				BioViz.singleton.mc.addHUDMessage(this.hashCode(), new Integer(droplet.getID()).toString(), xCoord, yCoord);
+				float HUDx = xCoord;
+				float HUDy = yCoord;
+				BioViz.singleton.mc.addHUDMessage(this.hashCode(), new Integer(droplet.getID()).toString(), HUDx, HUDy);
 			} else {
 				BioViz.singleton.mc.removeHUDMessage(this.hashCode());
 			}
