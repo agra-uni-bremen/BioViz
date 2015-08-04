@@ -24,7 +24,9 @@ public class DrawableField extends DrawableSprite {
 	private boolean drawSource = false;
 	private boolean drawBlockage = false;
 	private boolean drawDetector=false;
-	
+	private boolean drawRoutingSource = false;
+	private boolean drawRoutingTarget = false;
+
 	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 	private DrawableSprite adjacencyOverlay;
 
@@ -50,6 +52,9 @@ public class DrawableField extends DrawableSprite {
 	@Override
 	public void draw() {
 
+		// TODO what happens if some of these options overlap?
+		// Right now only the first occurrence according the order below is taken. This might not be what is intended
+		// In general, a detector, for example, is a very valid routing target
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 		if (this.field.isSink && !drawSink) {
 			this.addLOD(Float.MAX_VALUE, "Sink.png");
@@ -63,7 +68,16 @@ public class DrawableField extends DrawableSprite {
 		} else if (this.field.getDetector() != null && !drawDetector) {
 			this.addLOD(Float.MAX_VALUE, "Detector.png");
 			drawDetector = true;
+		} else if (!this.field.source_ids.isEmpty() && !drawRoutingSource) {
+			this.addLOD(Float.MAX_VALUE, "Start.png");
+			drawRoutingSource=true;
+
+		} else if (!this.field.target_ids.isEmpty() && !drawRoutingTarget) {
+			this.addLOD(Float.MAX_VALUE, "Target.png");
+			drawRoutingTarget=true;
 		}
+
+
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
 
