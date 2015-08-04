@@ -104,7 +104,7 @@ public class DesktopLauncher extends JFrame {
 		else
 			this.setTitle("Organic Visualization");
 		
-		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
+		logger.debug("Starting DesktopLauncher with file \"{}\"",file);
 		
 		if (file == null) {
 			bioViz = new BioViz();
@@ -164,6 +164,12 @@ public class DesktopLauncher extends JFrame {
 		adjacencyButton.setText("(A)djacency");
 		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
+
+
+		JButton displayDropletIDsButton = new JButton();
+		displayDropletIDsButton.setText("Drop IDs");
+		displayDropletIDsButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
+		displayDropletIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayDropletIDs());
 		
 		panel.add(label);
 		panel.add(autoplaytButton);
@@ -171,6 +177,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(zoomButton);
 		panel.add(adjacencyButton);
 		panel.add(usageButton);
+panel.add(displayDropletIDsButton);
 		panel.add(timeInfo);
 		panel.add(time);
 		panel.add(routeInfo);
@@ -246,6 +253,7 @@ public class DesktopLauncher extends JFrame {
 	private static void initializeLogback() {
 
 
+		// TODO hier dann nicht mehr hardcoden
 		// assume SLF4J is bound to logback in the current environment
 		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 

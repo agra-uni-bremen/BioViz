@@ -38,16 +38,17 @@ public class DrawableCircuit implements Drawable {
 	private float scalingDelay = 4f;
 	
 	public long currentTime = 0;
-
+	
 	public boolean autoAdvance = false;
 	public float autoSpeed = 2f;
 	private long lastAutoStepAt = new Date().getTime();
 	
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
-	
-	private boolean highlightAdjacency = true;
-	private boolean showUsage = false;
-	
+
+	private boolean highlightAdjacency = false;
+	private boolean displayDropletIDs = false;
+private boolean showUsage = false;
+
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
 
@@ -72,8 +73,18 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	public boolean getHighlightAdjacency() {
-		return highlightAdjacency;
+	public void setDisplayDropletIDs(boolean displayDrops) {
+		this.displayDropletIDs = displayDrops;
+		if (this.displayDropletIDs) {
+			logger.info("Displaying droplet IDs");
+		} else {
+			logger.info("Stop displaying droplet IDs");
+		}
+	}
+
+	public boolean getDisplayDropletIDs() { return displayDropletIDs;	}
+	public void toggleDisplayDropletIDs() {
+		this.setDisplayDropletIDs(!this.displayDropletIDs);
 	}
 
 	public void setHighlightAdjacency(boolean highlightAdjacency) {
@@ -84,7 +95,8 @@ public class DrawableCircuit implements Drawable {
 			logger.info("Stop highlighting fields with adjacent droplets");
 		}
 	}
-	
+
+	public boolean getHighlightAdjacency() { return highlightAdjacency;	}
 	public void toggleHighlightAdjacency() {
 		this.setHighlightAdjacency(!this.highlightAdjacency);
 	}
@@ -175,6 +187,7 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Calculates the x coordinate of a given gate
+	 *
 	 * @param i the gate index
 	 * @return the x coordinate on screen
 	 */
