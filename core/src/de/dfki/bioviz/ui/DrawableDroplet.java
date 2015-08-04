@@ -1,15 +1,17 @@
 package de.dfki.bioviz.ui;
 
 import de.dfki.bioviz.structures.Droplet;
+
 import java.util.Random;
+
 import com.badlogic.gdx.graphics.Color;
 
 public class DrawableDroplet extends DrawableSprite {
-	
+
 	public Droplet droplet;
-	
+
 	private DrawableRoute route;
-	
+
 	private static Random randnum = null;
 
 	public DrawableDroplet(Droplet droplet) {
@@ -28,10 +30,10 @@ public class DrawableDroplet extends DrawableSprite {
 	@Override
 	public String generateSVG() {
 		return
-			"<image x=\"" + this.droplet.smoothX + "\" " +
-			"y=\"" + (-this.droplet.smoothY + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" " +
-			"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
-			this.route.generateSVG();
+				"<image x=\"" + this.droplet.smoothX + "\" " +
+						"y=\"" + (-this.droplet.smoothY + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" " +
+						"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
+						this.route.generateSVG();
 	}
 
 	@Override
@@ -43,7 +45,7 @@ public class DrawableDroplet extends DrawableSprite {
 		droplet.targetY = droplet.getYAt(circ.currentTime);
 
 		droplet.update();
-		
+
 		if (droplet.getXAt(circ.currentTime) >= 0) {
 
 			float xCoord = circ.xCoordOnScreen(droplet.smoothX);
@@ -55,8 +57,9 @@ public class DrawableDroplet extends DrawableSprite {
 			this.scaleY = circ.smoothScaleY;
 
 			route.draw();
-
-			BioViz.singleton.mc.addHUDMessage(this.hashCode(), new Integer(droplet.getID()).toString(),xCoord,yCoord);
+			if (circ.getDisplayDropletIDs()) {
+				BioViz.singleton.mc.addHUDMessage(this.hashCode(), new Integer(droplet.getID()).toString(), xCoord, yCoord);
+			}
 
 			super.draw();
 		}

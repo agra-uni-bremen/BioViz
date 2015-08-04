@@ -159,12 +159,19 @@ public class DesktopLauncher extends JFrame {
 		adjacencyButton.setText("(A)djacency");
 		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
+
+
+		JButton displayDropletIDsButton = new JButton();
+		displayDropletIDsButton.setText("Drop IDs");
+		displayDropletIDsButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
+		displayDropletIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayDropletIDs());
 		
 		panel.add(label);
 		panel.add(defaultButton);
 		panel.add(openButton);
 		panel.add(zoomButton);
 		panel.add(adjacencyButton);
+		panel.add(displayDropletIDsButton);
 		panel.add(timeInfo);
 		panel.add(time);
 		panel.add(routeInfo);
