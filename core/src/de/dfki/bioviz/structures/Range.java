@@ -16,7 +16,7 @@ public class Range {
 	}
 
 	public boolean inRange(final int i) {
-		if (i <1) {
+		if (i < 0) {
 			return false;
 		}
 		else {
