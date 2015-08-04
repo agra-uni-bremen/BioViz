@@ -20,7 +20,7 @@ public class DrawableField extends DrawableSprite {
 	static final Color fieldAdjacentActivationColor = new Color(1f / 2f, 1f / 3f, 0, 1); //218-165-32
 	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
 
-	private boolean drawSink = false, drawSource = false, drawBlockage = false;
+	private boolean drawSink = false, drawSource = false, drawBlockage = false, drawDetector=false;
 	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 	private DrawableSprite adjacencyOverlay;
 
@@ -29,7 +29,6 @@ public class DrawableField extends DrawableSprite {
 		this.field = field;
 		super.addLOD(8, "BlackPixel.png");
 		adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
-
 	}
 
 	@Override
@@ -41,7 +40,7 @@ public class DrawableField extends DrawableSprite {
 		//		then add the total height of the circuit to have the element put
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
-		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
+			return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
 	@Override
@@ -57,6 +56,9 @@ public class DrawableField extends DrawableSprite {
 		} else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
 			this.addLOD(Float.MAX_VALUE, "Blockage.png");
 			drawBlockage = true;
+		} else if (this.field.getDetector() != null && !drawDetector) {
+			this.addLOD(Float.MAX_VALUE, "Detector.png");
+			drawDetector = true;
 		}
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
@@ -105,7 +107,7 @@ public class DrawableField extends DrawableSprite {
 
 		super.draw();
 
-		if (BioViz.singleton.currentCircuit.getHighlightAdjacency() && BioViz.singleton.currentCircuit.data.getAdjacentActivations().contains(this.field)) {
+		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
 			this.adjacencyOverlay.x = this.x;
 			this.adjacencyOverlay.y = this.y;
 			this.adjacencyOverlay.scaleX = this.scaleX;

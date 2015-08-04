@@ -19,6 +19,10 @@ public class BiochipField {
 		detector = det;
 	}
 
+	public Detector getDetector() {
+		return detector;
+	}
+
 
 	// ############################################################################################################
 	// TODO put Information about sink/dispenser in
