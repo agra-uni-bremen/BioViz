@@ -19,7 +19,10 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
@@ -37,10 +40,13 @@ public class DesktopLauncher extends JFrame {
 	timerCallback tc;
 	loadFileCallback load_cb;
 	loadedFileCallback loaded_cb;
+	saveFileCallback save_cb;
 	public static DesktopLauncher singleton;
 	private BioViz bioViz;
 	LwjglAWTCanvas canvas;
 	LwjglAWTInput input;
+
+	private static JFileChooser fileDialogs = null;
 	
 	private static Logger logger = LoggerFactory.getLogger(DesktopLauncher.class);
 	
@@ -121,6 +127,12 @@ public class DesktopLauncher extends JFrame {
 		load_cb = new loadFileCallback();
 		openButton.addActionListener(e -> load_cb.bioVizEvent());
 		
+		JButton saveButton = new JButton();
+		saveButton.setText("Save SVG");
+		saveButton.setPreferredSize(new Dimension(112, autoplaytButton.getPreferredSize().height));
+		save_cb = new saveFileCallback();
+		saveButton.addActionListener(e -> save_cb.bioVizEvent());
+		
 		JButton zoomButton = new JButton();
 		zoomButton.setText("Reset camera");
 		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
@@ -164,6 +176,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(label);
 		panel.add(autoplaytButton);
 		panel.add(openButton);
+		panel.add(saveButton);
 		panel.add(zoomButton);
 		panel.add(adjacencyButton);
 		panel.add(usageButton);
@@ -182,6 +195,9 @@ public class DesktopLauncher extends JFrame {
 		
 		loaded_cb = new loadedFileCallback();
 		BioViz.singleton.addLoadedFileListener(loaded_cb);
+		
+		save_cb = new saveFileCallback();
+		BioViz.singleton.addSaveFileListener(save_cb);
 
 		try {
 			this.setIconImage(ImageIO.read(BioViz.singleton.getApplicationIcon().file()));
@@ -234,9 +250,11 @@ public class DesktopLauncher extends JFrame {
 			path = new File(System.getProperty("user.dir"));
 		}
 
-		final JFileChooser fc = new JFileChooser(path);
-		fc.showOpenDialog(null);
-		File sFile = fc.getSelectedFile();
+		if (fileDialogs == null) {
+			fileDialogs = new JFileChooser(path);
+		}
+		fileDialogs.showOpenDialog(null);
+		File sFile = fileDialogs.getSelectedFile();
 
 		return sFile;
 	}
@@ -382,6 +400,34 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			logger.debug("Desktop received loaded event, setting slider...");
 			DesktopLauncher.singleton.time.setMaximum((int)BioViz.singleton.currentCircuit.data.getMaxTime());
+		}
+	}
+	
+	private class saveFileCallback implements BioVizEvent {
+		public saveFileCallback() {	}
+		@Override
+		public void bioVizEvent() {
+			try {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					Preferences prefs = Gdx.app.getPreferences("BioVizPreferences");
+					logger.debug("Desktop received save event, opening dialog...");
+
+					String name = prefs.getString("saveFolder", ".");
+					if (fileDialogs == null) {
+						fileDialogs = new JFileChooser();
+					}
+					int fcresult = fileDialogs.showSaveDialog(null) ;
+
+					if (fcresult == JFileChooser.APPROVE_OPTION) {
+						prefs.putString("saveFolder", fileDialogs.getSelectedFile().getAbsolutePath());
+						BioViz.singleton.saveSVG(fileDialogs.getSelectedFile().getAbsolutePath());
+					}
+				}
+			});
+			} catch (Exception e) {
+				logger.error("Could not save file: " + e.getMessage() + "\n" + e.getStackTrace());
+			}
 		}
 	}
 }

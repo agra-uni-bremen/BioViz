@@ -52,6 +52,7 @@ public class BioViz implements ApplicationListener {
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> loadFileListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> loadedFileListeners = new Vector<BioVizEvent>();
+	private Vector<BioVizEvent> saveFileListeners = new Vector<BioVizEvent>();
 	static Logger logger = LoggerFactory.getLogger(BioViz.class);
 	
 	private boolean loadFileOnUpdate = true;
@@ -276,6 +277,28 @@ public class BioViz implements ApplicationListener {
 		logger.debug("Calling " + this.loadedFileListeners.size() + " listeners for loaded");
 		for (BioVizEvent listener : this.loadedFileListeners) {
 			listener.bioVizEvent();
+		}
+	}
+	
+	public void addSaveFileListener(BioVizEvent listener) {
+		saveFileListeners.add(listener);
+	}
+	
+	void callSaveFileListeners() {
+		logger.debug("Calling " + this.saveFileListeners.size() + " listeners for save");
+		for (BioVizEvent listener : this.saveFileListeners) {
+			listener.bioVizEvent();
+		}
+	}
+	
+	public void saveSVG(String path) {
+		try {
+			String svg = BioViz.singleton.currentCircuit.generateSVG();
+			FileHandle handle = Gdx.files.absolute(path);
+			handle.writeString(svg, false);
+			logger.info("Stored SVG at {}", handle.path());
+		} catch (Exception e) {
+			logger.error("Could not store SVG: {}", e.getMessage());
 		}
 	}
 
