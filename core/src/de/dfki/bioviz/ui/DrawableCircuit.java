@@ -42,12 +42,12 @@ public class DrawableCircuit implements Drawable {
 	public boolean autoAdvance = false;
 	public float autoSpeed = 2f;
 	private long lastAutoStepAt = new Date().getTime();
-	
+
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 
+	private boolean showUsage = false;
 	private boolean highlightAdjacency = false;
 	private boolean displayDropletIDs = false;
-private boolean showUsage = false;
 
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();

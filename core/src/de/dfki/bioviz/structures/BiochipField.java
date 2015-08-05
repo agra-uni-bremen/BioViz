@@ -1,5 +1,7 @@
 package de.dfki.bioviz.structures;
 
+import java.util.ArrayList;
+
 public class BiochipField {
 	public boolean isSink = false;
 	public boolean isDispenser = false;
@@ -9,6 +11,9 @@ public class BiochipField {
 	public int usage;
 	public Pin pin;
 	public ActuationVector actVec;
+
+	public ArrayList<Integer> source_ids = new ArrayList<Integer>();
+	public ArrayList<Integer> target_ids = new ArrayList<Integer>();
 
 
 	public int x() { return pos.first;}
