@@ -1,7 +1,1 @@
-
-# How to use the parser 
-The parser relies on the classes generated from the [ANTLR4](http://www.antlr.org)
-grammar located in `lib/parser`. 
-
-The files have to be generated into the ordinary `src`
-folder using the package `de.agra.dmfb.bioparser.antlr`
+AGRA/DFKI's awesome visualization tool!
