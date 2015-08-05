@@ -155,6 +155,11 @@ public class DesktopLauncher extends JFrame {
 		displayDropletIDsButton.setText("Drop IDs");
 		displayDropletIDsButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
 		displayDropletIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayDropletIDs());
+
+		JButton displayFluidIDsButton = new JButton();
+		displayFluidIDsButton.setText("Fluid IDs");
+		displayFluidIDsButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
+		displayFluidIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayFluidIDs());
 		
 		panel.add(label);
 		panel.add(autoplaytButton);
@@ -163,6 +168,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(adjacencyButton);
 		panel.add(usageButton);
 		panel.add(displayDropletIDsButton);
+		panel.add(displayFluidIDsButton);
 		panel.add(timeInfo);
 		panel.add(time);
 		panel.add(routeInfo);

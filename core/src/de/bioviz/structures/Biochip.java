@@ -50,6 +50,12 @@ public class Biochip {
 	public void addDropToFluid(int dropletID, int fluidID) {
 		dropletIDsToFluidTypes.put(dropletID,fluidID);
 	}
+	public Integer fluidID(int dropletID) {
+		return dropletIDsToFluidTypes.get(dropletID);
+	}
+	public String fluidType(Integer fluidID) {
+		return fluidTypes.get(fluidID);
+	}
 
 
 	/**
