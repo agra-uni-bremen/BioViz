@@ -24,8 +24,6 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: "me.champeau.gradle.antlr4"
-    apply plugin: "checkstyle"
-    checkstyle.ignoreFailures=true
 
     version = '1.0'
     ext {
@@ -48,6 +46,9 @@ allprojects {
 
 project(":desktop") {
     apply plugin: "java"
+    
+    apply plugin: "checkstyle"
+    checkstyle.ignoreFailures = true
 
     antlr4.source = file('../lib/parser')
     antlr4.output = file('../core/src/de/bioviz/parser/generated')
@@ -57,6 +58,10 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile 'ch.qos.logback:logback-classic:1.1.3'
+    }
+    
+    tasks.matching { task -> task.name == "checkstyleMain" }.all {
+        outputs.upToDateWhen { false }
     }
 }
 
@@ -68,6 +73,10 @@ project(":core") {
     antlr4.extraArgs=['-package','de.agra.dmfb.bioparser.antlr']
     // make the Java compile task depend on the antlr4 task
     compileJava.dependsOn antlr4
+    
+    apply plugin: "checkstyle"
+    
+    checkstyle.ignoreFailures = true
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
@@ -76,6 +85,10 @@ project(":core") {
     
     configurations {
         compile.extendsFrom antlr4
+    }
+    
+    tasks.matching { task -> task.name == "checkstyleMain" }.all {
+        outputs.upToDateWhen { false }
     }
 }
 
