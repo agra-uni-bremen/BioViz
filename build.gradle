@@ -24,6 +24,8 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: "me.champeau.gradle.antlr4"
+    apply plugin: "checkstyle"
+    checkstyle.ignoreFailures=true
 
     version = '1.0'
     ext {
@@ -50,6 +52,7 @@ project(":desktop") {
     antlr4.source = file('../lib/parser')
     antlr4.output = file('../core/src/de/agra/dmfb/bioparser/antlr')
     antlr4.extraArgs=['-package','de.agra.dmfb.bioparser.antlr']
+    
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
