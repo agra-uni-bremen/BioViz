@@ -59,9 +59,6 @@ public class DrawableDroplet extends DrawableSprite {
 
 			route.draw();
 
-			// TODO what do we need this variables for? @jannis please check
-			float HUDx = xCoord;
-			float HUDy = yCoord;
 			String msg = null;
 
 			if (circ.getDisplayDropletIDs()) {
@@ -76,7 +73,7 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 
 			if (msg != null) {
-				BioViz.singleton.mc.addHUDMessage(this.hashCode(), msg, HUDx, HUDy);
+				BioViz.singleton.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
 			} else {
 				BioViz.singleton.mc.removeHUDMessage(this.hashCode());
 			}
