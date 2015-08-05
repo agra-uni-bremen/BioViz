@@ -214,6 +214,7 @@ public class BioViz implements ApplicationListener {
 			bc = BioParser.parse(fh.readString());
 		} else {
 			bc = BioParser.parseFile(filename);
+
 		}
 		
 		try {

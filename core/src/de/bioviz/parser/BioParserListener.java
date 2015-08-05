@@ -1,8 +1,24 @@
 package de.bioviz.parser;
 
-import de.agra.dmfb.bioparser.antlr.Bio;
-import de.agra.dmfb.bioparser.antlr.Bio.*;
-import de.agra.dmfb.bioparser.antlr.BioBaseListener;
+
+import de.bioviz.parser.generated.Bio;
+import de.bioviz.parser.generated.Bio.BlockageContext;
+import de.bioviz.parser.generated.Bio.PositionContext;
+import de.bioviz.parser.generated.Bio.TimeConstraintContext;
+import de.bioviz.parser.generated.Bio.DropletIDContext;
+import de.bioviz.parser.generated.Bio.FluidIDContext;
+import de.bioviz.parser.generated.Bio.PinIDContext;
+import de.bioviz.parser.generated.Bio.SourceContext;
+import de.bioviz.parser.generated.Bio.DispenserContext;
+import de.bioviz.parser.generated.Bio.TimingContext;
+import de.bioviz.parser.generated.Bio.GridblockContext;
+import de.bioviz.parser.generated.Bio.FluiddefContext;
+import de.bioviz.parser.generated.Bio.PinActuationContext;
+import de.bioviz.parser.generated.Bio.CellActuationContext;
+import de.bioviz.parser.generated.Bio.RouteContext;
+import de.bioviz.parser.generated.Bio.BioContext;
+
+import de.bioviz.parser.generated.BioBaseListener;
 import de.bioviz.structures.*;
 import de.bioviz.util.Pair;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -118,7 +134,7 @@ public class BioParserListener extends BioBaseListener {
 		return null;
 	}
 
-	private Pair<Point, Direction> getIOPort(IoportContext ctx) {
+	private Pair<Point, Direction> getIOPort(Bio.IoportContext ctx) {
 		Point pos = getPosition(ctx.position());
 		Direction dir = getDirection(ctx.Direction().getText());
 		if (dir == null) {
@@ -139,12 +155,12 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterGrid(GridContext ctx) {
+	public void enterGrid(Bio.GridContext ctx) {
 		++nGrids;
 	}
 
 	@Override
-	public void enterSink(@NotNull SinkContext ctx) {
+	public void enterSink(@NotNull Bio.SinkContext ctx) {
 		Pair<Point, Direction> sinkDef = getIOPort(ctx.ioport());
 		if (sinkDef != null) {
 			updateMaxDimension(sinkDef.first);
@@ -156,7 +172,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterAssignment(@NotNull AssignmentContext ctx) {
+	public void enterAssignment(@NotNull Bio.AssignmentContext ctx) {
 		Point pos = getPosition(ctx.position());
 		int pinID = getPinID(ctx.pinID());
 
@@ -169,11 +185,11 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterDetector(@NotNull DetectorContext ctx) {
+	public void enterDetector(@NotNull Bio.DetectorContext ctx) {
 		Point pos = getPosition(ctx.position());
 		int duration = 0;
 		int fluidType = 0;
-		Detector_specContext spec = ctx.detector_spec();
+		Bio.Detector_specContext spec = ctx.detector_spec();
 		if (spec != null) {
 			duration = getTimeConstraint(spec.timeConstraint());
 			if (spec.fluidID() == null) {
@@ -185,7 +201,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterDropToFluid(@NotNull DropToFluidContext ctx) {
+	public void enterDropToFluid(@NotNull Bio.DropToFluidContext ctx) {
 		int dropID = getDropletID(ctx.dropletID());
 		int fluidID = getFluidID(ctx.fluidID());
 		dropletIDsToFluidTypes.put(dropID, fluidID);
@@ -197,8 +213,8 @@ public class BioParserListener extends BioBaseListener {
 
 		ArrayList<Source> sources = new ArrayList<Source>();
 
-		ctx.children.stream().filter(child -> child instanceof SourceContext).forEach(child -> {
-			sources.add(getSource((SourceContext) child));
+		ctx.children.stream().filter(child -> child instanceof Bio.SourceContext).forEach(child -> {
+			sources.add(getSource((Bio.SourceContext) child));
 			logger.debug("Found source child {}", child);
 		});
 
@@ -352,9 +368,7 @@ public class BioParserListener extends BioBaseListener {
 		chip.detectors.addAll(detectors);
 
 		pins.values().forEach(pin -> {
-			pin.cells.forEach(pos -> {
-				chip.getFieldAt(pos).pin = pin;
-			});
+			pin.cells.forEach(pos -> chip.getFieldAt(pos).pin = pin);
 		});
 		chip.pins.putAll(pins);
 

@@ -48,8 +48,8 @@ project(":desktop") {
     apply plugin: "java"
 
     antlr4.source = file('../lib/parser')
-    antlr4.output = file('../core/src/de/agra/dmfb/bioparser/antlr')
-    antlr4.extraArgs=['-package','de.agra.dmfb.bioparser.antlr']
+    antlr4.output = file('../core/src/de/bioviz/parser/generated')
+    antlr4.extraArgs=['-package','de.bioviz.parser.generated']
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"

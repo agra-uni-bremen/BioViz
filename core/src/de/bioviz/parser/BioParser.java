@@ -1,8 +1,8 @@
 package de.bioviz.parser;
 
 
-import de.agra.dmfb.bioparser.antlr.Bio;
-import de.agra.dmfb.bioparser.antlr.BioLexerGrammar;
+import de.bioviz.parser.generated.Bio;
+import de.bioviz.parser.generated.BioLexerGrammar;
 import de.bioviz.structures.Biochip;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -29,13 +29,16 @@ public class BioParser  {
         try {
             content = new String(Files.readAllBytes(Paths.get(file.toURI())));
         } catch (IOException e) {
-            logger.error("Failde to parse file \"{}\".", file);
+            logger.error("Failed to parse file \"{}\".", file);
             return null;
         }
         return parse(content);
     }
 
     public static Biochip parse(final String inputString) {
+
+        logger.debug("Parsing file of length {}",inputString.length());
+
         try {
             ANTLRInputStream input = new ANTLRInputStream(inputString);
             BioLexerGrammar lexer = new BioLexerGrammar(input);
