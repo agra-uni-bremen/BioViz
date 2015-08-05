@@ -395,18 +395,26 @@ public class DesktopLauncher extends JFrame {
 		public saveFileCallback() {	}
 		@Override
 		public void bioVizEvent() {
-			Preferences prefs = Gdx.app.getPreferences("BioVizPreferences");
-			logger.debug("Desktop received save event, opening dialog...");
+			try {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					Preferences prefs = Gdx.app.getPreferences("BioVizPreferences");
+					logger.debug("Desktop received save event, opening dialog...");
 
-			String name = prefs.getString("saveFolder", ".");
-			if (fileDialogs == null) {
-				fileDialogs = new JFileChooser();
-			}
-			int fcresult = fileDialogs.showSaveDialog(null) ;
-			
-			if (fcresult == JFileChooser.APPROVE_OPTION) {
-				prefs.putString("saveFolder", fileDialogs.getSelectedFile().getAbsolutePath());
-				BioViz.singleton.saveSVG(fileDialogs.getSelectedFile().getAbsolutePath());
+					String name = prefs.getString("saveFolder", ".");
+					if (fileDialogs == null) {
+						fileDialogs = new JFileChooser();
+					}
+					int fcresult = fileDialogs.showSaveDialog(null) ;
+
+					if (fcresult == JFileChooser.APPROVE_OPTION) {
+						prefs.putString("saveFolder", fileDialogs.getSelectedFile().getAbsolutePath());
+						BioViz.singleton.saveSVG(fileDialogs.getSelectedFile().getAbsolutePath());
+					}
+				}
+			});
+			} catch (Exception e) {
+				logger.error("Could not save file: " + e.getMessage() + "\n" + e.getStackTrace());
 			}
 		}
 	}
