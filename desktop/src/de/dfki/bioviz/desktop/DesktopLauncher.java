@@ -140,6 +140,12 @@ public class DesktopLauncher extends JFrame {
 		load_cb = new loadFileCallback();
 		openButton.addActionListener(e -> load_cb.bioVizEvent());
 		
+		JButton saveButton = new JButton();
+		saveButton.setText("Save SVG");
+		saveButton.setPreferredSize(new Dimension(112, defaultButton.getPreferredSize().height));
+		save_cb = new saveFileCallback();
+		saveButton.addActionListener(e -> save_cb.bioVizEvent());
+		
 		JButton zoomButton = new JButton();
 		zoomButton.setText("Reset camera");
 		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
@@ -167,6 +173,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(label);
 		panel.add(defaultButton);
 		panel.add(openButton);
+		panel.add(saveButton);
 		panel.add(zoomButton);
 		panel.add(adjacencyButton);
 		panel.add(timeInfo);
