@@ -45,7 +45,7 @@ public class MessageCenter  {
 			this.color = Color.WHITE;
 		}
 	}
-	public HashMap<Integer, HUDMessage> HUDMessages = new HashMap<Integer, HUDMessage>();
+	private HashMap<Integer, HUDMessage> HUDMessages = new HashMap<Integer, HUDMessage>();
 
 	public MessageCenter() {
 		messages = new Vector<Message>();
@@ -164,5 +164,9 @@ public class MessageCenter  {
 		if (this.HUDMessages.containsKey(key)) {
 			this.HUDMessages.remove(key);
 		}
+	}
+	
+	public void clearHUDMessages() {
+		this.HUDMessages.clear();
 	}
 }
