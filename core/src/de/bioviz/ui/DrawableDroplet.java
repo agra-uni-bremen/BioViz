@@ -56,11 +56,24 @@ public class DrawableDroplet extends DrawableSprite {
 			this.scaleX = circ.smoothScaleX;
 			this.scaleY = circ.smoothScaleY;
 
+
 			route.draw();
+
+			String msg = null;
+
 			if (circ.getDisplayDropletIDs()) {
-				float HUDx = xCoord;
-				float HUDy = yCoord;
-				BioViz.singleton.mc.addHUDMessage(this.hashCode(), new Integer(droplet.getID()).toString(), HUDx, HUDy);
+				msg = new Integer(droplet.getID()).toString();
+			}
+			if (circ.getDisplayFluidIDs()) {
+				// note: fluidID may be null!
+				Integer fluidID = circ.data.fluidID(droplet.getID());
+				if (fluidID != null) {
+					msg = fluidID.toString();
+				}
+			}
+
+			if (msg != null) {
+				BioViz.singleton.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
 			} else {
 				BioViz.singleton.mc.removeHUDMessage(this.hashCode());
 			}
