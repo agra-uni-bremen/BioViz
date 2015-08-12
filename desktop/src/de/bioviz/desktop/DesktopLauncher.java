@@ -93,7 +93,7 @@ public class DesktopLauncher extends JFrame {
 		else if (rnd <= 19)
 			this.setTitle("Jannis' BioViz");
 		else
-			this.setTitle("Organic Visualization");
+			this.setTitle("Awesome BioViz");
 		
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
 		
@@ -114,7 +114,10 @@ public class DesktopLauncher extends JFrame {
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(128, 600));
 
-		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/></body></html>");
+
+		// This text was completely useless. I leave the code here as a reference on how to add labels with some kind
+		// of formatting.
+//		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/></body></html>");
 
 		JButton autoplaytButton = new JButton();
 		autoplaytButton.setText("Autoplay");
@@ -123,13 +126,13 @@ public class DesktopLauncher extends JFrame {
 		
 		JButton openButton = new JButton();
 		openButton.setText("Open File");
-		openButton.setPreferredSize(new Dimension(112, autoplaytButton.getPreferredSize().height));
+		openButton.setPreferredSize(new Dimension(112, openButton.getPreferredSize().height));
 		load_cb = new loadFileCallback();
 		openButton.addActionListener(e -> load_cb.bioVizEvent());
 		
 		JButton saveButton = new JButton();
 		saveButton.setText("Save SVG");
-		saveButton.setPreferredSize(new Dimension(112, autoplaytButton.getPreferredSize().height));
+		saveButton.setPreferredSize(new Dimension(112, saveButton.getPreferredSize().height));
 		save_cb = new saveFileCallback();
 		saveButton.addActionListener(e -> save_cb.bioVizEvent());
 		
@@ -140,7 +143,7 @@ public class DesktopLauncher extends JFrame {
 
 		JButton usageButton = new JButton();
 		usageButton.setText("Show Cell Usage");
-		usageButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
+		usageButton.setPreferredSize(new Dimension(112, usageButton.getPreferredSize().height));
 		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
 		
 		JLabel timeInfo = new JLabel("<html><body>Time</body></html>");
@@ -165,20 +168,21 @@ public class DesktopLauncher extends JFrame {
 
 		JButton displayDropletIDsButton = new JButton();
 		displayDropletIDsButton.setText("Drop IDs");
-		displayDropletIDsButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
+		displayDropletIDsButton.setPreferredSize(new Dimension(112, displayDropletIDsButton.getPreferredSize().height));
 		displayDropletIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayDropletIDs());
 
 		JButton displayFluidIDsButton = new JButton();
 		displayFluidIDsButton.setText("Fluid IDs");
-		displayFluidIDsButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
+		displayFluidIDsButton.setPreferredSize(new Dimension(112, displayFluidIDsButton.getPreferredSize().height));
 		displayFluidIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayFluidIDs());
 
 		JButton pinButton = new JButton();
 		pinButton.setText("Pins");
 		pinButton.setPreferredSize(new Dimension(112, pinButton.getPreferredSize().height));
 		pinButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowPins());
-		
-		panel.add(label);
+
+		// see comment above
+//		panel.add(label);
 		panel.add(autoplaytButton);
 		panel.add(openButton);
 		panel.add(saveButton);
