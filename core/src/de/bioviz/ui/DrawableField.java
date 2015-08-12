@@ -94,6 +94,14 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
+		// note: this overwrites any previous message
+		// TODO we really need some kind of mechanism of deceding when to show what
+		if (BioViz.singleton.currentCircuit.getShowPins()) {
+			if (this.field.pin != null) {
+				fieldHUDMsg =  Integer.valueOf(this.field.pin.pinID).toString();
+			}
+		}
+
 		if (fieldHUDMsg != null) {
 			BioViz.singleton.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);
 		} else {
@@ -148,6 +156,8 @@ public class DrawableField extends DrawableSprite {
 	}
 
 	private class AdjacencyOverlay extends DrawableSprite {
+
+
 
 		public AdjacencyOverlay(String textureFilename) {
 			super(textureFilename);
