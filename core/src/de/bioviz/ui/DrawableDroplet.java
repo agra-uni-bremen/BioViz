@@ -62,7 +62,7 @@ public class DrawableDroplet extends DrawableSprite {
 			String msg = null;
 
 			if (circ.getDisplayDropletIDs()) {
-				msg = new Integer(droplet.getID()).toString();
+				msg = Integer.toString(droplet.getID());
 			}
 			if (circ.getDisplayFluidIDs()) {
 				// note: fluidID may be null!
