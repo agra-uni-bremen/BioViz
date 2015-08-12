@@ -49,6 +49,7 @@ public class DrawableCircuit implements Drawable {
 	private boolean highlightAdjacency = false;
 	private boolean displayDropletIDs = false;
 	private boolean displayFluidIDs = false;
+	private boolean showPins = false;
 
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
@@ -142,6 +143,24 @@ public class DrawableCircuit implements Drawable {
 
 	public void toggleHighlightAdjacency() {
 		this.setHighlightAdjacency(!this.highlightAdjacency);
+	}
+
+
+	public void setShowPins(boolean showPins) {
+		this.showPins = showPins;
+		if (this.highlightAdjacency) {
+			logger.info("Displaying pin assignment");
+		} else {
+			logger.info("Stop displaying pin assignmnet");
+		}
+	}
+
+	public boolean getShowPins() {
+		return showPins;
+	}
+
+	public void toggleShowPins() {
+		this.setShowPins(!this.showPins);
 	}
 
 	/**
