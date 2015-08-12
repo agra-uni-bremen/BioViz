@@ -172,6 +172,11 @@ public class DesktopLauncher extends JFrame {
 		displayFluidIDsButton.setText("Fluid IDs");
 		displayFluidIDsButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
 		displayFluidIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayFluidIDs());
+
+		JButton pinButton = new JButton();
+		pinButton.setText("Pins");
+		pinButton.setPreferredSize(new Dimension(112, pinButton.getPreferredSize().height));
+		pinButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowPins());
 		
 		panel.add(label);
 		panel.add(autoplaytButton);
@@ -182,6 +187,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(usageButton);
 		panel.add(displayDropletIDsButton);
 		panel.add(displayFluidIDsButton);
+		panel.add(pinButton);
 		panel.add(timeInfo);
 		panel.add(time);
 		panel.add(routeInfo);
