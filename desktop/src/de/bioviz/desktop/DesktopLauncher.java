@@ -158,7 +158,7 @@ public class DesktopLauncher extends JFrame {
 		//tc = new timerCallback(time);
 		
 		JButton adjacencyButton = new JButton();
-		adjacencyButton.setText("(A)djacency");
+		adjacencyButton.setText("Adjacency");
 		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
 
