@@ -68,7 +68,7 @@ public class DrawableRoute extends DrawableSprite {
 
 
 		// TODO drawing of routes is now broken :(
-		if (false) {
+		if (true) {
 
 			hoverTimesteps = 2 * timesteps + 8;
 
@@ -87,11 +87,11 @@ public class DrawableRoute extends DrawableSprite {
 				}
 
 				displayAt = (int) currentTime + i;
-				Point p1 = parent.droplet.getPositionAt(displayAt);
-				Point p2 = parent.droplet.getPositionAt(displayAt + 1);
+				Point p1 = parent.droplet.getSafePositionAt(displayAt);
+				Point p2 = parent.droplet.getSafePositionAt(displayAt + 1);
 
-				logger.debug("Point p1: {} (timestep {})", p1, displayAt);
-				logger.debug("Point p2: {} (timestep {})", p2, displayAt + 1);
+				logger.trace("Point p1: {} (timestep {})", p1, displayAt);
+				logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
 
 				int x1 = p1.first;
 				int x2 = p2.first;
