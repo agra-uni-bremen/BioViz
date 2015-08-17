@@ -5,6 +5,7 @@ import de.bioviz.structures.Droplet;
 import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.Point;
 
 public class DrawableDroplet extends DrawableSprite {
 
@@ -41,12 +42,17 @@ public class DrawableDroplet extends DrawableSprite {
 
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 
-		droplet.targetX = droplet.getXAt(circ.currentTime);
-		droplet.targetY = droplet.getYAt(circ.currentTime);
+		// TODO this casting probably is bad (although we should rarely reach the boundary of int)
+		Point p = droplet.getPositionAt((int) circ.currentTime);
 
-		droplet.update();
+		if (p != null) {
 
-		if (droplet.getXAt(circ.currentTime) >= 0) {
+
+			droplet.targetX = p.first;
+			droplet.targetY = p.second;
+
+			droplet.update();
+
 
 			float xCoord = circ.xCoordOnScreen(droplet.smoothX);
 			float yCoord = circ.yCoordOnScreen(droplet.smoothY);

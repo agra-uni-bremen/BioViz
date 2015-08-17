@@ -304,17 +304,17 @@ public class BioParserListener extends BioBaseListener {
 	@Override
 	public void enterRoute(RouteContext ctx) {
 		int dropletID = Integer.parseInt(ctx.dropletID().getText());
-		int offset = 0;
+		int spawnTime = 1;
 		if (ctx.timeConstraint() != null) {
-			offset = getTimeConstraint(ctx.timeConstraint());
+			spawnTime = getTimeConstraint(ctx.timeConstraint());
 		}
-		Droplet drop = new Droplet(dropletID);
+		Droplet drop = new Droplet(dropletID,spawnTime);
 		List<PositionContext> positions = ctx.position();
 
 		for (int i = 0; i < positions.size(); i++) {
 			PositionContext pos = positions.get(i);
 			Point p = getPosition(pos);
-			drop.addPosition(i + offset, p.first, p.second);
+			drop.addPosition(p);
 		}
 		droplets.add(drop);
 
