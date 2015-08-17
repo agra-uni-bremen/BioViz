@@ -14,7 +14,7 @@ public class DrawableField extends DrawableSprite {
 	static final Color fieldDefaultColor = new Color(0.5f, 0.5f, 0.75f, 1f);
 	static final Color sinkDefaultColor = new Color(0.75f, 0.5f, 0.5f, 1f);
 	static final Color sourceDefaultColor = new Color(0.5f, 0.75f, 0.5f, 1f);
-	static final Color mixerDefaultColor = new Color(0.75f, 0.75f, 0.25f, 1f);
+	static final Color mixerDefaultColor = new Color(0.45f, 0.33f, 0.25f, 1f);
 	static final Color fieldAdjacentActivationColor = new Color(1f / 2f, 1f / 3f, 0, 1); //218-165-32
 	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
 
