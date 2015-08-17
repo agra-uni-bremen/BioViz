@@ -24,7 +24,7 @@ public class DrawableField extends DrawableSprite {
 	private boolean drawRoutingTarget = false;
 
 	private DrawableSprite adjacencyOverlay;
-	String fieldHUDMsg = null;
+
 
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
@@ -47,6 +47,8 @@ public class DrawableField extends DrawableSprite {
 
 	@Override
 	public void draw() {
+
+		String fieldHUDMsg = null;
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
@@ -93,6 +95,15 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 		}
+
+		// note: this overwrites any previous message
+		// TODO we really need some kind of mechanism of deceding when to show what
+		if (BioViz.singleton.currentCircuit.getShowPins()) {
+			if (this.field.pin != null) {
+				fieldHUDMsg =  Integer.toString(this.field.pin.pinID);
+			}
+		}
+
 
 		if (fieldHUDMsg != null) {
 			BioViz.singleton.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);
@@ -148,6 +159,8 @@ public class DrawableField extends DrawableSprite {
 	}
 
 	private class AdjacencyOverlay extends DrawableSprite {
+
+
 
 		public AdjacencyOverlay(String textureFilename) {
 			super(textureFilename);
