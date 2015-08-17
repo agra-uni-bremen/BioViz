@@ -413,7 +413,7 @@ public class BioParserListener extends BioBaseListener {
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(m -> {
 			m.positions.positions().forEach(pos -> {
-				logger.debug("Adding mixer {} to field {}",m,pos);
+				logger.trace("Adding mixer {} to field {}",m,pos);
 				chip.getFieldAt(pos).mixers.add(m);
 			});
 		});

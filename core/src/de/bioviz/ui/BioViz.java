@@ -243,7 +243,7 @@ public class BioViz implements ApplicationListener {
 	}
 	
 	public static void loadNewFile(File f) {
-		logger.debug("Scheduling loading of file " + f);
+		logger.trace("Scheduling loading of file " + f);
 		BioViz.singleton.filename = f;
 		BioViz.singleton.loadFileOnUpdate = true;
 	}
@@ -253,7 +253,7 @@ public class BioViz implements ApplicationListener {
 	}
 	
 	private void callTimeChangedListeners() {
-		logger.debug("Calling " + this.loadedFileListeners.size() + " listeners for timeChanged");
+		logger.trace("Calling " + this.loadedFileListeners.size() + " listeners for timeChanged");
 		for (BioVizEvent listener : this.timeChangedListeners) {
 			listener.bioVizEvent();
 		}
@@ -274,7 +274,7 @@ public class BioViz implements ApplicationListener {
 	}
 	
 	void callLoadedFileListeners() {
-		logger.debug("Calling " + this.loadedFileListeners.size() + " listeners for loaded");
+		logger.trace("Calling " + this.loadedFileListeners.size() + " listeners for loaded");
 		for (BioVizEvent listener : this.loadedFileListeners) {
 			listener.bioVizEvent();
 		}
