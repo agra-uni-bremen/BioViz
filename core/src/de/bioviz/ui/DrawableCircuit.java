@@ -148,7 +148,7 @@ public class DrawableCircuit implements Drawable {
 
 	public void setShowPins(boolean showPins) {
 		this.showPins = showPins;
-		if (this.highlightAdjacency) {
+		if (this.showPins) {
 			logger.info("Displaying pin assignment");
 		} else {
 			logger.info("Stop displaying pin assignmnet");
