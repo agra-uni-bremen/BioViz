@@ -63,7 +63,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	private int getTimeConstraint(TimeConstraintContext ctx) {
-		return Integer.parseInt(ctx.Integer().getText()) - 1;
+		return Integer.parseInt(ctx.Integer().getText());
 	}
 
 	private Point getPosition(PositionContext ctx) {
