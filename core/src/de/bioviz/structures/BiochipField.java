@@ -14,6 +14,7 @@ public class BiochipField {
 
 	public ArrayList<Integer> source_ids = new ArrayList<Integer>();
 	public ArrayList<Integer> target_ids = new ArrayList<Integer>();
+	public ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 
 	public int x() { return pos.first;}

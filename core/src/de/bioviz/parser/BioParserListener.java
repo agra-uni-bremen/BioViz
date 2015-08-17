@@ -17,6 +17,8 @@ import de.bioviz.parser.generated.Bio.PinActuationContext;
 import de.bioviz.parser.generated.Bio.CellActuationContext;
 import de.bioviz.parser.generated.Bio.RouteContext;
 import de.bioviz.parser.generated.Bio.BioContext;
+import de.bioviz.parser.generated.Bio.MixerIDContext;
+import de.bioviz.parser.generated.Bio.TimeRangeContext;
 
 import de.bioviz.parser.generated.BioBaseListener;
 import de.bioviz.structures.*;
@@ -53,6 +55,7 @@ public class BioParserListener extends BioBaseListener {
 	private HashMap<Integer, Pin> pins = new HashMap<>();
 	private HashMap<Integer, ActuationVector> pinActuations = new HashMap<>();
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
+	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 
 	public Biochip getBiochip() {
@@ -73,6 +76,8 @@ public class BioParserListener extends BioBaseListener {
 		return Integer.parseInt(ctx.Integer().getText());
 	}
 
+
+	// TODO remove this code dublicity!
 	private int getFluidID(FluidIDContext ctx) {
 		if (ctx == null) {
 			return 0;
@@ -82,6 +87,14 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	private int getPinID(PinIDContext ctx) {
+		if (ctx == null) {
+			return 0;
+		} else {
+			return Integer.parseInt(ctx.Integer().getText());
+		}
+	}
+
+	private int getMixerID(MixerIDContext ctx) {
 		if (ctx == null) {
 			return 0;
 		} else {
@@ -307,6 +320,23 @@ public class BioParserListener extends BioBaseListener {
 
 	}
 
+	Pair<Integer,Integer> getTimeRange(TimeRangeContext ctx) {
+		Integer fst = Integer.parseInt(ctx.Integer(0).getText());
+		Integer snd = Integer.parseInt(ctx.Integer(1).getText());
+
+		return new Pair(fst,snd);
+	}
+
+	@Override
+	public void enterMixer(@NotNull Bio.MixerContext ctx) {
+		int id = getMixerID(ctx.mixerID());
+		Rectangle rect = new Rectangle(getPosition(ctx.position(0)),getPosition(ctx.position(1)));
+		Pair<Integer,Integer> time = getTimeRange(ctx.timeRange());
+
+		mixers.add(new Mixer(id,rect,time));
+
+	}
+
 	@Override
 	public void exitBio(BioContext ctx) {
 
@@ -375,6 +405,15 @@ public class BioParserListener extends BioBaseListener {
 			chip.getFieldAt(pos).actVec = vec;
 		});
 		chip.cellActuations.putAll(cellActuations);
+
+
+		chip.mixers.addAll(this.mixers);
+		mixers.forEach(m -> {
+			m.positions.positions().forEach(pos -> {
+				logger.debug("Adding mixer {} to field {}",m,pos);
+				chip.getFieldAt(pos).mixers.add(m);
+			});
+		});
 
 	}
 }

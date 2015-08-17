@@ -25,7 +25,8 @@ public class Biochip {
 	public final ArrayList<Detector> detectors=new ArrayList<Detector>();
 	public final HashMap<Integer,Pin> pins = new HashMap<>();
 	public final HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
-	public final  HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
+	public final HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
+	public final ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 
 
