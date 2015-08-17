@@ -130,8 +130,8 @@ public class Biochip {
 
 
 		for (Droplet drop: droplets) {
-			for(TimedPosition pos: drop.getPositions()) {
-				field.get(pos.getPos()).usage++;
+			for(Point pos: drop.getPositions()) {
+				field.get(pos).usage++;
 			}
 		}
 	}
@@ -152,26 +152,22 @@ public class Biochip {
 			HashSet<BiochipField> result = new HashSet<>();
 			
 			boolean timeProceeds = true;
-			long currentTime = 0;
+			int currentTime = 0;
 			
 			while(timeProceeds) {
 				long minimumTimestep = Long.MAX_VALUE;
 				timeProceeds = false;
 				for (Droplet b : this.getDroplets()) {
-					
-					int x1, y1;
-					x1 = b.getXAt(currentTime);
-					y1 = b.getYAt(currentTime);
+
+					Point p1 = b.getPositionAt(currentTime);
 					for (Droplet partner : this.getDroplets()) {
 						int x2, y2;
-						x2 = partner.getXAt(currentTime);
-						y2 = partner.getYAt(currentTime);
+						Point p2 = partner.getPositionAt(currentTime);
 						if (
-								(x1 == x2 && Math.abs(y1 - y2) == 1) ||
-								(y1 == y2 && Math.abs(x1 - x2) == 1)
+								Point.adjacent(p1,p2)
 							) {
-							result.add(this.field.get(new Point(x1,y1)));
-							result.add(this.field.get(new Point(x2,y2)));
+							result.add(this.field.get(p1));
+							result.add(this.field.get(p2));
 							//BioViz.singleton.mc.addMessage("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime, MessageCenter.SEVERITY_DEBUG);
 						}
 					}
