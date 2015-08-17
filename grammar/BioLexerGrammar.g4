@@ -13,6 +13,7 @@ Routes: 'routes';
 Grid: 'grid';
 Dispensers: 'dispensers';
 Detectors: 'detectors';
+Mixers: 'mixers';
 
 CellActuations: 'cell actuations';
 PinActuations: 'pin actuations';
@@ -36,6 +37,7 @@ RParen: ')';
 
 LBracket: '[';
 RBracket: ']';
+Dash: '-'+;
 
 Comma: ',';
 Asterisk: '*';

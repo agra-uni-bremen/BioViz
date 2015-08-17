@@ -32,6 +32,10 @@ gridblock: position position;
 routes : Routes Newlines (route Newlines)+ END;
 route: dropletID timeConstraint? position+;
 
+// Definition of mixers
+mixers: Mixers Newlines (mixer Newlines)+ END;
+mixer: mixerID timeRange position position;
+
 
 // Definition of actuation vectors
 //
@@ -77,9 +81,10 @@ dropToFluid: dropletID fluidID;
 dropletID: Integer;
 fluidID: Integer;
 pinID: Integer;
+mixerID: Integer;
 position: LParen xpos Comma ypos RParen;
 xpos: Integer;
 ypos: Integer;
 timeConstraint: LBracket Integer RBracket;
-
+timeRange: LBracket Integer Dash Integer RBracket;
 
