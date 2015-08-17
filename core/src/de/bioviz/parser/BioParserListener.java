@@ -323,15 +323,18 @@ public class BioParserListener extends BioBaseListener {
 	Range getTimeRange(TimeRangeContext ctx) {
 		Integer fst = Integer.parseInt(ctx.Integer(0).getText());
 		Integer snd = Integer.parseInt(ctx.Integer(1).getText());
+		logger.debug("Time range from {} and {}",ctx.Integer(0), ctx.Integer(1));
 
 		return new Range(fst,snd);
 	}
 
 	@Override
 	public void enterMixer(@NotNull Bio.MixerContext ctx) {
+
 		int id = getMixerID(ctx.mixerID());
 		Rectangle rect = new Rectangle(getPosition(ctx.position(0)),getPosition(ctx.position(1)));
 		Range time = getTimeRange(ctx.timeRange());
+		logger.debug("Received TimeRange {}", time);
 
 		mixers.add(new Mixer(id,rect,time));
 

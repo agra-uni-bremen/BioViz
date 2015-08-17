@@ -17,4 +17,8 @@ public class Mixer {
 		this.timing=timing;
 	}
 
+	public String toString() {
+		return "Mixer "+this.id+": "+ timing + " " + positions;
+	}
+
 }
