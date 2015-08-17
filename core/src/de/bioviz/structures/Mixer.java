@@ -9,9 +9,9 @@ public class Mixer {
 
 	public final int id;
 	public final Rectangle positions;
-	public final Pair<Integer,Integer> timing;
+	public final Range timing;
 
-	public Mixer(int id, Rectangle pos, Pair<Integer,Integer> timing) {
+	public Mixer(int id, Rectangle pos, Range timing) {
 		this.id=id;
 		this.positions=pos;
 		this.timing=timing;

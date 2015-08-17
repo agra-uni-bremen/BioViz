@@ -97,7 +97,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		// note: this overwrites any previous message
-		// TODO we really need some kind of mechanism of deceding when to show what
+		// TODO we really need some kind of mechanism of deciding when to show what
 		if (BioViz.singleton.currentCircuit.getShowPins()) {
 			if (this.field.pin != null) {
 				fieldHUDMsg =  Integer.toString(this.field.pin.pinID);

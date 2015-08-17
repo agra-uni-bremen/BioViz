@@ -320,18 +320,18 @@ public class BioParserListener extends BioBaseListener {
 
 	}
 
-	Pair<Integer,Integer> getTimeRange(TimeRangeContext ctx) {
+	Range getTimeRange(TimeRangeContext ctx) {
 		Integer fst = Integer.parseInt(ctx.Integer(0).getText());
 		Integer snd = Integer.parseInt(ctx.Integer(1).getText());
 
-		return new Pair(fst,snd);
+		return new Range(fst,snd);
 	}
 
 	@Override
 	public void enterMixer(@NotNull Bio.MixerContext ctx) {
 		int id = getMixerID(ctx.mixerID());
 		Rectangle rect = new Rectangle(getPosition(ctx.position(0)),getPosition(ctx.position(1)));
-		Pair<Integer,Integer> time = getTimeRange(ctx.timeRange());
+		Range time = getTimeRange(ctx.timeRange());
 
 		mixers.add(new Mixer(id,rect,time));
 
