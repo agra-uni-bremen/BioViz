@@ -2,8 +2,12 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DrawableRoute extends DrawableSprite {
+
+	private static Logger logger = LoggerFactory.getLogger(DrawableRoute.class);
 
 	public static int timesteps = 0;
 	public static int hoverTimesteps = 2 * timesteps + 8;
@@ -62,61 +66,68 @@ public class DrawableRoute extends DrawableSprite {
 		long currentTime = BioViz.singleton.currentCircuit.currentTime;
 		int displayAt;
 
-		hoverTimesteps = 2 * timesteps + 8;
 
-		int stepsToUse = timesteps;
-		if (this.parent.isHovered()) {
-			stepsToUse = hoverTimesteps;
-		}
+		// TODO drawing of routes is now broken :(
+		if (true) {
 
-		for (int i = -stepsToUse; i < stepsToUse; i++) {
+			hoverTimesteps = 2 * timesteps + 8;
 
-			this.color = this.baseColor.cpy();
-			if (i >= 0) {
-				this.color.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
-			}
-			else {
-				this.color.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+			int stepsToUse = timesteps;
+			if (this.parent.isHovered()) {
+				stepsToUse = hoverTimesteps;
 			}
 
-			displayAt = (int)currentTime + i;
-			Point p1 = parent.droplet.getPositionAt(displayAt);
-			Point p2 = parent.droplet.getPositionAt(displayAt + 1);
+			for (int i = -stepsToUse; i < stepsToUse; i++) {
 
-			int x1 = p1.first;
-			int x2 = p2.first;
-			int y1 = p1.second;
-			int y2 = p2.second;
+				this.color = this.baseColor.cpy();
+				if (i >= 0) {
+					this.color.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
+				} else {
+					this.color.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+				}
 
-			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
-			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+				displayAt = (int) currentTime + i;
+				Point p1 = parent.droplet.getSafePositionAt(displayAt);
+				Point p2 = parent.droplet.getSafePositionAt(displayAt + 1);
 
-			if (y1 == y2 && x2 > x1) {
-				xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
-				yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
-				this.rotation = 0;
-			} else if (y1 == y2 && x2 < x1) {
-				xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 - 0.5f);
-				yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
-				this.rotation = 180;
-			} else if (x1 == x2 && y2 > y1) {
-				xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
-				yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 + 0.5f);
-				this.rotation = 90;
-			} else if (x1 == x2 && y2 < y1) {
-				xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
-				yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 - 0.5f);
-				this.rotation = 270;
-			} else {
-				continue;
+				logger.trace("Point p1: {} (timestep {})", p1, displayAt);
+				logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
+
+				int x1 = p1.first;
+				int x2 = p2.first;
+				int y1 = p1.second;
+				int y2 = p2.second;
+
+				float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
+				float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+
+				if (y1 == y2 && x2 > x1) {
+					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
+					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+					this.rotation = 0;
+				} else if (y1 == y2 && x2 < x1) {
+					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 - 0.5f);
+					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+					this.rotation = 180;
+				} else if (x1 == x2 && y2 > y1) {
+					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
+					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 + 0.5f);
+					this.rotation = 90;
+				} else if (x1 == x2 && y2 < y1) {
+					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
+					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 - 0.5f);
+					this.rotation = 270;
+				} else {
+					continue;
+				}
+
+				this.x = xCoord;
+				this.y = yCoord;
+				this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
+				this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
+
+				super.draw();
 			}
-
-			this.x = xCoord;
-			this.y = yCoord;
-			this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
-			this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
-
-			super.draw();
 		}
 	}
 

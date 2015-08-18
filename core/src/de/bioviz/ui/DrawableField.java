@@ -2,6 +2,7 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.Mixer;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ public class DrawableField extends DrawableSprite {
 	static final Color fieldDefaultColor = new Color(0.5f, 0.5f, 0.75f, 1f);
 	static final Color sinkDefaultColor = new Color(0.75f, 0.5f, 0.5f, 1f);
 	static final Color sourceDefaultColor = new Color(0.5f, 0.75f, 0.5f, 1f);
+	static final Color mixerDefaultColor = new Color(0.45f, 0.33f, 0.25f, 1f);
 	static final Color fieldAdjacentActivationColor = new Color(1f / 2f, 1f / 3f, 0, 1); //218-165-32
 	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
 
@@ -97,7 +99,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		// note: this overwrites any previous message
-		// TODO we really need some kind of mechanism of deceding when to show what
+		// TODO we really need some kind of mechanism of deciding when to show what
 		if (BioViz.singleton.currentCircuit.getShowPins()) {
 			if (this.field.pin != null) {
 				fieldHUDMsg =  Integer.toString(this.field.pin.pinID);
@@ -129,6 +131,7 @@ public class DrawableField extends DrawableSprite {
 			++colorOverlayCount;
 		}
 
+		// TODO why do we only add something if the count is zero? Save computation time?
 		if (colorOverlayCount == 0) {
 			if (this.field.isSink) {
 				this.color.add(sinkDefaultColor);
@@ -139,6 +142,15 @@ public class DrawableField extends DrawableSprite {
 			} else {
 				this.color.add(fieldDefaultColor);
 				colorOverlayCount++;
+			}
+			if (!this.field.mixers.isEmpty()) {
+
+				final int t = (int) circ.currentTime;
+				for (Mixer m: this.field.mixers) {
+					if (m.timing.inRange(t)) {
+						this.color.add(mixerDefaultColor);
+					}
+				}
 			}
 		}
 

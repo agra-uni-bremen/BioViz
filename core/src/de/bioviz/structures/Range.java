@@ -12,7 +12,7 @@ public class Range {
 	public Range(int begin,int end) {
 
 		this.begin = (begin<1) ? DONTCARE:begin;
-		this.end = (end<1) ? DONTCARE: begin;
+		this.end = (end<1) ? DONTCARE: end;
 	}
 
 	public boolean inRange(final int i) {

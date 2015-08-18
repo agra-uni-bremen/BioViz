@@ -32,6 +32,23 @@ public class Droplet {
 		positions.add(p);
 	}
 	
+	public Point getSafePositionAt(int t) {
+
+		int index = t-spawnTime;
+
+		if (positions.isEmpty()) {
+			return null;
+		}
+
+		if (index < 0) {
+			return positions.firstElement();
+		}
+		if (index >= positions.size()) {
+			return positions.lastElement();
+		}
+		return positions.get(index);
+	}
+
 	public Point getPositionAt(int t) {
 
 		int index = t-spawnTime;
@@ -39,7 +56,6 @@ public class Droplet {
 		if (positions.isEmpty() || index < 0 || index >= positions.size()) {
 			return null;
 		}
-
 		return positions.get(index);
 	}
 
