@@ -14,4 +14,13 @@ public class Net {
 		this.sources.addAll(sources);
 	}
 
+	public boolean containsDroplet(Droplet d) {
+		for (Source s:sources) {
+			if (s.dropletID == d.getID()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
