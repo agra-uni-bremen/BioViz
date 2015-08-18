@@ -73,9 +73,21 @@ public class Droplet {
 		smoothY += (targetY - smoothY) / movementDelay;
 	}
 
+	@Override
+	public int hashCode() {
+		return this.getID();
+	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Droplet) {
+			return ((Droplet) o).getID() == this.getID();
+		}
+		else {
+			return false;
+		}
+	}
 
-	
 	/**
 	 * Retrieves the last timestamp at which this droplet moves.
 	 * @return the time at which the droplet's last movement is performed
@@ -85,7 +97,12 @@ public class Droplet {
 
 		return positions.size()+spawnTime-1;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "D["+id+"@"+spawnTime+"]";
+	}
+
 	public int getID() {
 		return this.id;
 	}
