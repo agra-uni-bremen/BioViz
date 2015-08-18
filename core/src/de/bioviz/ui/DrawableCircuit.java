@@ -89,7 +89,7 @@ public class DrawableCircuit implements Drawable {
 			Displaying the fluid id is mutually exclusive to displaying the droplet id, therefore we set the
 			value accordingly
 			 */
-			this.displayDropletIDs=false;
+			this.displayDropletIDs = false;
 			logger.info("Displaying fluid IDs");
 		} else {
 			logger.info("Stop displaying fluid IDs");
@@ -112,7 +112,7 @@ public class DrawableCircuit implements Drawable {
 			Displaying the fluid id is mutually exclusive to displaying the droplet id, therefore we set the
 			value accordingly
 			 */
-			this.displayFluidIDs=false;
+			this.displayFluidIDs = false;
 			logger.info("Displaying droplet IDs");
 		} else {
 			logger.info("Stop displaying droplet IDs");
@@ -232,9 +232,13 @@ public class DrawableCircuit implements Drawable {
 			long current = new Date().getTime();
 			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
 				lastAutoStepAt = current;
-				currentTime++;
-				for (BioVizEvent listener : this.timeChangedListeners) {
-					listener.bioVizEvent();
+
+				logger.trace("data.getDuration: {}\tcurrentTime: {}",data.getDuration(), currentTime);
+				if (currentTime < data.getDuration()) {
+					currentTime++;
+					for (BioVizEvent listener : this.timeChangedListeners) {
+						listener.bioVizEvent();
+					}
 				}
 			}
 		}

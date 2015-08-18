@@ -16,10 +16,6 @@ public class Droplet {
 
 	public float smoothX, smoothY, targetX, targetY;
 
-	public Droplet() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public Droplet(int id) {
 		this.id = id;
 	}
@@ -77,18 +73,36 @@ public class Droplet {
 		smoothY += (targetY - smoothY) / movementDelay;
 	}
 
+	@Override
+	public int hashCode() {
+		return this.getID();
+	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Droplet) {
+			return ((Droplet) o).getID() == this.getID();
+		}
+		else {
+			return false;
+		}
+	}
 
-	
 	/**
 	 * Retrieves the last timestamp at which this droplet moves.
 	 * @return the time at which the droplet's last movement is performed
+	 * @warning Returns 0 in case no positions (i.e. no path) is associated with this droplet
 	 */
-	public long getMaxTime() {
+	public int getMaxTime() {
 
 		return positions.size()+spawnTime-1;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "D["+id+"@"+spawnTime+"]";
+	}
+
 	public int getID() {
 		return this.id;
 	}
