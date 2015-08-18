@@ -343,11 +343,11 @@ public class BioViz implements ApplicationListener {
 		int r = rnd.nextInt(3);
 		FileHandle handle;
 		if (r == 0)
-			handle = Gdx.files.internal("Droplet.png");
+			handle = Gdx.files.internal("images/Droplet.png");
 		else if (r == 1)
-			handle = Gdx.files.internal("Source.png");
+			handle = Gdx.files.internal("images/Source.png");
 		else
-			handle = Gdx.files.internal("Sink.png");
+			handle = Gdx.files.internal("images/Sink.png");
 		return handle;
 	}
 }
