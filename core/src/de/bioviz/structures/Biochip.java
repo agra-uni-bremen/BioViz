@@ -25,7 +25,7 @@ public class Biochip {
 	public final ArrayList<Detector> detectors=new ArrayList<Detector>();
 	public final HashMap<Integer,Pin> pins = new HashMap<>();
 	public final HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
-	public final  HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
+	public final HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
 
 
 
@@ -58,6 +58,9 @@ public class Biochip {
 	}
 
 
+	private int duration =-1;
+
+
 	/**
 	 * All droplets of this chip. Use the get-method to retrieve
 	 * them from other classes.
@@ -85,6 +88,18 @@ public class Biochip {
 	}
 
 	public Biochip() {
+	}
+
+	public int getDuration() {
+		if (duration != -1) {
+			return duration;
+		}
+
+		for (Droplet d: droplets) {
+			duration = Math.max(duration,d.getMaxTime());
+		}
+		return duration;
+
 	}
 
 

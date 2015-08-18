@@ -79,8 +79,9 @@ public class Droplet {
 	/**
 	 * Retrieves the last timestamp at which this droplet moves.
 	 * @return the time at which the droplet's last movement is performed
+	 * @warning Returns 0 in case no positions (i.e. no path) is associated with this droplet
 	 */
-	public long getMaxTime() {
+	public int getMaxTime() {
 
 		return positions.size()+spawnTime-1;
 	}
