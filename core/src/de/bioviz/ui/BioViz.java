@@ -228,7 +228,7 @@ public class BioViz implements ApplicationListener {
 			logger.debug("Initializing circuit");
 			currentCircuit.addTimeChangedListener(() -> callTimeChangedListeners());
 			currentCircuit.data.recalculateAdjacency = true;
-			logger.info("Done loading file");
+			logger.info("Done loading file {}", filename);
 			currentCircuit.zoomExtents();
 		} catch (Exception e) {
 			logger.error("Could not load " + BioViz.singleton.filename + ": " + e.getMessage());
@@ -237,8 +237,7 @@ public class BioViz implements ApplicationListener {
 		// clear on screen messages as they would otherwise remain visible
 		mc.clearHUDMessages();
 		
-		logger.debug("Done loading file " + filename);
-		
+
 		this.callLoadedFileListeners();
 	}
 	
