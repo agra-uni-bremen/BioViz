@@ -165,51 +165,60 @@ public class Biochip {
 			return false;
 		}
 	}
+
+	/**
 	 * Calculates all fields that are at some point activated
 	 * with adjacently placed droplets.
 	 *
 	 * @return Set of fields with adjacent droplets (at any point in time)
 	 */
 	public Set<BiochipField> getAdjacentActivations() {
+
 		if (adjacencyCache != null && !recalculateAdjacency) {
 			return adjacencyCache;
-		} else {
-			logger.debug("Recalculation adjacency");
+		}
+		else {
+			logger.debug("Recalculating adjacency");
 			recalculateAdjacency = false;
 			HashSet<BiochipField> result = new HashSet<>();
-			
-			boolean timeProceeds = true;
-			int currentTime = 0;
-			
-			while(timeProceeds) {
-				long minimumTimestep = Long.MAX_VALUE;
-				timeProceeds = false;
-				for (Droplet b : this.getDroplets()) {
 
-					Point p1 = b.getPositionAt(currentTime);
-					for (Droplet partner : this.getDroplets()) {
-						int x2, y2;
-						Point p2 = partner.getPositionAt(currentTime);
-						if (
-								Point.adjacent(p1,p2)
-							) {
-							result.add(this.field.get(p1));
-							result.add(this.field.get(p2));
-							//BioViz.singleton.mc.addMessage("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime, MessageCenter.SEVERITY_DEBUG);
-						}
-					}
-					
-					long nextStep = b.getNextStep(currentTime);
-					if (nextStep > currentTime) {
-						timeProceeds = true;
-						if (nextStep - currentTime < minimumTimestep) {
-							minimumTimestep = nextStep - currentTime;
+			for (int timestep=1;timestep <= getDuration();timestep++) {
+				for (Droplet d1: droplets) {
+					Point p1 = d1.getPositionAt(timestep);
+					Point pp1 = d1.getPositionAt(timestep+1);
+					for (Droplet d2: droplets) {
+
+						logger.trace("Comparing droplets {} and {}", d1, d2);
+
+
+						if (!d1.equals(d2) && !sameNet(d1,d2)) {
+							Point p2 = d2.getPositionAt(timestep);
+							Point pp2 = d2.getPositionAt(timestep+1);
+							/*
+							We actually need to differentiat the following three cases. The dynamic fluidic constraints
+							should highlight the cell that in the upcoming time step violates one of the constraints.
+							 */
+							if (Point.adjacent(p1, p2)) {
+								logger.trace("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 + ") are adjacent in time step " + timestep);
+								result.add(this.field.get(p1));
+								result.add(this.field.get(p2));
+							}
+							if (Point.adjacent(pp1, p2)) {
+								logger.trace("Points " + pp1 + "(" + d1 + ") and " + p2 + "(" + d2 + ") are adjacent in time step " + (timestep+1)+"/"+timestep);
+								result.add(this.field.get(pp1));
+								result.add(this.field.get(p2));
+							}
+							if (Point.adjacent(p1, pp2)) {
+								logger.trace("Points " + p1 + "(" + d1 + ") and " + pp2 + "(" + d2 + ") are adjacent in time step " + timestep+"/"+(timestep+1));
+								result.add(this.field.get(p1));
+								result.add(this.field.get(pp2));
+							}
 						}
 					}
 				}
-				
-				currentTime += minimumTimestep;
+				logger.trace("Advanced to timestep {}",timestep);
 			}
+
 			adjacencyCache = result;
 			return result;
 		}
