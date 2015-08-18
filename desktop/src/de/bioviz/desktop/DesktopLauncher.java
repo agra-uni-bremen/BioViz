@@ -399,8 +399,9 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			File f = askForFile();
-			if (f != null)
+			if (f != null) {
 				BioViz.loadNewFile(f);
+			}
 		}
 	}
 	
@@ -409,7 +410,8 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.debug("Desktop received loaded event, setting slider...");
-			DesktopLauncher.singleton.time.setMaximum((int)BioViz.singleton.currentCircuit.data.getMaxTime());
+			DesktopLauncher.singleton.time.setMaximum((int) BioViz.singleton.currentCircuit.data.getMaxTime());
+			DesktopLauncher.singleton.time.setValue(0);
 		}
 	}
 	

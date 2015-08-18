@@ -47,8 +47,9 @@ public class Point extends Pair<Integer, Integer> {
 		if (p1 == null || p2 == null) {
 			return false;
 		}
-		return (p1.first == p2.first && Math.abs(p1.second - p2.second) == 1) ||
-				(p1.second == p2.second && Math.abs(p1.first - p2.first) == 1);
+
+		return (Math.abs(p1.second - p2.second) <= 1) && (Math.abs(p1.first - p2.first) <= 1);
+
 	}
 
 }
