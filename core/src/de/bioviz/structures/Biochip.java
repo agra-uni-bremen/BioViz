@@ -96,7 +96,7 @@ public class Biochip {
 		}
 
 		for (Droplet d: droplets) {
-			duration = Math.max(duration,d.getMaxTime());
+			duration = Math.max(duration, d.getMaxTime());
 		}
 		return duration;
 
@@ -144,6 +144,27 @@ public class Biochip {
 
 
 	/**
+	 * @brief Checks whether two droplets are from the same nat
+	 * @param d1
+	 * @param d2
+	 * @return true iff the droplets are from the same net
+	 */
+	private boolean sameNet(Droplet d1, Droplet d2) {
+		if (nets != null) {
+			// first find the net of one of the droplets
+			Net net=null;
+			for (Net n:nets) {
+				if (n.containsDroplet(d1)) {
+					net=n;
+				}
+			}
+			return net == null ? false : net.containsDroplet(d2);
+		}
+		// when there are no nets stored, they can't be from the same net
+		else {
+			return false;
+		}
+	}
 	 * Calculates all fields that are at some point activated
 	 * with adjacently placed droplets.
 	 *
