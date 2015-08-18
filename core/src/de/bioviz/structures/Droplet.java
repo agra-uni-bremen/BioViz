@@ -16,10 +16,6 @@ public class Droplet {
 
 	public float smoothX, smoothY, targetX, targetY;
 
-	public Droplet() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public Droplet(int id) {
 		this.id = id;
 	}

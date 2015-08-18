@@ -87,15 +87,6 @@ public class Biochip {
 	public Biochip() {
 	}
 
-	/**
-	 * Adds a new blob to the circuit.
-	 * @return the newly created blob.
-	 */
-	public Droplet addDroplet() {
-		Droplet b = new Droplet();
-		this.droplets.add(b);
-		return b;
-	}
 
 	public void addDroplet(Droplet drop) {
 		this.droplets.add(drop);
