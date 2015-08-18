@@ -211,7 +211,7 @@ public class BioViz implements ApplicationListener {
 		logger.debug("Now loading file " + filename);
 		Biochip bc;
 		if (BioViz.singleton.filename == null) {
-			FileHandle fh = Gdx.files.getFileHandle("default_grid.bio", Files.FileType.Internal);
+			FileHandle fh = Gdx.files.getFileHandle("examples/default_grid.bio", Files.FileType.Internal);
 			bc = BioParser.parse(fh.readString());
 		} else {
 			bc = BioParser.parseFile(filename);
