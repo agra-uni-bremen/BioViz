@@ -58,12 +58,19 @@ public class DrawableCircuit implements Drawable {
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 
 
-	public void nextStep() {
+	public void prevStep() {
+		autoAdvance=false;
+		if (currentTime>1) {
+			currentTime--;
+		}
 
 	}
 
-	public void prevStep() {
-		
+	public void nextStep() {
+		autoAdvance=false;
+		if (currentTime< data.getMaxTime()) {
+			currentTime++;
+		}
 	}
 
 
