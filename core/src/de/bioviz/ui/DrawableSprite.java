@@ -71,9 +71,10 @@ public abstract class DrawableSprite implements Drawable {
 					foundLOD = true;
 				}
 			}
-			if (foundLOD)
+			if (foundLOD) {
 				currentTextureName = LevelOfDetailTextures.get(bestLODFactor);
-			
+			}
+
 			this.setTexture();
 		}
 		this.sprite.setPosition(x-sprite.getWidth()/2f, y-sprite.getHeight()/2f);

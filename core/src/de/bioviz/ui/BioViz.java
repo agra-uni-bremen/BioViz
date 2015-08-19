@@ -32,29 +32,41 @@ import java.util.Vector;
 public class BioViz implements ApplicationListener {
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
-	
-	
+
+
 	public DrawableCircuit currentCircuit;
 	public static BioViz singleton;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
-	
+
 	AssetManager manager = new AssetManager();
 	public MessageCenter mc = new MessageCenter();
-	
-	private File filename;
+
+	private File bioFile;
 	private BioVizInputProcessor inputProcessor;
-	public InputProcessor getInputProcessor(){return inputProcessor;}
-	
+
+	public String getFileName() {
+		if (bioFile == null) {
+			return "Default example";
+		}
+		else {
+			return bioFile.getName();
+		}
+	}
+
+	public InputProcessor getInputProcessor() {
+		return inputProcessor;
+	}
+
 	boolean runFullPresetScreenshots = false;
 	float fullPresetScreenshotsScaling = 6f;
-	
+
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> loadFileListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> loadedFileListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> saveFileListeners = new Vector<BioVizEvent>();
 	static Logger logger = LoggerFactory.getLogger(BioViz.class);
-	
+
 	private boolean loadFileOnUpdate = true;
 
 	public BioViz() {
@@ -62,30 +74,30 @@ public class BioViz implements ApplicationListener {
 		logger.info("Starting withouth filename being specified; loading example");
 		logger.info("Usage: java -jar BioViz.jar <filename>");
 
-		this.filename = null;
+		this.bioFile = null;
 
 		singleton = this;
 	}
-	
-	public BioViz(File filename) {
+
+	public BioViz(File bioFile) {
 		this();
-		logger.info("Starting with file \"{}\"",filename.getAbsolutePath());
-		this.filename = filename;
+		logger.info("Starting with file \"{}\"", bioFile.getAbsolutePath());
+		this.bioFile = bioFile;
 	}
-	
+
 	@Override
 	public void create() {
-		
+
 
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		
-		camera = new OrthographicCamera(1, h/w);
+
+		camera = new OrthographicCamera(1, h / w);
 		batch = new SpriteBatch(1000, this.createDefaultShader());
-		
+
 		inputProcessor = new BioVizInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
-		
+
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
 		logger.trace("BioViz started");
@@ -100,12 +112,12 @@ public class BioViz implements ApplicationListener {
 
 	@Override
 	public void render() {
-		
+
 		if (loadFileOnUpdate) {
 			loadNewFileNow();
 			loadFileOnUpdate = false;
 		}
-		
+
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
@@ -128,6 +140,7 @@ public class BioViz implements ApplicationListener {
 	}
 
 	private boolean firstRun = true;
+
 	@Override
 	public void resize(int width, int height) {
 		camera.viewportHeight = height;
@@ -146,8 +159,9 @@ public class BioViz implements ApplicationListener {
 	public void resume() {
 	}
 
-	
+
 	private static int screenshotCount = 0;
+
 	public void saveScreenshotFull(String prefix) {
 		render();
 		FileHandle fh = Gdx.files.getFileHandle("screenshots/" + prefix + "" + new Date().getTime() + "_" + screenshotCount + ".png", FileType.Local);
@@ -155,12 +169,14 @@ public class BioViz implements ApplicationListener {
 		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		logger.info("Saved screenshot to {}", fh.path());
 	}
+
 	public void saveScreenshotFull() {
 		saveScreenshotFull("");
 	}
 
 	/**
 	 * Taken from http://code.google.com/p/libgdx-users/wiki/Screenshots
+	 *
 	 * @param file
 	 * @param x
 	 * @param y
@@ -168,13 +184,14 @@ public class BioViz implements ApplicationListener {
 	 * @param h
 	 */
 	private void saveScreenshot(FileHandle file, int x, int y, int w, int h) {
-        Pixmap pixmap = getScreenshot(x, y, w, h, true);
-        PixmapIO.writePNG(file, pixmap);
-        pixmap.dispose();
+		Pixmap pixmap = getScreenshot(x, y, w, h, true);
+		PixmapIO.writePNG(file, pixmap);
+		pixmap.dispose();
 	}
 
 	/**
 	 * Taken from http://code.google.com/p/libgdx-users/wiki/Screenshots
+	 *
 	 * @param x
 	 * @param y
 	 * @param w
@@ -206,18 +223,18 @@ public class BioViz implements ApplicationListener {
 
 		return pixmap;
 	}
-	
+
 	private void loadNewFileNow() {
-		logger.debug("Now loading file " + filename);
 		Biochip bc;
-		if (BioViz.singleton.filename == null) {
+		if (BioViz.singleton.bioFile == null) {
+			logger.debug("Loading default file");
 			FileHandle fh = Gdx.files.getFileHandle("examples/default_grid.bio", Files.FileType.Internal);
 			bc = BioParser.parse(fh.readString());
 		} else {
-			bc = BioParser.parseFile(filename);
-
+			logger.debug("Loading {}", bioFile);
+			bc = BioParser.parseFile(bioFile);
 		}
-		
+
 		try {
 			logger.debug("loaded file, creating drawable elements...");
 			DrawableCircuit newCircuit = new DrawableCircuit(bc);
@@ -228,68 +245,73 @@ public class BioViz implements ApplicationListener {
 			logger.debug("Initializing circuit");
 			currentCircuit.addTimeChangedListener(() -> callTimeChangedListeners());
 			currentCircuit.data.recalculateAdjacency = true;
-			logger.info("Done loading file {}", filename);
+			if (bioFile == null) {
+				logger.info("Done loading default file");
+			} else {
+				logger.info("Done loading file {}", bioFile);
+			}
 			currentCircuit.zoomExtents();
 		} catch (Exception e) {
-			logger.error("Could not load " + BioViz.singleton.filename + ": " + e.getMessage());
+			logger.error("Could not load " + BioViz.singleton.bioFile + ": " + e.getMessage());
 			e.printStackTrace();
 		}
 		// clear on screen messages as they would otherwise remain visible
 		mc.clearHUDMessages();
-		
+
 
 		this.callLoadedFileListeners();
 	}
-	
+
 	public static void loadNewFile(File f) {
 		logger.trace("Scheduling loading of file " + f);
-		BioViz.singleton.filename = f;
+		BioViz.singleton.bioFile = f;
 		BioViz.singleton.loadFileOnUpdate = true;
 	}
-	
+
 	public void addTimeChangedListener(BioVizEvent listener) {
 		timeChangedListeners.add(listener);
 	}
-	
+
 	private void callTimeChangedListeners() {
 		logger.trace("Calling " + this.loadedFileListeners.size() + " listeners for timeChanged");
 		for (BioVizEvent listener : this.timeChangedListeners) {
 			listener.bioVizEvent();
 		}
 	}
-	
+
 	public void addLoadFileListener(BioVizEvent listener) {
 		loadFileListeners.add(listener);
 	}
-	
+
 	void callLoadFileListeners() {
-		logger.debug("Calling " + this.loadedFileListeners.size() + " listeners for load");
+		logger.trace("Calling " + this.loadedFileListeners.size() + " listeners for load");
 		for (BioVizEvent listener : this.loadFileListeners) {
 			listener.bioVizEvent();
 		}
 	}
+
 	public void addLoadedFileListener(BioVizEvent listener) {
 		loadedFileListeners.add(listener);
 	}
-	
+
 	void callLoadedFileListeners() {
 		logger.trace("Calling " + this.loadedFileListeners.size() + " listeners for loaded");
 		for (BioVizEvent listener : this.loadedFileListeners) {
 			listener.bioVizEvent();
 		}
 	}
-	
+
 	public void addSaveFileListener(BioVizEvent listener) {
 		saveFileListeners.add(listener);
 	}
-	
+
 	void callSaveFileListeners() {
-		logger.debug("Calling " + this.saveFileListeners.size() + " listeners for save");
+		logger.trace("Calling " + this.saveFileListeners.size() + " listeners for save");
 		for (BioVizEvent listener : this.saveFileListeners) {
 			listener.bioVizEvent();
 		}
 	}
-	
+
 	public void saveSVG(String path) {
 		try {
 			String svg = BioViz.singleton.currentCircuit.generateSVG();
@@ -301,7 +323,7 @@ public class BioViz implements ApplicationListener {
 		}
 	}
 
-	static public ShaderProgram createDefaultShader () {
+	static public ShaderProgram createDefaultShader() {
 		String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
 				+ "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
 				+ "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
@@ -334,20 +356,21 @@ public class BioViz implements ApplicationListener {
 				+ "}";
 
 		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
-		if (shader.isCompiled() == false) throw new IllegalArgumentException("Error compiling shader: " + shader.getLog());
+		if (shader.isCompiled() == false)
+			throw new IllegalArgumentException("Error compiling shader: " + shader.getLog());
 		return shader;
 	}
-	
+
 	public FileHandle getApplicationIcon() {
 		Random rnd = new Random();
 		int r = rnd.nextInt(3);
 		FileHandle handle;
 		if (r == 0)
-			handle = Gdx.files.internal("Droplet.png");
+			handle = Gdx.files.internal("images/Droplet.png");
 		else if (r == 1)
-			handle = Gdx.files.internal("Source.png");
+			handle = Gdx.files.internal("images/Source.png");
 		else
-			handle = Gdx.files.internal("Sink.png");
+			handle = Gdx.files.internal("images/Sink.png");
 		return handle;
 	}
 }
