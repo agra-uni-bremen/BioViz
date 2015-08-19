@@ -46,6 +46,8 @@ public class DesktopLauncher extends JFrame {
 	LwjglAWTCanvas canvas;
 	LwjglAWTInput input;
 
+	String programName = "BioViz";
+
 	private static JFileChooser fileDialogs = null;
 
 	private static Logger logger = LoggerFactory.getLogger(DesktopLauncher.class);
@@ -87,18 +89,8 @@ public class DesktopLauncher extends JFrame {
 
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
-		int rnd = new Random().nextInt(21);
-		if (rnd <= 9) {
-			this.setTitle("Olli's BioViz");
-		}
-		else {
-			if (rnd <= 19) {
-				this.setTitle("Jannis' BioViz");
-			}
-			else {
-				this.setTitle("Awesome BioViz");
-			}
-		}
+
+		this.setTitle(programName);
 
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
 
