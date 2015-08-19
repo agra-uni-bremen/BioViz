@@ -46,7 +46,7 @@ public class DesktopLauncher extends JFrame {
 	LwjglAWTCanvas canvas;
 	LwjglAWTInput input;
 
-	String programName = "BioViz";
+	public final String programName = "BioViz";
 
 	private static JFileChooser fileDialogs = null;
 
@@ -412,9 +412,15 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.trace("Desktop received loaded event, setting slider...");
-			DesktopLauncher.singleton.time.setMaximum((int) BioViz.singleton.currentCircuit.data.getMaxTime());
-			DesktopLauncher.singleton.time.setMinimum(1);
-			DesktopLauncher.singleton.time.setValue(0);
+
+			DesktopLauncher d = DesktopLauncher.singleton;
+
+			d.time.setMaximum((int) BioViz.singleton.currentCircuit.data.getMaxTime());
+			d.time.setMinimum(1);
+			d.time.setValue(0);
+
+			d.setTitle(d.bioViz.getFileName()+ " - " +d.programName);
+
 		}
 	}
 
