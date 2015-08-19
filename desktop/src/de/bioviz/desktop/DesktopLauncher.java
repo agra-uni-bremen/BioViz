@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -21,7 +20,6 @@ import ch.qos.logback.core.joran.spi.JoranException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
@@ -48,7 +46,7 @@ public class DesktopLauncher extends JFrame {
 
 	public final String programName = "BioViz";
 
-	private static JFileChooser fileDialogs = null;
+	private static JFileChooser fileDialog = null;
 
 	private static Logger logger = LoggerFactory.getLogger(DesktopLauncher.class);
 
@@ -294,12 +292,12 @@ public class DesktopLauncher extends JFrame {
 			path = new File(System.getProperty("user.dir"));
 		}
 
-		if (fileDialogs == null) {
-			fileDialogs = new JFileChooser(path);
+		if (fileDialog == null) {
+			fileDialog = new JFileChooser(path);
 		}
-		int choice = fileDialogs.showOpenDialog(null);
+		int choice = fileDialog.showOpenDialog(null);
 		if (choice == JFileChooser.APPROVE_OPTION) {
-			return fileDialogs.getSelectedFile();
+			return fileDialog.getSelectedFile();
 
 		}
 
@@ -478,14 +476,14 @@ public class DesktopLauncher extends JFrame {
 						logger.debug("Desktop received save event, opening dialog...");
 
 						String name = prefs.getString("saveFolder", ".");
-						if (fileDialogs == null) {
-							fileDialogs = new JFileChooser();
+						if (fileDialog == null) {
+							fileDialog = new JFileChooser();
 						}
-						int fcresult = fileDialogs.showSaveDialog(null);
+						int fcresult = fileDialog.showSaveDialog(null);
 
 						if (fcresult == JFileChooser.APPROVE_OPTION) {
-							prefs.putString("saveFolder", fileDialogs.getSelectedFile().getAbsolutePath());
-							BioViz.singleton.saveSVG(fileDialogs.getSelectedFile().getAbsolutePath());
+							prefs.putString("saveFolder", fileDialog.getSelectedFile().getAbsolutePath());
+							BioViz.singleton.saveSVG(fileDialog.getSelectedFile().getAbsolutePath());
 						}
 					}
 				});
