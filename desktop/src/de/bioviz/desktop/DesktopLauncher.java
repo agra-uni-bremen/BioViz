@@ -88,12 +88,17 @@ public class DesktopLauncher extends JFrame {
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 		int rnd = new Random().nextInt(21);
-		if (rnd <= 9)
+		if (rnd <= 9) {
 			this.setTitle("Olli's BioViz");
-		else if (rnd <= 19)
-			this.setTitle("Jannis' BioViz");
-		else
-			this.setTitle("Awesome BioViz");
+		}
+		else {
+			if (rnd <= 19) {
+				this.setTitle("Jannis' BioViz");
+			}
+			else {
+				this.setTitle("Awesome BioViz");
+			}
+		}
 
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
 
