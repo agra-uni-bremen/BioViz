@@ -51,6 +51,12 @@ public class BioVizInputProcessor implements InputProcessor {
 		} else if (keycode == Keys.A) {
 			BioViz.singleton.currentCircuit.toggleHighlightAdjacency();
 		}
+		else if (keycode == Keys.RIGHT || keycode == Keys.UP) {
+			BioViz.singleton.currentCircuit.nextStep();
+		}
+		else if (keycode == Keys.LEFT || keycode == Keys.DOWN) {
+			BioViz.singleton.currentCircuit.prevStep();
+		}
 		
 		return false;
 	}
