@@ -370,9 +370,16 @@ public class BioParserListener extends BioBaseListener {
 
 
 		dropletIDsToFluidTypes.forEach(chip::addDropToFluid);
+
+
+
 		sinks.forEach(sink -> {
 			Point p = sink.first;
-			chip.getFieldAt(p).setSink(sink.second);
+			Direction dir = sink.second;
+			Point dirPoint = Point.pointFromDirection(dir);
+			Point sinkPoint = p.add(dirPoint);
+			BiochipField sinkField = new BiochipField(sinkPoint,dir);
+			chip.addField(sinkPoint,sinkField);
 		});
 
 
