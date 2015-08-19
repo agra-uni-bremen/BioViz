@@ -178,6 +178,13 @@ public class DesktopLauncher extends JFrame {
 		pinButton.setPreferredSize(new Dimension(112, pinButton.getPreferredSize().height));
 		pinButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowPins());
 
+
+
+		JButton nextStepButton = new JButton("->");
+		nextStepButton.addActionListener(e -> BioViz.singleton.currentCircuit.nextStep());
+		JButton prevStepButton = new JButton("<-");
+		prevStepButton.addActionListener(e -> BioViz.singleton.currentCircuit.prevStep());
+
 		// see comment above
 //		panel.add(label);
 		panel.add(autoplaytButton);
@@ -190,6 +197,8 @@ public class DesktopLauncher extends JFrame {
 		panel.add(displayFluidIDsButton);
 		panel.add(pinButton);
 		panel.add(timeInfo);
+		panel.add(prevStepButton);
+		panel.add(nextStepButton);
 		panel.add(time);
 		panel.add(routeInfo);
 		panel.add(routes);

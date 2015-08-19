@@ -58,6 +58,15 @@ public class DrawableCircuit implements Drawable {
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 
 
+	public void nextStep() {
+
+	}
+
+	public void prevStep() {
+		
+	}
+
+
 	public boolean getShowUsage() {
 		return showUsage;
 	}
