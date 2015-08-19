@@ -37,7 +37,7 @@ public class BioParser  {
 
     public static Biochip parse(final String inputString) {
 
-        logger.debug("Parsing file of length {}",inputString.length());
+        logger.trace("Parsing file of length {}",inputString.length());
 
         try {
             ANTLRInputStream input = new ANTLRInputStream(inputString);
