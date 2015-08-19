@@ -416,6 +416,7 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			logger.debug("Desktop received loaded event, setting slider...");
 			DesktopLauncher.singleton.time.setMaximum((int) BioViz.singleton.currentCircuit.data.getMaxTime());
+			DesktopLauncher.singleton.time.setMinimum(1);
 			DesktopLauncher.singleton.time.setValue(0);
 		}
 	}

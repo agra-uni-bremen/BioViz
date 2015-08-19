@@ -37,7 +37,7 @@ public class DrawableCircuit implements Drawable {
 
 	private float scalingDelay = 4f;
 
-	public long currentTime = 0;
+	public long currentTime = 1;
 
 	public boolean autoAdvance = false;
 	public float autoSpeed = 2f;
