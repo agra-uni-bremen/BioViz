@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 public class DesktopLauncher extends JFrame {
 
 	public JSlider time;
+	JLabel timeInfo = new JLabel("1");
+
 	timerCallback tc;
 	loadFileCallback load_cb;
 	loadedFileCallback loaded_cb;
@@ -154,7 +156,7 @@ public class DesktopLauncher extends JFrame {
 		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
 		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
-		tc = new timerCallback(time);
+		tc = new timerCallback(time,timeInfo);
 
 
 
@@ -205,7 +207,7 @@ public class DesktopLauncher extends JFrame {
 		invisiSep.setPreferredSize(new Dimension(buttonWidth, 0));
 
 
-		JLabel timeInfo = new JLabel("");
+
 
 
 		panel.add(new JLabel("Files"));
@@ -226,6 +228,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);
+		panel.add(new JLabel("Step: "));
 		panel.add(timeInfo);
 		panel.add(autoplaytButton);
 		panel.add(prevStepButton);
@@ -419,15 +422,19 @@ public class DesktopLauncher extends JFrame {
 
 	private class timerCallback implements BioVizEvent {
 		private JSlider time;
+		private JLabel timeInfo;
 
-		public timerCallback(JSlider slider) {
+		public timerCallback(JSlider slider, JLabel info) {
 			this.time = slider;
+			this.timeInfo = info;
 			BioViz.singleton.addTimeChangedListener(this);
 		}
 
 		@Override
 		public void bioVizEvent() {
 			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
+			this.timeInfo.setText(Integer.toString((int)BioViz.singleton.currentCircuit.currentTime));
+
 		}
 	}
 
