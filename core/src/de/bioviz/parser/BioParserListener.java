@@ -226,7 +226,7 @@ public class BioParserListener extends BioBaseListener {
 
 		ctx.children.stream().filter(child -> child instanceof Bio.SourceContext).forEach(child -> {
 			sources.add(getSource((Bio.SourceContext) child));
-			logger.debug("Found source child {}", child);
+			logger.trace("Found source child {}", child);
 		});
 
 		nets.add(new Net(sources, target));
@@ -240,7 +240,7 @@ public class BioParserListener extends BioBaseListener {
 		Rectangle rect = new Rectangle(p1, p2);
 		Range timing = getTiming((TimingContext) ctx.getChild(2));
 
-		logger.debug("Found blockage {} with timing {}", rect, timing);
+		logger.trace("Found blockage {} with timing {}", rect, timing);
 
 		blockages.add(new Pair<Rectangle, Range>(rect, timing));
 	}

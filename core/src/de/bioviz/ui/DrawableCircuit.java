@@ -37,7 +37,7 @@ public class DrawableCircuit implements Drawable {
 
 	private float scalingDelay = 4f;
 
-	public long currentTime = 0;
+	public long currentTime = 1;
 
 	public boolean autoAdvance = false;
 	public float autoSpeed = 2f;
@@ -58,11 +58,25 @@ public class DrawableCircuit implements Drawable {
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 
 
+	public void prevStep() {
+		autoAdvance=false;
+		if (currentTime>1) {
+			currentTime--;
+		}
+
+	}
+
+	public void nextStep() {
+		autoAdvance=false;
+		if (currentTime< data.getMaxTime()) {
+			currentTime++;
+		}
+	}
+
+
 	public boolean getShowUsage() {
 		return showUsage;
 	}
-
-	;
 
 	public void toggleShowUsage() {
 		this.setShowUsage(!this.showUsage);
@@ -436,7 +450,7 @@ public class DrawableCircuit implements Drawable {
 		// FIXME Does not properly handle non-0 minimum coordinates yet
 		Point max = this.data.getMaxCoord();
 		Point min = this.data.getMinCoord();
-		logger.debug("Auto zoom around " + min + " <--/--> " + max);
+		logger.trace("Auto zoom around " + min + " <--/--> " + max);
 
 		float x = 1f / (max.first + 3);
 		float y = 1f / (max.second + 3);
@@ -449,7 +463,7 @@ public class DrawableCircuit implements Drawable {
 		this.offsetY = (max.second) / -2f;
 
 
-		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
+		logger.trace("Offset now at " + this.offsetX + "/" + this.offsetY);
 	}
 
 	/**
