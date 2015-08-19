@@ -41,8 +41,17 @@ public class BioViz implements ApplicationListener {
 	AssetManager manager = new AssetManager();
 	public MessageCenter mc = new MessageCenter();
 
-	private File filename;
+	private File bioFile;
 	private BioVizInputProcessor inputProcessor;
+
+	public String getFileName() {
+		if (bioFile == null) {
+			return "Default example";
+		}
+		else {
+			return bioFile.getName();
+		}
+	}
 
 	public InputProcessor getInputProcessor() {
 		return inputProcessor;
@@ -65,15 +74,15 @@ public class BioViz implements ApplicationListener {
 		logger.info("Starting withouth filename being specified; loading example");
 		logger.info("Usage: java -jar BioViz.jar <filename>");
 
-		this.filename = null;
+		this.bioFile = null;
 
 		singleton = this;
 	}
 
-	public BioViz(File filename) {
+	public BioViz(File bioFile) {
 		this();
-		logger.info("Starting with file \"{}\"", filename.getAbsolutePath());
-		this.filename = filename;
+		logger.info("Starting with file \"{}\"", bioFile.getAbsolutePath());
+		this.bioFile = bioFile;
 	}
 
 	@Override
@@ -217,13 +226,13 @@ public class BioViz implements ApplicationListener {
 
 	private void loadNewFileNow() {
 		Biochip bc;
-		if (BioViz.singleton.filename == null) {
+		if (BioViz.singleton.bioFile == null) {
 			logger.debug("Loading default file");
 			FileHandle fh = Gdx.files.getFileHandle("examples/default_grid.bio", Files.FileType.Internal);
 			bc = BioParser.parse(fh.readString());
 		} else {
-			logger.debug("Loading {}", filename);
-			bc = BioParser.parseFile(filename);
+			logger.debug("Loading {}", bioFile);
+			bc = BioParser.parseFile(bioFile);
 		}
 
 		try {
@@ -236,14 +245,14 @@ public class BioViz implements ApplicationListener {
 			logger.debug("Initializing circuit");
 			currentCircuit.addTimeChangedListener(() -> callTimeChangedListeners());
 			currentCircuit.data.recalculateAdjacency = true;
-			if (filename == null) {
+			if (bioFile == null) {
 				logger.info("Done loading default file");
 			} else {
-				logger.info("Done loading file {}", filename);
+				logger.info("Done loading file {}", bioFile);
 			}
 			currentCircuit.zoomExtents();
 		} catch (Exception e) {
-			logger.error("Could not load " + BioViz.singleton.filename + ": " + e.getMessage());
+			logger.error("Could not load " + BioViz.singleton.bioFile + ": " + e.getMessage());
 			e.printStackTrace();
 		}
 		// clear on screen messages as they would otherwise remain visible
@@ -255,7 +264,7 @@ public class BioViz implements ApplicationListener {
 
 	public static void loadNewFile(File f) {
 		logger.trace("Scheduling loading of file " + f);
-		BioViz.singleton.filename = f;
+		BioViz.singleton.bioFile = f;
 		BioViz.singleton.loadFileOnUpdate = true;
 	}
 
