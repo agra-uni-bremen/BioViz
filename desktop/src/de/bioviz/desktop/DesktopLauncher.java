@@ -121,8 +121,8 @@ public class DesktopLauncher extends JFrame {
 
 
 		final int buttonWidth = 112;
-		final int sliderWidth = panelWidth;
-		final int sliderHeight= 64;
+		final int sliderWidth = buttonWidth;
+		final int sliderHeight= 16;
 
 		JButton autoplaytButton = new JButton();
 		autoplaytButton.setText("Autoplay");
@@ -151,14 +151,14 @@ public class DesktopLauncher extends JFrame {
 		usageButton.setPreferredSize(new Dimension(buttonWidth, usageButton.getPreferredSize().height));
 		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
 
-		JLabel timeInfo = new JLabel("<html><body>Time</body></html>");
+
 
 		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
 		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
 		tc = new timerCallback(time);
 
-		JLabel routeInfo = new JLabel("<html><body>Route length</body></html>");
+
 
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
 		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
@@ -193,28 +193,47 @@ public class DesktopLauncher extends JFrame {
 		JButton prevStepButton = new JButton("<-");
 		prevStepButton.addActionListener(e -> BioViz.singleton.currentCircuit.prevStep());
 
-		JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
-		sep.setPreferredSize(new Dimension(buttonWidth,sep.getPreferredSize().height));
+		/*
+		For some reason, adding a speparator more then once prevents it from being displayed more
+		than once O_0
+		 */
+		JSeparator timeSep = new JSeparator(SwingConstants.HORIZONTAL);
+		timeSep.setPreferredSize(new Dimension(buttonWidth, 5));
+		JSeparator fileSep = new JSeparator(SwingConstants.HORIZONTAL);
+		fileSep.setPreferredSize(new Dimension(buttonWidth, 5));
+		JSeparator optionsSep = new JSeparator(SwingConstants.HORIZONTAL);
+		optionsSep.setPreferredSize(new Dimension(buttonWidth, 5));
+		JSeparator invisiSep = new JSeparator(SwingConstants.HORIZONTAL);
+		invisiSep.setPreferredSize(new Dimension(buttonWidth, 0));
 
-		// see comment above
-//		panel.add(label);
-		panel.add(autoplaytButton);
+
+		JLabel timeInfo = new JLabel("");
+
+
+		panel.add(new JLabel("Files"));
+		panel.add(fileSep);
 		panel.add(openButton);
 		panel.add(saveButton);
+		panel.add(invisiSep);
+		panel.add(new JLabel("Options"));
+		panel.add(optionsSep);
+		panel.add(new JLabel("Route length"));
+		panel.add(routes);
 		panel.add(zoomButton);
 		panel.add(adjacencyButton);
 		panel.add(usageButton);
 		panel.add(displayDropletIDsButton);
 		panel.add(displayFluidIDsButton);
 		panel.add(pinButton);
-		panel.add(sep);
+		panel.add(invisiSep);
+		panel.add(new JLabel("Time"));
+		panel.add(timeSep);
 		panel.add(timeInfo);
-		panel.add(sep);
+		panel.add(autoplaytButton);
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
 		panel.add(time);
-		panel.add(routeInfo);
-		panel.add(routes);
+
 
 
 		input = new LwjglAWTInput(canvas.getCanvas());
