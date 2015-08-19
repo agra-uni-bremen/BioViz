@@ -380,7 +380,11 @@ public class BioParserListener extends BioBaseListener {
 			int fluidID = dispenser.first;
 			Point p = dispenser.second.first;
 			Direction dir = dispenser.second.second;
-			chip.getFieldAt(p).setDispenser(fluidID, dir);
+			Point dirPoint = Point.pointFromDirection(dir);
+			Point dispPoint = p.add(dirPoint);
+			BiochipField dispField = new BiochipField(dispPoint,fluidID,dir);
+			chip.addField(dispPoint, dispField);
+
 		});
 
 		for (Pair<Rectangle, Range> b : blockages) {
