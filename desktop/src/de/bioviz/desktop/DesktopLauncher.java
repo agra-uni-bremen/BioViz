@@ -107,75 +107,83 @@ public class DesktopLauncher extends JFrame {
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new MyDispatcher());
 
+		final int panelWidth=128;
+		final int panelHeight=600;
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
-		panel.setPreferredSize(new Dimension(128, 600));
+		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
 
 
 		// This text was completely useless. I leave the code here as a reference on how to add labels with some kind
 		// of formatting.
 //		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/></body></html>");
 
+
+		final int buttonWidth = 112;
+		final int sliderWidth = panelWidth;
+		final int sliderHeight= 64;
+
 		JButton autoplaytButton = new JButton();
 		autoplaytButton.setText("Autoplay");
-		autoplaytButton.setPreferredSize(new Dimension(112, autoplaytButton.getPreferredSize().height));
+		autoplaytButton.setPreferredSize(new Dimension(buttonWidth, autoplaytButton.getPreferredSize().height));
 		autoplaytButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 
 		JButton openButton = new JButton();
 		openButton.setText("Open File");
-		openButton.setPreferredSize(new Dimension(112, openButton.getPreferredSize().height));
+		openButton.setPreferredSize(new Dimension(buttonWidth, openButton.getPreferredSize().height));
 		load_cb = new loadFileCallback();
 		openButton.addActionListener(e -> load_cb.bioVizEvent());
 
 		JButton saveButton = new JButton();
 		saveButton.setText("Save SVG");
-		saveButton.setPreferredSize(new Dimension(112, saveButton.getPreferredSize().height));
+		saveButton.setPreferredSize(new Dimension(buttonWidth, saveButton.getPreferredSize().height));
 		save_cb = new saveFileCallback();
 		saveButton.addActionListener(e -> save_cb.bioVizEvent());
 
 		JButton zoomButton = new JButton();
 		zoomButton.setText("Reset camera");
-		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
+		zoomButton.setPreferredSize(new Dimension(buttonWidth, zoomButton.getPreferredSize().height));
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
 
 		JButton usageButton = new JButton();
 		usageButton.setText("Show Cell Usage");
-		usageButton.setPreferredSize(new Dimension(112, usageButton.getPreferredSize().height));
+		usageButton.setPreferredSize(new Dimension(buttonWidth, usageButton.getPreferredSize().height));
 		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
 
 		JLabel timeInfo = new JLabel("<html><body>Time</body></html>");
 
-		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
-		time.setPreferredSize(new Dimension(128, 64));
+		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
+		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
 		tc = new timerCallback(time);
 
 		JLabel routeInfo = new JLabel("<html><body>Route length</body></html>");
 
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
-		routes.setPreferredSize(new Dimension(128, 64));
+		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
 		//tc = new timerCallback(time);
 
 		JButton adjacencyButton = new JButton();
 		adjacencyButton.setText("Adjacency");
-		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
+		adjacencyButton.setPreferredSize(new Dimension(buttonWidth, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
 
 
 		JButton displayDropletIDsButton = new JButton();
 		displayDropletIDsButton.setText("Drop IDs");
-		displayDropletIDsButton.setPreferredSize(new Dimension(112, displayDropletIDsButton.getPreferredSize().height));
+		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth, displayDropletIDsButton.getPreferredSize().height));
 		displayDropletIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayDropletIDs());
 
 		JButton displayFluidIDsButton = new JButton();
 		displayFluidIDsButton.setText("Fluid IDs");
-		displayFluidIDsButton.setPreferredSize(new Dimension(112, displayFluidIDsButton.getPreferredSize().height));
+		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth, displayFluidIDsButton.getPreferredSize().height));
 		displayFluidIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayFluidIDs());
 
 		JButton pinButton = new JButton();
 		pinButton.setText("Pins");
-		pinButton.setPreferredSize(new Dimension(112, pinButton.getPreferredSize().height));
+		pinButton.setPreferredSize(new Dimension(buttonWidth, pinButton.getPreferredSize().height));
 		pinButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowPins());
 
 
@@ -184,6 +192,9 @@ public class DesktopLauncher extends JFrame {
 		nextStepButton.addActionListener(e -> BioViz.singleton.currentCircuit.nextStep());
 		JButton prevStepButton = new JButton("<-");
 		prevStepButton.addActionListener(e -> BioViz.singleton.currentCircuit.prevStep());
+
+		JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+		sep.setPreferredSize(new Dimension(buttonWidth,sep.getPreferredSize().height));
 
 		// see comment above
 //		panel.add(label);
@@ -196,7 +207,9 @@ public class DesktopLauncher extends JFrame {
 		panel.add(displayDropletIDsButton);
 		panel.add(displayFluidIDsButton);
 		panel.add(pinButton);
+		panel.add(sep);
 		panel.add(timeInfo);
+		panel.add(sep);
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
 		panel.add(time);
