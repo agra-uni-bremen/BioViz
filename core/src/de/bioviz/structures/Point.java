@@ -18,6 +18,10 @@ public class Point extends Pair<Integer, Integer> {
 		return new Point(first + p.first, second + p.second);
 	}
 
+	public final static Point NORTH = new Point(0,1);
+	public final static Point EAST = new Point(1,0);
+	public final static Point SOUTH = new Point(0,-1);
+	public final static Point WEST = new Point(-1,0);
 
 	/*
 	This hashCode method has been taken from http://stackoverflow.com/a/26981910
