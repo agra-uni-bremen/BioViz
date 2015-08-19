@@ -34,13 +34,13 @@ public class Point extends Pair<Integer, Integer> {
 	public static Point pointFromDirection(Direction dir) {
 		switch (dir) {
 			case NORTH:
-				return new Point(0, 1);
+				return NORTH;
 			case EAST:
-				return new Point(1, 0);
+				return EAST;
 			case SOUTH:
-				return new Point(0, -1);
+				return SOUTH;
 			case WEST:
-				return new Point(-1, 0);
+				return WEST;
 		}
 
 		// note that this case should not be reachable
