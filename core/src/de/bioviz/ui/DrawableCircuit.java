@@ -62,8 +62,6 @@ public class DrawableCircuit implements Drawable {
 		return showUsage;
 	}
 
-	;
-
 	public void toggleShowUsage() {
 		this.setShowUsage(!this.showUsage);
 	}
