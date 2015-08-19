@@ -370,9 +370,16 @@ public class BioParserListener extends BioBaseListener {
 
 
 		dropletIDsToFluidTypes.forEach(chip::addDropToFluid);
+
+
+
 		sinks.forEach(sink -> {
 			Point p = sink.first;
-			chip.getFieldAt(p).setSink(sink.second);
+			Direction dir = sink.second;
+			Point dirPoint = Point.pointFromDirection(dir);
+			Point sinkPoint = p.add(dirPoint);
+			BiochipField sinkField = new BiochipField(sinkPoint,dir);
+			chip.addField(sinkPoint,sinkField);
 		});
 
 
@@ -380,7 +387,11 @@ public class BioParserListener extends BioBaseListener {
 			int fluidID = dispenser.first;
 			Point p = dispenser.second.first;
 			Direction dir = dispenser.second.second;
-			chip.getFieldAt(p).setDispenser(fluidID, dir);
+			Point dirPoint = Point.pointFromDirection(dir);
+			Point dispPoint = p.add(dirPoint);
+			BiochipField dispField = new BiochipField(dispPoint,fluidID,dir);
+			chip.addField(dispPoint, dispField);
+
 		});
 
 		for (Pair<Rectangle, Range> b : blockages) {

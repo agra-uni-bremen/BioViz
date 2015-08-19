@@ -14,10 +14,10 @@ mixers
 end
 
 sinks
-(5,3) W
+(5,3) E
 end
 
 dispensers
-1 (5,4) W
-2 (1,1) N
+1 (5,4) E
+2 (1,1) S
 end

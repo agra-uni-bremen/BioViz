@@ -57,28 +57,28 @@ public class BiochipField {
 		return !(blockage == null);
 	}
 
-	public void setSink(Direction removeFrom) {
+	public void setSink(Direction removeTo) {
 		isDispenser=false;
 		isSink=true;
 		fluidID=0;
-		direction = removeFrom;
+		direction = removeTo;
 	}
 
-	public void setDispenser(int fluidID, Direction dispenseTo) {
+	public void setDispenser(int fluidID, Direction dispenseFrom) {
 		isSink=false;
 		isDispenser=true;
 		this.fluidID=fluidID;
-		direction=dispenseTo;
+		direction=dispenseFrom;
 	}
 
-	public BiochipField(Point pos, int fluidID, Direction dispenseTo) {
+	public BiochipField(Point pos, int fluidID, Direction dispenseFrom) {
 		this.pos=pos;
-		setDispenser(fluidID,dispenseTo);
+		setDispenser(fluidID,dispenseFrom);
 	}
 
-	public BiochipField(Point pos, Direction removeFrom) {
+	public BiochipField(Point pos, Direction removeTo) {
 		this.pos=pos;
-		setSink(removeFrom);
+		setSink(removeTo);
 
 	}
 	// end of TODO
