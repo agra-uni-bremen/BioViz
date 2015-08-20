@@ -124,30 +124,25 @@ public class DesktopLauncher extends JFrame {
 		final int sliderWidth = buttonWidth;
 		final int sliderHeight= 16;
 
-		JButton autoplaytButton = new JButton();
-		autoplaytButton.setText("Autoplay");
+		JButton autoplaytButton = new JButton("Autplay");
 		autoplaytButton.setPreferredSize(new Dimension(buttonWidth, autoplaytButton.getPreferredSize().height));
 		autoplaytButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 
-		JButton openButton = new JButton();
-		openButton.setText("Open File");
+		JButton openButton = new JButton("Open File");
 		openButton.setPreferredSize(new Dimension(buttonWidth, openButton.getPreferredSize().height));
 		load_cb = new loadFileCallback();
 		openButton.addActionListener(e -> load_cb.bioVizEvent());
 
-		JButton saveButton = new JButton();
-		saveButton.setText("Save SVG");
+		JButton saveButton = new JButton("Save SVG");
 		saveButton.setPreferredSize(new Dimension(buttonWidth, saveButton.getPreferredSize().height));
 		save_cb = new saveFileCallback();
 		saveButton.addActionListener(e -> save_cb.bioVizEvent());
 
-		JButton zoomButton = new JButton();
-		zoomButton.setText("Reset camera");
+		JButton zoomButton = new JButton("Center");
 		zoomButton.setPreferredSize(new Dimension(buttonWidth, zoomButton.getPreferredSize().height));
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
 
-		JButton usageButton = new JButton();
-		usageButton.setText("Show Cell Usage");
+		JButton usageButton = new JButton("Cell Usage");
 		usageButton.setPreferredSize(new Dimension(buttonWidth, usageButton.getPreferredSize().height));
 		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
 
@@ -165,24 +160,20 @@ public class DesktopLauncher extends JFrame {
 		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
 		//tc = new timerCallback(time);
 
-		JButton adjacencyButton = new JButton();
-		adjacencyButton.setText("Adjacency");
+		JButton adjacencyButton = new JButton("Adjacency");
 		adjacencyButton.setPreferredSize(new Dimension(buttonWidth, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
 
 
-		JButton displayDropletIDsButton = new JButton();
-		displayDropletIDsButton.setText("Drop IDs");
+		JButton displayDropletIDsButton = new JButton("Drop IDs");
 		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth, displayDropletIDsButton.getPreferredSize().height));
 		displayDropletIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayDropletIDs());
 
-		JButton displayFluidIDsButton = new JButton();
-		displayFluidIDsButton.setText("Fluid IDs");
+		JButton displayFluidIDsButton = new JButton("Fluid IDs");
 		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth, displayFluidIDsButton.getPreferredSize().height));
 		displayFluidIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayFluidIDs());
 
-		JButton pinButton = new JButton();
-		pinButton.setText("Pins");
+		JButton pinButton = new JButton("Pins");
 		pinButton.setPreferredSize(new Dimension(buttonWidth, pinButton.getPreferredSize().height));
 		pinButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowPins());
 
