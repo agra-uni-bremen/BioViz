@@ -27,4 +27,8 @@ public class ActuationVector {
 		}
 	}
 
+	public int size() {
+		return vec.size();
+	}
+
 }
