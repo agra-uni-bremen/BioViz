@@ -62,13 +62,13 @@ public class DrawableCircuit implements Drawable {
 
 	public void prevStep() {
 		autoAdvance=false;
-		setCurrentTime((int)currentTime-1);
+		setCurrentTime(currentTime-1);
 
 	}
 
 	public void nextStep() {
 		autoAdvance=false;
-		setCurrentTime((int)currentTime+1);
+		setCurrentTime(currentTime+1);
 	}
 
 	public void setCurrentTime(int timeStep) {
@@ -285,7 +285,7 @@ public class DrawableCircuit implements Drawable {
 				lastAutoStepAt = current;
 
 				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);
-				setCurrentTime((int)currentTime +1);
+				setCurrentTime(currentTime +1);
 			}
 		}
 

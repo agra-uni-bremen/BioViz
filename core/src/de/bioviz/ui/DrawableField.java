@@ -53,7 +53,7 @@ public class DrawableField extends DrawableSprite {
 
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
-		int t = (int)circ.currentTime;
+		int t = circ.currentTime;
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
 
@@ -123,7 +123,7 @@ public class DrawableField extends DrawableSprite {
 		 */
 		this.color = new Color(Colors.fieldEmptyColor);
 
-		if (field.isBlocked((int) circ.currentTime)) {
+		if (field.isBlocked(circ.currentTime)) {
 			this.color.add(blockedColor);
 			colorOverlayCount++;
 		}
@@ -153,7 +153,7 @@ public class DrawableField extends DrawableSprite {
 
 			}
 			else {
-				if (c.dropletOnPosition(field.pos,(int)circ.currentTime)) {
+				if (c.dropletOnPosition(field.pos,circ.currentTime)) {
 					act = ActuationVector.Actuation.ON;
 				}
 			}
