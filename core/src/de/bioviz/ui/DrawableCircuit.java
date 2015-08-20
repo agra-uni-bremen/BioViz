@@ -37,7 +37,7 @@ public class DrawableCircuit implements Drawable {
 
 	private float scalingDelay = 4f;
 
-	public long currentTime = 1;
+	public int currentTime = 1;
 
 	public boolean autoAdvance = false;
 	public float autoSpeed = 2f;
@@ -72,7 +72,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	public void setCurrentTime(int timeStep) {
-		if (timeStep >= 1 && timeStep <= data.getMaxTime()) {
+		if (timeStep >= 1 && timeStep <= data.getMaxT()) {
 			currentTime = timeStep;
 			BioViz.singleton.callTimeChangedListeners();
 		}
@@ -284,7 +284,7 @@ public class DrawableCircuit implements Drawable {
 			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
 				lastAutoStepAt = current;
 
-				logger.trace("data.getDuration: {}\tcurrentTime: {}",data.getDuration(), currentTime);
+				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);
 				setCurrentTime((int)currentTime +1);
 			}
 		}
