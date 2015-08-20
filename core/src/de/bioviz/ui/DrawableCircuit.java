@@ -69,7 +69,7 @@ public class DrawableCircuit implements Drawable {
 
 	public void nextStep() {
 		autoAdvance=false;
-		if (currentTime< data.getMaxTime()) {
+		if (currentTime< data.getMaxT()) {
 			currentTime++;
 			BioViz.singleton.callTimeChangedListeners();
 		}
@@ -249,8 +249,8 @@ public class DrawableCircuit implements Drawable {
 			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
 				lastAutoStepAt = current;
 
-				logger.trace("data.getDuration: {}\tcurrentTime: {}",data.getDuration(), currentTime);
-				if (currentTime < data.getDuration()) {
+				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);
+				if (currentTime < data.getMaxT()) {
 					currentTime++;
 					BioViz.singleton.callTimeChangedListeners();
 				}

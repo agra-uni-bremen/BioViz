@@ -59,7 +59,7 @@ public class Biochip {
 	}
 
 
-	private int duration =-1;
+	private int maxT =-1;
 
 
 	/**
@@ -172,7 +172,7 @@ public class Biochip {
 			recalculateAdjacency = false;
 			HashSet<BiochipField> result = new HashSet<>();
 
-			for (int timestep=1;timestep <= getDuration();timestep++) {
+			for (int timestep=1;timestep <= getMaxT();timestep++) {
 				for (Droplet d1: droplets) {
 					Point p1 = d1.getPositionAt(timestep);
 					Point pp1 = d1.getPositionAt(timestep+1);
@@ -217,40 +217,29 @@ public class Biochip {
 	/**
 	 * Calculates the last timestamp at which a droplet is moved
 	 * @return the last timestamp of the currently loaded simulation
+	 * @author Oliver Keszöcze
 	 */
-	// TODO hier Tropfen, Actuations, Mixer berücksichtigen!
-	public long getMaxTime() {
-		long maxTime = 0;
-		for (Droplet d : this.droplets) {
-			long dTime = d.getMaxTime();
-			if (dTime > maxTime) {
-				maxTime = dTime;
-			}
-		}
-		return maxTime;
-	}
-
-	public int getDuration() {
-		if (duration != -1) {
-			return duration;
+	public int getMaxT() {
+		if (maxT != -1) {
+			return maxT;
 		}
 
 		for (Droplet d: droplets) {
-			duration = Math.max(duration, d.getMaxTime());
+			maxT = Math.max(maxT, d.getMaxTime());
 		}
 		for (Mixer m: mixers) {
-			duration = Math.max(duration, m.timing.end);
+			maxT = Math.max(maxT, m.timing.end);
 		}
 		for (Pair<Rectangle,Range> b: blockages) {
-			duration = Math.max(duration,b.second.end);
+			maxT = Math.max(maxT,b.second.end);
 		}
 		for (ActuationVector a: pinActuations.values()) {
-			duration = Math.max(duration,a.size());
+			maxT = Math.max(maxT,a.size());
 		}
 		for (ActuationVector a: cellActuations.values()) {
-			duration = Math.max(duration,a.size());
+			maxT = Math.max(maxT,a.size());
 		}
-		return duration;
+		return maxT;
 
 	}
 
