@@ -125,9 +125,11 @@ public class Biochip {
 		field.values().forEach(f -> f.usage=0);
 
 
-		for (Droplet drop: droplets) {
-			for(Point pos: drop.getPositions()) {
-				field.get(pos).usage++;
+		for (int t=1;t<=getMaxT();t++) {
+			for (BiochipField f: field.values()) {
+				if (f.isActuated(t)) {
+					f.usage++;
+				}
 			}
 		}
 	}
