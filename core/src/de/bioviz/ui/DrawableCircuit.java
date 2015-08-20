@@ -51,6 +51,7 @@ public class DrawableCircuit implements Drawable {
 	private boolean displayFluidIDs = false;
 	private boolean showPins = false;
 	private boolean showDroplets = true;
+	private boolean showActuations = false;
 
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
@@ -91,6 +92,23 @@ public class DrawableCircuit implements Drawable {
 			logger.info("Displaying droplets");
 		} else {
 			logger.info("Stop displaying droplets");
+		}
+	}
+
+	public boolean getShowActuations() {
+		return showActuations;
+	}
+
+	public void toggleShowActuations() {
+		this.setShowActuations(!this.showActuations);
+	}
+
+	public void setShowActuations(boolean showActuations) {
+		this.showActuations = showActuations;
+		if (this.showActuations) {
+			logger.info("Displaying actuations");
+		} else {
+			logger.info("Stop displaying actuations");
 		}
 	}
 

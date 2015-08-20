@@ -143,12 +143,16 @@ public class DesktopLauncher extends JFrame {
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
 
 		JButton dropletButton = new JButton("Droplets");
-		dropletButton.setPreferredSize(new Dimension(buttonWidth, zoomButton.getPreferredSize().height));
+		dropletButton.setPreferredSize(new Dimension(buttonWidth, dropletButton.getPreferredSize().height));
 		dropletButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowDroplets());
 
 		JButton usageButton = new JButton("Cell Usage");
 		usageButton.setPreferredSize(new Dimension(buttonWidth, usageButton.getPreferredSize().height));
 		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
+
+		JButton actuationButton = new JButton("Actuations");
+		actuationButton.setPreferredSize(new Dimension(buttonWidth, actuationButton.getPreferredSize().height));
+		actuationButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowActuations());
 
 
 
@@ -216,11 +220,12 @@ public class DesktopLauncher extends JFrame {
 		panel.add(routes);
 		panel.add(zoomButton);
 		panel.add(dropletButton);
-		panel.add(adjacencyButton);
-		panel.add(usageButton);
 		panel.add(displayDropletIDsButton);
 		panel.add(displayFluidIDsButton);
 		panel.add(pinButton);
+		panel.add(actuationButton);
+		panel.add(adjacencyButton);
+		panel.add(usageButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);

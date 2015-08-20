@@ -1,6 +1,8 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.ActuationVector;
+import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Mixer;
 
@@ -51,6 +53,7 @@ public class DrawableField extends DrawableSprite {
 
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+		int t = (int)circ.currentTime;
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
 
@@ -134,7 +137,34 @@ public class DrawableField extends DrawableSprite {
 			++colorOverlayCount;
 		}
 
+		if (circ.getShowActuations()) {
+			Biochip c = circ.data;
+			ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
+			if (!c.pinActuations.isEmpty()) {
+				// compute using the pins whether the field is actuated
+
+				if (this.field.pin != null) {
+					act = c.pinActuations.get(this.field.pin.pinID).get(t-1);
+				}
+			}
+			else if (!c.cellActuations.isEmpty()){
+				// check if the cell is actuated according to the list
+				act =c.cellActuations.get(field.pos).get(t-1);
+
+			}
+			else {
+				if (c.dropletOnPosition(field.pos,(int)circ.currentTime)) {
+					act = ActuationVector.Actuation.ON;
+				}
+			}
+			if (act == ActuationVector.Actuation.ON) {
+				this.color.add(Colors.actautedColor);
+				++colorOverlayCount;
+			}
+		}
+
 		// TODO why do we only add something if the count is zero? Save computation time?
+		// nope it seems that the cell usage is supposed to override the other overlays
 		if (colorOverlayCount == 0) {
 			if (this.field.isSink) {
 				this.color.add(sinkDefaultColor);
@@ -148,7 +178,6 @@ public class DrawableField extends DrawableSprite {
 			}
 			if (!this.field.mixers.isEmpty()) {
 
-				final int t = (int) circ.currentTime;
 				for (Mixer m: this.field.mixers) {
 					if (m.timing.inRange(t)) {
 						this.color.add(mixerDefaultColor);

@@ -132,6 +132,17 @@ public class Biochip {
 		}
 	}
 
+	public boolean dropletOnPosition(Point pos, int t) {
+
+		for (Droplet d: droplets) {
+			Point p = d.getPositionAt(t);
+			if (p != null && p.equals(pos)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	/**
 	 * @brief Checks whether two droplets are from the same nat
