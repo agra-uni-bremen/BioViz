@@ -155,7 +155,7 @@ public class DesktopLauncher extends JFrame {
 
 		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
 		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
+		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.setCurrentTime(((JSlider) ce.getSource()).getValue()));
 		tc = new timerCallback(time,timeInfo);
 
 
