@@ -142,6 +142,10 @@ public class DesktopLauncher extends JFrame {
 		zoomButton.setPreferredSize(new Dimension(buttonWidth, zoomButton.getPreferredSize().height));
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
 
+		JButton dropletButton = new JButton("Droplets");
+		dropletButton.setPreferredSize(new Dimension(buttonWidth, zoomButton.getPreferredSize().height));
+		dropletButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowDroplets());
+
 		JButton usageButton = new JButton("Cell Usage");
 		usageButton.setPreferredSize(new Dimension(buttonWidth, usageButton.getPreferredSize().height));
 		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
@@ -211,6 +215,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(new JLabel("Route length"));
 		panel.add(routes);
 		panel.add(zoomButton);
+		panel.add(dropletButton);
 		panel.add(adjacencyButton);
 		panel.add(usageButton);
 		panel.add(displayDropletIDsButton);
