@@ -25,7 +25,7 @@ public class DrawableRoute extends DrawableSprite {
 	@Override
 	public String generateSVG() {
 		String result = "";
-		long currentTime = BioViz.singleton.currentCircuit.currentTime;
+		int currentTime = BioViz.singleton.currentCircuit.currentTime;
 		int displayAt;
 
 		for (int i = -timesteps; i < timesteps; i++) {
@@ -33,7 +33,7 @@ public class DrawableRoute extends DrawableSprite {
 			float alpha = 1 - (Math.abs((float) i) / ((float) timesteps));
 
 			// TODO possible problem here due to casting
-			displayAt = (int) currentTime + i;
+			displayAt = currentTime + i;
 
 			Point p1 = parent.droplet.getPositionAt(displayAt);
 			Point p2 = parent.droplet.getPositionAt(displayAt + 1);
@@ -63,7 +63,7 @@ public class DrawableRoute extends DrawableSprite {
 
 	@Override
 	public void draw() {
-		long currentTime = BioViz.singleton.currentCircuit.currentTime;
+		int currentTime = BioViz.singleton.currentCircuit.currentTime;
 		int displayAt;
 
 
@@ -86,7 +86,7 @@ public class DrawableRoute extends DrawableSprite {
 					this.color.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
 				}
 
-				displayAt = (int) currentTime + i;
+				displayAt = currentTime + i;
 				Point p1 = parent.droplet.getSafePositionAt(displayAt);
 				Point p2 = parent.droplet.getSafePositionAt(displayAt + 1);
 

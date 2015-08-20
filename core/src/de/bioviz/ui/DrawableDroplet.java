@@ -43,7 +43,7 @@ public class DrawableDroplet extends DrawableSprite {
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 
 		// TODO this casting probably is bad (although we should rarely reach the boundary of int)
-		Point p = droplet.getPositionAt((int) circ.currentTime);
+		Point p = droplet.getPositionAt(circ.currentTime);
 
 		if (p != null && BioViz.singleton.currentCircuit.getShowDroplets()) {
 

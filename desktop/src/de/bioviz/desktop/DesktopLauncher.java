@@ -433,8 +433,8 @@ public class DesktopLauncher extends JFrame {
 
 		@Override
 		public void bioVizEvent() {
-			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
-			this.timeInfo.setText(Integer.toString((int) BioViz.singleton.currentCircuit.currentTime));
+			this.time.setValue(BioViz.singleton.currentCircuit.currentTime);
+			this.timeInfo.setText(Integer.toString(BioViz.singleton.currentCircuit.currentTime));
 
 		}
 	}
@@ -462,7 +462,7 @@ public class DesktopLauncher extends JFrame {
 
 			DesktopLauncher d = DesktopLauncher.singleton;
 
-			d.time.setMaximum((int) BioViz.singleton.currentCircuit.data.getMaxT());
+			d.time.setMaximum(BioViz.singleton.currentCircuit.data.getMaxT());
 			d.time.setMinimum(1);
 			d.time.setValue(0);
 

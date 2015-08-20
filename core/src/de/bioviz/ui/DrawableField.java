@@ -53,7 +53,7 @@ public class DrawableField extends DrawableSprite {
 
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
-		int t = (int)circ.currentTime;
+		int t = circ.currentTime;
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
 
@@ -102,7 +102,7 @@ public class DrawableField extends DrawableSprite {
 
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show what
-		if (BioViz.singleton.currentCircuit.getShowPins()) {
+		if (circ.getShowPins()) {
 			if (this.field.pin != null) {
 				fieldHUDMsg =  Integer.toString(this.field.pin.pinID);
 			}
@@ -123,7 +123,7 @@ public class DrawableField extends DrawableSprite {
 		 */
 		this.color = new Color(Colors.fieldEmptyColor);
 
-		if (field.isBlocked((int) circ.currentTime)) {
+		if (field.isBlocked(circ.currentTime)) {
 			this.color.add(blockedColor);
 			colorOverlayCount++;
 		}
@@ -138,26 +138,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		if (circ.getShowActuations()) {
-			Biochip c = circ.data;
-			ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
-			if (!c.pinActuations.isEmpty()) {
-				// compute using the pins whether the field is actuated
-
-				if (this.field.pin != null) {
-					act = c.pinActuations.get(this.field.pin.pinID).get(t-1);
-				}
-			}
-			else if (!c.cellActuations.isEmpty()){
-				// check if the cell is actuated according to the list
-				act =c.cellActuations.get(field.pos).get(t-1);
-
-			}
-			else {
-				if (c.dropletOnPosition(field.pos,(int)circ.currentTime)) {
-					act = ActuationVector.Actuation.ON;
-				}
-			}
-			if (act == ActuationVector.Actuation.ON) {
+			if (field.isActuated(t)) {
 				this.color.add(Colors.actautedColor);
 				++colorOverlayCount;
 			}
