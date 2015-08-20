@@ -1,6 +1,8 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.ActuationVector;
+import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Mixer;
 
@@ -11,12 +13,11 @@ public class DrawableField extends DrawableSprite {
 
 	public BiochipField field;
 
-	static final Color fieldDefaultColor = new Color(0.5f, 0.5f, 0.75f, 1f);
-	static final Color sinkDefaultColor = new Color(0.75f, 0.5f, 0.5f, 1f);
-	static final Color sourceDefaultColor = new Color(0.5f, 0.75f, 0.5f, 1f);
-	static final Color mixerDefaultColor = new Color(0.45f, 0.33f, 0.25f, 1f);
-	static final Color fieldAdjacentActivationColor = new Color(1f / 2f, 1f / 3f, 0, 1); //218-165-32
-	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
+	static final Color fieldDefaultColor = Colors.fieldColor;
+	static final Color sinkDefaultColor = Colors.sinkColor;
+	static final Color sourceDefaultColor = Colors.sourceColor;
+	static final Color mixerDefaultColor = Colors.mixerColor;
+	static final Color blockedColor = Colors.blockedColor;
 
 	private boolean drawSink = false;
 	private boolean drawSource = false;
@@ -52,6 +53,7 @@ public class DrawableField extends DrawableSprite {
 
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+		int t = (int)circ.currentTime;
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
 
@@ -115,7 +117,11 @@ public class DrawableField extends DrawableSprite {
 
 
 		int colorOverlayCount = 0;
-		this.color = new Color(0, 0, 0, 1);
+		/*
+		We need to create a copy of the fieldEmptyColor as that value is final and thus can not be modified.
+		If that value is unchangeable, the cells all stay white
+		 */
+		this.color = new Color(Colors.fieldEmptyColor);
 
 		if (field.isBlocked((int) circ.currentTime)) {
 			this.color.add(blockedColor);
@@ -131,7 +137,34 @@ public class DrawableField extends DrawableSprite {
 			++colorOverlayCount;
 		}
 
+		if (circ.getShowActuations()) {
+			Biochip c = circ.data;
+			ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
+			if (!c.pinActuations.isEmpty()) {
+				// compute using the pins whether the field is actuated
+
+				if (this.field.pin != null) {
+					act = c.pinActuations.get(this.field.pin.pinID).get(t-1);
+				}
+			}
+			else if (!c.cellActuations.isEmpty()){
+				// check if the cell is actuated according to the list
+				act =c.cellActuations.get(field.pos).get(t-1);
+
+			}
+			else {
+				if (c.dropletOnPosition(field.pos,(int)circ.currentTime)) {
+					act = ActuationVector.Actuation.ON;
+				}
+			}
+			if (act == ActuationVector.Actuation.ON) {
+				this.color.add(Colors.actautedColor);
+				++colorOverlayCount;
+			}
+		}
+
 		// TODO why do we only add something if the count is zero? Save computation time?
+		// nope it seems that the cell usage is supposed to override the other overlays
 		if (colorOverlayCount == 0) {
 			if (this.field.isSink) {
 				this.color.add(sinkDefaultColor);
@@ -145,7 +178,6 @@ public class DrawableField extends DrawableSprite {
 			}
 			if (!this.field.mixers.isEmpty()) {
 
-				final int t = (int) circ.currentTime;
 				for (Mixer m: this.field.mixers) {
 					if (m.timing.inRange(t)) {
 						this.color.add(mixerDefaultColor);

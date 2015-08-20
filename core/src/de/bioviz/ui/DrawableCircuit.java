@@ -50,6 +50,8 @@ public class DrawableCircuit implements Drawable {
 	private boolean displayDropletIDs = false;
 	private boolean displayFluidIDs = false;
 	private boolean showPins = false;
+	private boolean showDroplets = true;
+	private boolean showActuations = false;
 
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
@@ -75,7 +77,39 @@ public class DrawableCircuit implements Drawable {
 			BioViz.singleton.callTimeChangedListeners();
 		}
 	}
+	public boolean getShowDroplets() {
+		return showDroplets;
+	}
 
+	public void toggleShowDroplets() {
+		this.setShowDroplets(!this.showDroplets);
+	}
+
+	public void setShowDroplets(boolean showDroplets) {
+		this.showDroplets = showDroplets;
+		if (this.showDroplets) {
+			logger.info("Displaying droplets");
+		} else {
+			logger.info("Stop displaying droplets");
+		}
+	}
+
+	public boolean getShowActuations() {
+		return showActuations;
+	}
+
+	public void toggleShowActuations() {
+		this.setShowActuations(!this.showActuations);
+	}
+
+	public void setShowActuations(boolean showActuations) {
+		this.showActuations = showActuations;
+		if (this.showActuations) {
+			logger.info("Displaying actuations");
+		} else {
+			logger.info("Stop displaying actuations");
+		}
+	}
 
 	public boolean getShowUsage() {
 		return showUsage;

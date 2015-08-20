@@ -27,4 +27,12 @@ public class ActuationVector {
 		}
 	}
 
+	public Actuation get(int i) {
+		return vec.get(i);
+	}
+
+	public int size() {
+		return vec.size();
+	}
+
 }
