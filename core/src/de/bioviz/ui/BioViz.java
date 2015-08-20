@@ -272,8 +272,8 @@ public class BioViz implements ApplicationListener {
 		timeChangedListeners.add(listener);
 	}
 
-	private void callTimeChangedListeners() {
-		logger.trace("Calling " + this.loadedFileListeners.size() + " listeners for timeChanged");
+	public void callTimeChangedListeners() {
+		logger.debug("Calling " + this.loadedFileListeners.size() + " listeners for timeChanged");
 		for (BioVizEvent listener : this.timeChangedListeners) {
 			listener.bioVizEvent();
 		}

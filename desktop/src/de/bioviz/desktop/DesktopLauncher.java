@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -21,7 +20,6 @@ import ch.qos.logback.core.joran.spi.JoranException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
@@ -37,6 +35,8 @@ import org.slf4j.LoggerFactory;
 public class DesktopLauncher extends JFrame {
 
 	public JSlider time;
+	JLabel timeInfo = new JLabel("1");
+
 	timerCallback tc;
 	loadFileCallback load_cb;
 	loadedFileCallback loaded_cb;
@@ -48,7 +48,7 @@ public class DesktopLauncher extends JFrame {
 
 	public final String programName = "BioViz";
 
-	private static JFileChooser fileDialogs = null;
+	private static JFileChooser fileDialog = null;
 
 	private static Logger logger = LoggerFactory.getLogger(DesktopLauncher.class);
 
@@ -156,7 +156,7 @@ public class DesktopLauncher extends JFrame {
 		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
 		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
-		tc = new timerCallback(time);
+		tc = new timerCallback(time,timeInfo);
 
 
 
@@ -207,7 +207,7 @@ public class DesktopLauncher extends JFrame {
 		invisiSep.setPreferredSize(new Dimension(buttonWidth, 0));
 
 
-		JLabel timeInfo = new JLabel("");
+
 
 
 		panel.add(new JLabel("Files"));
@@ -228,6 +228,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);
+		panel.add(new JLabel("Step: "));
 		panel.add(timeInfo);
 		panel.add(autoplaytButton);
 		panel.add(prevStepButton);
@@ -294,12 +295,12 @@ public class DesktopLauncher extends JFrame {
 			path = new File(System.getProperty("user.dir"));
 		}
 
-		if (fileDialogs == null) {
-			fileDialogs = new JFileChooser(path);
+		if (fileDialog == null) {
+			fileDialog = new JFileChooser(path);
 		}
-		int choice = fileDialogs.showOpenDialog(null);
+		int choice = fileDialog.showOpenDialog(null);
 		if (choice == JFileChooser.APPROVE_OPTION) {
-			return fileDialogs.getSelectedFile();
+			return fileDialog.getSelectedFile();
 
 		}
 
@@ -421,15 +422,19 @@ public class DesktopLauncher extends JFrame {
 
 	private class timerCallback implements BioVizEvent {
 		private JSlider time;
+		private JLabel timeInfo;
 
-		public timerCallback(JSlider slider) {
+		public timerCallback(JSlider slider, JLabel info) {
 			this.time = slider;
+			this.timeInfo = info;
 			BioViz.singleton.addTimeChangedListener(this);
 		}
 
 		@Override
 		public void bioVizEvent() {
 			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
+			this.timeInfo.setText(Integer.toString((int)BioViz.singleton.currentCircuit.currentTime));
+
 		}
 	}
 
@@ -478,14 +483,14 @@ public class DesktopLauncher extends JFrame {
 						logger.debug("Desktop received save event, opening dialog...");
 
 						String name = prefs.getString("saveFolder", ".");
-						if (fileDialogs == null) {
-							fileDialogs = new JFileChooser();
+						if (fileDialog == null) {
+							fileDialog = new JFileChooser();
 						}
-						int fcresult = fileDialogs.showSaveDialog(null);
+						int fcresult = fileDialog.showSaveDialog(null);
 
 						if (fcresult == JFileChooser.APPROVE_OPTION) {
-							prefs.putString("saveFolder", fileDialogs.getSelectedFile().getAbsolutePath());
-							BioViz.singleton.saveSVG(fileDialogs.getSelectedFile().getAbsolutePath());
+							prefs.putString("saveFolder", fileDialog.getSelectedFile().getAbsolutePath());
+							BioViz.singleton.saveSVG(fileDialog.getSelectedFile().getAbsolutePath());
 						}
 					}
 				});

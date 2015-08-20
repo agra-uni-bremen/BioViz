@@ -62,6 +62,7 @@ public class DrawableCircuit implements Drawable {
 		autoAdvance=false;
 		if (currentTime>1) {
 			currentTime--;
+			BioViz.singleton.callTimeChangedListeners();
 		}
 
 	}
@@ -70,6 +71,7 @@ public class DrawableCircuit implements Drawable {
 		autoAdvance=false;
 		if (currentTime< data.getMaxTime()) {
 			currentTime++;
+			BioViz.singleton.callTimeChangedListeners();
 		}
 	}
 
@@ -250,9 +252,7 @@ public class DrawableCircuit implements Drawable {
 				logger.trace("data.getDuration: {}\tcurrentTime: {}",data.getDuration(), currentTime);
 				if (currentTime < data.getDuration()) {
 					currentTime++;
-					for (BioVizEvent listener : this.timeChangedListeners) {
-						listener.bioVizEvent();
-					}
+					BioViz.singleton.callTimeChangedListeners();
 				}
 			}
 		}
