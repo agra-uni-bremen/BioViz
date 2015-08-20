@@ -6,8 +6,8 @@ package de.bioviz.structures;
 public class Range {
 	public static final int DONTCARE = 0;
 
-	private int begin;
-	private int end;
+	public final int begin;
+	public final int end;
 
 	public Range(int begin,int end) {
 
