@@ -11,12 +11,11 @@ public class DrawableField extends DrawableSprite {
 
 	public BiochipField field;
 
-	static final Color fieldDefaultColor = new Color(0.5f, 0.5f, 0.75f, 1f);
-	static final Color sinkDefaultColor = new Color(0.75f, 0.5f, 0.5f, 1f);
-	static final Color sourceDefaultColor = new Color(0.5f, 0.75f, 0.5f, 1f);
-	static final Color mixerDefaultColor = new Color(0.45f, 0.33f, 0.25f, 1f);
-	static final Color fieldAdjacentActivationColor = new Color(1f / 2f, 1f / 3f, 0, 1); //218-165-32
-	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
+	static final Color fieldDefaultColor = Colors.fieldColor;
+	static final Color sinkDefaultColor = Colors.sinkColor;
+	static final Color sourceDefaultColor = Colors.sourceColor;
+	static final Color mixerDefaultColor = Colors.mixerColor;
+	static final Color blockedColor = Colors.blockedColor;
 
 	private boolean drawSink = false;
 	private boolean drawSource = false;
@@ -115,7 +114,11 @@ public class DrawableField extends DrawableSprite {
 
 
 		int colorOverlayCount = 0;
-		this.color = new Color(0, 0, 0, 1);
+		/*
+		We need to create a copy of the fieldEmptyColor as that value is final and thus can not be modified.
+		If that value is unchangeable, the cells all stay white
+		 */
+		this.color = new Color(Colors.fieldEmptyColor);
 
 		if (field.isBlocked((int) circ.currentTime)) {
 			this.color.add(blockedColor);
