@@ -91,17 +91,7 @@ public class Biochip {
 	public Biochip() {
 	}
 
-	public int getDuration() {
-		if (duration != -1) {
-			return duration;
-		}
 
-		for (Droplet d: droplets) {
-			duration = Math.max(duration, d.getMaxTime());
-		}
-		return duration;
-
-	}
 
 	public void addDroplet(Droplet drop) {
 		this.droplets.add(drop);
@@ -228,6 +218,7 @@ public class Biochip {
 	 * Calculates the last timestamp at which a droplet is moved
 	 * @return the last timestamp of the currently loaded simulation
 	 */
+	// TODO hier Tropfen, Actuations, Mixer berücksichtigen!
 	public long getMaxTime() {
 		long maxTime = 0;
 		for (Droplet d : this.droplets) {
@@ -238,6 +229,31 @@ public class Biochip {
 		}
 		return maxTime;
 	}
+
+	public int getDuration() {
+		if (duration != -1) {
+			return duration;
+		}
+
+		for (Droplet d: droplets) {
+			duration = Math.max(duration, d.getMaxTime());
+		}
+		for (Mixer m: mixers) {
+			duration = Math.max(duration, m.timing.end);
+		}
+		for (Pair<Rectangle,Range> b: blockages) {
+			duration = Math.max(duration,b.second.end);
+		}
+		for (ActuationVector a: pinActuations.values()) {
+			duration = Math.max(duration,a.size());
+		}
+		for (ActuationVector a: cellActuations.values()) {
+			duration = Math.max(duration,a.size());
+		}
+		return duration;
+
+	}
+
 
 	/**
 	 * Retrieves field that is located at given coordinates.
