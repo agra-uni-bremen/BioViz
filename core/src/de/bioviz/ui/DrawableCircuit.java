@@ -60,17 +60,18 @@ public class DrawableCircuit implements Drawable {
 
 	public void prevStep() {
 		autoAdvance=false;
-		if (currentTime>1) {
-			currentTime--;
-			BioViz.singleton.callTimeChangedListeners();
-		}
+		setCurrentTime((int)currentTime-1);
 
 	}
 
 	public void nextStep() {
 		autoAdvance=false;
-		if (currentTime< data.getMaxTime()) {
-			currentTime++;
+		setCurrentTime((int)currentTime+1);
+	}
+
+	public void setCurrentTime(int timeStep) {
+		if (timeStep >= 1 && timeStep <= data.getMaxTime()) {
+			currentTime = timeStep;
 			BioViz.singleton.callTimeChangedListeners();
 		}
 	}
@@ -250,10 +251,7 @@ public class DrawableCircuit implements Drawable {
 				lastAutoStepAt = current;
 
 				logger.trace("data.getDuration: {}\tcurrentTime: {}",data.getDuration(), currentTime);
-				if (currentTime < data.getDuration()) {
-					currentTime++;
-					BioViz.singleton.callTimeChangedListeners();
-				}
+				setCurrentTime((int)currentTime +1);
 			}
 		}
 
