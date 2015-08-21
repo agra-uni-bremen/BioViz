@@ -93,7 +93,7 @@ public class DrawableField extends DrawableSprite {
 			ArrayList<Integer> targets = this.field.target_ids;
 			fieldHUDMsg = targets.get(0).toString();
 			if (targets.size() > 1) {
-				for (int i = 2; i < targets.size(); i++) {
+				for (int i = 1; i < targets.size(); i++) {
 					fieldHUDMsg += ", " + targets.get(i);
 				}
 			}
