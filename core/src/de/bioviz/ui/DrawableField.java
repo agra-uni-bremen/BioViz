@@ -5,11 +5,15 @@ import de.bioviz.structures.ActuationVector;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Mixer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
 
 public class DrawableField extends DrawableSprite {
+
+	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 
 	public BiochipField field;
 
@@ -20,7 +24,6 @@ public class DrawableField extends DrawableSprite {
 	static final Color blockedColor = Colors.blockedColor;
 
 	private boolean drawSink = false;
-	private boolean drawSource = false;
 	private boolean drawBlockage = false;
 	private boolean drawDetector = false;
 	private boolean drawRoutingSource = false;
@@ -69,9 +72,9 @@ public class DrawableField extends DrawableSprite {
 		if (this.field.isSink && !drawSink) {
 			this.addLOD(Float.MAX_VALUE, "Sink.png");
 			drawSink = true;
-		} else if (this.field.isDispenser && !drawSource) {
+		} else if (this.field.isDispenser) {
 			this.addLOD(Float.MAX_VALUE, "Source.png");
-			drawSource = true;
+			fieldHUDMsg = Integer.toString(field.fluidID);
 		} else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
 			this.addLOD(Float.MAX_VALUE, "Blockage.png");
 			drawBlockage = true;
@@ -100,6 +103,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
+
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show what
 		if (circ.getShowPins()) {
@@ -107,7 +111,6 @@ public class DrawableField extends DrawableSprite {
 				fieldHUDMsg =  Integer.toString(this.field.pin.pinID);
 			}
 		}
-
 
 		if (fieldHUDMsg != null) {
 			BioViz.singleton.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);
