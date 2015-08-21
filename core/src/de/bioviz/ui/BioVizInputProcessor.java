@@ -104,7 +104,7 @@ public class BioVizInputProcessor implements InputProcessor {
 			multiTouchZoom = false;
 		}
 		
-		logger.debug("TouchUp at " + x + "/" + y + " with " + pointer + "/" + button);
+		logger.trace("TouchUp at " + x + "/" + y + " with " + pointer + "/" + button);
 		
 		return false;
 	}
