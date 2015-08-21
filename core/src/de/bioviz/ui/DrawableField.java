@@ -26,8 +26,6 @@ public class DrawableField extends DrawableSprite {
 	private boolean drawSink = false;
 	private boolean drawBlockage = false;
 	private boolean drawDetector = false;
-	private boolean drawRoutingSource = false;
-	private boolean drawRoutingTarget = false;
 
 	private DrawableSprite adjacencyOverlay;
 
@@ -81,9 +79,8 @@ public class DrawableField extends DrawableSprite {
 		} else if (this.field.getDetector() != null && !drawDetector) {
 			this.addLOD(Float.MAX_VALUE, "Detector.png");
 			drawDetector = true;
-		} else if (!this.field.source_ids.isEmpty() && !drawRoutingSource) {
+		} else if (!this.field.source_ids.isEmpty()) {
 			this.addLOD(Float.MAX_VALUE, "Start.png");
-			drawRoutingSource = true;
 			ArrayList<Integer> sources = this.field.source_ids;
 			fieldHUDMsg = sources.get(0).toString();
 			if (sources.size() > 1) {
@@ -91,9 +88,8 @@ public class DrawableField extends DrawableSprite {
 					fieldHUDMsg += ", " + sources.get(i);
 				}
 			}
-		} else if (!this.field.target_ids.isEmpty() && !drawRoutingTarget) {
+		} else if (!this.field.target_ids.isEmpty()) {
 			this.addLOD(Float.MAX_VALUE, "Target.png");
-			drawRoutingTarget = true;
 			ArrayList<Integer> targets = this.field.target_ids;
 			fieldHUDMsg = targets.get(0).toString();
 			if (targets.size() > 1) {
