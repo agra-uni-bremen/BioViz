@@ -12,7 +12,7 @@ public class Button extends DrawableSprite {
 
 	public Button(String textureFilename) {
 		super(textureFilename);
-		this.color = Color.WHITE.cpy().mul(1, 1, 1, 0.75f);
+		this.setColor(Color.WHITE.cpy().mul(1, 1, 1, 0.75f));
 	}
 	
 	private boolean isMouseOver(int x, int y) {
@@ -55,11 +55,11 @@ public class Button extends DrawableSprite {
 	}
 	
 	public void Hovered() {
-		this.color.a = 1;
+		this.getColor().a = 1;
 	}
 	
 	public void UnHovered() {
-		this.color.a = 0.75f;
+		this.getColor().a = 0.75f;
 	}
 
 	@Override

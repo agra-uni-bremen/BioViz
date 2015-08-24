@@ -20,7 +20,7 @@ public abstract class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
 	private static HashMap<String, TextureRegion> allTextures;
-	public Color color = Color.WHITE.cpy();
+	private Color color = Color.WHITE.cpy();
 	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
 	private String currentTextureName;
 	
@@ -80,7 +80,7 @@ public abstract class DrawableSprite implements Drawable {
 		this.sprite.setPosition(x-sprite.getWidth()/2f, y-sprite.getHeight()/2f);
 		this.sprite.setScale(scaleX, scaleY);
 		this.sprite.setRotation(rotation);
-		this.sprite.setColor(color);
+		this.sprite.setColor(getColor());
 		this.sprite.draw(BioViz.singleton.batch);
 	}
 	
@@ -136,5 +136,13 @@ public abstract class DrawableSprite implements Drawable {
 			return true;
 		}
 		return false;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 }
