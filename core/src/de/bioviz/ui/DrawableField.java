@@ -5,11 +5,15 @@ import de.bioviz.structures.ActuationVector;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Mixer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
 
 public class DrawableField extends DrawableSprite {
+
+	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 
 	public BiochipField field;
 
@@ -20,11 +24,8 @@ public class DrawableField extends DrawableSprite {
 	static final Color blockedColor = Colors.blockedColor;
 
 	private boolean drawSink = false;
-	private boolean drawSource = false;
 	private boolean drawBlockage = false;
 	private boolean drawDetector = false;
-	private boolean drawRoutingSource = false;
-	private boolean drawRoutingTarget = false;
 
 	private DrawableSprite adjacencyOverlay;
 
@@ -69,18 +70,17 @@ public class DrawableField extends DrawableSprite {
 		if (this.field.isSink && !drawSink) {
 			this.addLOD(Float.MAX_VALUE, "Sink.png");
 			drawSink = true;
-		} else if (this.field.isDispenser && !drawSource) {
+		} else if (this.field.isDispenser) {
 			this.addLOD(Float.MAX_VALUE, "Source.png");
-			drawSource = true;
+			fieldHUDMsg = Integer.toString(field.fluidID);
 		} else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
 			this.addLOD(Float.MAX_VALUE, "Blockage.png");
 			drawBlockage = true;
 		} else if (this.field.getDetector() != null && !drawDetector) {
 			this.addLOD(Float.MAX_VALUE, "Detector.png");
 			drawDetector = true;
-		} else if (!this.field.source_ids.isEmpty() && !drawRoutingSource) {
+		} else if (!this.field.source_ids.isEmpty()) {
 			this.addLOD(Float.MAX_VALUE, "Start.png");
-			drawRoutingSource = true;
 			ArrayList<Integer> sources = this.field.source_ids;
 			fieldHUDMsg = sources.get(0).toString();
 			if (sources.size() > 1) {
@@ -88,17 +88,17 @@ public class DrawableField extends DrawableSprite {
 					fieldHUDMsg += ", " + sources.get(i);
 				}
 			}
-		} else if (!this.field.target_ids.isEmpty() && !drawRoutingTarget) {
+		} else if (!this.field.target_ids.isEmpty()) {
 			this.addLOD(Float.MAX_VALUE, "Target.png");
-			drawRoutingTarget = true;
 			ArrayList<Integer> targets = this.field.target_ids;
 			fieldHUDMsg = targets.get(0).toString();
 			if (targets.size() > 1) {
-				for (int i = 2; i < targets.size(); i++) {
+				for (int i = 1; i < targets.size(); i++) {
 					fieldHUDMsg += ", " + targets.get(i);
 				}
 			}
 		}
+
 
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show what
@@ -107,7 +107,6 @@ public class DrawableField extends DrawableSprite {
 				fieldHUDMsg =  Integer.toString(this.field.pin.pinID);
 			}
 		}
-
 
 		if (fieldHUDMsg != null) {
 			BioViz.singleton.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);

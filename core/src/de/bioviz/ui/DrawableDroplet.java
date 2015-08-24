@@ -86,5 +86,9 @@ public class DrawableDroplet extends DrawableSprite {
 
 			super.draw();
 		}
+		else {
+			// make sure that previous numbers are removed when the droplet is removed.
+			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
+		}
 	}
 }
