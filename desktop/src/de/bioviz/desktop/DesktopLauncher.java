@@ -122,10 +122,10 @@ public class DesktopLauncher extends JFrame {
 
 		final int buttonWidth = 112;
 		final int sliderWidth = buttonWidth;
-		final int sliderHeight= 16;
+		final int sliderHeight= new JSlider().getPreferredSize().height;
 
-		JButton autoplaytButton = new JButton("Autplay");
-		autoplaytButton.setPreferredSize(new Dimension(buttonWidth, autoplaytButton.getPreferredSize().height));
+		JButton autoplaytButton = new JButton("Autoplay");
+		autoplaytButton.setPreferredSize(new Dimension(buttonWidth, sliderHeight));
 		autoplaytButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 
 		JButton openButton = new JButton("Open File");
