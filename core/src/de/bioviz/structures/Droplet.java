@@ -17,6 +17,7 @@ public class Droplet {
 	}
 
 	public float smoothX, smoothY, targetX, targetY;
+	private boolean firstUpdate = true;
 
 	public Droplet(int id) {
 		this.id = id;
@@ -94,6 +95,11 @@ public class Droplet {
 	}
 	
 	public void update() {
+		if (firstUpdate) {
+			smoothX = targetX;
+			smoothY = targetY;
+			firstUpdate = false;
+		}
 		smoothX += (targetX - smoothX) / movementDelay;
 		smoothY += (targetY - smoothY) / movementDelay;
 	}
