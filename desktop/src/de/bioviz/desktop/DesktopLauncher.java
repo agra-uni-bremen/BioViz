@@ -157,14 +157,14 @@ public class DesktopLauncher extends JFrame {
 
 
 		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
-		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
+		time.setPreferredSize(new Dimension(sliderWidth, (int) time.getPreferredSize().getHeight()));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.setCurrentTime(((JSlider) ce.getSource()).getValue()));
 		tc = new timerCallback(time,timeInfo);
 
 
 
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
-		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
+		routes.setPreferredSize(new Dimension(sliderWidth, (int) routes.getPreferredSize().getHeight()));
 		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
 		//tc = new timerCallback(time);
 
