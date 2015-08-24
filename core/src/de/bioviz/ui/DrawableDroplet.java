@@ -42,10 +42,11 @@ public class DrawableDroplet extends DrawableSprite {
 
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 
-		// TODO this casting probably is bad (although we should rarely reach the boundary of int)
 		Point p = droplet.getPositionAt(circ.currentTime);
-		
+		boolean visible = false;
+
 		if (p == null) {
+
 			if (circ.currentTime < droplet.getSpawnTime()) {
 				p = droplet.getFirstPosition();
 				this.setColor(this.getColor().cpy().sub(0, 0, 0, 1).clamp());
@@ -55,9 +56,10 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 		} else {
 			this.setColor(this.getColor().cpy().add(0, 0, 0, 1).clamp());
+			visible = true;
 		}
 
-		if (p != null && BioViz.singleton.currentCircuit.getShowDroplets()) {
+		if (BioViz.singleton.currentCircuit.getShowDroplets()) {
 
 
 			droplet.targetX = p.first;
@@ -98,7 +100,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 			super.draw();
 		}
-		else {
+		if (!visible) {
 			// make sure that previous numbers are removed when the droplet is removed.
 			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
 		}
