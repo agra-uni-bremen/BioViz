@@ -42,6 +42,8 @@ public abstract class DrawableSprite implements Drawable {
 			allTextures = new HashMap<>();
 		}
 		this.addLOD(Float.MAX_VALUE, textureFilename);
+		this.color.a = 0;
+		this.currentColor.a = 0;
 	}
 
 	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {

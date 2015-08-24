@@ -9,6 +9,8 @@ public class Droplet {
 
 	private int id=0;
 	private int spawnTime = 1;
+	
+	private float movementDelay = 4f;
 
 	public Vector<Point> getPositions() {
 		return positions;
@@ -92,7 +94,6 @@ public class Droplet {
 	}
 	
 	public void update() {
-		float movementDelay = 4f;
 		smoothX += (targetX - smoothX) / movementDelay;
 		smoothY += (targetY - smoothY) / movementDelay;
 	}
