@@ -59,7 +59,7 @@ public class DrawableDroplet extends DrawableSprite {
 			visible = true;
 		}
 
-		if (BioViz.singleton.currentCircuit.getShowDroplets()) {
+		if (p!= null && BioViz.singleton.currentCircuit.getShowDroplets()) {
 
 
 			droplet.targetX = p.first;
