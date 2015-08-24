@@ -21,6 +21,8 @@ public abstract class DrawableSprite implements Drawable {
 	protected Sprite sprite;
 	private static HashMap<String, TextureRegion> allTextures;
 	private Color color = Color.WHITE.cpy();
+	private Color currentColor = Color.WHITE.cpy();
+	float colorShiftDelay = 16f;
 	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
 	private String currentTextureName;
 	
@@ -77,10 +79,13 @@ public abstract class DrawableSprite implements Drawable {
 
 			this.setTexture();
 		}
+		
+		update();
+		
 		this.sprite.setPosition(x-sprite.getWidth()/2f, y-sprite.getHeight()/2f);
 		this.sprite.setScale(scaleX, scaleY);
 		this.sprite.setRotation(rotation);
-		this.sprite.setColor(getColor());
+		this.sprite.setColor(currentColor);
 		this.sprite.draw(BioViz.singleton.batch);
 	}
 	
@@ -136,6 +141,13 @@ public abstract class DrawableSprite implements Drawable {
 			return true;
 		}
 		return false;
+	}
+	
+	protected void update() {
+		currentColor.r += (color.r - currentColor.r) / colorShiftDelay;
+		currentColor.g += (color.g - currentColor.g) / colorShiftDelay;
+		currentColor.b += (color.b - currentColor.b) / colorShiftDelay;
+		currentColor.a += (color.a - currentColor.a) / colorShiftDelay;
 	}
 
 	public Color getColor() {
