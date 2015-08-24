@@ -9,12 +9,15 @@ public class Droplet {
 
 	private int id=0;
 	private int spawnTime = 1;
+	
+	private float movementDelay = 4f;
 
 	public Vector<Point> getPositions() {
 		return positions;
 	}
 
 	public float smoothX, smoothY, targetX, targetY;
+	private boolean firstUpdate = true;
 
 	public Droplet(int id) {
 		this.id = id;
@@ -58,6 +61,14 @@ public class Droplet {
 		}
 		return positions.get(index);
 	}
+	
+	public Point getFirstPosition() {
+		return positions.firstElement();
+	}
+	
+	public Point getLastPosition() {
+		return positions.lastElement();
+	}
 
 	
 	/**
@@ -84,7 +95,11 @@ public class Droplet {
 	}
 	
 	public void update() {
-		float movementDelay = 4f;
+		if (firstUpdate) {
+			smoothX = targetX;
+			smoothY = targetY;
+			firstUpdate = false;
+		}
 		smoothX += (targetX - smoothX) / movementDelay;
 		smoothY += (targetY - smoothY) / movementDelay;
 	}
@@ -110,8 +125,11 @@ public class Droplet {
 	 * @warning Returns 0 in case no positions (i.e. no path) is associated with this droplet
 	 */
 	public int getMaxTime() {
-
 		return positions.size()+spawnTime-1;
+	}
+	
+	public int getSpawnTime() {
+		return this.spawnTime;
 	}
 
 	@Override
