@@ -79,11 +79,11 @@ public class DrawableRoute extends DrawableSprite {
 
 			for (int i = -stepsToUse; i < stepsToUse; i++) {
 
-				this.color = this.baseColor.cpy();
+				this.setColor(this.baseColor.cpy());
 				if (i >= 0) {
-					this.color.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
+					this.getColor().a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
 				} else {
-					this.color.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+					this.getColor().a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
 				}
 
 				displayAt = currentTime + i;

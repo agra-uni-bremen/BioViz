@@ -120,10 +120,10 @@ public class DrawableField extends DrawableSprite {
 		We need to create a copy of the fieldEmptyColor as that value is final and thus can not be modified.
 		If that value is unchangeable, the cells all stay white
 		 */
-		this.color = new Color(Colors.fieldEmptyColor);
+		this.setColor(new Color(Colors.fieldEmptyColor));
 
 		if (field.isBlocked(circ.currentTime)) {
-			this.color.add(blockedColor);
+			this.getColor().add(blockedColor);
 			colorOverlayCount++;
 		}
 
@@ -132,13 +132,13 @@ public class DrawableField extends DrawableSprite {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max Usage verwenden)
 			float scalingFactor = 4f;
 
-			this.color.add(new Color(0, this.field.usage / scalingFactor, 0, 0));
+			this.getColor().add(new Color(0, this.field.usage / scalingFactor, 0, 0));
 			++colorOverlayCount;
 		}
 
 		if (circ.getShowActuations()) {
 			if (field.isActuated(t)) {
-				this.color.add(Colors.actautedColor);
+				this.getColor().add(Colors.actautedColor);
 				++colorOverlayCount;
 			}
 		}
@@ -147,28 +147,28 @@ public class DrawableField extends DrawableSprite {
 		// nope it seems that the cell usage is supposed to override the other overlays
 		if (colorOverlayCount == 0) {
 			if (this.field.isSink) {
-				this.color.add(sinkDefaultColor);
+				this.getColor().add(sinkDefaultColor);
 				colorOverlayCount++;
 			} else if (this.field.isDispenser) {
-				this.color.add(sourceDefaultColor);
+				this.getColor().add(sourceDefaultColor);
 				colorOverlayCount++;
 			} else {
-				this.color.add(fieldDefaultColor);
+				this.getColor().add(fieldDefaultColor);
 				colorOverlayCount++;
 			}
 			if (!this.field.mixers.isEmpty()) {
 
 				for (Mixer m: this.field.mixers) {
 					if (m.timing.inRange(t)) {
-						this.color.add(mixerDefaultColor);
+						this.getColor().add(mixerDefaultColor);
 					}
 				}
 			}
 		}
 
-		this.color.mul(1f / (float) colorOverlayCount);
+		this.getColor().mul(1f / (float) colorOverlayCount);
 
-		this.color.clamp();
+		this.getColor().clamp();
 
 		super.draw();
 
@@ -177,7 +177,7 @@ public class DrawableField extends DrawableSprite {
 			this.adjacencyOverlay.y = this.y;
 			this.adjacencyOverlay.scaleX = this.scaleX;
 			this.adjacencyOverlay.scaleY = this.scaleY;
-			this.adjacencyOverlay.color = Color.RED.cpy();
+			this.adjacencyOverlay.setColor(Color.RED.cpy());
 			this.adjacencyOverlay.draw();
 		}
 	}
