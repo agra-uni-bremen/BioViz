@@ -58,6 +58,14 @@ public class Droplet {
 		}
 		return positions.get(index);
 	}
+	
+	public Point getFirstPosition() {
+		return positions.firstElement();
+	}
+	
+	public Point getLastPosition() {
+		return positions.lastElement();
+	}
 
 	
 	/**
@@ -110,8 +118,11 @@ public class Droplet {
 	 * @warning Returns 0 in case no positions (i.e. no path) is associated with this droplet
 	 */
 	public int getMaxTime() {
-
 		return positions.size()+spawnTime-1;
+	}
+	
+	public int getSpawnTime() {
+		return this.spawnTime;
 	}
 
 	@Override

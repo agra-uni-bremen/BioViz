@@ -44,6 +44,18 @@ public class DrawableDroplet extends DrawableSprite {
 
 		// TODO this casting probably is bad (although we should rarely reach the boundary of int)
 		Point p = droplet.getPositionAt(circ.currentTime);
+		
+		if (p == null) {
+			if (circ.currentTime < droplet.getSpawnTime()) {
+				p = droplet.getFirstPosition();
+				this.setColor(this.getColor().cpy().sub(0, 0, 0, 1).clamp());
+			} else if (circ.currentTime > droplet.getMaxTime()) {
+				p = droplet.getLastPosition();
+				this.setColor(this.getColor().cpy().sub(0, 0, 0, 1).clamp());
+			}
+		} else {
+			this.setColor(this.getColor().cpy().add(0, 0, 0, 1).clamp());
+		}
 
 		if (p != null && BioViz.singleton.currentCircuit.getShowDroplets()) {
 

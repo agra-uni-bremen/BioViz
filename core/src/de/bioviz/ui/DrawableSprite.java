@@ -22,7 +22,7 @@ public abstract class DrawableSprite implements Drawable {
 	private static HashMap<String, TextureRegion> allTextures;
 	private Color color = Color.WHITE.cpy();
 	private Color currentColor = Color.WHITE.cpy();
-	float colorShiftDelay = 16f;
+	float colorShiftDelay = 8f;
 	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
 	private String currentTextureName;
 	
