@@ -167,7 +167,7 @@ public class DrawableField extends DrawableSprite {
 		}
 		
 		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
-			this.getColor().add(0.5f, 0,0,0);
+			this.getColor().add(0.5f, -0.5f, -0.5f, 0);
 		}
 
 		this.getColor().mul(1f / (float) colorOverlayCount);
