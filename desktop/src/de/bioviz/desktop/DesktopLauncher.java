@@ -122,10 +122,10 @@ public class DesktopLauncher extends JFrame {
 
 		final int buttonWidth = 112;
 		final int sliderWidth = buttonWidth;
-		final int sliderHeight= 16;
+		final int sliderHeight= new JSlider().getPreferredSize().height;
 
 		JButton autoplaytButton = new JButton("Autoplay");
-		autoplaytButton.setPreferredSize(new Dimension(buttonWidth, autoplaytButton.getPreferredSize().height));
+		autoplaytButton.setPreferredSize(new Dimension(buttonWidth, sliderHeight));
 		autoplaytButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
 
 		JButton openButton = new JButton("Open File");
@@ -157,14 +157,14 @@ public class DesktopLauncher extends JFrame {
 
 
 		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
-		time.setPreferredSize(new Dimension(sliderWidth, (int) time.getPreferredSize().getHeight()));
+		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.setCurrentTime(((JSlider) ce.getSource()).getValue()));
 		tc = new timerCallback(time,timeInfo);
 
 
 
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
-		routes.setPreferredSize(new Dimension(sliderWidth, (int) routes.getPreferredSize().getHeight()));
+		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
 		//tc = new timerCallback(time);
 
