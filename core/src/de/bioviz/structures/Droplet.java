@@ -1,9 +1,17 @@
 package de.bioviz.structures;
 
+import java.util.Date;
 import java.util.Collections;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.bioviz.ui.DrawableCircuit;
+
 public class Droplet {
+	
+	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 	
 	private Vector<Point> positions = new Vector<>();
 
@@ -12,7 +20,7 @@ public class Droplet {
 	
 	private float movementDelay = 4f;
 	
-	private long movementTransitionStartTime = 0, movementTransitionEndTime = 0;
+	private long movementTransitionStartTime = 0, movementTransitionEndTime = 0, movementTransitionDuration = 500;
 
 	public Vector<Point> getPositions() {
 		return positions;
@@ -21,8 +29,10 @@ public class Droplet {
 	public float smoothX, smoothY;
 
 	private float targetX;
-
 	private float targetY;
+	private float originX;
+	private float originY;
+	
 	private boolean firstUpdate = true;
 
 	public Droplet(int id) {
@@ -104,10 +114,16 @@ public class Droplet {
 		if (firstUpdate) {
 			smoothX = getTargetX();
 			smoothY = getTargetY();
+			originX = getTargetX();
+			originY = getTargetY();
 			firstUpdate = false;
 		}
-		smoothX += (getTargetX() - smoothX) / movementDelay;
-		smoothY += (getTargetY() - smoothY) / movementDelay;
+		
+		float transitionProgress = Math.max(0, Math.min(1, (float)(new Date().getTime() - movementTransitionStartTime) / (float)(movementTransitionEndTime - movementTransitionStartTime)));
+		float totalProgress = (float)(-(Math.pow((transitionProgress - 1), 4)) + 1);
+		
+		smoothX = this.originX * (1 - totalProgress) + this.targetX * totalProgress;
+		smoothY = this.originY * (1 - totalProgress) + this.targetY * totalProgress;
 	}
 
 	@Override
@@ -149,14 +165,21 @@ public class Droplet {
 	public float getTargetX() {
 		return targetX;
 	}
-	public void setTargetX(float targetX) {
-		this.targetX = targetX;
-	}
+
 	public float getTargetY() {
 		return targetY;
 	}
-	public void setTargetY(float targetY) {
-		this.targetY = targetY;
+	
+	public void setTargetPosition(float targetX, float targetY) {
+		if (this.targetX != targetX || this.targetY != targetY) {
+			originX = this.smoothX;
+			originY = this.smoothY;
+			this.targetX = targetX;
+			this.targetY = targetY;
+			Date d = new Date();
+			this.movementTransitionStartTime = d.getTime(); 
+			this.movementTransitionEndTime = d.getTime() + movementTransitionDuration;
+		}
 	}
 
 }
