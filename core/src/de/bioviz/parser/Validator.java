@@ -34,7 +34,7 @@ public class Validator {
 //						logger.debug("looking at points {} and {}",prev,curr);
 //						logger.debug("reachable: {}",Point.reachable(prev,curr));
 						if (!Point.reachable(prev,curr)) {
-							errors.add("Droplets "+ prev + " and "+curr +" are too far away of each other");
+							errors.add("Droplet " + drop.getID() + " has a jump in its route from " + prev + " to "+curr);
 						}
 						prev=curr;
 					}
