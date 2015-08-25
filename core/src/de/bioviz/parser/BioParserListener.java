@@ -344,6 +344,7 @@ public class BioParserListener extends BioBaseListener {
 	public void exitBio(BioContext ctx) {
 
 		chip = new Biochip();
+		ArrayList<String> errors = new ArrayList<String>();
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {
@@ -431,10 +432,10 @@ public class BioParserListener extends BioBaseListener {
 
 		// perform some sanity checks
 
-		ArrayList<String> errors = new ArrayList<String>();
 
-		errors.addAll(Validator.checkPathsForJumps(chip.getDroplets()));
-		errors.addAll(Validator.checkPathsForPositions(chip.getDroplets(), chip.getAllCoordinates()));
+
+		errors.addAll(Validator.checkPathsForJumps(droplets));
+		errors.addAll(Validator.checkPathsForPositions(droplets, chip.getAllCoordinates()));
 		errors.addAll(Validator.checkActuationVectorLenghts(cellActuations,pinActuations));
 
 		errors.forEach(s -> logger.error(s));

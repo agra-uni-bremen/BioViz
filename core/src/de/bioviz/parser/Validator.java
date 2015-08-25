@@ -17,7 +17,7 @@ public class Validator {
 	static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
 
-	static ArrayList<String> checkPathsForPositions(Set<Droplet> drops, Set<Point> points) {
+	static ArrayList<String> checkPathsForPositions(ArrayList<Droplet> drops, Set<Point> points) {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (Droplet drop: drops) {
 			Vector<Point> ps = drop.getPositions();
@@ -31,7 +31,7 @@ public class Validator {
 		return errors;
 	}
 
-	static ArrayList<String> checkPathsForJumps(Set<Droplet> drops) {
+	static ArrayList<String> checkPathsForJumps(ArrayList<Droplet> drops) {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (Droplet drop: drops) {
 			Vector<Point> points = drop.getPositions();
