@@ -21,6 +21,8 @@ public class BiochipField {
 	public ArrayList<Integer> target_ids = new ArrayList<Integer>();
 	public ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 	static private Logger logger = LoggerFactory.getLogger(BiochipField.class);
+	
+	BioViz parent;
 
 	public int x() {
 		return pos.first;
@@ -64,7 +66,7 @@ public class BiochipField {
 
 	public boolean isActuated(int timeStep) {
 
-		Biochip circ = BioViz.singleton.currentCircuit.data;
+		Biochip circ = parent.currentCircuit.data;
 		ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
 
 		if (pin != null && !circ.pinActuations.isEmpty()) {
@@ -103,25 +105,28 @@ public class BiochipField {
 		direction = dispenseFrom;
 	}
 
-	public BiochipField(Point pos, int fluidID, Direction dispenseFrom) {
+	public BiochipField(Point pos, int fluidID, Direction dispenseFrom, BioViz parent) {
 		this.pos = pos;
 		setDispenser(fluidID, dispenseFrom);
+		this.parent = parent;
 	}
 
-	public BiochipField(Point pos, Direction removeTo) {
+	public BiochipField(Point pos, Direction removeTo, BioViz parent) {
 		this.pos = pos;
 		setSink(removeTo);
-
+		this.parent = parent;
 	}
 
 	// end of TODO
 	// ############################################################################################################
-	public BiochipField(int x, int y) {
+	public BiochipField(int x, int y, BioViz parent) {
 		this.pos = new Point(x, y);
+		this.parent = parent;
 	}
 
-	public BiochipField(Point p) {
+	public BiochipField(Point p, BioViz parent) {
 		this.pos = p;
+		this.parent = parent;
 	}
 
 

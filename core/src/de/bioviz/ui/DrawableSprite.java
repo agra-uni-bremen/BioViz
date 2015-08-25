@@ -33,13 +33,17 @@ public abstract class DrawableSprite implements Drawable {
 	
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 	
+	BioViz viz;
+	
 	/**
 	 * This constructor checks if the given texture has been loaded before and does so
 	 * if that's not the case. A sprite is initialized accordingly.
 	 * 
 	 * @param textureFilename the texture to use
 	 */
-	public DrawableSprite(String textureFilename, float sizeX, float sizeY) {
+	public DrawableSprite(String textureFilename, float sizeX, float sizeY, BioViz parent) {
+		if (parent == null)
+			throw new RuntimeException("sprite parent must not be null"); 
 		currentTextureName = textureFilename;
 		if (allTextures == null) {
 			allTextures = new HashMap<>();
@@ -47,6 +51,7 @@ public abstract class DrawableSprite implements Drawable {
 		this.addLOD(Float.MAX_VALUE, textureFilename);
 		this.targetColor.a = 0;
 		this.currentColor.a = 0;
+		this.viz = parent;
 	}
 
 	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
@@ -56,8 +61,8 @@ public abstract class DrawableSprite implements Drawable {
 		sprite.setPosition(-sprite.getWidth()/2f, -sprite.getHeight()/2f);
 	}
 	
-	public DrawableSprite(String textureFilename) {
-		this(textureFilename, 1, 1);
+	public DrawableSprite(String textureFilename, BioViz parent) {
+		this(textureFilename, 1, 1, parent);
 	}
 	
 	public void draw() {
@@ -91,7 +96,7 @@ public abstract class DrawableSprite implements Drawable {
 		this.sprite.setScale(scaleX, scaleY);
 		this.sprite.setRotation(rotation);
 		this.sprite.setColor(currentColor);
-		this.sprite.draw(BioViz.singleton.batch);
+		this.sprite.draw(viz.batch);
 	}
 	
 	public void setDimensions(float dimX, float dimY) {
@@ -136,13 +141,13 @@ public abstract class DrawableSprite implements Drawable {
 		int resX = Gdx.graphics.getWidth();
 		int resY = Gdx.graphics.getHeight();
 		
-		Rectangle viewport = BioViz.singleton.currentCircuit.getViewBounds();
+		Rectangle viewport = viz.currentCircuit.getViewBounds();
 		
 		float viewMouseX = (((float)mouseX / (float)resX) * viewport.width + viewport.x);
 		float viewMouseY = -(((float)mouseY / (float)resY) * viewport.height + viewport.y);
 		
-		if (viewMouseX > BioViz.singleton.currentCircuit.xCoordInGates(this.x) - 0.5f && viewMouseX < BioViz.singleton.currentCircuit.xCoordInGates(this.x) + 0.5f &&
-			viewMouseY > BioViz.singleton.currentCircuit.yCoordInGates(this.y) - 0.5f && viewMouseY < BioViz.singleton.currentCircuit.yCoordInGates(this.y) + 0.5f) {
+		if (viewMouseX > viz.currentCircuit.xCoordInGates(this.x) - 0.5f && viewMouseX < viz.currentCircuit.xCoordInGates(this.x) + 0.5f &&
+			viewMouseY > viz.currentCircuit.yCoordInGates(this.y) - 0.5f && viewMouseY < viz.currentCircuit.yCoordInGates(this.y) + 0.5f) {
 			return true;
 		}
 		return false;

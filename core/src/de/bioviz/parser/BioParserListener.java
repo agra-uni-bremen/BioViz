@@ -19,10 +19,11 @@ import de.bioviz.parser.generated.Bio.RouteContext;
 import de.bioviz.parser.generated.Bio.BioContext;
 import de.bioviz.parser.generated.Bio.MixerIDContext;
 import de.bioviz.parser.generated.Bio.TimeRangeContext;
-
 import de.bioviz.parser.generated.BioBaseListener;
 import de.bioviz.structures.*;
+import de.bioviz.ui.BioViz;
 import de.bioviz.util.Pair;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Nullable;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -57,6 +58,10 @@ public class BioParserListener extends BioBaseListener {
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
+	BioViz viz;
+	public BioParserListener(BioViz viz) {
+		this.viz = viz;
+	}
 
 	public Biochip getBiochip() {
 		return chip;
@@ -347,7 +352,7 @@ public class BioParserListener extends BioBaseListener {
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {
-				chip.addField(cell, new BiochipField(cell));
+				chip.addField(cell, new BiochipField(cell, viz));
 			}
 		}
 
@@ -378,7 +383,7 @@ public class BioParserListener extends BioBaseListener {
 			Direction dir = sink.second;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point sinkPoint = p.add(dirPoint);
-			BiochipField sinkField = new BiochipField(sinkPoint,dir);
+			BiochipField sinkField = new BiochipField(sinkPoint,dir, viz);
 			chip.addField(sinkPoint,sinkField);
 		});
 
@@ -389,7 +394,7 @@ public class BioParserListener extends BioBaseListener {
 			Direction dir = dispenser.second.second;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point dispPoint = p.add(dirPoint);
-			BiochipField dispField = new BiochipField(dispPoint,fluidID,dir);
+			BiochipField dispField = new BiochipField(dispPoint,fluidID,dir, viz);
 			chip.addField(dispPoint, dispField);
 
 		});

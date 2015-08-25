@@ -17,7 +17,7 @@ public class DrawableRoute extends DrawableSprite {
 	public Color baseColor = Color.BLACK;
 
 	public DrawableRoute(DrawableDroplet parent) {
-		super("StepMarker.png");
+		super("StepMarker.png", parent.viz);
 		this.parent = parent;
 		super.addLOD(defaultLODThreshold, "BlackPixel.png");
 	}
@@ -25,7 +25,7 @@ public class DrawableRoute extends DrawableSprite {
 	@Override
 	public String generateSVG() {
 		String result = "";
-		int currentTime = BioViz.singleton.currentCircuit.currentTime;
+		int currentTime = parent.parent.currentTime;
 		int displayAt;
 
 		for (int i = -timesteps; i < timesteps; i++) {
@@ -45,7 +45,7 @@ public class DrawableRoute extends DrawableSprite {
 
 			float targetX = x1 + 0.5f;
 			float targetY = -y1 +
-					BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1;
+					parent.parent.data.getMaxCoord().second - 1;
 			if (y1 == y2 && x2 > x1) {
 				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" xlink:href=\"StepMarker.svg\" />";
 			} else if (y1 == y2 && x2 < x1) {
@@ -63,7 +63,7 @@ public class DrawableRoute extends DrawableSprite {
 
 	@Override
 	public void draw() {
-		int currentTime = BioViz.singleton.currentCircuit.currentTime;
+		int currentTime = parent.parent.currentTime;
 		int displayAt;
 
 
@@ -98,24 +98,24 @@ public class DrawableRoute extends DrawableSprite {
 				int y1 = p1.second;
 				int y2 = p2.second;
 
-				float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
-				float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+				float xCoord = parent.parent.xCoordOnScreen(x1 + 0.5f);
+				float yCoord = parent.parent.yCoordOnScreen(y1);
 
 				if (y1 == y2 && x2 > x1) {
-					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
-					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+					xCoord = parent.parent.xCoordOnScreen(x1 + 0.5f);
+					yCoord = parent.parent.yCoordOnScreen(y1);
 					this.rotation = 0;
 				} else if (y1 == y2 && x2 < x1) {
-					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 - 0.5f);
-					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+					xCoord = parent.parent.xCoordOnScreen(x1 - 0.5f);
+					yCoord = parent.parent.yCoordOnScreen(y1);
 					this.rotation = 180;
 				} else if (x1 == x2 && y2 > y1) {
-					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
-					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 + 0.5f);
+					xCoord = parent.parent.xCoordOnScreen(x1);
+					yCoord = parent.parent.yCoordOnScreen(y1 + 0.5f);
 					this.rotation = 90;
 				} else if (x1 == x2 && y2 < y1) {
-					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
-					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 - 0.5f);
+					xCoord = parent.parent.xCoordOnScreen(x1);
+					yCoord = parent.parent.yCoordOnScreen(y1 - 0.5f);
 					this.rotation = 270;
 				} else {
 					continue;
@@ -123,8 +123,8 @@ public class DrawableRoute extends DrawableSprite {
 
 				this.x = xCoord;
 				this.y = yCoord;
-				this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
-				this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
+				this.scaleX = parent.parent.smoothScaleX;
+				this.scaleY = parent.parent.smoothScaleY;
 
 				super.draw();
 			}

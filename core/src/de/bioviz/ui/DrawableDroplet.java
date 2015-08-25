@@ -14,9 +14,12 @@ public class DrawableDroplet extends DrawableSprite {
 	private DrawableRoute route;
 
 	private static Random randnum = null;
+	
+	DrawableCircuit parent;
 
-	public DrawableDroplet(Droplet droplet) {
-		super("Droplet.png");
+	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
+		super("Droplet.png", parent.parent);
+		this.parent = parent;
 		if (randnum == null) {
 			randnum = new Random();
 		}
@@ -34,7 +37,7 @@ public class DrawableDroplet extends DrawableSprite {
 	public String generateSVG() {
 		return
 				"<image x=\"" + this.droplet.smoothX + "\" " +
-						"y=\"" + (-this.droplet.smoothY + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" " +
+						"y=\"" + (-this.droplet.smoothY + parent.data.getMaxCoord().second - 1) + "\" " +
 						"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
 						this.route.generateSVG();
 	}
@@ -42,7 +45,7 @@ public class DrawableDroplet extends DrawableSprite {
 	@Override
 	public void draw() {
 
-		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+		DrawableCircuit circ = parent;
 
 		Point p = droplet.getPositionAt(circ.currentTime);
 		boolean visible = false;
@@ -61,7 +64,7 @@ public class DrawableDroplet extends DrawableSprite {
 			visible = true;
 		}
 
-		if (p!= null && BioViz.singleton.currentCircuit.getShowDroplets()) {
+		if (p!= null && parent.getShowDroplets()) {
 
 
 			droplet.setTargetPosition(p.first, p.second);
@@ -94,16 +97,16 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 
 			if (msg != null) {
-				BioViz.singleton.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
+				parent.parent.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
 			} else {
-				BioViz.singleton.mc.removeHUDMessage(this.hashCode());
+				parent.parent.mc.removeHUDMessage(this.hashCode());
 			}
 
 			super.draw();
 		}
 		if (!visible) {
 			// make sure that previous numbers are removed when the droplet is removed.
-			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
+			parent.parent.mc.removeHUDMessage(this.hashCode());
 		}
 	}
 }
