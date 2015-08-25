@@ -1,12 +1,15 @@
 package de.bioviz.structures;
 
 import de.bioviz.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by keszocze on 27.07.15.
  * @author Oliver Keszocze
  */
 public class Point extends Pair<Integer, Integer> {
+	static final Logger logger = LoggerFactory.getLogger(Point.class);
 	public Point(int x, int y) {
 		super(x, y);
 	}
@@ -53,7 +56,9 @@ public class Point extends Pair<Integer, Integer> {
 
 	public static boolean reachable(Point p1, Point p2) {
 		for (Point direction : DIRECTIONS) {
-			if (p1.add(direction) == p2) {
+//			logger.debug("p1.add("+direction+")="+p1.add(direction)+" == "+p2);
+
+			if (p1.add(direction).equals(p2)) {
 				return true;
 			}
 		}
