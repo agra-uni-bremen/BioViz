@@ -17,8 +17,21 @@ import java.util.Vector;
 public class Validator {
 	static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
-	// TODO add check for positions that are outside of the grid
-	static ArrayList<String> checkPaths(Set<Droplet> drops) {
+
+	static ArrayList<String> checkPathsForPositions(Set<Droplet> drops, Set<Point> points) {
+		ArrayList<String> errors = new ArrayList<String>();
+		for (Droplet drop: drops) {
+			Vector<Point> ps = drop.getPositions();
+			ps.forEach(p -> {
+				if (!points.contains(p)) {
+					errors.add("Droplet "+drop.getID()+": position " + p + " of route not on grid!");
+				}
+			});
+		}
+
+		return errors;
+	}
+
 	static ArrayList<String> checkPathsForJumps(Set<Droplet> drops) {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (Droplet drop: drops) {
@@ -26,7 +39,7 @@ public class Validator {
 //			logger.debug("Evaluating router of length {} for droplet {}",points.size(),drop.getID());
 
 			if (points.isEmpty()) {
-				errors.add("Droplet " + drop.getID() + " has no route attached to it");
+				errors.add("Droplet " + drop.getID() + " has no route attached to it!");
 			} else {
 				if (points.size() >= 2) {
 					Point prev = points.get(0);
@@ -35,7 +48,7 @@ public class Validator {
 //						logger.debug("looking at points {} and {}",prev,curr);
 //						logger.debug("reachable: {}",Point.reachable(prev,curr));
 						if (!Point.reachable(prev,curr)) {
-							errors.add("Droplet " + drop.getID() + " has a jump in its route from " + prev + " to "+curr);
+							errors.add("Droplet " + drop.getID() + ": Jump in route from " + prev + " to "+curr+"!");
 						}
 						prev=curr;
 					}

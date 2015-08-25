@@ -434,6 +434,7 @@ public class BioParserListener extends BioBaseListener {
 		ArrayList<String> errors = new ArrayList<String>();
 
 		errors.addAll(Validator.checkPathsForJumps(chip.getDroplets()));
+		errors.addAll(Validator.checkPathsForPositions(chip.getDroplets(),chip.getAllCoordinates()));
 
 		errors.forEach(s -> logger.error(s));
 
