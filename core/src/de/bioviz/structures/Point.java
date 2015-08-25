@@ -4,6 +4,7 @@ import de.bioviz.util.Pair;
 
 /**
  * Created by keszocze on 27.07.15.
+ * @author Oliver Keszocze
  */
 public class Point extends Pair<Integer, Integer> {
 	public Point(int x, int y) {
@@ -22,6 +23,8 @@ public class Point extends Pair<Integer, Integer> {
 	public final static Point EAST = new Point(1,0);
 	public final static Point SOUTH = new Point(0,-1);
 	public final static Point WEST = new Point(-1,0);
+
+	public final static Point[] DIRECTIONS  = {NORTH, EAST, SOUTH, WEST};
 
 	/*
 	This hashCode method has been taken from http://stackoverflow.com/a/26981910
@@ -45,6 +48,16 @@ public class Point extends Pair<Integer, Integer> {
 
 		// note that this case should not be reachable
 		return new Point(0, 0);
+	}
+
+
+	public static boolean reachable(Point p1, Point p2) {
+		for (Point direction : DIRECTIONS) {
+			if (p1.add(direction) == p2) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static boolean adjacent(Point p1, Point p2) {
