@@ -49,7 +49,10 @@ project(":desktop") {
     
     apply plugin: "checkstyle"
     checkstyle.ignoreFailures = true
-
+    checkstyle {
+        toolVersion = "6.0"
+    }
+    
     antlr4.source = file('../lib/parser')
     antlr4.output = file('../core/src/de/bioviz/parser/generated')
     antlr4.extraArgs=['-package','de.bioviz.parser.generated']
@@ -75,9 +78,11 @@ project(":core") {
     compileJava.dependsOn antlr4
     
     apply plugin: "checkstyle"
-    
     checkstyle.ignoreFailures = true
-
+    checkstyle {
+        toolVersion = "6.0"
+    }
+    
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile 'ch.qos.logback:logback-classic:1.1.3'
