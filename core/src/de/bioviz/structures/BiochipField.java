@@ -68,7 +68,12 @@ public class BiochipField {
 		ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
 
 		if (pin != null && !circ.pinActuations.isEmpty()) {
-			act = circ.pinActuations.get(pin.pinID).get(timeStep - 1);
+			logger.trace("circ.pinActuations.isEmpty: {}", circ.pinActuations.isEmpty());
+			logger.trace("timeStep: {} actuationVector {}", timeStep, circ.pinActuations.get(pin.pinID));
+			ActuationVector vec = circ.pinActuations.get(pin.pinID);
+			if (vec != null) {
+				act = vec.get(timeStep - 1);
+			}
 		} else if (actVec != null && !actVec.isEmpty()) {
 			act = actVec.get(timeStep - 1);
 		} else {
