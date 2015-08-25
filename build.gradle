@@ -95,6 +95,8 @@ project(":core") {
     tasks.matching { task -> task.name == "checkstyleMain" }.all {
         outputs.upToDateWhen { false }
     }
+    
+    compileJava.finalizedBy(checkstyleMain)
 }
 
 tasks.eclipse.doLast {
