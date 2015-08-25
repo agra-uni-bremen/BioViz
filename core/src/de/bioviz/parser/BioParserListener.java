@@ -429,5 +429,13 @@ public class BioParserListener extends BioBaseListener {
 			});
 		});
 
+		// perform some sanity checks
+
+		ArrayList<String> errors = new ArrayList<String>();
+
+		errors.addAll(Validator.checkPaths(chip.getDroplets()));
+
+		errors.forEach(s -> logger.error(s));
+
 	}
 }
