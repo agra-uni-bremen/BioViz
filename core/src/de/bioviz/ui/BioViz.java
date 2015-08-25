@@ -122,7 +122,7 @@ public class BioViz implements ApplicationListener {
 	}
 
 	@Override
-	public void render() {
+	public synchronized void render() {
 		
 		long currentTimestamp = new Date().getTime();
 		

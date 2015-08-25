@@ -51,6 +51,8 @@ public class DesktopLauncher extends JFrame {
 	private static JFileChooser fileDialog = null;
 
 	private static Logger logger = LoggerFactory.getLogger(DesktopLauncher.class);
+	
+	private JTabbedPane visualizationTabs;
 
 	/**
 	 * Needed to fetch *all* pressed keys that are caught somewhere
@@ -94,15 +96,11 @@ public class DesktopLauncher extends JFrame {
 
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
 
-		if (file == null) {
-			bioViz = new BioViz();
-		} else {
-			bioViz = new BioViz(file);
-		}
-		canvas = new LwjglAWTCanvas(bioViz);
 		
-		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Tab", canvas.getCanvas());
+		
+		visualizationTabs = new JTabbedPane();
+		
+		addNewTab(file);
 
 		/**
 		 * Needed to pipe through the keyboard events to the libgdx application
@@ -244,7 +242,7 @@ public class DesktopLauncher extends JFrame {
 		input = new LwjglAWTInput(canvas.getCanvas());
 
 		container.add(panel, BorderLayout.WEST);
-		container.add(tabbedPane, BorderLayout.CENTER);
+		container.add(visualizationTabs, BorderLayout.CENTER);
 
 		loaded_cb = new loadedFileCallback();
 		BioViz.singleton.addLoadedFileListener(loaded_cb);
@@ -261,6 +259,16 @@ public class DesktopLauncher extends JFrame {
 		pack();
 		setVisible(true);
 		setSize(800, 600);
+	}
+	
+	private void addNewTab(File file) {
+		if (file == null) {
+			bioViz = new BioViz();
+		} else {
+			bioViz = new BioViz(file);
+		}
+		canvas = new LwjglAWTCanvas(bioViz);
+		visualizationTabs.addTab("Tab", canvas.getCanvas());
 	}
 
 	public static void main(String[] args) {
@@ -450,7 +458,7 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			File f = askForFile();
 			if (f != null) {
-				BioViz.loadNewFile(f);
+				addNewTab(f);
 			}
 		}
 	}
