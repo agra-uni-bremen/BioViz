@@ -28,7 +28,8 @@ public class Pair<K, V> {
 			return false;
 		}
 
-		return first.equals(((Pair)o).first) && second.equals(((Pair)o).second);
+		Pair other = (Pair)o;
+		return first.equals(other.first) && second.equals(other.second);
 	}
 
 	public String toString() {
