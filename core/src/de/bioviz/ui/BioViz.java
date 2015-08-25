@@ -43,6 +43,17 @@ public class BioViz implements ApplicationListener {
 
 	private File bioFile;
 	private BioVizInputProcessor inputProcessor;
+	
+	/**
+	 * This stores the last time a frame was rendered.
+	 * Used to limit the framerate on faster systems to save resources.
+	 */
+	private long lastRenderTimestamp = 0;
+	
+	/**
+	 * The desired framerate in fps.
+	 */
+	private int targetFramerate = 60;
 
 	public String getFileName() {
 		if (bioFile == null) {
@@ -112,7 +123,10 @@ public class BioViz implements ApplicationListener {
 
 	@Override
 	public void render() {
-
+		
+		long currentTimestamp = new Date().getTime();
+		
+		
 		if (loadFileOnUpdate) {
 			loadNewFileNow();
 			loadFileOnUpdate = false;
@@ -137,6 +151,14 @@ public class BioViz implements ApplicationListener {
 		mc.render();
 
 		batch.end();
+		
+		long waitUntil = currentTimestamp + (1000 / this.targetFramerate);
+		try {
+			Thread.sleep(Math.max(0, waitUntil - new Date().getTime()));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private boolean firstRun = true;
