@@ -52,6 +52,12 @@ project(":desktop") {
     checkstyle {
         toolVersion = "6.0"
     }
+    task checkstyleHtml << {
+        ant.xslt(in: checkstyleMain.reports.xml.destination,
+             style: file('../config/checkstyle-noframes-sorted.xsl'),
+             out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
+    }
+    checkstyleMain.finalizedBy checkstyleHtml
     
     antlr4.source = file('../lib/parser')
     antlr4.output = file('../core/src/de/bioviz/parser/generated')
@@ -78,6 +84,12 @@ project(":core") {
     compileJava.dependsOn antlr4
     
     apply plugin: "checkstyle"
+    task checkstyleHtml << {
+        ant.xslt(in: checkstyleMain.reports.xml.destination,
+             style: file('../config/checkstyle-noframes-sorted.xsl'),
+             out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
+    }
+    checkstyleMain.finalizedBy checkstyleHtml
     checkstyle.ignoreFailures = true
     checkstyle {
         toolVersion = "6.0"
