@@ -24,7 +24,9 @@ public class DrawableDroplet extends DrawableSprite {
 		super.addLOD(defaultLODThreshold, "BlackPixel.png");
 		randnum.setSeed(droplet.getID());
 		super.setColor(new Color(randnum.nextInt()));
-		super.getColor().a = 1f;
+		Color c = super.getColor();
+		c.a = 1f;
+		super.setColor(c);
 		route = new DrawableRoute(this);
 	}
 

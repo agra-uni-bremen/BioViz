@@ -1,5 +1,6 @@
 package de.bioviz.ui;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
@@ -20,8 +21,10 @@ public abstract class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
 	private static HashMap<String, TextureRegion> allTextures;
-	private Color color = Color.WHITE.cpy();
+	private Color targetColor = Color.WHITE.cpy();
 	private Color currentColor = Color.WHITE.cpy();
+	private Color originColor = Color.WHITE.cpy();
+	private long colorTransitionStartTime = 0, colorTransitionEndTime = 0, colorTransitionDuration = 500;
 	float colorShiftDelay = 8f;
 	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
 	private String currentTextureName;
@@ -42,7 +45,7 @@ public abstract class DrawableSprite implements Drawable {
 			allTextures = new HashMap<>();
 		}
 		this.addLOD(Float.MAX_VALUE, textureFilename);
-		this.color.a = 0;
+		this.targetColor.a = 0;
 		this.currentColor.a = 0;
 	}
 
@@ -145,18 +148,25 @@ public abstract class DrawableSprite implements Drawable {
 		return false;
 	}
 	
-	protected void update() {
-		currentColor.r += (color.r - currentColor.r) / colorShiftDelay;
-		currentColor.g += (color.g - currentColor.g) / colorShiftDelay;
-		currentColor.b += (color.b - currentColor.b) / colorShiftDelay;
-		currentColor.a += (color.a - currentColor.a) / colorShiftDelay;
+	protected void update() {		
+		float transitionProgress = Math.max(0, Math.min(1, (float)(new Date().getTime() - colorTransitionStartTime) / (float)(colorTransitionEndTime - colorTransitionStartTime)));
+		float totalProgress = (float)(-(Math.pow((transitionProgress - 1), 4)) + 1);
+		
+		currentColor = this.originColor.cpy().mul(1 - totalProgress).add(this.targetColor.cpy().mul(totalProgress));
 	}
 
 	public Color getColor() {
-		return color;
+		return targetColor.cpy();
 	}
 
 	public void setColor(Color color) {
-		this.color = color;
+		if (!this.targetColor.equals(color)) {
+			//this.color = color;
+			originColor = this.currentColor;
+			this.targetColor = color;
+			Date d = new Date();
+			this.colorTransitionStartTime = d.getTime(); 
+			this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
+		}
 	}
 }

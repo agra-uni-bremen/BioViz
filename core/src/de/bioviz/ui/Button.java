@@ -55,11 +55,15 @@ public class Button extends DrawableSprite {
 	}
 	
 	public void Hovered() {
-		this.getColor().a = 1;
+		Color c = this.getColor();
+		c.a = 1;
+		this.setColor(c);
 	}
 	
 	public void UnHovered() {
-		this.getColor().a = 0.75f;
+		Color c = this.getColor();
+		c.a = 0.75f;
+		this.setColor(c);
 	}
 
 	@Override
