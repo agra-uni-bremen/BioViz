@@ -19,6 +19,7 @@ public class Validator {
 
 	// TODO add check for positions that are outside of the grid
 	static ArrayList<String> checkPaths(Set<Droplet> drops) {
+	static ArrayList<String> checkPathsForJumps(Set<Droplet> drops) {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (Droplet drop: drops) {
 			Vector<Point> points = drop.getPositions();

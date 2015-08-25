@@ -389,7 +389,7 @@ public class BioParserListener extends BioBaseListener {
 			Direction dir = dispenser.second.second;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point dispPoint = p.add(dirPoint);
-			BiochipField dispField = new BiochipField(dispPoint,fluidID,dir);
+			BiochipField dispField = new BiochipField(dispPoint, fluidID, dir);
 			chip.addField(dispPoint, dispField);
 
 		});
@@ -433,7 +433,7 @@ public class BioParserListener extends BioBaseListener {
 
 		ArrayList<String> errors = new ArrayList<String>();
 
-		errors.addAll(Validator.checkPaths(chip.getDroplets()));
+		errors.addAll(Validator.checkPathsForJumps(chip.getDroplets()));
 
 		errors.forEach(s -> logger.error(s));
 
