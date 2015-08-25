@@ -27,14 +27,14 @@ public class DrawableField extends DrawableSprite {
 	private boolean drawBlockage = false;
 	private boolean drawDetector = false;
 
-	private DrawableSprite adjacencyOverlay;
+	//private DrawableSprite adjacencyOverlay;
 
 
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
 		this.field = field;
 		super.addLOD(8, "BlackPixel.png");
-		adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
+		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 
 	@Override
@@ -165,21 +165,16 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 		}
+		
+		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
+			this.getColor().add(0.5f, -0.5f, -0.5f, 0);
+		}
 
 		this.getColor().mul(1f / (float) colorOverlayCount);
 
 		this.getColor().clamp();
 
 		super.draw();
-
-		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
-			this.adjacencyOverlay.x = this.x;
-			this.adjacencyOverlay.y = this.y;
-			this.adjacencyOverlay.scaleX = this.scaleX;
-			this.adjacencyOverlay.scaleY = this.scaleY;
-			this.adjacencyOverlay.setColor(Color.RED.cpy());
-			this.adjacencyOverlay.draw();
-		}
 	}
 
 	private class AdjacencyOverlay extends DrawableSprite {
