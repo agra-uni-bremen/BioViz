@@ -11,12 +11,18 @@ public class Droplet {
 	private int spawnTime = 1;
 	
 	private float movementDelay = 4f;
+	
+	private long movementTransitionStartTime = 0, movementTransitionEndTime = 0;
 
 	public Vector<Point> getPositions() {
 		return positions;
 	}
 
-	public float smoothX, smoothY, targetX, targetY;
+	public float smoothX, smoothY;
+
+	private float targetX;
+
+	private float targetY;
 	private boolean firstUpdate = true;
 
 	public Droplet(int id) {
@@ -96,12 +102,12 @@ public class Droplet {
 	
 	public void update() {
 		if (firstUpdate) {
-			smoothX = targetX;
-			smoothY = targetY;
+			smoothX = getTargetX();
+			smoothY = getTargetY();
 			firstUpdate = false;
 		}
-		smoothX += (targetX - smoothX) / movementDelay;
-		smoothY += (targetY - smoothY) / movementDelay;
+		smoothX += (getTargetX() - smoothX) / movementDelay;
+		smoothY += (getTargetY() - smoothY) / movementDelay;
 	}
 
 	@Override
@@ -139,6 +145,18 @@ public class Droplet {
 
 	public int getID() {
 		return this.id;
+	}
+	public float getTargetX() {
+		return targetX;
+	}
+	public void setTargetX(float targetX) {
+		this.targetX = targetX;
+	}
+	public float getTargetY() {
+		return targetY;
+	}
+	public void setTargetY(float targetY) {
+		this.targetY = targetY;
 	}
 
 }

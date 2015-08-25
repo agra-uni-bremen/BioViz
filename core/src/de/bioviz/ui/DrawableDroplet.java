@@ -62,8 +62,8 @@ public class DrawableDroplet extends DrawableSprite {
 		if (p!= null && BioViz.singleton.currentCircuit.getShowDroplets()) {
 
 
-			droplet.targetX = p.first;
-			droplet.targetY = p.second;
+			droplet.setTargetX(p.first);
+			droplet.setTargetY(p.second);
 
 			droplet.update();
 
