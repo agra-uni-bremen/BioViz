@@ -1,13 +1,12 @@
 package de.bioviz.parser;
 
+import de.bioviz.structures.ActuationVector;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Created by keszocze on 25.08.15.
@@ -55,6 +54,49 @@ public class Validator {
 				}
 			}
 
+		}
+		return errors;
+	}
+
+	static ArrayList<String> checkActuationVectorLenghts(HashMap<Point, ActuationVector> cellActuations, HashMap<Integer, ActuationVector> pinActuations) {
+		ArrayList<String> errors = new ArrayList<String>();
+
+		int cellActs = -1;
+		int pinActs = -1;
+		boolean addedCellError=false;
+
+		if (cellActuations != null && !cellActuations.isEmpty()) {
+			for (Map.Entry<Point, ActuationVector> pair : cellActuations.entrySet()) {
+				int len = pair.getValue().size();
+				if (cellActs == -1) {
+					cellActs = len;
+				} else {
+					if (len != cellActs && !addedCellError) {
+						errors.add("Different lengths in cell actuations");
+						addedCellError=true;
+					}
+				}
+			}
+		}
+
+		boolean addedPinError=false;
+		boolean diffError=false;
+		if (pinActuations != null && !pinActuations.isEmpty()) {
+			for (Map.Entry<Integer, ActuationVector> pair : pinActuations.entrySet()) {
+				int len = pair.getValue().size();
+				if (pinActs == -1) {
+					pinActs = len;
+				} else {
+					if (len != cellActs && !addedPinError) {
+						errors.add("Different lengths in pin actuations");
+						addedPinError=true;
+					}
+					if (pinActs != -1 && pinActs != len && !diffError) {
+						errors.add("Different lengths between cell and pin actuations");
+						diffError=true;
+					}
+				}
+			}
 		}
 		return errors;
 	}
