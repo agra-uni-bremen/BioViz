@@ -100,6 +100,9 @@ public class DesktopLauncher extends JFrame {
 			bioViz = new BioViz(file);
 		}
 		canvas = new LwjglAWTCanvas(bioViz);
+		
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("Tab", canvas.getCanvas());
 
 		/**
 		 * Needed to pipe through the keyboard events to the libgdx application
@@ -241,7 +244,7 @@ public class DesktopLauncher extends JFrame {
 		input = new LwjglAWTInput(canvas.getCanvas());
 
 		container.add(panel, BorderLayout.WEST);
-		container.add(canvas.getCanvas(), BorderLayout.CENTER);
+		container.add(tabbedPane, BorderLayout.CENTER);
 
 		loaded_cb = new loadedFileCallback();
 		BioViz.singleton.addLoadedFileListener(loaded_cb);
