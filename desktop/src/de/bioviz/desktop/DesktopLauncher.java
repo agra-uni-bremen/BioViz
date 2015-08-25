@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,7 +18,9 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
@@ -34,22 +35,29 @@ import org.slf4j.LoggerFactory;
 public class DesktopLauncher extends JFrame {
 
 	public JSlider time;
+	JLabel timeInfo = new JLabel("1");
+
 	timerCallback tc;
 	loadFileCallback load_cb;
 	loadedFileCallback loaded_cb;
+	saveFileCallback save_cb;
 	public static DesktopLauncher singleton;
 	private BioViz bioViz;
 	LwjglAWTCanvas canvas;
 	LwjglAWTInput input;
-	
+
+	public final String programName = "BioViz";
+
+	private static JFileChooser fileDialog = null;
+
 	private static Logger logger = LoggerFactory.getLogger(DesktopLauncher.class);
-	
+
 	/**
 	 * Needed to fetch *all* pressed keys that are caught somewhere
 	 * in this frame in order to pipe them through to the libgdx
 	 * program within.
-	 * @author jannis
 	 *
+	 * @author jannis
 	 */
 	private class MyDispatcher implements KeyEventDispatcher {
 		@Override
@@ -78,111 +86,175 @@ public class DesktopLauncher extends JFrame {
 	public DesktopLauncher(int timeMax, File file) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
-		int rnd = new Random().nextInt(21);
-		if (rnd <= 9)
-			this.setTitle("Olli's BioViz");
-		else if (rnd <= 19)
-			this.setTitle("Jannis' BioViz");
-		else
-			this.setTitle("Organic Visualization");
-		
+
+		this.setTitle(programName);
+
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
-		
+
 		if (file == null) {
 			bioViz = new BioViz();
 		} else {
 			bioViz = new BioViz(file);
 		}
 		canvas = new LwjglAWTCanvas(bioViz);
-		
+
 		/**
 		 * Needed to pipe through the keyboard events to the libgdx application
 		 */
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new MyDispatcher());
 
+		final int panelWidth=128;
+		final int panelHeight=600;
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
-		panel.setPreferredSize(new Dimension(128, 600));
+		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
 
-		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/></body></html>");
 
-		JButton autoplaytButton = new JButton();
-		autoplaytButton.setText("Autoplay");
-		autoplaytButton.setPreferredSize(new Dimension(112, autoplaytButton.getPreferredSize().height));
+		// This text was completely useless. I leave the code here as a reference on how to add labels with some kind
+		// of formatting.
+//		JLabel label = new JLabel("<html><body>Totally classic<br/>UI elements<br/></body></html>");
+
+
+		final int buttonWidth = 112;
+		final int sliderWidth = buttonWidth;
+		final int sliderHeight= new JSlider().getPreferredSize().height;
+
+		JButton autoplaytButton = new JButton("Autoplay");
+		autoplaytButton.setPreferredSize(new Dimension(buttonWidth, autoplaytButton.getPreferredSize().height));
 		autoplaytButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
-		
-		JButton openButton = new JButton();
-		openButton.setText("Open File");
-		openButton.setPreferredSize(new Dimension(112, autoplaytButton.getPreferredSize().height));
+
+		JButton openButton = new JButton("Open File");
+		openButton.setPreferredSize(new Dimension(buttonWidth, openButton.getPreferredSize().height));
 		load_cb = new loadFileCallback();
 		openButton.addActionListener(e -> load_cb.bioVizEvent());
-		
-		JButton zoomButton = new JButton();
-		zoomButton.setText("Reset camera");
-		zoomButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
+
+		JButton saveButton = new JButton("Save SVG");
+		saveButton.setPreferredSize(new Dimension(buttonWidth, saveButton.getPreferredSize().height));
+		save_cb = new saveFileCallback();
+		saveButton.addActionListener(e -> save_cb.bioVizEvent());
+
+		JButton zoomButton = new JButton("Center");
+		zoomButton.setPreferredSize(new Dimension(buttonWidth, zoomButton.getPreferredSize().height));
 		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
 
-		JButton usageButton = new JButton();
-		usageButton.setText("Show Cell Usage");
-		usageButton.setPreferredSize(new Dimension(112, zoomButton.getPreferredSize().height));
+		JButton dropletButton = new JButton("Droplets");
+		dropletButton.setPreferredSize(new Dimension(buttonWidth, dropletButton.getPreferredSize().height));
+		dropletButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowDroplets());
+
+		JButton usageButton = new JButton("Cell Usage");
+		usageButton.setPreferredSize(new Dimension(buttonWidth, usageButton.getPreferredSize().height));
 		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
-		
-		JLabel timeInfo = new JLabel("<html><body>Time</body></html>");
-		
-		time = new JSlider(JSlider.HORIZONTAL, 0, timeMax, 0);
-		time.setPreferredSize(new Dimension(128, 64));
-		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.currentTime = ((JSlider) ce.getSource()).getValue());
-		tc = new timerCallback(time);
-		
-		JLabel routeInfo = new JLabel("<html><body>Route length</body></html>");
-		
+
+		JButton actuationButton = new JButton("Actuations");
+		actuationButton.setPreferredSize(new Dimension(buttonWidth, actuationButton.getPreferredSize().height));
+		actuationButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowActuations());
+
+
+
+		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
+		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
+		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.setCurrentTime(((JSlider) ce.getSource()).getValue()));
+		tc = new timerCallback(time,timeInfo);
+
+
+
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
-		routes.setPreferredSize(new Dimension(128, 64));
+		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
 		//tc = new timerCallback(time);
-		
-		JButton adjacencyButton = new JButton();
-		adjacencyButton.setText("(A)djacency");
-		adjacencyButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
+
+		JButton adjacencyButton = new JButton("Adjacency");
+		adjacencyButton.setPreferredSize(new Dimension(buttonWidth, adjacencyButton.getPreferredSize().height));
 		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
 
 
-		JButton displayDropletIDsButton = new JButton();
-		displayDropletIDsButton.setText("Drop IDs");
-		displayDropletIDsButton.setPreferredSize(new Dimension(112, adjacencyButton.getPreferredSize().height));
+		JButton displayDropletIDsButton = new JButton("Drop IDs");
+		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth, displayDropletIDsButton.getPreferredSize().height));
 		displayDropletIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayDropletIDs());
-		
-		panel.add(label);
-		panel.add(autoplaytButton);
+
+		JButton displayFluidIDsButton = new JButton("Fluid IDs");
+		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth, displayFluidIDsButton.getPreferredSize().height));
+		displayFluidIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayFluidIDs());
+
+		JButton pinButton = new JButton("Pins");
+		pinButton.setPreferredSize(new Dimension(buttonWidth, pinButton.getPreferredSize().height));
+		pinButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowPins());
+
+
+
+		JButton nextStepButton = new JButton("->");
+		nextStepButton.addActionListener(e -> BioViz.singleton.currentCircuit.nextStep());
+		JButton prevStepButton = new JButton("<-");
+		prevStepButton.addActionListener(e -> BioViz.singleton.currentCircuit.prevStep());
+
+		/*
+		For some reason, adding a speparator more then once prevents it from being displayed more
+		than once O_0
+		 */
+		JSeparator timeSep = new JSeparator(SwingConstants.HORIZONTAL);
+		timeSep.setPreferredSize(new Dimension(buttonWidth, 5));
+		JSeparator fileSep = new JSeparator(SwingConstants.HORIZONTAL);
+		fileSep.setPreferredSize(new Dimension(buttonWidth, 5));
+		JSeparator optionsSep = new JSeparator(SwingConstants.HORIZONTAL);
+		optionsSep.setPreferredSize(new Dimension(buttonWidth, 5));
+		JSeparator invisiSep = new JSeparator(SwingConstants.HORIZONTAL);
+		invisiSep.setPreferredSize(new Dimension(buttonWidth, 0));
+
+
+
+
+
+		panel.add(new JLabel("Files"));
+		panel.add(fileSep);
 		panel.add(openButton);
-		panel.add(zoomButton);
-		panel.add(adjacencyButton);
-		panel.add(usageButton);
-		panel.add(displayDropletIDsButton);
-		panel.add(timeInfo);
-		panel.add(time);
-		panel.add(routeInfo);
+		panel.add(saveButton);
+		panel.add(invisiSep);
+		panel.add(new JLabel("Options"));
+		panel.add(optionsSep);
+		panel.add(new JLabel("Route length"));
 		panel.add(routes);
-		
-		
+		panel.add(zoomButton);
+		panel.add(dropletButton);
+		panel.add(displayDropletIDsButton);
+		panel.add(displayFluidIDsButton);
+		panel.add(pinButton);
+		panel.add(actuationButton);
+		panel.add(adjacencyButton);
+//		panel.add(usageButton);
+		panel.add(invisiSep);
+		panel.add(new JLabel("Time"));
+		panel.add(timeSep);
+		panel.add(new JLabel("Step: "));
+		panel.add(timeInfo);
+		panel.add(autoplaytButton);
+		panel.add(prevStepButton);
+		panel.add(nextStepButton);
+		panel.add(time);
+
+
+
 		input = new LwjglAWTInput(canvas.getCanvas());
-		
+
 		container.add(panel, BorderLayout.WEST);
 		container.add(canvas.getCanvas(), BorderLayout.CENTER);
-		
+
 		loaded_cb = new loadedFileCallback();
 		BioViz.singleton.addLoadedFileListener(loaded_cb);
+
+		save_cb = new saveFileCallback();
+		BioViz.singleton.addSaveFileListener(save_cb);
 
 		try {
 			this.setIconImage(ImageIO.read(BioViz.singleton.getApplicationIcon().file()));
 		} catch (Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage());
 		}
-		
+
 		pack();
 		setVisible(true);
 		setSize(800, 600);
@@ -196,22 +268,18 @@ public class DesktopLauncher extends JFrame {
 			// Set System L&F
 			UIManager.setLookAndFeel(
 					UIManager.getSystemLookAndFeelClassName());
-		} 
-		catch (UnsupportedLookAndFeelException e) {
+		} catch (UnsupportedLookAndFeelException e) {
 			// handle exception
-		}
-		catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			// handle exception
-		}
-		catch (InstantiationException e) {
+		} catch (InstantiationException e) {
 			// handle exception
-		}
-		catch (IllegalAccessException e) {
+		} catch (IllegalAccessException e) {
 			// handle exception
 		}
 
 		File file = askForFile();
-		JFrame frame = new DesktopLauncher(10,file);
+		JFrame frame = new DesktopLauncher(10, file);
 
 
 		singleton.addWindowListener(new WindowAdapter() {
@@ -220,7 +288,7 @@ public class DesktopLauncher extends JFrame {
 			}
 		});
 	}
-	
+
 	private static File askForFile() {
 		// TODO Irgendwie den letzten Pfad merken
 		File path = null;
@@ -228,11 +296,16 @@ public class DesktopLauncher extends JFrame {
 			path = new File(System.getProperty("user.dir"));
 		}
 
-		final JFileChooser fc = new JFileChooser(path);
-		fc.showOpenDialog(null);
-		File sFile = fc.getSelectedFile();
+		if (fileDialog == null) {
+			fileDialog = new JFileChooser(path);
+		}
+		int choice = fileDialog.showOpenDialog(null);
+		if (choice == JFileChooser.APPROVE_OPTION) {
+			return fileDialog.getSelectedFile();
 
-		return sFile;
+		}
+
+		return null;
 	}
 
 	private static void initializeLogback() {
@@ -247,7 +320,7 @@ public class DesktopLauncher extends JFrame {
 			// Call context.reset() to clear any previous configuration, e.g. default
 			// configuration. For multi-step configuration, omit calling context.reset().
 			context.reset();
-			configurator.doConfigure("logback.xml");
+			configurator.doConfigure("config/logback.xml");
 		} catch (JoranException je) {
 			// StatusPrinter will handle this
 		}
@@ -347,35 +420,84 @@ public class DesktopLauncher extends JFrame {
 
 		return Input.Keys.UNKNOWN;
 	}
-	
+
 	private class timerCallback implements BioVizEvent {
 		private JSlider time;
-		public timerCallback(JSlider slider) {
+		private JLabel timeInfo;
+
+		public timerCallback(JSlider slider, JLabel info) {
 			this.time = slider;
+			this.timeInfo = info;
 			BioViz.singleton.addTimeChangedListener(this);
 		}
+
 		@Override
 		public void bioVizEvent() {
-			this.time.setValue((int) BioViz.singleton.currentCircuit.currentTime);
+			this.time.setValue(BioViz.singleton.currentCircuit.currentTime);
+			this.timeInfo.setText(Integer.toString(BioViz.singleton.currentCircuit.currentTime));
+
 		}
 	}
-	
+
 	private class loadFileCallback implements BioVizEvent {
-		public loadFileCallback() {	}
+		public loadFileCallback() {
+		}
+
 		@Override
 		public void bioVizEvent() {
 			File f = askForFile();
-			if (f != null)
+			if (f != null) {
 				BioViz.loadNewFile(f);
+			}
 		}
 	}
-	
+
 	private class loadedFileCallback implements BioVizEvent {
-		public loadedFileCallback() {	}
+		public loadedFileCallback() {
+		}
+
 		@Override
 		public void bioVizEvent() {
-			logger.debug("Desktop received loaded event, setting slider...");
-			DesktopLauncher.singleton.time.setMaximum((int)BioViz.singleton.currentCircuit.data.getMaxTime());
+			logger.trace("Desktop received loaded event, setting slider...");
+
+			DesktopLauncher d = DesktopLauncher.singleton;
+
+			d.time.setMaximum(BioViz.singleton.currentCircuit.data.getMaxT());
+			d.time.setMinimum(1);
+			d.time.setValue(0);
+
+			d.setTitle(d.bioViz.getFileName()+ " - " +d.programName);
+
+		}
+	}
+
+	private class saveFileCallback implements BioVizEvent {
+		public saveFileCallback() {
+		}
+
+		@Override
+		public void bioVizEvent() {
+			try {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						Preferences prefs = Gdx.app.getPreferences("BioVizPreferences");
+						logger.debug("Desktop received save event, opening dialog...");
+
+						String name = prefs.getString("saveFolder", ".");
+						if (fileDialog == null) {
+							fileDialog = new JFileChooser();
+						}
+						int fcresult = fileDialog.showSaveDialog(null);
+
+						if (fcresult == JFileChooser.APPROVE_OPTION) {
+							prefs.putString("saveFolder", fileDialog.getSelectedFile().getAbsolutePath());
+							BioViz.singleton.saveSVG(fileDialog.getSelectedFile().getAbsolutePath());
+						}
+					}
+				});
+			} catch (Exception e) {
+				logger.error("Could not save file: " + e.getMessage() + "\n" + e.getStackTrace());
+			}
 		}
 	}
 }

@@ -5,6 +5,7 @@ import de.bioviz.structures.Droplet;
 import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.Point;
 
 public class DrawableDroplet extends DrawableSprite {
 
@@ -22,8 +23,8 @@ public class DrawableDroplet extends DrawableSprite {
 		this.droplet = droplet;
 		super.addLOD(defaultLODThreshold, "BlackPixel.png");
 		randnum.setSeed(droplet.getID());
-		super.color = new Color(randnum.nextInt());
-		super.color.a = 1f;
+		super.setColor(new Color(randnum.nextInt()));
+		super.getColor().a = 1f;
 		route = new DrawableRoute(this);
 	}
 
@@ -41,12 +42,31 @@ public class DrawableDroplet extends DrawableSprite {
 
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 
-		droplet.targetX = droplet.getXAt(circ.currentTime);
-		droplet.targetY = droplet.getYAt(circ.currentTime);
+		Point p = droplet.getPositionAt(circ.currentTime);
+		boolean visible = false;
 
-		droplet.update();
+		if (p == null) {
 
-		if (droplet.getXAt(circ.currentTime) >= 0) {
+			if (circ.currentTime < droplet.getSpawnTime()) {
+				p = droplet.getFirstPosition();
+				this.setColor(this.getColor().cpy().sub(0, 0, 0, 1).clamp());
+			} else if (circ.currentTime > droplet.getMaxTime()) {
+				p = droplet.getLastPosition();
+				this.setColor(this.getColor().cpy().sub(0, 0, 0, 1).clamp());
+			}
+		} else {
+			this.setColor(this.getColor().cpy().add(0, 0, 0, 1).clamp());
+			visible = true;
+		}
+
+		if (p!= null && BioViz.singleton.currentCircuit.getShowDroplets()) {
+
+
+			droplet.targetX = p.first;
+			droplet.targetY = p.second;
+
+			droplet.update();
+
 
 			float xCoord = circ.xCoordOnScreen(droplet.smoothX);
 			float yCoord = circ.yCoordOnScreen(droplet.smoothY);
@@ -56,16 +76,33 @@ public class DrawableDroplet extends DrawableSprite {
 			this.scaleX = circ.smoothScaleX;
 			this.scaleY = circ.smoothScaleY;
 
+
 			route.draw();
+
+			String msg = null;
+
 			if (circ.getDisplayDropletIDs()) {
-				float HUDx = xCoord;
-				float HUDy = yCoord;
-				BioViz.singleton.mc.addHUDMessage(this.hashCode(), new Integer(droplet.getID()).toString(), HUDx, HUDy);
+				msg = Integer.toString(droplet.getID());
+			}
+			if (circ.getDisplayFluidIDs()) {
+				// note: fluidID may be null!
+				Integer fluidID = circ.data.fluidID(droplet.getID());
+				if (fluidID != null) {
+					msg = fluidID.toString();
+				}
+			}
+
+			if (msg != null) {
+				BioViz.singleton.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
 			} else {
 				BioViz.singleton.mc.removeHUDMessage(this.hashCode());
 			}
 
 			super.draw();
+		}
+		if (!visible) {
+			// make sure that previous numbers are removed when the droplet is removed.
+			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
 		}
 	}
 }

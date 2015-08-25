@@ -1,5 +1,10 @@
 package de.bioviz.structures;
 
+import de.bioviz.ui.BioViz;
+import de.bioviz.ui.DrawableCircuit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 
 public class BiochipField {
@@ -14,10 +19,16 @@ public class BiochipField {
 
 	public ArrayList<Integer> source_ids = new ArrayList<Integer>();
 	public ArrayList<Integer> target_ids = new ArrayList<Integer>();
+	public ArrayList<Mixer> mixers = new ArrayList<Mixer>();
+	static private Logger logger = LoggerFactory.getLogger(BiochipField.class);
 
+	public int x() {
+		return pos.first;
+	}
 
-	public int x() { return pos.first;}
-	public int y() { return pos.second;}
+	public int y() {
+		return pos.second;
+	}
 
 
 	public void setDetector(Detector det) {
@@ -40,50 +51,68 @@ public class BiochipField {
 
 
 	public void attachBlockage(Range blockage) {
-		this.blockage=blockage;
+		this.blockage = blockage;
 	}
 
 	public boolean isBlocked(int timeStep) {
 		if (blockage == null) {
 			return false;
-		}
-		else {
+		} else {
 			return blockage.inRange(timeStep);
 		}
 	}
-	
+
+	public boolean isActuated(int timeStep) {
+
+		Biochip circ = BioViz.singleton.currentCircuit.data;
+		ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
+
+		if (pin != null && !circ.pinActuations.isEmpty()) {
+			act = circ.pinActuations.get(pin.pinID).get(timeStep - 1);
+		} else if (actVec != null && !actVec.isEmpty()) {
+			act = actVec.get(timeStep - 1);
+		} else {
+			if (circ.dropletOnPosition(pos, timeStep)) {
+				act = ActuationVector.Actuation.ON;
+			}
+		}
+
+		return act == ActuationVector.Actuation.ON;
+	}
+
 	public boolean isPotentiallyBlocked() {
 		return !(blockage == null);
 	}
 
-	public void setSink(Direction removeFrom) {
-		isDispenser=false;
-		isSink=true;
-		fluidID=0;
-		direction = removeFrom;
+	public void setSink(Direction removeTo) {
+		isDispenser = false;
+		isSink = true;
+		fluidID = 0;
+		direction = removeTo;
 	}
 
-	public void setDispenser(int fluidID, Direction dispenseTo) {
-		isSink=false;
-		isDispenser=true;
-		this.fluidID=fluidID;
-		direction=dispenseTo;
+	public void setDispenser(int fluidID, Direction dispenseFrom) {
+		isSink = false;
+		isDispenser = true;
+		this.fluidID = fluidID;
+		direction = dispenseFrom;
 	}
 
-	public BiochipField(Point pos, int fluidID, Direction dispenseTo) {
-		this.pos=pos;
-		setDispenser(fluidID,dispenseTo);
+	public BiochipField(Point pos, int fluidID, Direction dispenseFrom) {
+		this.pos = pos;
+		setDispenser(fluidID, dispenseFrom);
 	}
 
-	public BiochipField(Point pos, Direction removeFrom) {
-		this.pos=pos;
-		setSink(removeFrom);
+	public BiochipField(Point pos, Direction removeTo) {
+		this.pos = pos;
+		setSink(removeTo);
 
 	}
+
 	// end of TODO
 	// ############################################################################################################
 	public BiochipField(int x, int y) {
-		this.pos = new Point(x,y);
+		this.pos = new Point(x, y);
 	}
 
 	public BiochipField(Point p) {

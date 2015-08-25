@@ -5,54 +5,71 @@ import java.util.Vector;
 
 public class Droplet {
 	
-	private Vector<TimedPosition> positions = new Vector<>();
+	private Vector<Point> positions = new Vector<>();
 
 	private int id=0;
+	private int spawnTime = 1;
+	
+	private float movementDelay = 4f;
 
-	public Vector<TimedPosition> getPositions() {
+	public Vector<Point> getPositions() {
 		return positions;
 	}
 
 	public float smoothX, smoothY, targetX, targetY;
-
-	public Droplet() {
-		// TODO Auto-generated constructor stub
-	}
+	private boolean firstUpdate = true;
 
 	public Droplet(int id) {
 		this.id = id;
 	}
-	
-	public void addPosition(long time, int x, int y) {
-		positions.add(new TimedPosition(time, x, y));
-		Collections.sort(positions);
+	public Droplet(int id, int spawnTime) {
+		this.id = id;
+		this.spawnTime=spawnTime;
 	}
 	
-	public int getXAt(long t) {
-		int result = positions.get(0).x;
-		for (TimedPosition position : positions) {
-			if (position.time <= t) {
-				result = position.x;
-			} else {
-				return result;
-			}
+	public void addPosition(int x, int y) {
+		positions.add(new Point(x,y));
+	}
+
+	public void addPosition(Point p) {
+		positions.add(p);
+	}
+	
+	public Point getSafePositionAt(int t) {
+
+		int index = t-spawnTime;
+
+		if (positions.isEmpty()) {
+			return null;
 		}
-		
-		return result;
+
+		if (index < 0) {
+			return positions.firstElement();
+		}
+		if (index >= positions.size()) {
+			return positions.lastElement();
+		}
+		return positions.get(index);
+	}
+
+	public Point getPositionAt(int t) {
+
+		int index = t-spawnTime;
+
+		if (positions.isEmpty() || index < 0 || index >= positions.size()) {
+			return null;
+		}
+		return positions.get(index);
 	}
 	
-	public int getYAt(long t) {
-		int result = positions.get(0).y;
-		for (TimedPosition position : positions) {
-			if (position.time <= t) {
-				result = position.y;
-			} else {
-				return result;
-			}
-		}
-		
-		return result;
+	public Point getFirstPosition() {
+		return positions.firstElement();
 	}
+	
+	public Point getLastPosition() {
+		return positions.lastElement();
+	}
+
 	
 	/**
 	 * Calculates the time at which the <i>next</i> step is performed
@@ -65,36 +82,61 @@ public class Droplet {
 	 */
 	public long getNextStep(long current) {
 		long result = 0;
-		for (int i = 0; i < positions.size(); i++) {
-			if (positions.get(i).time <= current) {
-				result = positions.get(i).time;
-			} else {
-				if (i < positions.size()) {
-					result = positions.get(i).time;
-				}
-				return result;
-			}
+
+		if (current > 0 && current < positions.size()-1) {
+			result = current+1;
 		}
+		else {
+			result = positions.size();
+		}
+
+
 		return result;
 	}
 	
 	public void update() {
-		float movementDelay = 4f;
+		if (firstUpdate) {
+			smoothX = targetX;
+			smoothY = targetY;
+			firstUpdate = false;
+		}
 		smoothX += (targetX - smoothX) / movementDelay;
 		smoothY += (targetY - smoothY) / movementDelay;
 	}
 
+	@Override
+	public int hashCode() {
+		return this.getID();
+	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Droplet) {
+			return ((Droplet) o).getID() == this.getID();
+		}
+		else {
+			return false;
+		}
+	}
 
-	
 	/**
 	 * Retrieves the last timestamp at which this droplet moves.
 	 * @return the time at which the droplet's last movement is performed
+	 * @warning Returns 0 in case no positions (i.e. no path) is associated with this droplet
 	 */
-	public long getMaxTime() {
-		return this.positions.lastElement().getTime();
+	public int getMaxTime() {
+		return positions.size()+spawnTime-1;
 	}
 	
+	public int getSpawnTime() {
+		return this.spawnTime;
+	}
+
+	@Override
+	public String toString() {
+		return "D["+id+"@"+spawnTime+"]";
+	}
+
 	public int getID() {
 		return this.id;
 	}

@@ -46,17 +46,16 @@ public class BioVizInputProcessor implements InputProcessor {
 			}
 		} else if (keycode == Keys.S) {
 			if (ctrl) {
-				try {
-					String svg = BioViz.singleton.currentCircuit.generateSVG();
-					FileHandle handle = Gdx.files.local("export/BioViz_" + new Date().getTime() + ".svg");
-					handle.writeString(svg, false);
-					logger.info("Stored SVG at {}", handle.path());
-				} catch (Exception e) {
-					logger.error("Could not store SVG: {}", e.getMessage());
-				}
+				BioViz.singleton.callSaveFileListeners();
 			}
 		} else if (keycode == Keys.A) {
 			BioViz.singleton.currentCircuit.toggleHighlightAdjacency();
+		}
+		else if (keycode == Keys.RIGHT || keycode == Keys.UP) {
+			BioViz.singleton.currentCircuit.nextStep();
+		}
+		else if (keycode == Keys.LEFT || keycode == Keys.DOWN) {
+			BioViz.singleton.currentCircuit.prevStep();
 		}
 		
 		return false;
@@ -105,7 +104,7 @@ public class BioVizInputProcessor implements InputProcessor {
 			multiTouchZoom = false;
 		}
 		
-		logger.debug("TouchUp at " + x + "/" + y + " with " + pointer + "/" + button);
+		logger.trace("TouchUp at " + x + "/" + y + " with " + pointer + "/" + button);
 		
 		return false;
 	}

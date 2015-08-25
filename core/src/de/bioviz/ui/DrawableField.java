@@ -1,36 +1,40 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.ActuationVector;
+import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.Mixer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
 
 public class DrawableField extends DrawableSprite {
 
+	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
+
 	public BiochipField field;
 
-	static final Color fieldDefaultColor = new Color(0.5f, 0.5f, 0.75f, 1f);
-	static final Color sinkDefaultColor = new Color(0.75f, 0.5f, 0.5f, 1f);
-	static final Color sourceDefaultColor = new Color(0.5f, 0.75f, 0.5f, 1f);
-	static final Color fieldAdjacentActivationColor = new Color(1f / 2f, 1f / 3f, 0, 1); //218-165-32
-	static final Color blockedColor = new Color(1f / 2f, 0, 0, 1);
+	static final Color fieldDefaultColor = Colors.fieldColor;
+	static final Color sinkDefaultColor = Colors.sinkColor;
+	static final Color sourceDefaultColor = Colors.sourceColor;
+	static final Color mixerDefaultColor = Colors.mixerColor;
+	static final Color blockedColor = Colors.blockedColor;
 
 	private boolean drawSink = false;
-	private boolean drawSource = false;
 	private boolean drawBlockage = false;
 	private boolean drawDetector = false;
-	private boolean drawRoutingSource = false;
-	private boolean drawRoutingTarget = false;
 
-	private DrawableSprite adjacencyOverlay;
-	String fieldHUDMsg = null;
+	//private DrawableSprite adjacencyOverlay;
+
 
 	public DrawableField(BiochipField field) {
 		super("GridMarker.png");
 		this.field = field;
 		super.addLOD(8, "BlackPixel.png");
-		adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
+		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 
 	@Override
@@ -47,7 +51,10 @@ public class DrawableField extends DrawableSprite {
 
 	@Override
 	public void draw() {
+
+		String fieldHUDMsg = null;
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+		int t = circ.currentTime;
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
 
@@ -63,18 +70,17 @@ public class DrawableField extends DrawableSprite {
 		if (this.field.isSink && !drawSink) {
 			this.addLOD(Float.MAX_VALUE, "Sink.png");
 			drawSink = true;
-		} else if (this.field.isDispenser && !drawSource) {
+		} else if (this.field.isDispenser) {
 			this.addLOD(Float.MAX_VALUE, "Source.png");
-			drawSource = true;
+			fieldHUDMsg = Integer.toString(field.fluidID);
 		} else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
 			this.addLOD(Float.MAX_VALUE, "Blockage.png");
 			drawBlockage = true;
 		} else if (this.field.getDetector() != null && !drawDetector) {
 			this.addLOD(Float.MAX_VALUE, "Detector.png");
 			drawDetector = true;
-		} else if (!this.field.source_ids.isEmpty() && !drawRoutingSource) {
+		} else if (!this.field.source_ids.isEmpty()) {
 			this.addLOD(Float.MAX_VALUE, "Start.png");
-			drawRoutingSource = true;
 			ArrayList<Integer> sources = this.field.source_ids;
 			fieldHUDMsg = sources.get(0).toString();
 			if (sources.size() > 1) {
@@ -82,15 +88,23 @@ public class DrawableField extends DrawableSprite {
 					fieldHUDMsg += ", " + sources.get(i);
 				}
 			}
-		} else if (!this.field.target_ids.isEmpty() && !drawRoutingTarget) {
+		} else if (!this.field.target_ids.isEmpty()) {
 			this.addLOD(Float.MAX_VALUE, "Target.png");
-			drawRoutingTarget = true;
 			ArrayList<Integer> targets = this.field.target_ids;
 			fieldHUDMsg = targets.get(0).toString();
 			if (targets.size() > 1) {
-				for (int i = 2; i < targets.size(); i++) {
+				for (int i = 1; i < targets.size(); i++) {
 					fieldHUDMsg += ", " + targets.get(i);
 				}
+			}
+		}
+
+
+		// note: this overwrites any previous message
+		// TODO we really need some kind of mechanism of deciding when to show what
+		if (circ.getShowPins()) {
+			if (this.field.pin != null) {
+				fieldHUDMsg =  Integer.toString(this.field.pin.pinID);
 			}
 		}
 
@@ -102,10 +116,14 @@ public class DrawableField extends DrawableSprite {
 
 
 		int colorOverlayCount = 0;
-		this.color = new Color(0, 0, 0, 1);
+		/*
+		We need to create a copy of the fieldEmptyColor as that value is final and thus can not be modified.
+		If that value is unchangeable, the cells all stay white
+		 */
+		this.setColor(new Color(Colors.fieldEmptyColor));
 
-		if (field.isBlocked((int) circ.currentTime)) {
-			this.color.add(blockedColor);
+		if (field.isBlocked(circ.currentTime)) {
+			this.getColor().add(blockedColor);
 			colorOverlayCount++;
 		}
 
@@ -114,40 +132,54 @@ public class DrawableField extends DrawableSprite {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max Usage verwenden)
 			float scalingFactor = 4f;
 
-			this.color.add(new Color(0, this.field.usage / scalingFactor, 0, 0));
+			this.getColor().add(new Color(0, this.field.usage / scalingFactor, 0, 0));
 			++colorOverlayCount;
 		}
 
-		if (colorOverlayCount == 0) {
-			if (this.field.isSink) {
-				this.color.add(sinkDefaultColor);
-				colorOverlayCount++;
-			} else if (this.field.isDispenser) {
-				this.color.add(sourceDefaultColor);
-				colorOverlayCount++;
-			} else {
-				this.color.add(fieldDefaultColor);
-				colorOverlayCount++;
+		if (circ.getShowActuations()) {
+			if (field.isActuated(t)) {
+				this.getColor().add(Colors.actautedColor);
+				++colorOverlayCount;
 			}
 		}
 
-		this.color.mul(1f / (float) colorOverlayCount);
+		// TODO why do we only add something if the count is zero? Save computation time?
+		// nope it seems that the cell usage is supposed to override the other overlays
+		if (colorOverlayCount == 0) {
+			if (this.field.isSink) {
+				this.getColor().add(sinkDefaultColor);
+				colorOverlayCount++;
+			} else if (this.field.isDispenser) {
+				this.getColor().add(sourceDefaultColor);
+				colorOverlayCount++;
+			} else {
+				this.getColor().add(fieldDefaultColor);
+				colorOverlayCount++;
+			}
+			if (!this.field.mixers.isEmpty()) {
 
-		this.color.clamp();
+				for (Mixer m: this.field.mixers) {
+					if (m.timing.inRange(t)) {
+						this.getColor().add(mixerDefaultColor);
+					}
+				}
+			}
+		}
+		
+		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
+			this.getColor().add(0.5f, -0.5f, -0.5f, 0);
+		}
+
+		this.getColor().mul(1f / (float) colorOverlayCount);
+
+		this.getColor().clamp();
 
 		super.draw();
-
-		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
-			this.adjacencyOverlay.x = this.x;
-			this.adjacencyOverlay.y = this.y;
-			this.adjacencyOverlay.scaleX = this.scaleX;
-			this.adjacencyOverlay.scaleY = this.scaleY;
-			this.adjacencyOverlay.color = Color.RED.cpy();
-			this.adjacencyOverlay.draw();
-		}
 	}
 
 	private class AdjacencyOverlay extends DrawableSprite {
+
+
 
 		public AdjacencyOverlay(String textureFilename) {
 			super(textureFilename);

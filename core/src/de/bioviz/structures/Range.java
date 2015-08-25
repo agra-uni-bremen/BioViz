@@ -6,13 +6,13 @@ package de.bioviz.structures;
 public class Range {
 	public static final int DONTCARE = 0;
 
-	private int begin;
-	private int end;
+	public final int begin;
+	public final int end;
 
 	public Range(int begin,int end) {
 
 		this.begin = (begin<1) ? DONTCARE:begin;
-		this.end = (end<1) ? DONTCARE: begin;
+		this.end = (end<1) ? DONTCARE: end;
 	}
 
 	public boolean inRange(final int i) {

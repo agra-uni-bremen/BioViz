@@ -64,8 +64,10 @@ build/
 .DS_Store
 
 ## Parser
-core/src/de/agra
+core/src/de/bioviz/parser/generated/
+core/src/de/agra/
 
 ## Exported SVG
 *BioViz_*.svg
 
+core/assets/examples/test.bio

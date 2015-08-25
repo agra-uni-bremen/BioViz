@@ -25,7 +25,8 @@ public class Biochip {
 	public final ArrayList<Detector> detectors=new ArrayList<Detector>();
 	public final HashMap<Integer,Pin> pins = new HashMap<>();
 	public final HashMap<Integer,ActuationVector> pinActuations = new HashMap<>();
-	public final  HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
+	public final HashMap<Point,ActuationVector> cellActuations = new HashMap<>();
+	public final ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 
 
@@ -50,6 +51,15 @@ public class Biochip {
 	public void addDropToFluid(int dropletID, int fluidID) {
 		dropletIDsToFluidTypes.put(dropletID,fluidID);
 	}
+	public Integer fluidID(int dropletID) {
+		return dropletIDsToFluidTypes.get(dropletID);
+	}
+	public String fluidType(Integer fluidID) {
+		return fluidTypes.get(fluidID);
+	}
+
+
+	private int maxT =-1;
 
 
 	/**
@@ -81,15 +91,7 @@ public class Biochip {
 	public Biochip() {
 	}
 
-	/**
-	 * Adds a new blob to the circuit.
-	 * @return the newly created blob.
-	 */
-	public Droplet addDroplet() {
-		Droplet b = new Droplet();
-		this.droplets.add(b);
-		return b;
-	}
+
 
 	public void addDroplet(Droplet drop) {
 		this.droplets.add(drop);
@@ -123,13 +125,49 @@ public class Biochip {
 		field.values().forEach(f -> f.usage=0);
 
 
-		for (Droplet drop: droplets) {
-			for(TimedPosition pos: drop.getPositions()) {
-				field.get(pos.getPos()).usage++;
+		for (int t=1;t<=getMaxT();t++) {
+			for (BiochipField f: field.values()) {
+				if (f.isActuated(t)) {
+					f.usage++;
+				}
 			}
 		}
 	}
 
+	public boolean dropletOnPosition(Point pos, int t) {
+
+		for (Droplet d: droplets) {
+			Point p = d.getPositionAt(t);
+			if (p != null && p.equals(pos)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * @brief Checks whether two droplets are from the same nat
+	 * @param d1
+	 * @param d2
+	 * @return true iff the droplets are from the same net
+	 */
+	private boolean sameNet(Droplet d1, Droplet d2) {
+		if (nets != null) {
+			// first find the net of one of the droplets
+			Net net=null;
+			for (Net n:nets) {
+				if (n.containsDroplet(d1)) {
+					net=n;
+				}
+			}
+			return net == null ? false : net.containsDroplet(d2);
+		}
+		// when there are no nets stored, they can't be from the same net
+		else {
+			return false;
+		}
+	}
 
 	/**
 	 * Calculates all fields that are at some point activated
@@ -138,49 +176,52 @@ public class Biochip {
 	 * @return Set of fields with adjacent droplets (at any point in time)
 	 */
 	public Set<BiochipField> getAdjacentActivations() {
+
 		if (adjacencyCache != null && !recalculateAdjacency) {
 			return adjacencyCache;
-		} else {
-			logger.debug("Recalculation adjacency");
+		}
+		else {
+			logger.debug("Recalculating adjacency");
 			recalculateAdjacency = false;
 			HashSet<BiochipField> result = new HashSet<>();
-			
-			boolean timeProceeds = true;
-			long currentTime = 0;
-			
-			while(timeProceeds) {
-				long minimumTimestep = Long.MAX_VALUE;
-				timeProceeds = false;
-				for (Droplet b : this.getDroplets()) {
-					
-					int x1, y1;
-					x1 = b.getXAt(currentTime);
-					y1 = b.getYAt(currentTime);
-					for (Droplet partner : this.getDroplets()) {
-						int x2, y2;
-						x2 = partner.getXAt(currentTime);
-						y2 = partner.getYAt(currentTime);
-						if (
-								(x1 == x2 && Math.abs(y1 - y2) == 1) ||
-								(y1 == y2 && Math.abs(x1 - x2) == 1)
-							) {
-							result.add(this.field.get(new Point(x1,y1)));
-							result.add(this.field.get(new Point(x2,y2)));
-							//BioViz.singleton.mc.addMessage("Found adjacency: " + x1 + "/" + y1 + " <-> " + x2 + "/" + y2 + " at " + currentTime, MessageCenter.SEVERITY_DEBUG);
-						}
-					}
-					
-					long nextStep = b.getNextStep(currentTime);
-					if (nextStep > currentTime) {
-						timeProceeds = true;
-						if (nextStep - currentTime < minimumTimestep) {
-							minimumTimestep = nextStep - currentTime;
+
+			for (int timestep=1;timestep <= getMaxT();timestep++) {
+				for (Droplet d1: droplets) {
+					Point p1 = d1.getPositionAt(timestep);
+					Point pp1 = d1.getPositionAt(timestep+1);
+					for (Droplet d2: droplets) {
+
+						logger.trace("Comparing droplets {} and {}", d1, d2);
+
+
+						if (!d1.equals(d2) && !sameNet(d1,d2)) {
+							Point p2 = d2.getPositionAt(timestep);
+							Point pp2 = d2.getPositionAt(timestep+1);
+							/*
+							We actually need to differentiat the following three cases. The dynamic fluidic constraints
+							should highlight the cell that in the upcoming time step violates one of the constraints.
+							 */
+							if (Point.adjacent(p1, p2)) {
+								logger.trace("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 + ") are adjacent in time step " + timestep);
+								result.add(this.field.get(p1));
+								result.add(this.field.get(p2));
+							}
+							if (Point.adjacent(pp1, p2)) {
+								logger.trace("Points " + pp1 + "(" + d1 + ") and " + p2 + "(" + d2 + ") are adjacent in time step " + (timestep+1)+"/"+timestep);
+								result.add(this.field.get(pp1));
+								result.add(this.field.get(p2));
+							}
+							if (Point.adjacent(p1, pp2)) {
+								logger.trace("Points " + p1 + "(" + d1 + ") and " + pp2 + "(" + d2 + ") are adjacent in time step " + timestep+"/"+(timestep+1));
+								result.add(this.field.get(p1));
+								result.add(this.field.get(pp2));
+							}
 						}
 					}
 				}
-				
-				currentTime += minimumTimestep;
+				logger.trace("Advanced to timestep {}",timestep);
 			}
+
 			adjacencyCache = result;
 			return result;
 		}
@@ -189,17 +230,32 @@ public class Biochip {
 	/**
 	 * Calculates the last timestamp at which a droplet is moved
 	 * @return the last timestamp of the currently loaded simulation
+	 * @author Oliver Keszöcze
 	 */
-	public long getMaxTime() {
-		long maxTime = 0;
-		for (Droplet d : this.droplets) {
-			long dTime = d.getMaxTime();
-			if (dTime > maxTime) {
-				maxTime = dTime;
-			}
+	public int getMaxT() {
+		if (maxT != -1) {
+			return maxT;
 		}
-		return maxTime;
+
+		for (Droplet d: droplets) {
+			maxT = Math.max(maxT, d.getMaxTime());
+		}
+		for (Mixer m: mixers) {
+			maxT = Math.max(maxT, m.timing.end);
+		}
+		for (Pair<Rectangle,Range> b: blockages) {
+			maxT = Math.max(maxT,b.second.end);
+		}
+		for (ActuationVector a: pinActuations.values()) {
+			maxT = Math.max(maxT,a.size());
+		}
+		for (ActuationVector a: cellActuations.values()) {
+			maxT = Math.max(maxT,a.size());
+		}
+		return maxT;
+
 	}
+
 
 	/**
 	 * Retrieves field that is located at given coordinates.
@@ -237,7 +293,7 @@ public class Biochip {
 			coordinates = new Point(field.x(), field.y());
 		}
 		if (this.field.containsKey(coordinates)) {
-			logger.debug("Field added twice at " + coordinates + ", removed older instance");
+			logger.trace("Field added twice at " + coordinates + ", removed older instance");
 		}
 		this.field.put(coordinates, field);
 	}

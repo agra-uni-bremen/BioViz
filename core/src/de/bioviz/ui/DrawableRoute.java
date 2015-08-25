@@ -1,16 +1,21 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DrawableRoute extends DrawableSprite {
 
+	private static Logger logger = LoggerFactory.getLogger(DrawableRoute.class);
+
 	public static int timesteps = 0;
 	public static int hoverTimesteps = 2 * timesteps + 8;
-	
+
 	private DrawableDroplet parent;
-	
+
 	public Color baseColor = Color.BLACK;
-	
+
 	public DrawableRoute(DrawableDroplet parent) {
 		super("StepMarker.png");
 		this.parent = parent;
@@ -20,21 +25,27 @@ public class DrawableRoute extends DrawableSprite {
 	@Override
 	public String generateSVG() {
 		String result = "";
-		long currentTime = BioViz.singleton.currentCircuit.currentTime;
-		long displayAt;
-		
-		for(int i = -timesteps; i < timesteps; i++) {
-			
-			float alpha = 1 - (Math.abs((float)i) / ((float)timesteps));
+		int currentTime = BioViz.singleton.currentCircuit.currentTime;
+		int displayAt;
+
+		for (int i = -timesteps; i < timesteps; i++) {
+
+			float alpha = 1 - (Math.abs((float) i) / ((float) timesteps));
+
+			// TODO possible problem here due to casting
 			displayAt = currentTime + i;
-			int x1 = parent.droplet.getXAt(displayAt);
-			int x2 = parent.droplet.getXAt(displayAt + 1);
-			int y1 = parent.droplet.getYAt(displayAt);
-			int y2 = parent.droplet.getYAt(displayAt + 1);
-			
+
+			Point p1 = parent.droplet.getPositionAt(displayAt);
+			Point p2 = parent.droplet.getPositionAt(displayAt + 1);
+
+			int x1 = p1.first;
+			int x2 = p2.first;
+			int y1 = p1.second;
+			int y2 = p2.second;
+
 			float targetX = x1 + 0.5f;
 			float targetY = -y1 +
-				BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1;
+					BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1;
 			if (y1 == y2 && x2 > x1) {
 				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" xlink:href=\"StepMarker.svg\" />";
 			} else if (y1 == y2 && x2 < x1) {
@@ -49,62 +60,74 @@ public class DrawableRoute extends DrawableSprite {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void draw() {
-		long currentTime = BioViz.singleton.currentCircuit.currentTime;
-		long displayAt;
-		
-		hoverTimesteps = 2 * timesteps + 8;
-		
-		int stepsToUse = timesteps;
-		if (this.parent.isHovered()) {
-			stepsToUse = hoverTimesteps;
-		}
-		
-		for(int i = -stepsToUse; i < stepsToUse; i++) {
-			
-			this.color = this.baseColor.cpy();
-			if (i >= 0)
-				this.color.a = 1 - (Math.abs((float)i + 1) / ((float)stepsToUse + 1));
-			else
-				this.color.a = 1 - (Math.abs((float)i) / ((float)stepsToUse + 1));
-			
-			displayAt = currentTime + i;
-			int x1 = parent.droplet.getXAt(displayAt);
-			int x2 = parent.droplet.getXAt(displayAt + 1);
-			int y1 = parent.droplet.getYAt(displayAt);
-			int y2 = parent.droplet.getYAt(displayAt + 1);
-			
-			float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
-			float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
-			
-			if (y1 == y2 && x2 > x1) {
-				xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
-				yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
-				this.rotation = 0;
-			} else if (y1 == y2 && x2 < x1) {
-				xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 - 0.5f);
-				yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
-				this.rotation = 180;
-			} else if (x1 == x2 && y2 > y1) {
-				xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
-				yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 + 0.5f);
-				this.rotation = 90;
-			} else if (x1 == x2 && y2 < y1) {
-				xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
-				yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 - 0.5f);
-				this.rotation = 270;
-			} else {
-				continue;
+		int currentTime = BioViz.singleton.currentCircuit.currentTime;
+		int displayAt;
+
+
+		// TODO drawing of routes is now broken :(
+		if (true) {
+
+			hoverTimesteps = 2 * timesteps + 8;
+
+			int stepsToUse = timesteps;
+			if (this.parent.isHovered()) {
+				stepsToUse = hoverTimesteps;
 			}
 
-			this.x = xCoord;
-			this.y = yCoord;
-			this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
-			this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
-			
-			super.draw();
+			for (int i = -stepsToUse; i < stepsToUse; i++) {
+
+				this.setColor(this.baseColor.cpy());
+				if (i >= 0) {
+					this.getColor().a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
+				} else {
+					this.getColor().a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+				}
+
+				displayAt = currentTime + i;
+				Point p1 = parent.droplet.getSafePositionAt(displayAt);
+				Point p2 = parent.droplet.getSafePositionAt(displayAt + 1);
+
+				logger.trace("Point p1: {} (timestep {})", p1, displayAt);
+				logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
+
+				int x1 = p1.first;
+				int x2 = p2.first;
+				int y1 = p1.second;
+				int y2 = p2.second;
+
+				float xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
+				float yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+
+				if (y1 == y2 && x2 > x1) {
+					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 + 0.5f);
+					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+					this.rotation = 0;
+				} else if (y1 == y2 && x2 < x1) {
+					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1 - 0.5f);
+					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1);
+					this.rotation = 180;
+				} else if (x1 == x2 && y2 > y1) {
+					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
+					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 + 0.5f);
+					this.rotation = 90;
+				} else if (x1 == x2 && y2 < y1) {
+					xCoord = BioViz.singleton.currentCircuit.xCoordOnScreen(x1);
+					yCoord = BioViz.singleton.currentCircuit.yCoordOnScreen(y1 - 0.5f);
+					this.rotation = 270;
+				} else {
+					continue;
+				}
+
+				this.x = xCoord;
+				this.y = yCoord;
+				this.scaleX = BioViz.singleton.currentCircuit.smoothScaleX;
+				this.scaleY = BioViz.singleton.currentCircuit.smoothScaleY;
+
+				super.draw();
+			}
 		}
 	}
 
