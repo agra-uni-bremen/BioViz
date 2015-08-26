@@ -267,6 +267,7 @@ public class BioViz implements ApplicationListener {
 				DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
 				currentCircuit = newCircuit;
 				this.loadedCircuits.put(bioFile.getCanonicalPath(), newCircuit);
+				currentCircuit.zoomExtents();
 			}
 			logger.debug("drawable created, replacing old elements...");
 			drawables.add(currentCircuit);
@@ -278,7 +279,6 @@ public class BioViz implements ApplicationListener {
 			} else {
 				logger.info("Done loading file {}", bioFile);
 			}
-			currentCircuit.zoomExtents();
 		} catch (Exception e) {
 			logger.error("Could not load " + bioFile + ": " + e.getMessage());
 			e.printStackTrace();
