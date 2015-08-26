@@ -482,20 +482,20 @@ public class DrawableCircuit implements Drawable {
 		// FIXME Does not properly handle non-0 minimum coordinates yet
 		Point max = this.data.getMaxCoord();
 		Point min = this.data.getMinCoord();
-		logger.trace("Auto zoom around " + min + " <--/--> " + max);
+		logger.debug("Auto zoom around " + min + " <--/--> " + max);
 
-		float x = 1f / (max.first + 3);
-		float y = 1f / (max.second + 3);
+		float x = (1f / (max.first - min.first + 2));
+		float y = (1f / (max.second - min.second + 2));
 		float xFactor = Gdx.graphics.getWidth();
 		float yFactor = Gdx.graphics.getHeight();
 		float maxScale = Math.min(x * xFactor, y * yFactor);
 		this.scaleX = maxScale;
 		this.scaleY = maxScale;
-		this.offsetX = (max.first) / -2f;
-		this.offsetY = (max.second) / -2f;
+		this.offsetX = (max.first) / -2f + min.first / -2f;
+		this.offsetY = (max.second) / -2f + min.second / -2f;
 
 
-		logger.trace("Offset now at " + this.offsetX + "/" + this.offsetY);
+		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
 	}
 
 	/**
