@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Vector;
 
@@ -35,6 +36,7 @@ public class BioViz implements ApplicationListener {
 
 
 	public DrawableCircuit currentCircuit;
+	private HashMap<String, DrawableCircuit> loadedCircuits;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 
 	AssetManager manager = new AssetManager();
@@ -84,6 +86,7 @@ public class BioViz implements ApplicationListener {
 		logger.info("Starting withouth filename being specified; loading example");
 		logger.info("Usage: java -jar BioViz.jar <filename>");
 		this.bioFile = null;
+		loadedCircuits = new HashMap<>();
 	}
 
 	public BioViz(File bioFile) {
@@ -255,11 +258,17 @@ public class BioViz implements ApplicationListener {
 		}
 
 		try {
-			logger.debug("loaded file, creating drawable elements...");
-			DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
-			logger.debug("drawable created, replacing old elements...");
 			drawables.remove(currentCircuit);
-			currentCircuit = newCircuit;
+			if (this.loadedCircuits.containsKey(bioFile.getCanonicalPath())) {
+				logger.debug("re-fetching previously loaded file " + bioFile.getCanonicalPath());
+				currentCircuit = this.loadedCircuits.get(bioFile.getCanonicalPath());
+			} else {
+				logger.debug("loaded file, creating drawable elements...");
+				DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
+				currentCircuit = newCircuit;
+				this.loadedCircuits.put(bioFile.getCanonicalPath(), newCircuit);
+			}
+			logger.debug("drawable created, replacing old elements...");
 			drawables.add(currentCircuit);
 			logger.debug("Initializing circuit");
 			currentCircuit.addTimeChangedListener(() -> callTimeChangedListeners());

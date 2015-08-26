@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -55,6 +56,8 @@ public class DesktopLauncher extends JFrame {
 	private JTabbedPane visualizationTabs;
 	
 	BioViz currentViz;
+	
+	private HashMap<Integer, File> tabsToFilenames;
 
 
 	/**
@@ -91,9 +94,18 @@ public class DesktopLauncher extends JFrame {
 	public DesktopLauncher(int timeMax, File file) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		tabsToFilenames = new HashMap<Integer, File>();
+		
+		if (file == null) {
+			bioViz = new BioViz();
+		} else {
+			bioViz = new BioViz(file);
+		}
+		currentViz = bioViz;
+		canvas = new LwjglAWTCanvas(bioViz);
 
 		final Container container = getContentPane();
-		container.setLayout(new BorderLayout());
+		container.setLayout(new BorderLayout()); 
 
 		this.setTitle(programName);
 
@@ -103,7 +115,9 @@ public class DesktopLauncher extends JFrame {
 		
 		visualizationTabs = new JTabbedPane();
 		
-		visualizationTabs.addChangeListener(l -> logger.debug("buh " + ((JTabbedPane)l.getSource()).getSelectedIndex()));
+		visualizationTabs.addChangeListener(
+				l -> bioViz.loadNewFile(
+						tabsToFilenames.get(((JTabbedPane)l.getSource()).getSelectedIndex())));
 		
 		addNewTab(file);
 
@@ -247,7 +261,13 @@ public class DesktopLauncher extends JFrame {
 		input = new LwjglAWTInput(canvas.getCanvas());
 
 		container.add(panel, BorderLayout.WEST);
-		container.add(visualizationTabs, BorderLayout.CENTER);
+		
+		JPanel tabContainer = new JPanel(new BorderLayout());
+		
+		container.add(tabContainer, BorderLayout.CENTER);
+		
+		tabContainer.add(visualizationTabs, BorderLayout.NORTH);
+		tabContainer.add(canvas.getCanvas(), BorderLayout.CENTER);
 
 		loaded_cb = new loadedFileCallback();
 		currentViz.addLoadedFileListener(loaded_cb);
@@ -267,14 +287,10 @@ public class DesktopLauncher extends JFrame {
 	}
 	
 	private void addNewTab(File file) {
-		if (file == null) {
-			bioViz = new BioViz();
-		} else {
-			bioViz = new BioViz(file);
-		}
-		currentViz = bioViz;
-		canvas = new LwjglAWTCanvas(bioViz);
-		visualizationTabs.addTab("Tab", canvas.getCanvas());
+		logger.debug("Adding new tab to UI for " + file.getName());
+		visualizationTabs.addTab(file.getName(), new JPanel());
+		this.bioViz.loadNewFile(file);
+		tabsToFilenames.put((Integer)(visualizationTabs.getTabCount() - 1), file);
 	}
 
 	public static void main(String[] args) {
