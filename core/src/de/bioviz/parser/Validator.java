@@ -2,11 +2,13 @@ package de.bioviz.parser;
 
 import de.bioviz.structures.ActuationVector;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Pin;
 import de.bioviz.structures.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by keszocze on 25.08.15.
@@ -73,6 +75,37 @@ public class Validator {
 			}
 
 		}
+		return errors;
+	}
+
+
+	// TODO Somehow also generate the list of assigned pins to the cells
+	/**
+	 *
+	 * Method that checks whether there are cells that have multiple pin assigned to them.
+	 *
+	 * @note This method will generate error messages even if one cell gets assigned the same pin multiple times.
+	 *
+	 * @param pins List of pins that will be scanned for multiple aissgnments
+	 * @return List of errors
+	 */
+	static ArrayList<String> checkMultiplePinAssignments(Collection<Pin> pins) {
+		ArrayList<Point> points = new ArrayList<>();
+		ArrayList<String> errors = new ArrayList<String>();
+
+		for (Pin pin : pins) {
+			points.addAll(pin.cells);
+		}
+
+		Map<Point,Long> counts = points.stream().collect(Collectors.groupingBy(e->e,Collectors.counting()));
+
+		for (Map.Entry<Point,Long> e: counts.entrySet()) {
+				long count = e.getValue();
+				if (count > 1) {
+					errors.add("Cell "+e.getKey()+" has multiple pins assigned: "+count);
+				}
+		}
+
 		return errors;
 	}
 
