@@ -11,12 +11,24 @@ import java.util.*;
 /**
  * Created by keszocze on 25.08.15.
  *
+ * This class provides very basic validation of aspects of the chip.
+ *
+ * The way this validator works is that every problem found will be added to an error list
+ * that will be returned to the caller.
+ *
  * @author Oliver Keszocze
  */
 public class Validator {
 	static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
 
+	/**
+	 * This method checks that all the positions a droplet moves along is actually a position of the chip
+	 *
+	 * @param drops Droplets, whose positions should be valided
+	 * @param points The possible positions of
+	 * @return List of errors
+	 */
 	static ArrayList<String> checkPathsForPositions(ArrayList<Droplet> drops, Set<Point> points) {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (Droplet drop: drops) {
@@ -31,6 +43,12 @@ public class Validator {
 		return errors;
 	}
 
+	/**
+	 * This method checks whether droplets only move a single cell in horizontal or vertical direction in one time step
+	 *
+	 * @param drops Droplets whose positions on the grid will be checked for 'jumps'
+	 * @return List of errors
+	 */
 	static ArrayList<String> checkPathsForJumps(ArrayList<Droplet> drops) {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (Droplet drop: drops) {
@@ -58,6 +76,14 @@ public class Validator {
 		return errors;
 	}
 
+	/**
+	 *
+	 * This method checks that all actuations sequences provided have the same length
+	 *
+	 * @param cellActuations List of actuations given on the cell level (might be null)
+	 * @param pinActuations List of actuations given on the pin level (might be nulll)
+	 * @return List of errors
+	 */
 	static ArrayList<String> checkActuationVectorLenghts(HashMap<Point, ActuationVector> cellActuations, HashMap<Integer, ActuationVector> pinActuations) {
 		ArrayList<String> errors = new ArrayList<String>();
 
