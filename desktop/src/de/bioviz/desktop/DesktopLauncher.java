@@ -292,6 +292,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.addTab(file.getName(), null);
 		this.bioViz.loadNewFile(file);
 		tabsToFilenames.put((Integer)(visualizationTabs.getTabCount() - 1), file);
+		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() - 1);
 	}
 
 	public static void main(String[] args) {
