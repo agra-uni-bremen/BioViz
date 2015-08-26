@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -57,7 +59,7 @@ public class DesktopLauncher extends JFrame {
 	
 	BioViz currentViz;
 	
-	private HashMap<Integer, File> tabsToFilenames;
+	private HashMap<Object, File> tabsToFilenames;
 
 
 	/**
@@ -94,7 +96,7 @@ public class DesktopLauncher extends JFrame {
 	public DesktopLauncher(int timeMax, File file) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		tabsToFilenames = new HashMap<Integer, File>();
+		tabsToFilenames = new HashMap<Object, File>();
 		
 		if (file == null) {
 			bioViz = new BioViz();
@@ -118,7 +120,42 @@ public class DesktopLauncher extends JFrame {
 		
 		visualizationTabs.addChangeListener(
 				l -> bioViz.loadNewFile(
-						tabsToFilenames.get(((JTabbedPane)l.getSource()).getSelectedIndex())));
+						tabsToFilenames.get(((JTabbedPane)l.getSource()).getSelectedComponent())));
+		
+		visualizationTabs.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				logger.debug("got button " + e.getButton() + " in tabs");
+				if (e.getButton() == MouseEvent.BUTTON2) {
+					closeTab(visualizationTabs.getSelectedIndex());
+				}
+			}
+		});
 		
 		addNewTab(file);
 
@@ -289,10 +326,19 @@ public class DesktopLauncher extends JFrame {
 	
 	private void addNewTab(File file) {
 		logger.debug("Adding new tab to UI for " + file.getName());
-		visualizationTabs.addTab(file.getName(), null);
-		this.bioViz.loadNewFile(file);
-		tabsToFilenames.put((Integer)(visualizationTabs.getTabCount() - 1), file);
+		JPanel dummyPanel = new JPanel();
+		dummyPanel.setPreferredSize(new Dimension());
+		visualizationTabs.addTab(file.getName(), dummyPanel);
 		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() - 1);
+		tabsToFilenames.put(dummyPanel, file);
+		this.bioViz.loadNewFile(file);
+	}
+	
+	private void closeTab(int index) {
+		logger.info("Closing file (" + index + ")");
+		bioViz.unloadFile(tabsToFilenames.get(visualizationTabs.getSelectedComponent()));
+		tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
+		visualizationTabs.removeTabAt(index);
 	}
 
 	public static void main(String[] args) {

@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.HashMap;
@@ -245,6 +246,16 @@ public class BioViz implements ApplicationListener {
 
 		return pixmap;
 	}
+	
+	public void unloadFile(File f) {
+		try {
+			if (this.loadedCircuits.containsKey(f.getCanonicalPath())) {
+				this.loadedCircuits.remove(f.getCanonicalPath());
+			}
+		} catch (Exception e) {
+			logger.error("Could not unload file " + f);
+		}
+	}
 
 	private void loadNewFileNow() {
 		Biochip bc;
@@ -291,7 +302,7 @@ public class BioViz implements ApplicationListener {
 	}
 
 	public void loadNewFile(File f) {
-		logger.trace("Scheduling loading of file " + f);
+		logger.debug("Scheduling loading of file " + f);
 		bioFile = f;
 		loadFileOnUpdate = true;
 	}
