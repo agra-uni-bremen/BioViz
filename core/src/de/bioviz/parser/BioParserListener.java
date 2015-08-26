@@ -357,6 +357,9 @@ public class BioParserListener extends BioBaseListener {
 		}
 
 		droplets.forEach(chip::addDroplet);
+		errors.addAll(Validator.checkPathsForJumps(droplets));
+		errors.addAll(Validator.checkPathsForPositions(droplets, chip.getAllCoordinates()));
+
 		chip.addFluidTypes(fluidTypes);
 		chip.addNets(nets);
 
@@ -421,22 +424,16 @@ public class BioParserListener extends BioBaseListener {
 		});
 		chip.cellActuations.putAll(cellActuations);
 
+		errors.addAll(Validator.checkActuationVectorLenghts(cellActuations, pinActuations));
 
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(m -> {
 			m.positions.positions().forEach(pos -> {
-				logger.trace("Adding mixer {} to field {}",m,pos);
+				logger.trace("Adding mixer {} to field {}", m, pos);
 				chip.getFieldAt(pos).mixers.add(m);
 			});
 		});
 
-		// perform some sanity checks
-
-
-
-		errors.addAll(Validator.checkPathsForJumps(droplets));
-		errors.addAll(Validator.checkPathsForPositions(droplets, chip.getAllCoordinates()));
-		errors.addAll(Validator.checkActuationVectorLenghts(cellActuations,pinActuations));
 
 		errors.forEach(s -> logger.error(s));
 
