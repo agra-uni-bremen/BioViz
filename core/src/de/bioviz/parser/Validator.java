@@ -87,14 +87,14 @@ public class Validator {
 	static ArrayList<String> checkActuationVectorLenghts(HashMap<Point, ActuationVector> cellActuations, HashMap<Integer, ActuationVector> pinActuations) {
 		ArrayList<String> errors = new ArrayList<String>();
 
-		int cellActs = -1;
-		int pinActs = -1;
+		Integer cellActs = null;
+		Integer pinActs = null;
 		boolean addedCellError=false;
 
 		if (cellActuations != null && !cellActuations.isEmpty()) {
 			for (Map.Entry<Point, ActuationVector> pair : cellActuations.entrySet()) {
 				int len = pair.getValue().size();
-				if (cellActs == -1) {
+				if (cellActs == null) {
 					cellActs = len;
 				} else {
 					if (len != cellActs && !addedCellError) {
@@ -110,7 +110,7 @@ public class Validator {
 		if (pinActuations != null && !pinActuations.isEmpty()) {
 			for (Map.Entry<Integer, ActuationVector> pair : pinActuations.entrySet()) {
 				int len = pair.getValue().size();
-				if (pinActs == -1) {
+				if (pinActs == null) {
 					pinActs = len;
 				} else {
 					if (len != cellActs && !addedPinError) {
