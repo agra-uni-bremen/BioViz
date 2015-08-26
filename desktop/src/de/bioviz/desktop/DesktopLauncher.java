@@ -114,6 +114,7 @@ public class DesktopLauncher extends JFrame {
 		
 		
 		visualizationTabs = new JTabbedPane();
+		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		
 		visualizationTabs.addChangeListener(
 				l -> bioViz.loadNewFile(
@@ -288,7 +289,7 @@ public class DesktopLauncher extends JFrame {
 	
 	private void addNewTab(File file) {
 		logger.debug("Adding new tab to UI for " + file.getName());
-		visualizationTabs.addTab(file.getName(), new JPanel());
+		visualizationTabs.addTab(file.getName(), null);
 		this.bioViz.loadNewFile(file);
 		tabsToFilenames.put((Integer)(visualizationTabs.getTabCount() - 1), file);
 	}
