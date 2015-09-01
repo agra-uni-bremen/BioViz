@@ -21,6 +21,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
@@ -325,6 +326,9 @@ public class DesktopLauncher extends JFrame {
 	}
 	
 	private void addNewTab(File file) {
+		if (file == null) {
+			file = Gdx.files.getFileHandle("examples/default_grid.bio", Files.FileType.Internal).file();
+		}
 		logger.debug("Adding new tab to UI for " + file.getName());
 		JPanel dummyPanel = new JPanel();
 		dummyPanel.setPreferredSize(new Dimension());
