@@ -37,6 +37,9 @@ public class Point extends Pair<Integer, Integer> {
 		return (first << 16) + second;
 	}
 
+
+
+	// Bascially casts from enum to static points
 	public static Point pointFromDirection(Direction dir) {
 		switch (dir) {
 			case NORTH:
