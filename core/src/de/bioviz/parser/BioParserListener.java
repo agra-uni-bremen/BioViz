@@ -406,11 +406,14 @@ public class BioParserListener extends BioBaseListener {
 
 		chip.blockages.addAll(blockages);
 
+		errors.addAll(Validator.checkForDetectorPositions(chip,detectors,true));
+		// only valid detectors are left -> we can happily add them to the chip
 		detectors.forEach(det -> {
 			Point pos = det.position();
 			chip.getFieldAt(pos).setDetector(det);
 		});
 		chip.detectors.addAll(detectors);
+
 
 		pins.values().forEach(pin -> {
 			pin.cells.forEach(pos -> chip.getFieldAt(pos).pin = pin);
