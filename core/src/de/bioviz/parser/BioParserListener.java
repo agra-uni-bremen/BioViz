@@ -376,7 +376,7 @@ public class BioParserListener extends BioBaseListener {
 		dropletIDsToFluidTypes.forEach(chip::addDropToFluid);
 
 
-
+		errors.addAll(Validator.checkSinkPositions(chip, sinks, true));
 		sinks.forEach(sink -> {
 			Point p = sink.first;
 			Direction dir = sink.second;
@@ -386,7 +386,9 @@ public class BioParserListener extends BioBaseListener {
 			chip.addField(sinkPoint, sinkField);
 		});
 
-
+		errors.addAll(Validator.checkDispenserPositions(chip,
+				dispensers,
+				true));
 		dispensers.forEach(dispenser -> {
 			int fluidID = dispenser.first;
 			Point p = dispenser.second.first;
@@ -420,8 +422,7 @@ public class BioParserListener extends BioBaseListener {
 		});
 		chip.pins.putAll(pins);
 		errors.addAll(Validator.checkMultiplePinAssignments(pins.values()));
-
-				chip.pinActuations.putAll(pinActuations);
+		chip.pinActuations.putAll(pinActuations);
 
 		cellActuations.forEach((pos, vec) -> {
 			chip.getFieldAt(pos).actVec = vec;

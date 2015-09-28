@@ -1,6 +1,7 @@
 package de.bioviz.parser;
 
 import de.bioviz.structures.*;
+import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +13,8 @@ import java.util.stream.Collectors;
  * <p>
  * This class provides very basic validation of aspects of the chip.
  * <p>
- * The way this validator works is that every problem found will be added to an error list
- * that will be returned to the caller.
+ * The way this validator works is that every problem found will be added to an
+ * error list that will be returned to the caller.
  *
  * @author Oliver Keszocze
  */
@@ -22,10 +23,13 @@ public class Validator {
 
 
 	/**
-	 * This method checks that all the positions a droplet moves along is actually a position of the chip
+	 * This method checks that all the positions a droplet moves along is
+	 * actually a position of the chip
 	 *
-	 * @param drops  Droplets, whose positions should be valided
-	 * @param points The possible positions of
+	 * @param drops
+	 * 		Droplets, whose positions should be valided
+	 * @param points
+	 * 		The possible positions of
 	 * @return List of errors
 	 */
 	static ArrayList<String> checkPathsForPositions(ArrayList<Droplet> drops, Set<Point> points) {
@@ -43,9 +47,11 @@ public class Validator {
 	}
 
 	/**
-	 * This method checks whether droplets only move a single cell in horizontal or vertical direction in one time step
+	 * This method checks whether droplets only move a single cell in horizontal
+	 * or vertical direction in one time step
 	 *
-	 * @param drops Droplets whose positions on the grid will be checked for 'jumps'
+	 * @param drops
+	 * 		Droplets whose positions on the grid will be checked for 'jumps'
 	 * @return List of errors
 	 */
 	static ArrayList<String> checkPathsForJumps(ArrayList<Droplet> drops) {
@@ -79,11 +85,14 @@ public class Validator {
 	// TODO Somehow also generate the list of assigned pins to the cells
 
 	/**
-	 * Method that checks whether there are cells that have multiple pin assigned to them.
+	 * Method that checks whether there are cells that have multiple pin
+	 * assigned to them.
 	 *
-	 * @param pins List of pins that will be scanned for multiple aissgnments
+	 * @param pins
+	 * 		List of pins that will be scanned for multiple aissgnments
 	 * @return List of errors
-	 * @note This method will generate error messages even if one cell gets assigned the same pin multiple times.
+	 * @note This method will generate error messages even if one cell gets
+	 * assigned the same pin multiple times.
 	 */
 	static ArrayList<String> checkMultiplePinAssignments(Collection<Pin> pins) {
 		ArrayList<Point> points = new ArrayList<>();
@@ -106,10 +115,13 @@ public class Validator {
 	}
 
 	/**
-	 * This method checks that all actuations sequences provided have the same length
+	 * This method checks that all actuations sequences provided have the same
+	 * length
 	 *
-	 * @param cellActuations List of actuations given on the cell level (might be null)
-	 * @param pinActuations  List of actuations given on the pin level (might be nulll)
+	 * @param cellActuations
+	 * 		List of actuations given on the cell level (might be null)
+	 * @param pinActuations
+	 * 		List of actuations given on the pin level (might be nulll)
 	 * @return List of errors
 	 */
 	static ArrayList<String> checkActuationVectorLenghts(HashMap<Point, ActuationVector> cellActuations, HashMap<Integer, ActuationVector> pinActuations) {
@@ -157,12 +169,17 @@ public class Validator {
 
 
 	/**
-	 * This method checks whether provided detectors can actually be placed on the chip. It can further remove conflicting
-	 * detectors from the detectors list.
+	 * This method checks whether provided detectors can actually be placed on
+	 * the chip. It can further remove conflicting detectors from the detectors
+	 * list.
 	 *
-	 * @param chip                 The biochip that is supposed to contain the detectors
-	 * @param detectors            List of detectors to be placed on the chip (might be nulll)
-	 * @param removeWrongDetectors if true, erroneous detectors will be removed from the list of detectors
+	 * @param chip
+	 * 		The biochip that is supposed to contain the detectors
+	 * @param detectors
+	 * 		List of detectors to be placed on the chip (might be nulll)
+	 * @param removeWrongDetectors
+	 * 		if true, erroneous detectors will be removed from the list of
+	 * 		detectors
 	 * @return List of errors
 	 */
 	public static ArrayList<String> checkForDetectorPositions(Biochip chip, ArrayList<Detector> detectors, boolean removeWrongDetectors) {
@@ -184,6 +201,86 @@ public class Validator {
 				}
 			}
 			detectors.removeAll(removeList);
+		}
+		return errors;
+	}
+
+	public static String checkOutsidePosition(Biochip chip, String type, Pair<Point, Direction> dir) {
+		String msg = "";
+		boolean targetExists = true;
+		boolean sourceExists = true;
+		Point source = dir.first.add(Point.pointFromDirection(dir.second));
+
+
+		try {
+			chip.getFieldAt(dir.first);
+		} catch (RuntimeException e) {
+			targetExists = false;
+		}
+
+		try {
+
+			chip.getFieldAt(source);
+		} catch (RuntimeException e) {
+			sourceExists = false;
+		}
+
+
+		if (!targetExists) {
+			msg = msg + type + " target " + dir.first + " does not exist! [" + dir + "] ";
+		}
+		if (sourceExists) {
+			msg = msg + type + " source " + source + " is within the chip! [" + dir + "]";
+		}
+
+		return msg;
+	}
+
+	public static ArrayList<String> checkSinkPositions(Biochip chip, ArrayList<Pair<Point, Direction>> sinks, boolean removeWrongDirs) {
+		ArrayList<String> errors = new ArrayList<String>();
+
+		if (sinks != null && !sinks.isEmpty()) {
+			ArrayList<Pair<Point, Direction>> removeList = new ArrayList<Pair<Point, Direction>>();
+			for (Pair<Point, Direction> sink : sinks) {
+				String msg = checkOutsidePosition(chip, "Sink", sink);
+				if (!msg.isEmpty()) {
+					if (removeWrongDirs) {
+						removeList.add(sink);
+						msg = msg + " Removed invalid sink.";
+					}
+
+					errors.add(msg);
+				}
+			}
+			sinks.removeAll(removeList);
+		}
+		return errors;
+	}
+
+
+	public static ArrayList<String> checkDispenserPositions(
+			Biochip chip,
+			ArrayList<Pair<Integer, Pair<Point, Direction>>> disps,
+			boolean removeWrongDirs) {
+
+		ArrayList<String> errors = new ArrayList<String>();
+
+		if (disps != null && !disps.isEmpty()) {
+			ArrayList<Pair<Integer, Pair<Point, Direction>>> removeList
+					= new ArrayList<Pair<Integer, Pair<Point, Direction>>>();
+			for (Pair<Integer, Pair<Point, Direction>> dir : disps) {
+				String msg = checkOutsidePosition(chip, "Dispenser", dir.second);
+				if (!msg.isEmpty()) {
+					if (removeWrongDirs) {
+						removeList.add(dir);
+						msg = msg + " Removed invalid dispenser.";
+					}
+
+					errors.add(msg);
+				}
+
+			}
+			disps.removeAll(removeList);
 		}
 		return errors;
 	}
