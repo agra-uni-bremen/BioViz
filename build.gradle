@@ -108,7 +108,7 @@ project(":core") {
         outputs.upToDateWhen { false }
     }
     
-    compileJava.finalizedBy(checkstyleMain)
+    //compileJava.finalizedBy(checkstyleMain)
 }
 
 tasks.eclipse.doLast {
