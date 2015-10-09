@@ -80,17 +80,26 @@ public class DrawableField extends DrawableSprite {
 			this.addLOD(Float.MAX_VALUE, "Detector.png");
 			drawDetector = true;
 		} else if (!this.field.source_ids.isEmpty()) {
-			this.addLOD(Float.MAX_VALUE, "Start.png");
-			ArrayList<Integer> sources = this.field.source_ids;
-			fieldHUDMsg = sources.get(0).toString();
-			if (sources.size() > 1) {
-				for (int i = 2; i < sources.size(); i++) {
-					fieldHUDMsg += ", " + sources.get(i);
+			if (circ.getShowSourceTargetIcons()) {
+				this.addLOD(Float.MAX_VALUE, "Start.png");
+			}
+			else {
+				this.removeLOD(Float.MAX_VALUE);
+			}
+			if (circ.getShowSourceTargetIDs()) {
+				ArrayList<Integer> sources = this.field.source_ids;
+				fieldHUDMsg = sources.get(0).toString();
+				if (sources.size() > 1) {
+					for (int i = 2; i < sources.size(); i++) {
+						fieldHUDMsg += ", " + sources.get(i);
+					}
 				}
 			}
 		} else if (!this.field.target_ids.isEmpty()) {
 			if (circ.getShowSourceTargetIcons()) {
 				this.addLOD(Float.MAX_VALUE, "Target.png");
+			} else {
+				this.removeLOD(Float.MAX_VALUE);
 			}
 			if (circ.getShowSourceTargetIDs()) {
 				ArrayList<Integer> targets = this.field.target_ids;
