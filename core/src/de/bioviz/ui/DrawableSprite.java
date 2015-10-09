@@ -2,6 +2,7 @@ package de.bioviz.ui;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -128,6 +129,9 @@ public abstract class DrawableSprite implements Drawable {
 	public void addLOD(float scaleFactorMax, String textureFilename) {
 		loadTexture(textureFilename);
 		this.LevelOfDetailTextures.put(scaleFactorMax, textureFilename);
+	}
+	public void removeLOD(float scaleFactorMax) {
+		this.LevelOfDetailTextures.remove(scaleFactorMax);
 	}
 	
 	public boolean isHovered() {
