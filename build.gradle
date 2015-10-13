@@ -12,7 +12,7 @@ buildscript {
 apply plugin: 'me.champeau.gradle.antlr4'
 
 antlr4.source = file('lib/parser')
-antlr4.output = file('../core/src/de/bioviz/parser/generated')
+antlr4.output = file('core/src/de/bioviz/parser/generated')
 antlr4.extraArgs=['-package','de.bioviz.parser.generated']
 
 // add antlr4 to classpath
