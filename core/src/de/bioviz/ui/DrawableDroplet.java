@@ -15,11 +15,11 @@ public class DrawableDroplet extends DrawableSprite {
 
 	private static Random randnum = null;
 	
-	DrawableCircuit parent;
+	DrawableCircuit parentCircuit;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
 		super("Droplet.png", parent.parent);
-		this.parent = parent;
+		this.parentCircuit = parent;
 		if (randnum == null) {
 			randnum = new Random();
 		}
@@ -37,7 +37,7 @@ public class DrawableDroplet extends DrawableSprite {
 	public String generateSVG() {
 		return
 				"<image x=\"" + this.droplet.smoothX + "\" " +
-						"y=\"" + (-this.droplet.smoothY + parent.data.getMaxCoord().second - 1) + "\" " +
+						"y=\"" + (-this.droplet.smoothY + parentCircuit.data.getMaxCoord().second - 1) + "\" " +
 						"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
 						this.route.generateSVG();
 	}
@@ -45,7 +45,7 @@ public class DrawableDroplet extends DrawableSprite {
 	@Override
 	public void draw() {
 
-		DrawableCircuit circ = parent;
+		DrawableCircuit circ = parentCircuit;
 
 		Point p = droplet.getPositionAt(circ.currentTime);
 		boolean visible = false;
@@ -64,7 +64,7 @@ public class DrawableDroplet extends DrawableSprite {
 			visible = true;
 		}
 
-		if (p!= null && parent.getShowDroplets()) {
+		if (p!= null && parentCircuit.getShowDroplets()) {
 
 
 			droplet.setTargetPosition(p.first, p.second);
@@ -97,16 +97,16 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 
 			if (msg != null) {
-				parent.parent.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
+				parentCircuit.parent.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
 			} else {
-				parent.parent.mc.removeHUDMessage(this.hashCode());
+				parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
 			}
 
 			super.draw();
 		}
 		if (!visible) {
 			// make sure that previous numbers are removed when the droplet is removed.
-			parent.parent.mc.removeHUDMessage(this.hashCode());
+			parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
 		}
 	}
 }

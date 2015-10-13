@@ -12,20 +12,20 @@ public class DrawableRoute extends DrawableSprite {
 	public static int timesteps = 0;
 	public static int hoverTimesteps = 2 * timesteps + 8;
 
-	private DrawableDroplet parent;
+	private DrawableDroplet droplet;
 
 	public Color baseColor = Color.BLACK;
 
-	public DrawableRoute(DrawableDroplet parent) {
-		super("StepMarker.png", parent.viz);
-		this.parent = parent;
+	public DrawableRoute(DrawableDroplet droplet) {
+		super("StepMarker.png", droplet.viz);
+		this.droplet = droplet;
 		super.addLOD(defaultLODThreshold, "BlackPixel.png");
 	}
 
 	@Override
 	public String generateSVG() {
 		String result = "";
-		int currentTime = parent.parent.currentTime;
+		int currentTime = droplet.parentCircuit.currentTime;
 		int displayAt;
 
 		for (int i = -timesteps; i < timesteps; i++) {
@@ -35,8 +35,8 @@ public class DrawableRoute extends DrawableSprite {
 			// TODO possible problem here due to casting
 			displayAt = currentTime + i;
 
-			Point p1 = parent.droplet.getPositionAt(displayAt);
-			Point p2 = parent.droplet.getPositionAt(displayAt + 1);
+			Point p1 = droplet.droplet.getPositionAt(displayAt);
+			Point p2 = droplet.droplet.getPositionAt(displayAt + 1);
 
 			int x1 = p1.first;
 			int x2 = p2.first;
@@ -45,7 +45,7 @@ public class DrawableRoute extends DrawableSprite {
 
 			float targetX = x1 + 0.5f;
 			float targetY = -y1 +
-					parent.parent.data.getMaxCoord().second - 1;
+					droplet.parentCircuit.data.getMaxCoord().second - 1;
 			if (y1 == y2 && x2 > x1) {
 				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" xlink:href=\"StepMarker.svg\" />";
 			} else if (y1 == y2 && x2 < x1) {
@@ -63,7 +63,7 @@ public class DrawableRoute extends DrawableSprite {
 
 	@Override
 	public void draw() {
-		int currentTime = parent.parent.currentTime;
+		int currentTime = droplet.parentCircuit.currentTime;
 		int displayAt;
 
 
@@ -73,7 +73,7 @@ public class DrawableRoute extends DrawableSprite {
 			hoverTimesteps = 2 * timesteps + 8;
 
 			int stepsToUse = timesteps;
-			if (this.parent.isHovered()) {
+			if (this.droplet.isHovered()) {
 				stepsToUse = hoverTimesteps;
 			}
 
@@ -87,8 +87,8 @@ public class DrawableRoute extends DrawableSprite {
 				}
 
 				displayAt = currentTime + i;
-				Point p1 = parent.droplet.getSafePositionAt(displayAt);
-				Point p2 = parent.droplet.getSafePositionAt(displayAt + 1);
+				Point p1 = droplet.droplet.getSafePositionAt(displayAt);
+				Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
 
 				logger.trace("Point p1: {} (timestep {})", p1, displayAt);
 				logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
@@ -98,24 +98,24 @@ public class DrawableRoute extends DrawableSprite {
 				int y1 = p1.second;
 				int y2 = p2.second;
 
-				float xCoord = parent.parent.xCoordOnScreen(x1 + 0.5f);
-				float yCoord = parent.parent.yCoordOnScreen(y1);
+				float xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
+				float yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
 
 				if (y1 == y2 && x2 > x1) {
-					xCoord = parent.parent.xCoordOnScreen(x1 + 0.5f);
-					yCoord = parent.parent.yCoordOnScreen(y1);
+					xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
+					yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
 					this.rotation = 0;
 				} else if (y1 == y2 && x2 < x1) {
-					xCoord = parent.parent.xCoordOnScreen(x1 - 0.5f);
-					yCoord = parent.parent.yCoordOnScreen(y1);
+					xCoord = droplet.parentCircuit.xCoordOnScreen(x1 - 0.5f);
+					yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
 					this.rotation = 180;
 				} else if (x1 == x2 && y2 > y1) {
-					xCoord = parent.parent.xCoordOnScreen(x1);
-					yCoord = parent.parent.yCoordOnScreen(y1 + 0.5f);
+					xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
+					yCoord = droplet.parentCircuit.yCoordOnScreen(y1 + 0.5f);
 					this.rotation = 90;
 				} else if (x1 == x2 && y2 < y1) {
-					xCoord = parent.parent.xCoordOnScreen(x1);
-					yCoord = parent.parent.yCoordOnScreen(y1 - 0.5f);
+					xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
+					yCoord = droplet.parentCircuit.yCoordOnScreen(y1 - 0.5f);
 					this.rotation = 270;
 				} else {
 					continue;
@@ -123,8 +123,8 @@ public class DrawableRoute extends DrawableSprite {
 
 				this.x = xCoord;
 				this.y = yCoord;
-				this.scaleX = parent.parent.smoothScaleX;
-				this.scaleY = parent.parent.smoothScaleY;
+				this.scaleX = droplet.parentCircuit.smoothScaleX;
+				this.scaleY = droplet.parentCircuit.smoothScaleY;
 
 				super.draw();
 			}
