@@ -84,7 +84,7 @@ public class DrawableField extends DrawableSprite {
 				this.addLOD(Float.MAX_VALUE, "Start.png");
 			}
 			else {
-				this.removeLOD(Float.MAX_VALUE);
+				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
 			}
 			if (circ.getShowSourceTargetIDs()) {
 				ArrayList<Integer> sources = this.field.source_ids;
@@ -99,7 +99,7 @@ public class DrawableField extends DrawableSprite {
 			if (circ.getShowSourceTargetIcons()) {
 				this.addLOD(Float.MAX_VALUE, "Target.png");
 			} else {
-				this.removeLOD(Float.MAX_VALUE);
+				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
 			}
 			if (circ.getShowSourceTargetIDs()) {
 				ArrayList<Integer> targets = this.field.target_ids;
