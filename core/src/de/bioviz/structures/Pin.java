@@ -25,5 +25,9 @@ public class Pin {
 		this.cells.addAll(cells);
 	}
 
+	public String toString() {
+		return "Pin="+pinID;
+	}
+
 
 }
