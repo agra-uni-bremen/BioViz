@@ -430,6 +430,8 @@ public class BioParserListener extends BioBaseListener {
 		chip.cellActuations.putAll(cellActuations);
 
 		errors.addAll(Validator.checkActuationVectorLenghts(cellActuations, pinActuations));
+		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,cellActuations, pinActuations,true));
+		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,cellActuations, pinActuations,false));
 
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(m -> {

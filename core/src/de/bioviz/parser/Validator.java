@@ -1,6 +1,7 @@
 package de.bioviz.parser;
 
 import de.bioviz.structures.*;
+import de.bioviz.ui.BioViz;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -257,7 +258,6 @@ public class Validator {
 		return errors;
 	}
 
-
 	public static ArrayList<String> checkDispenserPositions(
 			Biochip chip,
 			ArrayList<Pair<Integer, Pair<Point, Direction>>> disps,
@@ -282,6 +282,99 @@ public class Validator {
 			}
 			disps.removeAll(removeList);
 		}
+		return errors;
+	}
+
+
+	private static void compatibility(ActuationVector v1,
+									  ActuationVector v2,
+									  ArrayList<String> errors,
+									  boolean strong,
+									  String what) {
+
+		logger.debug("Comparing actuation vectors {} <-> {}", v1, v2);
+		if (v1 != null && v1.size() == v2.size()) {
+			for (int i = 0; i < v1.size(); i++) {
+				ActuationVector.Actuation a = v1.get(i);
+				ActuationVector.Actuation b = v2.get(i);
+				if (a != b) {
+					if (strong) {
+						errors.add("Cell and pin actuations for " + what + " are not strongly compatible.");
+						break;
+					} else {
+						if (a != ActuationVector.Actuation.DONTCARE && b != ActuationVector.Actuation.DONTCARE) {
+							errors.add("Cell and pin actuations for " + what + " are not weakly compatible.");
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public static ArrayList<String> checkCellPinActuationCompatibility(
+			Biochip chip,
+			HashMap<Point, ActuationVector> cellActuations,
+			HashMap<Integer, ActuationVector> pinActuations,
+			boolean strongCompatibility) {
+
+		ArrayList<String> errors = new ArrayList<String>();
+
+		/*
+		Check that every cell actuation matches with the pin actuation that is
+		attached to the cell. Note that not necessarily both  (in this case the
+		pin actuation) actuations need to be specified
+		 */
+		//logger.debug("cellActuations.entrySet()={}", cellActuations.entrySet());
+		for (Map.Entry<Point, ActuationVector> e : cellActuations.entrySet()) {
+			Point p = e.getKey();
+			ActuationVector cellActVec = e.getValue();
+			//logger.debug("Working on cell actuation {}", e);
+
+			Pin pin = chip.getFieldAt(p).pin;
+			//logger.debug("Pin for position {}: {}", p, pin);
+			if (pin != null) {
+				ActuationVector pinActVec = chip.pinActuations.get(pin.pinID);
+				//logger.debug("pin={} pinActVec={}", pin, pinActVec);
+				compatibility(pinActVec, cellActVec, errors, strongCompatibility, "field at " + p + " and pin " + pin.pinID);
+			}
+		}
+
+
+		/*
+		Check that every pin actuation matches with the cell actuations associated
+		with this pin. Note that not necessarily both  (in this case the
+		cell actuations) actuations need to be specified. It is necessary to
+		check the compatibility in both directions (cell -> pin & pin -> cells)
+		as it is possible that both inputs in the file specify different sets
+		 */
+
+		//logger.debug("pinActuations.entrySet().size()={}",pinActuations.entrySet().size());
+		for (
+				Map.Entry<Integer, ActuationVector> e
+				: pinActuations.entrySet())
+
+		{
+			Integer pinID = e.getKey();
+			ActuationVector pinActVec = e.getValue();
+			List<BiochipField> fields = chip.getFieldsForPin(pinID);
+
+			//logger.debug("Entry: {}",e);
+			//logger.debug("Working on pin actuation vector for pin {}:{}",pinID,pinActVec);
+
+			final int n = pinActVec.size();
+
+			if (!fields.isEmpty()) {
+				for (BiochipField f : fields) {
+					ActuationVector cellActVec = f.actVec;
+					//logger.debug("pin -> cell: comparing {} and {}",pinActVec,cellActVec);
+					compatibility(cellActVec, pinActVec, errors,
+							strongCompatibility, "pin with ID " + pinID + " and cell at " + f.pos);
+				}
+
+			}
+		}
+
 		return errors;
 	}
 }
