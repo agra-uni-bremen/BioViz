@@ -49,6 +49,7 @@ project(":desktop") {
     
     apply plugin: "checkstyle"
     checkstyle.ignoreFailures = true
+    checkstyle.showViolations = false
     checkstyle {
         toolVersion = "6.0"
     }
@@ -72,6 +73,8 @@ project(":desktop") {
     tasks.matching { task -> task.name == "checkstyleMain" }.all {
         outputs.upToDateWhen { false }
     }
+    
+    compileJava.finalizedBy(checkstyleMain)
 }
 
 project(":core") {
@@ -91,6 +94,7 @@ project(":core") {
     }
     checkstyleMain.finalizedBy checkstyleHtml
     checkstyle.ignoreFailures = true
+    checkstyle.showViolations = false
     checkstyle {
         toolVersion = "6.0"
     }
@@ -108,7 +112,7 @@ project(":core") {
         outputs.upToDateWhen { false }
     }
     
-    //compileJava.finalizedBy(checkstyleMain)
+    compileJava.finalizedBy(checkstyleMain)
 }
 
 tasks.eclipse.doLast {
