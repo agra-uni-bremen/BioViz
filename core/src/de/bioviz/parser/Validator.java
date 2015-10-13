@@ -125,7 +125,7 @@ public class Validator {
 	 * 		List of actuations given on the pin level (might be nulll)
 	 * @return List of errors
 	 */
-	static ArrayList<String> checkActuationVectorLenghts(HashMap<Point, ActuationVector> cellActuations, HashMap<Integer, ActuationVector> pinActuations) {
+	static ArrayList<String> checkActuationVectorLengths(HashMap<Point, ActuationVector> cellActuations, HashMap<Integer, ActuationVector> pinActuations) {
 		ArrayList<String> errors = new ArrayList<String>();
 
 		Integer cellActs = null;
