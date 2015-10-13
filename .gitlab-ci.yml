@@ -1,2 +1,2 @@
 desktop:
-  script: "./gradlew desktop:build"
+  script: "sudo ./gradlew desktop:build"
