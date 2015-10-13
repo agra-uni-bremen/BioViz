@@ -1,2 +1,2 @@
 desktop:
-  script: "./gradlew desktop:build"
+  script: "git submodule init && git submodule update && ./gradlew desktop:build"
