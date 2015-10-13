@@ -1,12 +1,31 @@
 package de.bioviz.structures;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Created by keszocze on 31.07.15.
  */
+
+
 public class ActuationVector {
-	public  enum Actuation { ON, OFF , DONTCARE}
+
+	public enum Actuation {ON, OFF, DONTCARE}
+
+	public static String actToString(Actuation a) {
+		String act;
+		switch (a) {
+			case ON:
+				act = "1";
+				break;
+			case OFF:
+				act = "0";
+				break;
+			default:
+				act = "X";
+		}
+		return act;
+	}
 
 	public final ArrayList<Actuation> vec = new ArrayList<>();
 
@@ -22,7 +41,7 @@ public class ActuationVector {
 
 
 	public ActuationVector(String s) {
-		for (int i=0; i< s.length(); ++i) {
+		for (int i = 0; i < s.length(); ++i) {
 			vec.add(getActuation(s.charAt(i)));
 		}
 	}
@@ -39,4 +58,7 @@ public class ActuationVector {
 		return vec.size();
 	}
 
+	public String toString() {
+		return vec.stream().map(a -> actToString(a)).collect(Collectors.joining());
+	}
 }
