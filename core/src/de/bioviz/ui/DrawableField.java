@@ -80,21 +80,34 @@ public class DrawableField extends DrawableSprite {
 			this.addLOD(Float.MAX_VALUE, "Detector.png");
 			drawDetector = true;
 		} else if (!this.field.source_ids.isEmpty()) {
-			this.addLOD(Float.MAX_VALUE, "Start.png");
-			ArrayList<Integer> sources = this.field.source_ids;
-			fieldHUDMsg = sources.get(0).toString();
-			if (sources.size() > 1) {
-				for (int i = 2; i < sources.size(); i++) {
-					fieldHUDMsg += ", " + sources.get(i);
+			if (circ.getShowSourceTargetIcons()) {
+				this.addLOD(Float.MAX_VALUE, "Start.png");
+			}
+			else {
+				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
+			}
+			if (circ.getShowSourceTargetIDs()) {
+				ArrayList<Integer> sources = this.field.source_ids;
+				fieldHUDMsg = sources.get(0).toString();
+				if (sources.size() > 1) {
+					for (int i = 2; i < sources.size(); i++) {
+						fieldHUDMsg += ", " + sources.get(i);
+					}
 				}
 			}
 		} else if (!this.field.target_ids.isEmpty()) {
-			this.addLOD(Float.MAX_VALUE, "Target.png");
-			ArrayList<Integer> targets = this.field.target_ids;
-			fieldHUDMsg = targets.get(0).toString();
-			if (targets.size() > 1) {
-				for (int i = 1; i < targets.size(); i++) {
-					fieldHUDMsg += ", " + targets.get(i);
+			if (circ.getShowSourceTargetIcons()) {
+				this.addLOD(Float.MAX_VALUE, "Target.png");
+			} else {
+				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
+			}
+			if (circ.getShowSourceTargetIDs()) {
+				ArrayList<Integer> targets = this.field.target_ids;
+				fieldHUDMsg = targets.get(0).toString();
+				if (targets.size() > 1) {
+					for (int i = 1; i < targets.size(); i++) {
+						fieldHUDMsg += ", " + targets.get(i);
+					}
 				}
 			}
 		}
@@ -104,7 +117,7 @@ public class DrawableField extends DrawableSprite {
 		// TODO we really need some kind of mechanism of deciding when to show what
 		if (circ.getShowPins()) {
 			if (this.field.pin != null) {
-				fieldHUDMsg =  Integer.toString(this.field.pin.pinID);
+				fieldHUDMsg = Integer.toString(this.field.pin.pinID);
 			}
 		}
 
@@ -158,22 +171,22 @@ public class DrawableField extends DrawableSprite {
 			}
 			if (!this.field.mixers.isEmpty()) {
 
-				for (Mixer m: this.field.mixers) {
+				for (Mixer m : this.field.mixers) {
 					if (m.timing.inRange(t)) {
 						result.add(mixerDefaultColor);
 					}
 				}
 			}
 		}
-		
+
 		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
 			result.add(0.5f, -0.5f, -0.5f, 0);
 		}
 
-		result.mul(1f / (float) colorOverlayCount);
+		result.mul(1f / (float)colorOverlayCount);
 
 		result.clamp();
-		
+
 		setColor(result);
 
 		super.draw();
