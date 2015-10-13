@@ -67,6 +67,8 @@ public class BiochipField {
 		Biochip circ = BioViz.singleton.currentCircuit.data;
 		ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
 
+		// TODO document that pin actuations win over cell actuations
+
 		if (pin != null && !circ.pinActuations.isEmpty()) {
 			logger.trace("circ.pinActuations.isEmpty: {}", circ.pinActuations.isEmpty());
 			logger.trace("timeStep: {} actuationVector {}", timeStep, circ.pinActuations.get(pin.pinID));
@@ -102,6 +104,7 @@ public class BiochipField {
 		this.fluidID = fluidID;
 		direction = dispenseFrom;
 	}
+
 
 	public BiochipField(Point pos, int fluidID, Direction dispenseFrom) {
 		this.pos = pos;
