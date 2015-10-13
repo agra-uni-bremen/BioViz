@@ -225,7 +225,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(pinButton);
 		panel.add(actuationButton);
 		panel.add(adjacencyButton);
-//		panel.add(usageButton);
+		panel.add(usageButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);
