@@ -45,7 +45,7 @@ public class DrawableDroplet extends DrawableSprite {
 		DrawableCircuit circ = BioViz.singleton.currentCircuit;
 
 		Point p = droplet.getPositionAt(circ.currentTime);
-		boolean visible = false;
+		boolean withinTimeRange = false;
 
 		if (p == null) {
 
@@ -58,7 +58,7 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 		} else {
 			this.setColor(this.getColor().cpy().add(0, 0, 0, 1).clamp());
-			visible = true;
+			withinTimeRange = true;
 		}
 
 
@@ -68,9 +68,7 @@ public class DrawableDroplet extends DrawableSprite {
 			droplet.update();
 			route.draw();
 
-			if (BioViz.singleton.currentCircuit.getShowDroplets()) {
-
-
+			if (isVisible) {
 
 				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
 				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
@@ -103,7 +101,7 @@ public class DrawableDroplet extends DrawableSprite {
 				super.draw();
 			}
 		}
-		if (!visible) {
+		if (!withinTimeRange) {
 			// make sure that previous numbers are removed when the droplet is removed.
 			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
 		}

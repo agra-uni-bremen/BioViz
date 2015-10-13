@@ -123,6 +123,7 @@ public class DrawableCircuit implements Drawable {
 
 	public void setShowDroplets(boolean showDroplets) {
 		this.showDroplets = showDroplets;
+		droplets.forEach(d -> {d.isVisible=showDroplets;});
 		if (this.showDroplets) {
 			logger.info("Displaying droplets");
 		} else {
