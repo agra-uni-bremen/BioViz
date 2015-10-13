@@ -55,6 +55,8 @@ public class DrawableCircuit implements Drawable {
 	private boolean showPins = false;
 	private boolean showDroplets = true;
 	private boolean showActuations = false;
+	private boolean showSourceTargetIcons = true;
+	private boolean showSourceTargetIDs = true;
 
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
@@ -85,6 +87,40 @@ public class DrawableCircuit implements Drawable {
 			throw new RuntimeException("circuit parent is null");
 		}
 	}
+	public boolean getShowSourceTargetIcons() {
+		return showSourceTargetIcons;
+	}
+
+	public void toggleShowSourceTargetIcons() {
+		this.setShowSourceTargetIcons(!this.showSourceTargetIcons);
+	}
+
+	public void setShowSourceTargetIcons(boolean showSourceTargetIcons) {
+		this.showSourceTargetIcons = showSourceTargetIcons;
+		if (this.showSourceTargetIcons) {
+			logger.info("Displaying Source/Target icons");
+		} else {
+			logger.info("Stop displaying Source/Target icons");
+		}
+	}
+
+	public boolean getShowSourceTargetIDs() {
+		return showSourceTargetIDs;
+	}
+
+	public void toggleShowSourceTargetIDs() {
+		this.setShowSourceTargetIDs(!this.showSourceTargetIDs);
+	}
+
+	public void setShowSourceTargetIDs(boolean showSourceTargetIDs) {
+		this.showSourceTargetIDs = showSourceTargetIDs;
+		if (this.showSourceTargetIDs) {
+			logger.info("Displaying Source/Target IDs");
+		} else {
+			logger.info("Stop displaying Source/Target IDs");
+		}
+	}
+
 	public boolean getShowDroplets() {
 		return showDroplets;
 	}
@@ -95,6 +131,7 @@ public class DrawableCircuit implements Drawable {
 
 	public void setShowDroplets(boolean showDroplets) {
 		this.showDroplets = showDroplets;
+		droplets.forEach(d -> {d.isVisible=showDroplets;});
 		if (this.showDroplets) {
 			logger.info("Displaying droplets");
 		} else {

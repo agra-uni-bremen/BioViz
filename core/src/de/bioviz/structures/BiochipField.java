@@ -69,6 +69,8 @@ public class BiochipField {
 		Biochip circ = parent.currentCircuit.data;
 		ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
 
+		// TODO document that pin actuations win over cell actuations
+
 		if (pin != null && !circ.pinActuations.isEmpty()) {
 			logger.trace("circ.pinActuations.isEmpty: {}", circ.pinActuations.isEmpty());
 			logger.trace("timeStep: {} actuationVector {}", timeStep, circ.pinActuations.get(pin.pinID));

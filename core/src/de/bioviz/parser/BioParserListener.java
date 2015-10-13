@@ -349,6 +349,7 @@ public class BioParserListener extends BioBaseListener {
 	public void exitBio(BioContext ctx) {
 
 		chip = new Biochip();
+		ArrayList<String> errors = new ArrayList<String>();
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {
@@ -361,6 +362,9 @@ public class BioParserListener extends BioBaseListener {
 		}
 
 		droplets.forEach(chip::addDroplet);
+		errors.addAll(Validator.checkPathsForJumps(droplets));
+		errors.addAll(Validator.checkPathsForPositions(droplets, chip.getAllCoordinates()));
+
 		chip.addFluidTypes(fluidTypes);
 		chip.addNets(nets);
 
@@ -377,24 +381,26 @@ public class BioParserListener extends BioBaseListener {
 		dropletIDsToFluidTypes.forEach(chip::addDropToFluid);
 
 
-
+		errors.addAll(Validator.checkSinkPositions(chip, sinks, true));
 		sinks.forEach(sink -> {
 			Point p = sink.first;
 			Direction dir = sink.second;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point sinkPoint = p.add(dirPoint);
-			BiochipField sinkField = new BiochipField(sinkPoint,dir, viz);
-			chip.addField(sinkPoint,sinkField);
+			BiochipField sinkField = new BiochipField(sinkPoint, dir, viz);
+			chip.addField(sinkPoint, sinkField);
 		});
 
-
+		errors.addAll(Validator.checkDispenserPositions(chip,
+				dispensers,
+				true));
 		dispensers.forEach(dispenser -> {
 			int fluidID = dispenser.first;
 			Point p = dispenser.second.first;
 			Direction dir = dispenser.second.second;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point dispPoint = p.add(dirPoint);
-			BiochipField dispField = new BiochipField(dispPoint,fluidID,dir, viz);
+			BiochipField dispField = new BiochipField(dispPoint, fluidID, dir, viz);
 			chip.addField(dispPoint, dispField);
 
 		});
@@ -407,17 +413,20 @@ public class BioParserListener extends BioBaseListener {
 
 		chip.blockages.addAll(blockages);
 
+		errors.addAll(Validator.checkForDetectorPositions(chip,detectors,true));
+		// only valid detectors are left -> we can happily add them to the chip
 		detectors.forEach(det -> {
 			Point pos = det.position();
 			chip.getFieldAt(pos).setDetector(det);
 		});
 		chip.detectors.addAll(detectors);
 
+
 		pins.values().forEach(pin -> {
 			pin.cells.forEach(pos -> chip.getFieldAt(pos).pin = pin);
 		});
 		chip.pins.putAll(pins);
-
+		errors.addAll(Validator.checkMultiplePinAssignments(pins.values()));
 		chip.pinActuations.putAll(pinActuations);
 
 		cellActuations.forEach((pos, vec) -> {
@@ -425,14 +434,20 @@ public class BioParserListener extends BioBaseListener {
 		});
 		chip.cellActuations.putAll(cellActuations);
 
+		errors.addAll(Validator.checkActuationVectorLengths(cellActuations, pinActuations));
+		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,cellActuations, pinActuations,true));
+		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,cellActuations, pinActuations,false));
 
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(m -> {
 			m.positions.positions().forEach(pos -> {
-				logger.trace("Adding mixer {} to field {}",m,pos);
+				logger.trace("Adding mixer {} to field {}", m, pos);
 				chip.getFieldAt(pos).mixers.add(m);
 			});
 		});
+
+
+		errors.forEach(s -> logger.error(s));
 
 	}
 }

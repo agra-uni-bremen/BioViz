@@ -217,14 +217,14 @@ public class DesktopLauncher extends JFrame {
 
 		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
 		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		time.addChangeListener(ce -> currentViz.currentCircuit.setCurrentTime(((JSlider) ce.getSource()).getValue()));
+		time.addChangeListener(ce -> currentViz.currentCircuit.setCurrentTime(((JSlider)ce.getSource()).getValue()));
 		tc = new timerCallback(time,timeInfo);
 
 
 
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
 		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
+		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider)ce.getSource()).getValue());
 		//tc = new timerCallback(time);
 
 		JButton adjacencyButton = new JButton("Adjacency");
@@ -243,6 +243,14 @@ public class DesktopLauncher extends JFrame {
 		JButton pinButton = new JButton("Pins");
 		pinButton.setPreferredSize(new Dimension(buttonWidth, pinButton.getPreferredSize().height));
 		pinButton.addActionListener(e -> currentViz.currentCircuit.toggleShowPins());
+
+		JButton stIconButton = new JButton("Source/Target icons");
+		stIconButton.setPreferredSize(new Dimension(buttonWidth, stIconButton.getPreferredSize().height));
+		stIconButton.addActionListener(e -> currentViz.currentCircuit.toggleShowSourceTargetIcons());
+
+		JButton stIDButton = new JButton("Source/Target IDs");
+		stIDButton.setPreferredSize(new Dimension(buttonWidth, stIDButton.getPreferredSize().height));
+		stIDButton.addActionListener(e -> currentViz.currentCircuit.toggleShowSourceTargetIDs());
 
 
 
@@ -285,6 +293,8 @@ public class DesktopLauncher extends JFrame {
 		panel.add(actuationButton);
 		panel.add(adjacencyButton);
 		panel.add(usageButton);
+		panel.add(stIconButton);
+		panel.add(stIDButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);

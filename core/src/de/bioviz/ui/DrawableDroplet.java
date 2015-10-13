@@ -48,7 +48,7 @@ public class DrawableDroplet extends DrawableSprite {
 		DrawableCircuit circ = parentCircuit;
 
 		Point p = droplet.getPositionAt(circ.currentTime);
-		boolean visible = false;
+		boolean withinTimeRange = false;
 
 		if (p == null) {
 
@@ -61,50 +61,48 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 		} else {
 			this.setColor(this.getColor().cpy().add(0, 0, 0, 1).clamp());
-			visible = true;
+			withinTimeRange = true;
 		}
 
-		if (p!= null && parentCircuit.getShowDroplets()) {
-
-
+		if (p != null) {
 			droplet.setTargetPosition(p.first, p.second);
-
 			droplet.update();
-
-
-			float xCoord = circ.xCoordOnScreen(droplet.smoothX);
-			float yCoord = circ.yCoordOnScreen(droplet.smoothY);
-
-			this.x = xCoord;
-			this.y = yCoord;
-			this.scaleX = circ.smoothScaleX;
-			this.scaleY = circ.smoothScaleY;
-
-
 			route.draw();
 
-			String msg = null;
+			if (isVisible) {
 
-			if (circ.getDisplayDropletIDs()) {
-				msg = Integer.toString(droplet.getID());
-			}
-			if (circ.getDisplayFluidIDs()) {
-				// note: fluidID may be null!
-				Integer fluidID = circ.data.fluidID(droplet.getID());
-				if (fluidID != null) {
-					msg = fluidID.toString();
+				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
+				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
+
+				this.x = xCoord;
+				this.y = yCoord;
+				this.scaleX = circ.smoothScaleX;
+				this.scaleY = circ.smoothScaleY;
+
+
+				String msg = null;
+
+				if (circ.getDisplayDropletIDs()) {
+					msg = Integer.toString(droplet.getID());
 				}
-			}
+				if (circ.getDisplayFluidIDs()) {
+					// note: fluidID may be null!
+					Integer fluidID = circ.data.fluidID(droplet.getID());
+					if (fluidID != null) {
+						msg = fluidID.toString();
+					}
+				}
 
-			if (msg != null) {
-				parentCircuit.parent.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
-			} else {
-				parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
-			}
+				if (msg != null) {
+					parentCircuit.parent.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
+				} else {
+					parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
+				}
 
-			super.draw();
+				super.draw();
+			}
 		}
-		if (!visible) {
+		if (!withinTimeRange) {
 			// make sure that previous numbers are removed when the droplet is removed.
 			parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
 		}
