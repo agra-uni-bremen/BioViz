@@ -1,0 +1,24 @@
+grid
+(1,1) (5,5)
+end
+
+pin actuations
+1: 101010
+2: 101011
+3: 1X1010
+4: 1110X0
+end
+
+pin assignments
+(1,1) 1
+(2,2) 2
+(3,3) 3
+(1,4) 4
+end
+
+
+cell actuations
+(1,1): 101X10
+(3,3): 101011
+(5,5): 111010
+end
