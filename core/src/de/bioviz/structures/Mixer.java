@@ -12,13 +12,13 @@ public class Mixer {
 	public final Range timing;
 
 	public Mixer(int id, Rectangle pos, Range timing) {
-		this.id=id;
-		this.positions=pos;
-		this.timing=timing;
+		this.id = id;
+		this.positions = pos;
+		this.timing = timing;
 	}
 
 	public String toString() {
-		return "Mixer "+this.id+": "+ timing + " " + positions;
+		return "Mixer " + this.id + ": " + timing + " " + positions;
 	}
 
 }

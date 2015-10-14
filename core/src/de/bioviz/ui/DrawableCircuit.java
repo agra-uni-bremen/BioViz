@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.management.RuntimeErrorException;
+
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
@@ -12,6 +14,7 @@ import de.bioviz.structures.Point;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -52,13 +55,16 @@ public class DrawableCircuit implements Drawable {
 	private boolean showPins = false;
 	private boolean showDroplets = true;
 	private boolean showActuations = false;
+	private boolean showSourceTargetIcons = true;
+	private boolean showSourceTargetIDs = true;
 
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
 
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
-
+	
+	public BioViz parent;
 
 	public void prevStep() {
 		autoAdvance=false;
@@ -72,11 +78,49 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	public void setCurrentTime(int timeStep) {
-		if (timeStep >= 1 && timeStep <= data.getMaxT()) {
-			currentTime = timeStep;
-			BioViz.singleton.callTimeChangedListeners();
+		if (parent != null) {
+			if (timeStep >= 1 && timeStep <= data.getMaxT()) {
+				currentTime = timeStep;
+				parent.callTimeChangedListeners();
+			}
+		} else {
+			throw new RuntimeException("circuit parent is null");
 		}
 	}
+	public boolean getShowSourceTargetIcons() {
+		return showSourceTargetIcons;
+	}
+
+	public void toggleShowSourceTargetIcons() {
+		this.setShowSourceTargetIcons(!this.showSourceTargetIcons);
+	}
+
+	public void setShowSourceTargetIcons(boolean showSourceTargetIcons) {
+		this.showSourceTargetIcons = showSourceTargetIcons;
+		if (this.showSourceTargetIcons) {
+			logger.info("Displaying Source/Target icons");
+		} else {
+			logger.info("Stop displaying Source/Target icons");
+		}
+	}
+
+	public boolean getShowSourceTargetIDs() {
+		return showSourceTargetIDs;
+	}
+
+	public void toggleShowSourceTargetIDs() {
+		this.setShowSourceTargetIDs(!this.showSourceTargetIDs);
+	}
+
+	public void setShowSourceTargetIDs(boolean showSourceTargetIDs) {
+		this.showSourceTargetIDs = showSourceTargetIDs;
+		if (this.showSourceTargetIDs) {
+			logger.info("Displaying Source/Target IDs");
+		} else {
+			logger.info("Stop displaying Source/Target IDs");
+		}
+	}
+
 	public boolean getShowDroplets() {
 		return showDroplets;
 	}
@@ -87,6 +131,7 @@ public class DrawableCircuit implements Drawable {
 
 	public void setShowDroplets(boolean showDroplets) {
 		this.showDroplets = showDroplets;
+		droplets.forEach(d -> {d.isVisible=showDroplets;});
 		if (this.showDroplets) {
 			logger.info("Displaying droplets");
 		} else {
@@ -219,9 +264,10 @@ public class DrawableCircuit implements Drawable {
 	 *
 	 * @param toDraw the data to draw
 	 */
-	public DrawableCircuit(Biochip toDraw) {
+	public DrawableCircuit(Biochip toDraw, BioViz parent) {
 		logger.debug("Creating new drawable chip based on " + toDraw);
 		this.data = toDraw;
+		this.parent = parent;
 		this.initializeDrawables();
 		logger.debug("New DrawableCircuit created successfully.");
 	}
@@ -238,7 +284,7 @@ public class DrawableCircuit implements Drawable {
 
 		//setup fields
 		data.getAllFields().forEach(fld -> {
-			DrawableField f = new DrawableField(fld);
+			DrawableField f = new DrawableField(fld, this);
 			this.fields.add(f);
 		});
 
@@ -246,7 +292,7 @@ public class DrawableCircuit implements Drawable {
 
 		//setup droplets
 		for (Droplet d : data.getDroplets()) {
-			DrawableDroplet dd = new DrawableDroplet(d);
+			DrawableDroplet dd = new DrawableDroplet(d, this);
 			this.droplets.add(dd);
 		}
 
@@ -482,20 +528,20 @@ public class DrawableCircuit implements Drawable {
 		// FIXME Does not properly handle non-0 minimum coordinates yet
 		Point max = this.data.getMaxCoord();
 		Point min = this.data.getMinCoord();
-		logger.trace("Auto zoom around " + min + " <--/--> " + max);
+		logger.debug("Auto zoom around " + min + " <--/--> " + max);
 
-		float x = 1f / (max.first + 3);
-		float y = 1f / (max.second + 3);
+		float x = (1f / (max.first - min.first + 2));
+		float y = (1f / (max.second - min.second + 2));
 		float xFactor = Gdx.graphics.getWidth();
 		float yFactor = Gdx.graphics.getHeight();
 		float maxScale = Math.min(x * xFactor, y * yFactor);
 		this.scaleX = maxScale;
 		this.scaleY = maxScale;
-		this.offsetX = (max.first) / -2f;
-		this.offsetY = (max.second) / -2f;
+		this.offsetX = (max.first) / -2f + min.first / -2f;
+		this.offsetY = (max.second) / -2f + min.second / -2f;
 
 
-		logger.trace("Offset now at " + this.offsetX + "/" + this.offsetY);
+		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
 	}
 
 	/**
