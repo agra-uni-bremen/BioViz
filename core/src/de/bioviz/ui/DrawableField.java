@@ -29,9 +29,11 @@ public class DrawableField extends DrawableSprite {
 
 	//private DrawableSprite adjacencyOverlay;
 
+	DrawableCircuit parentCircuit;
 
-	public DrawableField(BiochipField field) {
-		super("GridMarker.png");
+	public DrawableField(BiochipField field, DrawableCircuit parent) {
+		super("GridMarker.png", parent.parent);
+		this.parentCircuit = parent;
 		this.field = field;
 		super.addLOD(8, "BlackPixel.png");
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
@@ -46,14 +48,14 @@ public class DrawableField extends DrawableSprite {
 		//		then add the total height of the circuit to have the element put
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
-		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
+		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + parentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
 	@Override
 	public void draw() {
 
 		String fieldHUDMsg = null;
-		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+		DrawableCircuit circ = parentCircuit;
 		int t = circ.currentTime;
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
@@ -122,9 +124,9 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		if (fieldHUDMsg != null) {
-			BioViz.singleton.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);
+			parentCircuit.parent.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);
 		} else {
-			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
+			parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
 		}
 
 
@@ -190,17 +192,5 @@ public class DrawableField extends DrawableSprite {
 		setColor(result);
 
 		super.draw();
-	}
-
-	private class AdjacencyOverlay extends DrawableSprite {
-		public AdjacencyOverlay(String textureFilename) {
-			super(textureFilename);
-		}
-
-		@Override
-		public String generateSVG() {
-			return null;
-		}
-
 	}
 }

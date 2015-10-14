@@ -14,9 +14,12 @@ public class DrawableDroplet extends DrawableSprite {
 	private DrawableRoute route;
 
 	private static Random randnum = null;
+	
+	DrawableCircuit parentCircuit;
 
-	public DrawableDroplet(Droplet droplet) {
-		super("Droplet.png");
+	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
+		super("Droplet.png", parent.parent);
+		this.parentCircuit = parent;
 		if (randnum == null) {
 			randnum = new Random();
 		}
@@ -34,7 +37,7 @@ public class DrawableDroplet extends DrawableSprite {
 	public String generateSVG() {
 		return
 				"<image x=\"" + this.droplet.smoothX + "\" " +
-						"y=\"" + (-this.droplet.smoothY + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" " +
+						"y=\"" + (-this.droplet.smoothY + parentCircuit.data.getMaxCoord().second - 1) + "\" " +
 						"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
 						this.route.generateSVG();
 	}
@@ -42,7 +45,7 @@ public class DrawableDroplet extends DrawableSprite {
 	@Override
 	public void draw() {
 
-		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+		DrawableCircuit circ = parentCircuit;
 
 		Point p = droplet.getPositionAt(circ.currentTime);
 		boolean withinTimeRange = false;
@@ -60,8 +63,6 @@ public class DrawableDroplet extends DrawableSprite {
 			this.setColor(this.getColor().cpy().add(0, 0, 0, 1).clamp());
 			withinTimeRange = true;
 		}
-
-
 
 		if (p != null) {
 			droplet.setTargetPosition(p.first, p.second);
@@ -93,9 +94,9 @@ public class DrawableDroplet extends DrawableSprite {
 				}
 
 				if (msg != null) {
-					BioViz.singleton.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
+					parentCircuit.parent.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
 				} else {
-					BioViz.singleton.mc.removeHUDMessage(this.hashCode());
+					parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
 				}
 
 				super.draw();
@@ -103,7 +104,7 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 		if (!withinTimeRange) {
 			// make sure that previous numbers are removed when the droplet is removed.
-			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
+			parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
 		}
 	}
 }

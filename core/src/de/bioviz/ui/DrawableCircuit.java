@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.management.RuntimeErrorException;
+
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
@@ -12,6 +14,7 @@ import de.bioviz.structures.Point;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -60,7 +63,8 @@ public class DrawableCircuit implements Drawable {
 
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
-
+	
+	public BioViz parent;
 
 	public void prevStep() {
 		autoAdvance=false;
@@ -74,9 +78,13 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	public void setCurrentTime(int timeStep) {
-		if (timeStep >= 1 && timeStep <= data.getMaxT()) {
-			currentTime = timeStep;
-			BioViz.singleton.callTimeChangedListeners();
+		if (parent != null) {
+			if (timeStep >= 1 && timeStep <= data.getMaxT()) {
+				currentTime = timeStep;
+				parent.callTimeChangedListeners();
+			}
+		} else {
+			throw new RuntimeException("circuit parent is null");
 		}
 	}
 	public boolean getShowSourceTargetIcons() {
@@ -256,9 +264,10 @@ public class DrawableCircuit implements Drawable {
 	 *
 	 * @param toDraw the data to draw
 	 */
-	public DrawableCircuit(Biochip toDraw) {
+	public DrawableCircuit(Biochip toDraw, BioViz parent) {
 		logger.debug("Creating new drawable chip based on " + toDraw);
 		this.data = toDraw;
+		this.parent = parent;
 		this.initializeDrawables();
 		logger.debug("New DrawableCircuit created successfully.");
 	}
@@ -275,7 +284,7 @@ public class DrawableCircuit implements Drawable {
 
 		//setup fields
 		data.getAllFields().forEach(fld -> {
-			DrawableField f = new DrawableField(fld);
+			DrawableField f = new DrawableField(fld, this);
 			this.fields.add(f);
 		});
 
@@ -283,7 +292,7 @@ public class DrawableCircuit implements Drawable {
 
 		//setup droplets
 		for (Droplet d : data.getDroplets()) {
-			DrawableDroplet dd = new DrawableDroplet(d);
+			DrawableDroplet dd = new DrawableDroplet(d, this);
 			this.droplets.add(dd);
 		}
 
