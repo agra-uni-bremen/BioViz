@@ -1,7 +1,6 @@
 package de.bioviz.structures;
 
 import de.bioviz.ui.BioViz;
-import de.bioviz.ui.DrawableCircuit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +24,11 @@ public class BiochipField {
 	BioViz parent;
 
 	public int x() {
-		return pos.first;
+		return pos.fst;
 	}
 
 	public int y() {
-		return pos.second;
+		return pos.snd;
 	}
 
 

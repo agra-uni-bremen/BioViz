@@ -15,11 +15,11 @@ public class Point extends Pair<Integer, Integer> {
 	}
 
 	public Point(Point p) {
-		this(p.first, p.second);
+		this(p.fst, p.snd);
 	}
 
 	public Point add(Point p) {
-		return new Point(first + p.first, second + p.second);
+		return new Point(fst + p.fst, snd + p.snd);
 	}
 
 	public final static Point NORTH = new Point(0,1);
@@ -34,7 +34,7 @@ public class Point extends Pair<Integer, Integer> {
 	 */
 	@Override
 	public int hashCode() {
-		return (first << 16) + second;
+		return (fst << 16) + snd;
 	}
 
 
@@ -73,7 +73,7 @@ public class Point extends Pair<Integer, Integer> {
 			return false;
 		}
 
-		return (Math.abs(p1.second - p2.second) <= 1) && (Math.abs(p1.first - p2.first) <= 1);
+		return (Math.abs(p1.snd - p2.snd) <= 1) && (Math.abs(p1.fst - p2.fst) <= 1);
 
 	}
 
