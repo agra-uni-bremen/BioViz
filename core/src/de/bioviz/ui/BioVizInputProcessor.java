@@ -63,6 +63,11 @@ public class BioVizInputProcessor implements InputProcessor {
 		else if (keycode == Keys.LEFT || keycode == Keys.DOWN) {
 			parentViz.currentCircuit.prevStep();
 		}
+		else if (keycode == Keys.W) {
+			if (ctrl) {
+				parentViz.callCloseFileListeners();
+			}
+		}
 		
 		return false;
 	}

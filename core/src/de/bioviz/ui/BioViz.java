@@ -78,6 +78,7 @@ public class BioViz implements ApplicationListener {
 	private Vector<BioVizEvent> loadFileListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> loadedFileListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> saveFileListeners = new Vector<BioVizEvent>();
+	private Vector<BioVizEvent> closeFileListeners = new Vector<BioVizEvent>();
 	static Logger logger = LoggerFactory.getLogger(BioViz.class);
 
 	private boolean loadFileOnUpdate = true;
@@ -352,6 +353,17 @@ public class BioViz implements ApplicationListener {
 	void callSaveFileListeners() {
 		logger.trace("Calling " + this.saveFileListeners.size() + " listeners for save");
 		for (BioVizEvent listener : this.saveFileListeners) {
+			listener.bioVizEvent();
+		}
+	}
+	
+	public void addCloseFileListener(BioVizEvent listener) {
+		closeFileListeners.add(listener);
+	}
+	
+	void callCloseFileListeners() {
+		logger.trace("Calling " + this.closeFileListeners.size() + " listeners for close");
+		for (BioVizEvent listener : this.closeFileListeners) {
 			listener.bioVizEvent();
 		}
 	}

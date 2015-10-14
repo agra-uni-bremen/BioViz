@@ -106,6 +106,8 @@ public class DesktopLauncher extends JFrame {
 		}
 		currentViz = bioViz;
 		canvas = new LwjglAWTCanvas(bioViz);
+		
+		currentViz.addCloseFileListener(new closeFileCallback());
 
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout()); 
@@ -354,6 +356,11 @@ public class DesktopLauncher extends JFrame {
 		tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
 		visualizationTabs.removeTabAt(index);
 	}
+	
+	private void closeTab() {
+		int index = visualizationTabs.getSelectedIndex();
+		closeTab(index);
+	}
 
 	public static void main(String[] args) {
 
@@ -544,6 +551,16 @@ public class DesktopLauncher extends JFrame {
 			if (f != null) {
 				addNewTab(f);
 			}
+		}
+	}
+	
+	private class closeFileCallback implements BioVizEvent {
+		public closeFileCallback() {
+		}
+
+		@Override
+		public void bioVizEvent() {
+			DesktopLauncher.singleton.closeTab();
 		}
 	}
 
