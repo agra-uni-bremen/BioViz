@@ -321,6 +321,7 @@ public class BioParserListener extends BioBaseListener {
 			Point p = getPosition(pos);
 			drop.addPosition(p);
 		}
+
 		droplets.add(drop);
 
 	}
