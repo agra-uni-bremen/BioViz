@@ -270,25 +270,30 @@ public class BioViz implements ApplicationListener {
 
 		try {
 			drawables.remove(currentCircuit);
-			if (this.loadedCircuits.containsKey(bioFile.getCanonicalPath())) {
-				logger.debug("re-fetching previously loaded file " + bioFile.getCanonicalPath());
-				currentCircuit = this.loadedCircuits.get(bioFile.getCanonicalPath());
+			if (bioFile != null) {
+				if (this.loadedCircuits.containsKey(bioFile.getCanonicalPath())) {
+					logger.debug("re-fetching previously loaded file " + bioFile.getCanonicalPath());
+					currentCircuit = this.loadedCircuits.get(bioFile.getCanonicalPath());
+				} else {
+					logger.debug("loaded file, creating drawable elements...");
+					DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
+					currentCircuit = newCircuit;
+					this.loadedCircuits.put(bioFile.getCanonicalPath(), newCircuit);
+					currentCircuit.zoomExtents();
+				}
+				logger.debug("drawable created, replacing old elements...");
+				drawables.add(currentCircuit);
+				logger.debug("Initializing circuit");
+				currentCircuit.addTimeChangedListener(() -> callTimeChangedListeners());
+				currentCircuit.data.recalculateAdjacency = true;
+				if (bioFile == null) {
+					logger.info("Done loading default file");
+				} else {
+					logger.info("Done loading file {}", bioFile);
+				}
 			} else {
-				logger.debug("loaded file, creating drawable elements...");
-				DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
-				currentCircuit = newCircuit;
-				this.loadedCircuits.put(bioFile.getCanonicalPath(), newCircuit);
-				currentCircuit.zoomExtents();
-			}
-			logger.debug("drawable created, replacing old elements...");
-			drawables.add(currentCircuit);
-			logger.debug("Initializing circuit");
-			currentCircuit.addTimeChangedListener(() -> callTimeChangedListeners());
-			currentCircuit.data.recalculateAdjacency = true;
-			if (bioFile == null) {
-				logger.info("Done loading default file");
-			} else {
-				logger.info("Done loading file {}", bioFile);
+				logger.debug("File to be set is empty, setting empty visualization.");
+				currentCircuit = new DrawableCircuit(new Biochip(), this);
 			}
 		} catch (Exception e) {
 			logger.error("Could not load " + bioFile + ": " + e.getMessage());

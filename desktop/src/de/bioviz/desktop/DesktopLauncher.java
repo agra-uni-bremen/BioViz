@@ -553,16 +553,25 @@ public class DesktopLauncher extends JFrame {
 
 		@Override
 		public void bioVizEvent() {
-			logger.trace("Desktop received loaded event, setting slider...");
-
-			DesktopLauncher d = DesktopLauncher.singleton;
-
-			d.time.setMaximum(currentViz.currentCircuit.data.getMaxT());
-			d.time.setMinimum(1);
-			d.time.setValue(0);
-
-			d.setTitle(d.bioViz.getFileName()+ " - " +d.programName);
-
+			if (currentViz.currentCircuit != null) {
+				logger.trace("Desktop received loaded event, setting slider...");
+	
+				DesktopLauncher d = DesktopLauncher.singleton;
+	
+				d.time.setMaximum(currentViz.currentCircuit.data.getMaxT());
+				d.time.setMinimum(1);
+				d.time.setValue(0);
+	
+				d.setTitle(d.bioViz.getFileName()+ " - " +d.programName);
+			} else {
+				logger.trace("Last file closed, no more file to display.");
+				DesktopLauncher d = DesktopLauncher.singleton;
+				d.time.setMaximum(1);
+				d.time.setMinimum(1);
+				d.time.setValue(1);
+				
+				d.setTitle(d.programName);
+			}
 		}
 	}
 
