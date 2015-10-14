@@ -165,7 +165,19 @@
         <module name="AvoidInlineConditionals"/>
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
-        <module name="HiddenField"/>
+
+        <!--
+        this module checks whether parameters or variables shadow class fields.
+        see http://checkstyle.sourceforge.net/apidocs/com/puppycrawl/tools/checkstyle/checks/coding/HiddenFieldCheck.html
+        -->
+        <module name="HiddenField">
+            <!-- using the same name within the constructor is imho the totally right way to go! -->
+            <property name="ignoreConstructorParameter" value="true"/>
+            <!-- using different names in setters also leads to more confusion than it solves -->
+            <property name="ignoreSetter" value="true"/>
+            <!-- currently we do not use the 'Builder-pattern' but that would totally make sens -->
+            <!-- <property name="setterCanReturnItsClass" value="true"/> current checkstyle version does not support this -->
+        </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber"/>
