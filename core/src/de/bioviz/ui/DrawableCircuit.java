@@ -405,7 +405,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
-	private static Color hsvToRgb(float hue, float saturation, float value) {
+	private static Color hsvToRgb(float hue, final float saturation, final float value) {
 
 		while (hue >= 1) {
 			hue -= 1;
@@ -470,7 +470,7 @@ public class DrawableCircuit implements Drawable {
 	 * smooth camera movement. Use setScaleImmediately if the viewport
 	 * is supposed to skip those inbetween steps.
 	 */
-	public void setScaleY(float scaleY) {
+	public void setScaleY(final float scaleY) {
 		this.scaleY = scaleY;
 	}
 
@@ -495,7 +495,7 @@ public class DrawableCircuit implements Drawable {
 	 *
 	 * @param bounds the area the viewport is supposed to show.
 	 */
-	public void setViewBounds(Rectangle bounds) {
+	public void setViewBounds(final Rectangle bounds) {
 		float targetHeight = Gdx.graphics.getHeight() / bounds.height;
 		float targetWidth = Gdx.graphics.getWidth() / bounds.width;
 		float targetOffsetX = (bounds.x + (bounds.width / 2f));
@@ -563,7 +563,7 @@ public class DrawableCircuit implements Drawable {
 		this.smoothScaleY = scaleY;
 	}
 
-	public void addTimeChangedListener(BioVizEvent listener) {
+	public void addTimeChangedListener(final BioVizEvent listener) {
 		timeChangedListeners.add(listener);
 	}
 

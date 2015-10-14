@@ -82,8 +82,7 @@ public class DrawableField extends DrawableSprite {
 		} else if (!this.field.source_ids.isEmpty()) {
 			if (circ.getShowSourceTargetIcons()) {
 				this.addLOD(Float.MAX_VALUE, "Start.png");
-			}
-			else {
+			} else {
 				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
 			}
 			if (circ.getShowSourceTargetIDs()) {
@@ -183,7 +182,7 @@ public class DrawableField extends DrawableSprite {
 			result.add(0.5f, -0.5f, -0.5f, 0);
 		}
 
-		result.mul(1f / (float)colorOverlayCount);
+		result.mul(1f / (float) colorOverlayCount);
 
 		result.clamp();
 

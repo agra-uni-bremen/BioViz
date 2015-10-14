@@ -42,7 +42,9 @@
 
     <!-- Checks that a package-info.java file exists for each package.     -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html#JavadocPackage -->
-    <module name="JavadocPackage"/>
+    <module name="JavadocPackage">
+        <property name="severity" value="info"/>
+    </module>
 
     <!-- Checks whether files end with a new line.                        -->
     <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
@@ -58,7 +60,9 @@
 
     <!-- Checks for whitespace                               -->
     <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+    <!-- This check is bullshit as tabs are the proper way of indenting
     <module name="FileTabCharacter"/>
+    -->
 
     <!-- Miscellaneous other checks.                   -->
     <!-- See http://checkstyle.sf.net/config_misc.html -->
@@ -118,15 +122,19 @@
         <!-- Checks for imports                              -->
         <!-- See http://checkstyle.sf.net/config_import.html -->
         <module name="AvoidStarImport"/>
-        <module name="IllegalImport"/>
         <!-- defaults to sun.* packages -->
+        <module name="IllegalImport"/>
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
 
 
         <!-- Checks for Size Violations.                    -->
         <!-- See http://checkstyle.sf.net/config_sizes.html -->
-        <module name="LineLength"/>
+        <module name="LineLength">
+            <!-- It does not really make much sense to treat a tab as anything but a single
+            character when determining the length of a line -->
+            <property name="tabWidth" value="1"/>
+        </module>
         <module name="MethodLength"/>
         <module name="ParameterNumber"/>
 
@@ -134,6 +142,7 @@
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
         <module name="EmptyForIteratorPad"/>
+        <module name="EmptyLineSeparator"/>
         <module name="GenericWhitespace"/>
         <module name="MethodParamPad"/>
         <module name="NoWhitespaceAfter"/>
@@ -156,15 +165,45 @@
         <module name="AvoidNestedBlocks"/>
         <module name="EmptyBlock"/>
         <module name="LeftCurly"/>
-        <module name="NeedBraces"/>
-        <module name="RightCurly"/>
+        <module name="NeedBraces">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="RightCurly">
+            <!-- TODO allow the option 'alone_or_singleline' after updating to newer checkstyle version -->
+            <property name="option" value="alone"/>
+        </module>
 
 
         <!-- Checks for common coding problems               -->
         <!-- See http://checkstyle.sf.net/config_coding.html -->
-        <module name="AvoidInlineConditionals"/>
-        <module name="EmptyStatement"/>
+
+        <!-- If arrays are initialized over severy lines, every line containing a values must end
+        with a comma. That allows for easy reordering. If the initialization is on a single line,
+        no trailing comma is needed -->
+        <module name="ArrayTrailingComma"/>
+        <!-- I quote "Rationale: Some developers find inline conditionals hard to read, so their
+        employer's coding standards forbid them." :D -->
+        <module name="AvoidInlineConditionals">
+            <property name="severity" value="warning"/>
+        </module>
+        <!-- Make sure that there is an FooClass.equals(Object o) method (if equals is overridden).
+        The point is that people tend to implement FooClass.equals(FooClass f) only -->
+        <module name="CovariantEquals"/>
+        <module name=" EmptyStatement"/>
         <module name="EqualsHashCode"/>
+        <!-- force overriding of hashCode() if equals() is overridden -->
+        <!-- This is nice:
+            String nullString = null;
+            nullString.equals("My_Sweet_String");
+
+        should be refactored to
+
+            String nullString = null;
+            "My_Sweet_String".equals(nullString);
+        -->
+        <module name="EqualsAvoidNull"/>
+        <module name="IllegalToken"/>
+        <!-- Disallow labels -->
 
         <!--
         this module checks whether parameters or variables shadow class fields.
@@ -182,20 +221,47 @@
         <module name="InnerAssignment"/>
         <module name="MagicNumber"/>
         <module name="MissingSwitchDefault"/>
+        <!-- basically disallow changing loop variables (usually i,j, etc.) -->
+        <module name="ModifiedControlVariable">
+            <!-- TODO this property, hopefully, will be in the next release of ubuntu
+            <property name="skipEnhancedForLoopVariable" value="true"/>
+            -->
+            <property name="severity" value="error"/>
+        </module>
         <module name="RedundantThrows"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
+        <module name="NestedForDepth">
+            <property name="max" value="3"/>
+        </module>
+        <module name="NestedIfDepth">
+            <property name="max" value="3"/>
+        </module>
+        <module name="NestedTryDepth"/>
+        <!-- depth is 1 -->
+        <module name="PackageDeclaration"/>
+        <module name="DeclarationOrder"/>
+        <module name="DefaultComesLast"/>
+        <module name="MissingCtor"/>
+        <module name="MultipleVariableDeclarations"/>
+        <module name="UnnecessaryParentheses"/>
+
 
         <!-- Checks for class design                         -->
         <!-- See http://checkstyle.sf.net/config_design.html -->
         <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>
+        <module name="InnerTypeLast"/>
         <!--
             Even though this check seems to be quite stupid, I'll give it a try and manually exclude variables I
             definitely want to be publicly available -->
         <module name="VisibilityModifier">
             <property name="publicMemberPattern" value="^serialVersionUID$|^fst$|^snd$"/>
+
+            <!-- This allows protected class members. I have no clue why they should be disabled -->
+            <property name="packageAllowed" value="true"/>
         </module>
         <!-- This seems to be a pretty stupid check. See http://checkstyle.sourceforge.net/config_design.html#DesignForExtension-->
         <!-- <module name="DesignForExtension"/> -->
@@ -208,8 +274,12 @@
             <!-- final parameters in general are very clever. Lets see what happens if we enforce them everywhwere -->
             <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH, FOR_EACH_CLAUSE"/>
         </module>
-        <module name="TodoComment"/>
+        <module name="TodoComment">
+            <property name="format" value="(TODO)|(FIXME)"/>
+            <property name="severity" value="warning"/>
+        </module>
         <module name="UpperEll"/>
+        <module name="OuterTypeFilename"/>
 
     </module>
 

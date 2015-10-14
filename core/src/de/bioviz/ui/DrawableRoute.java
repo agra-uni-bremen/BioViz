@@ -19,7 +19,7 @@ public class DrawableRoute extends DrawableSprite {
 	public DrawableRoute(DrawableDroplet droplet) {
 		super("StepMarker.png", droplet.viz);
 		this.droplet = droplet;
-		super.addLOD(defaultLODThreshold, "BlackPixel.png");
+		super.addLOD(DEFAULT_LOD_THRESHOLD, "BlackPixel.png");
 	}
 
 	@Override
