@@ -187,7 +187,10 @@
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
-        <module name="FinalParameters"/>
+        <module name="FinalParameters">
+            <!-- final parameters in general are very clever. Lets see what happens if we enforce them everywhwere -->
+            <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH, FOR_EACH_CLAUSE"/>
+        </module>
         <module name="TodoComment"/>
         <module name="UpperEll"/>
 

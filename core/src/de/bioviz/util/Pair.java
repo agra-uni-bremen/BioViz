@@ -13,20 +13,20 @@ package de.bioviz.util;
 public class Pair<K, V> {
 
 	/**
-	 * The first entry of the tuple
+	 * The first entry of the tuple.
 	 */
 	public final K first;
 
 	/**
-	 * The second entry of the tuple
+	 * The second entry of the tuple.
 	 */
 	public final V second;
 
-	public static <K, V> Pair<K, V> mkPair(K first, V second) {
+	public static <K, V> Pair<K, V> mkPair(final K first, final V second) {
 		return new Pair<K, V>(first, second);
 	}
 
-	public Pair(K first, V second) {
+	public Pair(final K first, final V second) {
 		this.first = first;
 		this.second = second;
 	}
@@ -36,10 +36,14 @@ public class Pair<K, V> {
 	 * @param o
 	 * 		The object to compare against
 	 * @return True iff o is logically equivalent to the object
-	 * @brief Compares to pairs for
+	 * @brief Checks equality of the pair with another object.
+	 * <p>
+	 * An object is treated as equals if it also is a pair and the values in the
+	 * first and second position are equal as determined by their equals()
+	 * method.
 	 */
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 
 		if (this == o) {
 			return true;
@@ -49,7 +53,7 @@ public class Pair<K, V> {
 			return false;
 		}
 
-		return first.equals(((Pair)o).first) && second.equals(((Pair)o).second);
+		return first.equals(((Pair) o).first) && second.equals(((Pair) o).second);
 	}
 
 	/**
