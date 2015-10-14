@@ -23,8 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Vector;
 
@@ -35,11 +37,11 @@ public class BioViz implements ApplicationListener {
 
 
 	public DrawableCircuit currentCircuit;
-	public static BioViz singleton;
+	private HashMap<String, DrawableCircuit> loadedCircuits;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 
 	AssetManager manager = new AssetManager();
-	public MessageCenter mc = new MessageCenter();
+	public MessageCenter mc;
 
 	private File bioFile;
 	private BioVizInputProcessor inputProcessor;
@@ -84,10 +86,8 @@ public class BioViz implements ApplicationListener {
 		super();
 		logger.info("Starting withouth filename being specified; loading example");
 		logger.info("Usage: java -jar BioViz.jar <filename>");
-
 		this.bioFile = null;
-
-		singleton = this;
+		loadedCircuits = new HashMap<>();
 	}
 
 	public BioViz(File bioFile) {
@@ -98,6 +98,7 @@ public class BioViz implements ApplicationListener {
 
 	@Override
 	public void create() {
+		mc = new MessageCenter(this);
 
 
 		float w = Gdx.graphics.getWidth();
@@ -106,7 +107,7 @@ public class BioViz implements ApplicationListener {
 		camera = new OrthographicCamera(1, h / w);
 		batch = new SpriteBatch(1000, this.createDefaultShader());
 
-		inputProcessor = new BioVizInputProcessor();
+		inputProcessor = new BioVizInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);
 
 		//this.menu = new Menu();
@@ -122,7 +123,7 @@ public class BioViz implements ApplicationListener {
 	}
 
 	@Override
-	public void render() {
+	public synchronized void render() {
 		
 		long currentTimestamp = new Date().getTime();
 		
@@ -245,24 +246,41 @@ public class BioViz implements ApplicationListener {
 
 		return pixmap;
 	}
+	
+	public void unloadFile(File f) {
+		try {
+			if (this.loadedCircuits.containsKey(f.getCanonicalPath())) {
+				this.loadedCircuits.remove(f.getCanonicalPath());
+			}
+		} catch (Exception e) {
+			logger.error("Could not unload file " + f);
+		}
+	}
 
 	private void loadNewFileNow() {
 		Biochip bc;
-		if (BioViz.singleton.bioFile == null) {
+		if (bioFile == null) {
 			logger.debug("Loading default file");
 			FileHandle fh = Gdx.files.getFileHandle("examples/default_grid.bio", Files.FileType.Internal);
-			bc = BioParser.parse(fh.readString());
+			bc = BioParser.parse(fh.readString(), this);
 		} else {
 			logger.debug("Loading {}", bioFile);
-			bc = BioParser.parseFile(bioFile);
+			bc = BioParser.parseFile(bioFile, this);
 		}
 
 		try {
-			logger.debug("loaded file, creating drawable elements...");
-			DrawableCircuit newCircuit = new DrawableCircuit(bc);
-			logger.debug("drawable created, replacing old elements...");
 			drawables.remove(currentCircuit);
-			currentCircuit = newCircuit;
+			if (this.loadedCircuits.containsKey(bioFile.getCanonicalPath())) {
+				logger.debug("re-fetching previously loaded file " + bioFile.getCanonicalPath());
+				currentCircuit = this.loadedCircuits.get(bioFile.getCanonicalPath());
+			} else {
+				logger.debug("loaded file, creating drawable elements...");
+				DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
+				currentCircuit = newCircuit;
+				this.loadedCircuits.put(bioFile.getCanonicalPath(), newCircuit);
+				currentCircuit.zoomExtents();
+			}
+			logger.debug("drawable created, replacing old elements...");
 			drawables.add(currentCircuit);
 			logger.debug("Initializing circuit");
 			currentCircuit.addTimeChangedListener(() -> callTimeChangedListeners());
@@ -272,9 +290,8 @@ public class BioViz implements ApplicationListener {
 			} else {
 				logger.info("Done loading file {}", bioFile);
 			}
-			currentCircuit.zoomExtents();
 		} catch (Exception e) {
-			logger.error("Could not load " + BioViz.singleton.bioFile + ": " + e.getMessage());
+			logger.error("Could not load " + bioFile + ": " + e.getMessage());
 			e.printStackTrace();
 		}
 		// clear on screen messages as they would otherwise remain visible
@@ -284,10 +301,10 @@ public class BioViz implements ApplicationListener {
 		this.callLoadedFileListeners();
 	}
 
-	public static void loadNewFile(File f) {
-		logger.trace("Scheduling loading of file " + f);
-		BioViz.singleton.bioFile = f;
-		BioViz.singleton.loadFileOnUpdate = true;
+	public void loadNewFile(File f) {
+		logger.debug("Scheduling loading of file " + f);
+		bioFile = f;
+		loadFileOnUpdate = true;
 	}
 
 	public void addTimeChangedListener(BioVizEvent listener) {
@@ -336,7 +353,7 @@ public class BioViz implements ApplicationListener {
 
 	public void saveSVG(String path) {
 		try {
-			String svg = BioViz.singleton.currentCircuit.generateSVG();
+			String svg = currentCircuit.generateSVG();
 			FileHandle handle = Gdx.files.absolute(path);
 			handle.writeString(svg, false);
 			logger.info("Stored SVG at {}", handle.path());

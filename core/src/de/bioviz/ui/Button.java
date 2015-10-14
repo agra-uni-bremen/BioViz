@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.Color;
  */
 public class Button extends DrawableSprite {
 
-	public Button(String textureFilename) {
-		super(textureFilename);
+	public Button(String textureFilename, BioViz parent) {
+		super(textureFilename, parent);
 		this.setColor(Color.WHITE.cpy().mul(1, 1, 1, 0.75f));
 	}
 	

@@ -7,9 +7,12 @@ import java.awt.FlowLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,6 +21,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
@@ -51,6 +55,13 @@ public class DesktopLauncher extends JFrame {
 	private static JFileChooser fileDialog = null;
 
 	private static Logger logger = LoggerFactory.getLogger(DesktopLauncher.class);
+	
+	private JTabbedPane visualizationTabs;
+	
+	BioViz currentViz;
+	
+	private HashMap<Object, File> tabsToFilenames;
+
 
 	/**
 	 * Needed to fetch *all* pressed keys that are caught somewhere
@@ -86,20 +97,68 @@ public class DesktopLauncher extends JFrame {
 	public DesktopLauncher(int timeMax, File file) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		final Container container = getContentPane();
-		container.setLayout(new BorderLayout());
-
-		this.setTitle(programName);
-
-		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
-
+		tabsToFilenames = new HashMap<Object, File>();
+		
 		if (file == null) {
 			bioViz = new BioViz();
 		} else {
 			bioViz = new BioViz(file);
 		}
+		currentViz = bioViz;
 		canvas = new LwjglAWTCanvas(bioViz);
+
+		final Container container = getContentPane();
+		container.setLayout(new BorderLayout()); 
+
+		this.setTitle(programName);
+
+		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
+
+		
+		
+		visualizationTabs = new JTabbedPane();
+		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		
+		visualizationTabs.addChangeListener(
+				l -> bioViz.loadNewFile(
+						tabsToFilenames.get(((JTabbedPane)l.getSource()).getSelectedComponent())));
+		
+		visualizationTabs.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				logger.debug("got button " + e.getButton() + " in tabs");
+				if (e.getButton() == MouseEvent.BUTTON2) {
+					closeTab(visualizationTabs.getSelectedIndex());
+				}
+			}
+		});
+		
+		addNewTab(file);
 
 		/**
 		 * Needed to pipe through the keyboard events to the libgdx application
@@ -126,7 +185,7 @@ public class DesktopLauncher extends JFrame {
 
 		JButton autoplaytButton = new JButton("Autoplay");
 		autoplaytButton.setPreferredSize(new Dimension(buttonWidth, autoplaytButton.getPreferredSize().height));
-		autoplaytButton.addActionListener(e -> BioViz.singleton.currentCircuit.autoAdvance = !BioViz.singleton.currentCircuit.autoAdvance);
+		autoplaytButton.addActionListener(e -> currentViz.currentCircuit.autoAdvance = !currentViz.currentCircuit.autoAdvance);
 
 		JButton openButton = new JButton("Open File");
 		openButton.setPreferredSize(new Dimension(buttonWidth, openButton.getPreferredSize().height));
@@ -140,57 +199,65 @@ public class DesktopLauncher extends JFrame {
 
 		JButton zoomButton = new JButton("Center");
 		zoomButton.setPreferredSize(new Dimension(buttonWidth, zoomButton.getPreferredSize().height));
-		zoomButton.addActionListener(e -> BioViz.singleton.currentCircuit.zoomExtents());
+		zoomButton.addActionListener(e -> currentViz.currentCircuit.zoomExtents());
 
 		JButton dropletButton = new JButton("Droplets");
 		dropletButton.setPreferredSize(new Dimension(buttonWidth, dropletButton.getPreferredSize().height));
-		dropletButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowDroplets());
+		dropletButton.addActionListener(e -> currentViz.currentCircuit.toggleShowDroplets());
 
 		JButton usageButton = new JButton("Cell Usage");
 		usageButton.setPreferredSize(new Dimension(buttonWidth, usageButton.getPreferredSize().height));
-		usageButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowUsage());
+		usageButton.addActionListener(e -> currentViz.currentCircuit.toggleShowUsage());
 
 		JButton actuationButton = new JButton("Actuations");
 		actuationButton.setPreferredSize(new Dimension(buttonWidth, actuationButton.getPreferredSize().height));
-		actuationButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowActuations());
+		actuationButton.addActionListener(e -> currentViz.currentCircuit.toggleShowActuations());
 
 
 
 		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
 		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		time.addChangeListener(ce -> BioViz.singleton.currentCircuit.setCurrentTime(((JSlider) ce.getSource()).getValue()));
+		time.addChangeListener(ce -> currentViz.currentCircuit.setCurrentTime(((JSlider)ce.getSource()).getValue()));
 		tc = new timerCallback(time,timeInfo);
 
 
 
 		JSlider routes = new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute.timesteps);
 		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider) ce.getSource()).getValue());
+		routes.addChangeListener(ce -> DrawableRoute.timesteps = ((JSlider)ce.getSource()).getValue());
 		//tc = new timerCallback(time);
 
 		JButton adjacencyButton = new JButton("Adjacency");
 		adjacencyButton.setPreferredSize(new Dimension(buttonWidth, adjacencyButton.getPreferredSize().height));
-		adjacencyButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleHighlightAdjacency());
+		adjacencyButton.addActionListener(e -> currentViz.currentCircuit.toggleHighlightAdjacency());
 
 
 		JButton displayDropletIDsButton = new JButton("Drop IDs");
 		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth, displayDropletIDsButton.getPreferredSize().height));
-		displayDropletIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayDropletIDs());
+		displayDropletIDsButton.addActionListener(e -> currentViz.currentCircuit.toggleDisplayDropletIDs());
 
 		JButton displayFluidIDsButton = new JButton("Fluid IDs");
 		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth, displayFluidIDsButton.getPreferredSize().height));
-		displayFluidIDsButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleDisplayFluidIDs());
+		displayFluidIDsButton.addActionListener(e -> currentViz.currentCircuit.toggleDisplayFluidIDs());
 
 		JButton pinButton = new JButton("Pins");
 		pinButton.setPreferredSize(new Dimension(buttonWidth, pinButton.getPreferredSize().height));
-		pinButton.addActionListener(e -> BioViz.singleton.currentCircuit.toggleShowPins());
+		pinButton.addActionListener(e -> currentViz.currentCircuit.toggleShowPins());
+
+		JButton stIconButton = new JButton("Source/Target icons");
+		stIconButton.setPreferredSize(new Dimension(buttonWidth, stIconButton.getPreferredSize().height));
+		stIconButton.addActionListener(e -> currentViz.currentCircuit.toggleShowSourceTargetIcons());
+
+		JButton stIDButton = new JButton("Source/Target IDs");
+		stIDButton.setPreferredSize(new Dimension(buttonWidth, stIDButton.getPreferredSize().height));
+		stIDButton.addActionListener(e -> currentViz.currentCircuit.toggleShowSourceTargetIDs());
 
 
 
 		JButton nextStepButton = new JButton("->");
-		nextStepButton.addActionListener(e -> BioViz.singleton.currentCircuit.nextStep());
+		nextStepButton.addActionListener(e -> currentViz.currentCircuit.nextStep());
 		JButton prevStepButton = new JButton("<-");
-		prevStepButton.addActionListener(e -> BioViz.singleton.currentCircuit.prevStep());
+		prevStepButton.addActionListener(e -> currentViz.currentCircuit.prevStep());
 
 		/*
 		For some reason, adding a speparator more then once prevents it from being displayed more
@@ -226,6 +293,8 @@ public class DesktopLauncher extends JFrame {
 		panel.add(actuationButton);
 		panel.add(adjacencyButton);
 		panel.add(usageButton);
+		panel.add(stIconButton);
+		panel.add(stIDButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);
@@ -241,16 +310,22 @@ public class DesktopLauncher extends JFrame {
 		input = new LwjglAWTInput(canvas.getCanvas());
 
 		container.add(panel, BorderLayout.WEST);
-		container.add(canvas.getCanvas(), BorderLayout.CENTER);
+		
+		JPanel tabContainer = new JPanel(new BorderLayout());
+		
+		container.add(tabContainer, BorderLayout.CENTER);
+		
+		tabContainer.add(visualizationTabs, BorderLayout.NORTH);
+		tabContainer.add(canvas.getCanvas(), BorderLayout.CENTER);
 
 		loaded_cb = new loadedFileCallback();
-		BioViz.singleton.addLoadedFileListener(loaded_cb);
+		currentViz.addLoadedFileListener(loaded_cb);
 
 		save_cb = new saveFileCallback();
-		BioViz.singleton.addSaveFileListener(save_cb);
+		currentViz.addSaveFileListener(save_cb);
 
 		try {
-			this.setIconImage(ImageIO.read(BioViz.singleton.getApplicationIcon().file()));
+			this.setIconImage(ImageIO.read(currentViz.getApplicationIcon().file()));
 		} catch (Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage());
 		}
@@ -258,6 +333,26 @@ public class DesktopLauncher extends JFrame {
 		pack();
 		setVisible(true);
 		setSize(800, 600);
+	}
+	
+	private void addNewTab(File file) {
+		if (file == null) {
+			file = Gdx.files.getFileHandle("examples/default_grid.bio", Files.FileType.Internal).file();
+		}
+		logger.debug("Adding new tab to UI for " + file.getName());
+		JPanel dummyPanel = new JPanel();
+		dummyPanel.setPreferredSize(new Dimension());
+		visualizationTabs.addTab(file.getName(), dummyPanel);
+		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() - 1);
+		tabsToFilenames.put(dummyPanel, file);
+		this.bioViz.loadNewFile(file);
+	}
+	
+	private void closeTab(int index) {
+		logger.info("Closing file (" + index + ")");
+		bioViz.unloadFile(tabsToFilenames.get(visualizationTabs.getSelectedComponent()));
+		tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
+		visualizationTabs.removeTabAt(index);
 	}
 
 	public static void main(String[] args) {
@@ -428,13 +523,13 @@ public class DesktopLauncher extends JFrame {
 		public timerCallback(JSlider slider, JLabel info) {
 			this.time = slider;
 			this.timeInfo = info;
-			BioViz.singleton.addTimeChangedListener(this);
+			currentViz.addTimeChangedListener(this);
 		}
 
 		@Override
 		public void bioVizEvent() {
-			this.time.setValue(BioViz.singleton.currentCircuit.currentTime);
-			this.timeInfo.setText(Integer.toString(BioViz.singleton.currentCircuit.currentTime));
+			this.time.setValue(currentViz.currentCircuit.currentTime);
+			this.timeInfo.setText(Integer.toString(currentViz.currentCircuit.currentTime));
 
 		}
 	}
@@ -447,7 +542,7 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			File f = askForFile();
 			if (f != null) {
-				BioViz.loadNewFile(f);
+				addNewTab(f);
 			}
 		}
 	}
@@ -462,7 +557,7 @@ public class DesktopLauncher extends JFrame {
 
 			DesktopLauncher d = DesktopLauncher.singleton;
 
-			d.time.setMaximum(BioViz.singleton.currentCircuit.data.getMaxT());
+			d.time.setMaximum(currentViz.currentCircuit.data.getMaxT());
 			d.time.setMinimum(1);
 			d.time.setValue(0);
 
@@ -491,7 +586,7 @@ public class DesktopLauncher extends JFrame {
 
 						if (fcresult == JFileChooser.APPROVE_OPTION) {
 							prefs.putString("saveFolder", fileDialog.getSelectedFile().getAbsolutePath());
-							BioViz.singleton.saveSVG(fileDialog.getSelectedFile().getAbsolutePath());
+							currentViz.saveSVG(fileDialog.getSelectedFile().getAbsolutePath());
 						}
 					}
 				});

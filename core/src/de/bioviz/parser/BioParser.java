@@ -4,6 +4,8 @@ package de.bioviz.parser;
 import de.bioviz.parser.generated.Bio;
 import de.bioviz.parser.generated.BioLexerGrammar;
 import de.bioviz.structures.Biochip;
+import de.bioviz.ui.BioViz;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -24,7 +26,7 @@ public class BioParser  {
     static private Logger logger = LoggerFactory.getLogger(BioParser.class);
 
 
-    public static Biochip parseFile(final File file) {
+    public static Biochip parseFile(final File file, BioViz viz) {
         String content = null;
         try {
             content = new String(Files.readAllBytes(Paths.get(file.toURI())));
@@ -32,10 +34,10 @@ public class BioParser  {
             logger.error("Failed to parse file \"{}\".", file);
             return null;
         }
-        return parse(content);
+        return parse(content, viz);
     }
 
-    public static Biochip parse(final String inputString) {
+    public static Biochip parse(final String inputString, BioViz viz) {
 
         logger.trace("Parsing file of length {}",inputString.length());
 
@@ -48,7 +50,7 @@ public class BioParser  {
 
             ParseTreeWalker walker = new ParseTreeWalker();
             // Walk the tree created during the parse, trigger callbacks
-            BioParserListener listener = new BioParserListener();
+            BioParserListener listener = new BioParserListener(viz);
             walker.walk(listener, tree);
             return listener.getBiochip();
 

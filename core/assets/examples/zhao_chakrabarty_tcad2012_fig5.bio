@@ -1,22 +1,22 @@
 grid
-# horizontal rows in detection region
+# vertical rows in detection region
 (1,6) (1,53)
 (9,6) (9,53)
 (17,6) (17,53)
 
-# horizontal rows in reaction region
+# vertical rows in reaction region
 (29,1) (29,53)
 (33,1) (33,53)
 (41,1) (41,53)
 
-# horizontal rows in routing region
+# vertical rows in routing region
 (49,3) (49,53)
 (57,3) (57,53)
 (65,3) (65,53)
 (73,3) (73,53)
 
 
-# vertical rows
+# horizontal rows
 (1,6) (76,6)
 (1,10) (76,10)
 (1,14) (76,14)
@@ -66,4 +66,14 @@ dispensers
 (57,3) S
 (65,3) S
 (73,3) S
+end
+
+# Whether these positions actually are detectors is uncertain. I just assumed that due to the label "Detection region"
+# and the fact that these cells seem to be drawn in a different style.
+detectors
+(5,10)
+(5,14)
+(5,22)
+(5,34)
+(5,46)
 end

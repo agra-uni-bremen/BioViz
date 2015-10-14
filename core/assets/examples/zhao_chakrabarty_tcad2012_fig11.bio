@@ -36,9 +36,6 @@ grid
 end
 
 
-# sinks and dispensers are put 'on top' of the last elements of the rows
-# when looking at the images, this seems to be what is intended
-
 sinks
 (1,51) N
 (25,1) S
@@ -74,5 +71,9 @@ dispensers
 5 (65,1) S
 5 (57,1) S
 5 (48,1) S
+end
+
+detectors
+(5,12)
 end
 

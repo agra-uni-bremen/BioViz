@@ -29,9 +29,11 @@ public class DrawableField extends DrawableSprite {
 
 	//private DrawableSprite adjacencyOverlay;
 
+	DrawableCircuit parentCircuit;
 
-	public DrawableField(BiochipField field) {
-		super("GridMarker.png");
+	public DrawableField(BiochipField field, DrawableCircuit parent) {
+		super("GridMarker.png", parent.parent);
+		this.parentCircuit = parent;
 		this.field = field;
 		super.addLOD(8, "BlackPixel.png");
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
@@ -46,14 +48,14 @@ public class DrawableField extends DrawableSprite {
 		//		then add the total height of the circuit to have the element put
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
-		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
+		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + parentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
 	@Override
 	public void draw() {
 
 		String fieldHUDMsg = null;
-		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+		DrawableCircuit circ = parentCircuit;
 		int t = circ.currentTime;
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
@@ -80,21 +82,34 @@ public class DrawableField extends DrawableSprite {
 			this.addLOD(Float.MAX_VALUE, "Detector.png");
 			drawDetector = true;
 		} else if (!this.field.source_ids.isEmpty()) {
-			this.addLOD(Float.MAX_VALUE, "Start.png");
-			ArrayList<Integer> sources = this.field.source_ids;
-			fieldHUDMsg = sources.get(0).toString();
-			if (sources.size() > 1) {
-				for (int i = 2; i < sources.size(); i++) {
-					fieldHUDMsg += ", " + sources.get(i);
+			if (circ.getShowSourceTargetIcons()) {
+				this.addLOD(Float.MAX_VALUE, "Start.png");
+			}
+			else {
+				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
+			}
+			if (circ.getShowSourceTargetIDs()) {
+				ArrayList<Integer> sources = this.field.source_ids;
+				fieldHUDMsg = sources.get(0).toString();
+				if (sources.size() > 1) {
+					for (int i = 2; i < sources.size(); i++) {
+						fieldHUDMsg += ", " + sources.get(i);
+					}
 				}
 			}
 		} else if (!this.field.target_ids.isEmpty()) {
-			this.addLOD(Float.MAX_VALUE, "Target.png");
-			ArrayList<Integer> targets = this.field.target_ids;
-			fieldHUDMsg = targets.get(0).toString();
-			if (targets.size() > 1) {
-				for (int i = 1; i < targets.size(); i++) {
-					fieldHUDMsg += ", " + targets.get(i);
+			if (circ.getShowSourceTargetIcons()) {
+				this.addLOD(Float.MAX_VALUE, "Target.png");
+			} else {
+				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
+			}
+			if (circ.getShowSourceTargetIDs()) {
+				ArrayList<Integer> targets = this.field.target_ids;
+				fieldHUDMsg = targets.get(0).toString();
+				if (targets.size() > 1) {
+					for (int i = 1; i < targets.size(); i++) {
+						fieldHUDMsg += ", " + targets.get(i);
+					}
 				}
 			}
 		}
@@ -104,14 +119,14 @@ public class DrawableField extends DrawableSprite {
 		// TODO we really need some kind of mechanism of deciding when to show what
 		if (circ.getShowPins()) {
 			if (this.field.pin != null) {
-				fieldHUDMsg =  Integer.toString(this.field.pin.pinID);
+				fieldHUDMsg = Integer.toString(this.field.pin.pinID);
 			}
 		}
 
 		if (fieldHUDMsg != null) {
-			BioViz.singleton.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);
+			parentCircuit.parent.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);
 		} else {
-			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
+			parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
 		}
 
 
@@ -158,36 +173,24 @@ public class DrawableField extends DrawableSprite {
 			}
 			if (!this.field.mixers.isEmpty()) {
 
-				for (Mixer m: this.field.mixers) {
+				for (Mixer m : this.field.mixers) {
 					if (m.timing.inRange(t)) {
 						result.add(mixerDefaultColor);
 					}
 				}
 			}
 		}
-		
+
 		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
 			result.add(0.5f, -0.5f, -0.5f, 0);
 		}
 
-		result.mul(1f / (float) colorOverlayCount);
+		result.mul(1f / (float)colorOverlayCount);
 
 		result.clamp();
-		
+
 		setColor(result);
 
 		super.draw();
-	}
-
-	private class AdjacencyOverlay extends DrawableSprite {
-		public AdjacencyOverlay(String textureFilename) {
-			super(textureFilename);
-		}
-
-		@Override
-		public String generateSVG() {
-			return null;
-		}
-
 	}
 }
