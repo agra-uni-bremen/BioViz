@@ -253,7 +253,7 @@ public class Biochip {
 			maxT = Math.max(maxT, m.timing.end);
 		}
 		for (Pair<Rectangle, Range> b : blockages) {
-			maxT = Math.max(maxT, b.second.end);
+			maxT = Math.max(maxT, b.snd.end);
 		}
 		for (ActuationVector a : pinActuations.values()) {
 			maxT = Math.max(maxT, a.size());
@@ -313,7 +313,7 @@ public class Biochip {
 	}
 
 	public void addField(Point coordinates, BiochipField field) {
-		if (field.x() != coordinates.first || field.y() != coordinates.second) {
+		if (field.x() != coordinates.fst || field.y() != coordinates.snd) {
 			logger.error("Field coordinates differ from those transmitted to the chip for this instance");
 			coordinates = new Point(field.x(), field.y());
 		}
@@ -326,11 +326,11 @@ public class Biochip {
 	public Point getMaxCoord() {
 		int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
 		for (Point coord : this.field.keySet()) {
-			if (maxX < coord.first) {
-				maxX = coord.first;
+			if (maxX < coord.fst) {
+				maxX = coord.fst;
 			}
-			if (maxY < coord.second) {
-				maxY = coord.second;
+			if (maxY < coord.snd) {
+				maxY = coord.snd;
 			}
 		}
 		return new Point(maxX, maxY);
@@ -339,11 +339,11 @@ public class Biochip {
 	public Point getMinCoord() {
 		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
 		for (Point coord : this.field.keySet()) {
-			if (minX > coord.first) {
-				minX = coord.first;
+			if (minX > coord.fst) {
+				minX = coord.fst;
 			}
-			if (minY > coord.second) {
-				minY = coord.second;
+			if (minY > coord.snd) {
+				minY = coord.snd;
 			}
 		}
 		return new Point(minX, minY);

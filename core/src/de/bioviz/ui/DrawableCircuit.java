@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.management.RuntimeErrorException;
-
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
@@ -530,15 +528,15 @@ public class DrawableCircuit implements Drawable {
 		Point min = this.data.getMinCoord();
 		logger.debug("Auto zoom around " + min + " <--/--> " + max);
 
-		float x = (1f / (max.first - min.first + 2));
-		float y = (1f / (max.second - min.second + 2));
+		float x = (1f / (max.fst - min.fst + 2));
+		float y = (1f / (max.snd - min.snd + 2));
 		float xFactor = Gdx.graphics.getWidth();
 		float yFactor = Gdx.graphics.getHeight();
 		float maxScale = Math.min(x * xFactor, y * yFactor);
 		this.scaleX = maxScale;
 		this.scaleY = maxScale;
-		this.offsetX = (max.first) / -2f + min.first / -2f;
-		this.offsetY = (max.second) / -2f + min.second / -2f;
+		this.offsetX = (max.fst) / -2f + min.fst / -2f;
+		this.offsetY = (max.snd) / -2f + min.snd / -2f;
 
 
 		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
@@ -585,10 +583,10 @@ public class DrawableCircuit implements Drawable {
 		String result = "";
 		result +=
 				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-						this.data.getMinCoord().first + " " +
-						(this.data.getMinCoord().second - 1) + " " +
-						(this.data.getMaxCoord().first + 1) + " " +
-						(this.data.getMaxCoord().second + 1) +
+						this.data.getMinCoord().fst + " " +
+						(this.data.getMinCoord().snd - 1) + " " +
+						(this.data.getMaxCoord().fst + 1) + " " +
+						(this.data.getMaxCoord().snd + 1) +
 						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
 
 		for (Drawable d : this.fields) {

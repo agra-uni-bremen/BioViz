@@ -38,14 +38,14 @@ public class DrawableRoute extends DrawableSprite {
 			Point p1 = droplet.droplet.getPositionAt(displayAt);
 			Point p2 = droplet.droplet.getPositionAt(displayAt + 1);
 
-			int x1 = p1.first;
-			int x2 = p2.first;
-			int y1 = p1.second;
-			int y2 = p2.second;
+			int x1 = p1.fst;
+			int x2 = p2.fst;
+			int y1 = p1.snd;
+			int y2 = p2.snd;
 
 			float targetX = x1 + 0.5f;
 			float targetY = -y1 +
-					droplet.parentCircuit.data.getMaxCoord().second - 1;
+					droplet.parentCircuit.data.getMaxCoord().snd - 1;
 			if (y1 == y2 && x2 > x1) {
 				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" xlink:href=\"StepMarker.svg\" />";
 			} else if (y1 == y2 && x2 < x1) {
@@ -93,10 +93,10 @@ public class DrawableRoute extends DrawableSprite {
 				logger.trace("Point p1: {} (timestep {})", p1, displayAt);
 				logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
 
-				int x1 = p1.first;
-				int x2 = p2.first;
-				int y1 = p1.second;
-				int y2 = p2.second;
+				int x1 = p1.fst;
+				int x2 = p2.fst;
+				int y1 = p1.snd;
+				int y2 = p2.snd;
 
 				float xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
 				float yCoord = droplet.parentCircuit.yCoordOnScreen(y1);

@@ -1,8 +1,6 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
-import de.bioviz.structures.ActuationVector;
-import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Mixer;
 import org.slf4j.Logger;
@@ -48,7 +46,7 @@ public class DrawableField extends DrawableSprite {
 		//		then add the total height of the circuit to have the element put
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
-		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + parentCircuit.data.getMaxCoord().second - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
+		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + parentCircuit.data.getMaxCoord().snd - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
 	@Override

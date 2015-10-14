@@ -37,7 +37,7 @@ public class DrawableDroplet extends DrawableSprite {
 	public String generateSVG() {
 		return
 				"<image x=\"" + this.droplet.smoothX + "\" " +
-						"y=\"" + (-this.droplet.smoothY + parentCircuit.data.getMaxCoord().second - 1) + "\" " +
+						"y=\"" + (-this.droplet.smoothY + parentCircuit.data.getMaxCoord().snd - 1) + "\" " +
 						"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
 						this.route.generateSVG();
 	}
@@ -65,7 +65,7 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 
 		if (p != null) {
-			droplet.setTargetPosition(p.first, p.second);
+			droplet.setTargetPosition(p.fst, p.snd);
 			droplet.update();
 			route.draw();
 

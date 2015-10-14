@@ -8,27 +8,27 @@ package de.bioviz.util;
  * @param <K>
  * 		Type for the first entry of the tuple
  * @param <V>
- * 		Type for the second entry of the tuple
+ * 		Type for the snd entry of the tuple
  */
 public class Pair<K, V> {
 
 	/**
 	 * The first entry of the tuple.
 	 */
-	public final K first;
+	public final K fst;
 
 	/**
-	 * The second entry of the tuple.
+	 * The snd entry of the tuple.
 	 */
-	public final V second;
+	public final V snd;
 
 	public static <K, V> Pair<K, V> mkPair(final K first, final V second) {
 		return new Pair<K, V>(first, second);
 	}
 
-	public Pair(final K first, final V second) {
-		this.first = first;
-		this.second = second;
+	public Pair(final K fst, final V snd) {
+		this.fst = fst;
+		this.snd = snd;
 	}
 
 
@@ -39,7 +39,7 @@ public class Pair<K, V> {
 	 * @brief Checks equality of the pair with another object.
 	 * <p>
 	 * An object is treated as equals if it also is a pair and the values in the
-	 * first and second position are equal as determined by their equals()
+	 * first and snd position are equal as determined by their equals()
 	 * method.
 	 */
 	@Override
@@ -53,15 +53,23 @@ public class Pair<K, V> {
 			return false;
 		}
 
-		return first.equals(((Pair) o).first) && second.equals(((Pair) o).second);
+		return fst.equals(((Pair) o).fst) && snd.equals(((Pair) o).snd);
+	}
+
+	@Override
+	/**
+	 * @return The sum of the hashcodes, i.e. fst.hashCode()+snd.hashCode()
+	 */
+	public int hashCode() {
+		return fst.hashCode()+ snd.hashCode();
 	}
 
 	/**
 	 * @return String representing the Pair of the form '(' + first + ',' +
-	 * second + ')'
+	 * snd + ')'
 	 */
 	public String toString() {
-		return "(" + first + "," + second + ")";
+		return "(" + fst + "," + snd + ")";
 	}
 
 }

@@ -1,7 +1,6 @@
 package de.bioviz.parser;
 
 import de.bioviz.structures.*;
-import de.bioviz.ui.BioViz;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,11 +209,11 @@ public class Validator {
 		String msg = "";
 		boolean targetExists = true;
 		boolean sourceExists = true;
-		Point source = dir.first.add(Point.pointFromDirection(dir.second));
+		Point source = dir.fst.add(Point.pointFromDirection(dir.snd));
 
 
 		try {
-			chip.getFieldAt(dir.first);
+			chip.getFieldAt(dir.fst);
 		} catch (RuntimeException e) {
 			targetExists = false;
 		}
@@ -228,7 +227,7 @@ public class Validator {
 
 
 		if (!targetExists) {
-			msg = msg + type + " target " + dir.first + " does not exist! [" + dir + "] ";
+			msg = msg + type + " target " + dir.fst + " does not exist! [" + dir + "] ";
 		}
 		if (sourceExists) {
 			msg = msg + type + " source " + source + " is within the chip! [" + dir + "]";
@@ -269,7 +268,7 @@ public class Validator {
 			ArrayList<Pair<Integer, Pair<Point, Direction>>> removeList
 					= new ArrayList<Pair<Integer, Pair<Point, Direction>>>();
 			for (Pair<Integer, Pair<Point, Direction>> dir : disps) {
-				String msg = checkOutsidePosition(chip, "Dispenser", dir.second);
+				String msg = checkOutsidePosition(chip, "Dispenser", dir.snd);
 				if (!msg.isEmpty()) {
 					if (removeWrongDirs) {
 						removeList.add(dir);
