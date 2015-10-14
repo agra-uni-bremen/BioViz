@@ -67,8 +67,8 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	private Point getPosition(PositionContext ctx) {
-		Integer x = Integer.parseInt(ctx.xpos().getText()) - 1;
-		Integer y = Integer.parseInt(ctx.ypos().getText()) - 1;
+		Integer x = Integer.parseInt(ctx.xpos().getText());
+		Integer y = Integer.parseInt(ctx.ypos().getText());
 		return new Point(x, y);
 	}
 
