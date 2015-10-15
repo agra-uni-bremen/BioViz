@@ -1,3 +1,4 @@
 desktop:
   script:
-    - ./gradlew checkstyleMain
+      - ./gradlew core:checkstyleMain
+      - ./gradlew desktop:checkstyleMain
