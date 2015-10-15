@@ -48,8 +48,8 @@ project(":desktop") {
     apply plugin: "java"
     
     apply plugin: "checkstyle"
-    checkstyle.ignoreFailures = true
-    checkstyle.showViolations = false
+    checkstyle.ignoreFailures = false
+    checkstyle.showViolations = true
     checkstyle {
         toolVersion = "6.0"
     }
@@ -74,7 +74,7 @@ project(":desktop") {
         outputs.upToDateWhen { false }
     }
     
-    compileJava.finalizedBy(checkstyleMain)
+    //compileJava.finalizedBy(checkstyleMain)
 }
 
 project(":core") {
@@ -93,8 +93,8 @@ project(":core") {
              out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
     }
     checkstyleMain.finalizedBy checkstyleHtml
-    checkstyle.ignoreFailures = true
-    checkstyle.showViolations = false
+    checkstyle.ignoreFailures = false
+    checkstyle.showViolations = true
     checkstyle {
         toolVersion = "6.0"
     }
@@ -112,7 +112,7 @@ project(":core") {
         outputs.upToDateWhen { false }
     }
     
-    compileJava.finalizedBy(checkstyleMain)
+    //compileJava.finalizedBy(checkstyleMain)
 }
 
 tasks.eclipse.doLast {
