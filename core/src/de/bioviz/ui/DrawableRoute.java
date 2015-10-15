@@ -9,8 +9,8 @@ public class DrawableRoute extends DrawableSprite {
 
 	private static Logger logger = LoggerFactory.getLogger(DrawableRoute.class);
 
-	public static int timesteps = 0;
-	public static int hoverTimesteps = 2 * timesteps + 8;
+	public static int routeDisplayLength = 0;
+	public static int hoverTimesteps = 2 * routeDisplayLength + 8;
 
 	private DrawableDroplet droplet;
 
@@ -29,15 +29,33 @@ public class DrawableRoute extends DrawableSprite {
 		int currentTime = droplet.parentCircuit.currentTime;
 		int displayAt;
 
-		for (int i = -timesteps; i < timesteps; i++) {
 
-			float alpha = 1 - (Math.abs((float) i) / ((float) timesteps));
+		/*
+		The prevoius code did some weird stuff here. The new rationale is
+		that we go, from the currentTime either as long as there actually
+		is time or until we reached the end of the display length of the
+		route, whatever happens first.
+		 */
+		int nSteps = Math.min(routeDisplayLength,droplet.parentCircuit.data.getMaxT())-1;
+		logger.debug("nSteps: {}",nSteps);
+
+		for (int i = 0; i < nSteps; i++) {
+
+			logger.debug("i: {}",i);
+
 
 			// TODO possible problem here due to casting
+			float alpha = 1 - (Math.abs((float) i) / ((float) routeDisplayLength));
+
+
 			displayAt = currentTime + i;
+
+			logger.debug("displayAt {}",displayAt);
 
 			Point p1 = droplet.droplet.getPositionAt(displayAt);
 			Point p2 = droplet.droplet.getPositionAt(displayAt + 1);
+
+			logger.debug("p1 {}; p2 {}",p1,p2);
 
 			int x1 = p1.fst;
 			int x2 = p2.fst;
@@ -71,9 +89,9 @@ public class DrawableRoute extends DrawableSprite {
 		// TODO drawing of routes is now broken :(
 		if (true) {
 
-			hoverTimesteps = 2 * timesteps + 8;
+			hoverTimesteps = 2 * routeDisplayLength + 8;
 
-			int stepsToUse = timesteps;
+			int stepsToUse = routeDisplayLength;
 			if (this.droplet.isHovered()) {
 				stepsToUse = hoverTimesteps;
 			}

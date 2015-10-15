@@ -260,9 +260,9 @@ public class DesktopLauncher extends JFrame {
 
 		JSlider routes =
 				new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute
-						.timesteps);
+						.routeDisplayLength);
 		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		routes.addChangeListener(ce -> DrawableRoute.timesteps =
+		routes.addChangeListener(ce -> DrawableRoute.routeDisplayLength =
 				((JSlider) ce.getSource()).getValue());
 		//tc = new timerCallback(time);
 
