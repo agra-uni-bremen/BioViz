@@ -2,7 +2,6 @@ package de.bioviz.ui;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -15,7 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 /**
  * This is a wrapper for the 2d drawing methods.
  *
- * @author jannis
+ * @author Jannis Stoppe
  */
 public abstract class DrawableSprite implements Drawable {
 
@@ -24,18 +23,22 @@ public abstract class DrawableSprite implements Drawable {
 	private Color targetColor = Color.WHITE.cpy();
 	private Color currentColor = Color.WHITE.cpy();
 	private Color originColor = Color.WHITE.cpy();
-	private long colorTransitionStartTime = 0, colorTransitionEndTime = 0, colorTransitionDuration = 500;
-	float colorShiftDelay = 8f;
-	private HashMap<Float, String> LevelOfDetailTextures = new HashMap<>();
+	private long colorTransitionStartTime = 0;
+	private long colorTransitionEndTime = 0;
+	private final long colorTransitionDuration = 500;
+	private HashMap<Float, String> levelOfDetailTextures = new HashMap<>();
 	private String currentTextureName;
 	protected boolean isVisible = true;
 
-	public static final float defaultLODThreshold = 8f;
+	public static final float DEFAULT_LOD_THRESHOLD = 8f;
 
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 
+	float ALPHA_FULL = 0;
+	float COORDINATE_SHIFT = 0.5f;
+
 	BioViz viz;
-	
+
 	/**
 	 * This constructor checks if the given texture has been loaded before and
 	 * does so if that's not the case. A sprite is initialized accordingly.
@@ -45,14 +48,14 @@ public abstract class DrawableSprite implements Drawable {
 	 */
 	public DrawableSprite(String textureFilename, float sizeX, float sizeY, BioViz parent) {
 		if (parent == null)
-			throw new RuntimeException("sprite parent must not be null"); 
+			throw new RuntimeException("sprite parent must not be null");
 		currentTextureName = textureFilename;
 		if (allTextures == null) {
 			allTextures = new HashMap<>();
 		}
 		this.addLOD(Float.MAX_VALUE, textureFilename);
-		this.targetColor.a = 0;
-		this.currentColor.a = 0;
+		this.targetColor.a = ALPHA_FULL;
+		this.currentColor.a = ALPHA_FULL;
 		this.viz = parent;
 	}
 
@@ -78,17 +81,17 @@ public abstract class DrawableSprite implements Drawable {
 
 			// if LOD is set, enable LOD calculation and set
 			// sprite accordingly
-			if (this.LevelOfDetailTextures.size() > 0) {
+			if (this.levelOfDetailTextures.size() > 0) {
 				float bestLODFactor = Float.MAX_VALUE;
 				boolean foundLOD = false;
-				for (Float factor : LevelOfDetailTextures.keySet()) {
+				for (Float factor : levelOfDetailTextures.keySet()) {
 					if (factor >= this.scaleX && factor <= bestLODFactor) {
 						bestLODFactor = factor;
 						foundLOD = true;
 					}
 				}
 				if (foundLOD) {
-					currentTextureName = LevelOfDetailTextures.get(bestLODFactor);
+					currentTextureName = levelOfDetailTextures.get(bestLODFactor);
 				}
 
 				this.setTexture();
@@ -121,11 +124,6 @@ public abstract class DrawableSprite implements Drawable {
 		}
 	}
 
-	/**
-	 * Set the texture to something different.
-	 *
-	 * @param textureFilename
-	 */
 	private void setTexture() {
 		if (!this.allTextures.containsKey(currentTextureName)) {
 			this.loadTexture(currentTextureName);
@@ -137,11 +135,11 @@ public abstract class DrawableSprite implements Drawable {
 
 	public void addLOD(float scaleFactorMax, String textureFilename) {
 		loadTexture(textureFilename);
-		this.LevelOfDetailTextures.put(scaleFactorMax, textureFilename);
+		this.levelOfDetailTextures.put(scaleFactorMax, textureFilename);
 	}
 
 	public void removeLOD(float scaleFactorMax) {
-		this.LevelOfDetailTextures.remove(scaleFactorMax);
+		this.levelOfDetailTextures.remove(scaleFactorMax);
 	}
 
 	public boolean isHovered() {
@@ -153,11 +151,18 @@ public abstract class DrawableSprite implements Drawable {
 
 			Rectangle viewport = viz.currentCircuit.getViewBounds();
 
-			float viewMouseX = (((float)mouseX / (float)resX) * viewport.width + viewport.x);
-			float viewMouseY = -(((float)mouseY / (float)resY) * viewport.height + viewport.y);
+			float viewMouseX = (((float) mouseX / (float) resX) * viewport.width + viewport.x);
+			float viewMouseY = -(((float) mouseY / (float) resY) * viewport.height + viewport.y);
 
-			if (viewMouseX > viz.currentCircuit.xCoordInGates(this.x) - 0.5f && viewMouseX < viz.currentCircuit.xCoordInGates(this.x) + 0.5f &&
-					viewMouseY > viz.currentCircuit.yCoordInGates(this.y) - 0.5f && viewMouseY < viz.currentCircuit.yCoordInGates(this.y) + 0.5f) {
+			float xCoord = viz.currentCircuit.xCoordInGates(this.x);
+			float yCoord = viz.currentCircuit.yCoordInGates(this.y);
+
+			boolean aboveX = viewMouseX > xCoord - COORDINATE_SHIFT;
+			boolean belowX = viewMouseX < xCoord + COORDINATE_SHIFT;
+			boolean aboveY = viewMouseY > yCoord - COORDINATE_SHIFT;
+			boolean belowY = viewMouseY < yCoord + COORDINATE_SHIFT;
+
+			if (aboveX && belowX && aboveY && belowY) {
 				return true;
 			}
 		}
@@ -165,8 +170,8 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	protected void update() {
-		float transitionProgress = Math.max(0, Math.min(1, (float)(new Date().getTime() - colorTransitionStartTime) / (float)(colorTransitionEndTime - colorTransitionStartTime)));
-		float totalProgress = (float)(-(Math.pow((transitionProgress - 1), 4)) + 1);
+		float transitionProgress = Math.max(0, Math.min(1, (float) (new Date().getTime() - colorTransitionStartTime) / (float) (colorTransitionEndTime - colorTransitionStartTime)));
+		float totalProgress = (float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
 
 		currentColor = this.originColor.cpy().mul(1 - totalProgress).add(this.targetColor.cpy().mul(totalProgress));
 	}

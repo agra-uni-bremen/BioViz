@@ -19,7 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Created by keszocze on 21.07.15.
+ * @author Oliver Keszöcze
  */
 public class BioParser  {
 
@@ -46,14 +46,24 @@ public class BioParser  {
             BioLexerGrammar lexer = new BioLexerGrammar(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             Bio parser = new Bio(tokens);
+            parser.removeErrorListeners();
+            BioErrorListener errorListener = new BioErrorListener();
+            parser.addErrorListener(errorListener);
             ParseTree tree = parser.bio(); // parse everything
 
-            ParseTreeWalker walker = new ParseTreeWalker();
-            // Walk the tree created during the parse, trigger callbacks
-            BioParserListener listener = new BioParserListener(viz);
-            walker.walk(listener, tree);
-            return listener.getBiochip();
-
+            if (errorListener.hasErrors()) {
+                for (String msg : errorListener.getErrors()) {
+                    logger.error(msg);
+                }
+                return null;
+            }
+            else {
+                ParseTreeWalker walker = new ParseTreeWalker();
+                // Walk the tree created during the parse, trigger callbacks
+                BioParserListener listener = new BioParserListener(viz);
+                walker.walk(listener, tree);
+                return listener.getBiochip();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             // TODO do something with this exception

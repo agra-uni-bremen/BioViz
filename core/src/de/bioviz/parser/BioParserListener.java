@@ -124,7 +124,7 @@ public class BioParserListener extends BioBaseListener {
 
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
 		if (dispenser != null) {
-			updateMaxDimension(dispenser.first);
+			updateMaxDimension(dispenser.fst);
 			dispensers.add(new Pair<Integer, Pair<Point, Direction>>(fluidID, dispenser));
 		} else {
 			logger.error("Skipping definition of dispenser");
@@ -162,8 +162,8 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	private void updateMaxDimension(Point p) {
-		maxX = Math.max(p.first + 1, maxX);
-		maxY = Math.max(p.second + 1, maxY);
+		maxX = Math.max(p.fst + 1, maxX);
+		maxY = Math.max(p.snd + 1, maxY);
 	}
 
 	private void updateMaxDimension(Point p1, Point p2) {
@@ -180,7 +180,7 @@ public class BioParserListener extends BioBaseListener {
 	public void enterSink(@NotNull Bio.SinkContext ctx) {
 		Pair<Point, Direction> sinkDef = getIOPort(ctx.ioport());
 		if (sinkDef != null) {
-			updateMaxDimension(sinkDef.first);
+			updateMaxDimension(sinkDef.fst);
 			sinks.add(sinkDef);
 		} else {
 			logger.error("Skipping definition of sink");
@@ -321,6 +321,7 @@ public class BioParserListener extends BioBaseListener {
 			Point p = getPosition(pos);
 			drop.addPosition(p);
 		}
+
 		droplets.add(drop);
 
 	}
@@ -383,8 +384,8 @@ public class BioParserListener extends BioBaseListener {
 
 		errors.addAll(Validator.checkSinkPositions(chip, sinks, true));
 		sinks.forEach(sink -> {
-			Point p = sink.first;
-			Direction dir = sink.second;
+			Point p = sink.fst;
+			Direction dir = sink.snd;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point sinkPoint = p.add(dirPoint);
 			BiochipField sinkField = new BiochipField(sinkPoint, dir, viz);
@@ -395,9 +396,9 @@ public class BioParserListener extends BioBaseListener {
 				dispensers,
 				true));
 		dispensers.forEach(dispenser -> {
-			int fluidID = dispenser.first;
-			Point p = dispenser.second.first;
-			Direction dir = dispenser.second.second;
+			int fluidID = dispenser.fst;
+			Point p = dispenser.snd.fst;
+			Direction dir = dispenser.snd.snd;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point dispPoint = p.add(dirPoint);
 			BiochipField dispField = new BiochipField(dispPoint, fluidID, dir, viz);
@@ -406,8 +407,8 @@ public class BioParserListener extends BioBaseListener {
 		});
 
 		for (Pair<Rectangle, Range> b : blockages) {
-			Rectangle rect = b.first;
-			Range rng = b.second;
+			Rectangle rect = b.fst;
+			Range rng = b.snd;
 			rect.positions().forEach(pos -> chip.getFieldAt(pos).attachBlockage(rng));
 		}
 

@@ -260,6 +260,8 @@ public class BioViz implements ApplicationListener {
 
 	private void loadNewFileNow() {
 		Biochip bc;
+		boolean error = false;
+		String errorMsg="";
 		if (bioFile == null) {
 			logger.debug("Loading default file");
 			FileHandle fh = Gdx.files.getFileHandle("examples/default_grid.bio", Files.FileType.Internal);
@@ -267,6 +269,12 @@ public class BioViz implements ApplicationListener {
 		} else {
 			logger.debug("Loading {}", bioFile);
 			bc = BioParser.parseFile(bioFile, this);
+		}
+
+		if (bc == null) {
+			error = true;
+			errorMsg = "Could not parse file" + bioFile;
+			bc = new Biochip();
 		}
 
 		try {
@@ -297,9 +305,16 @@ public class BioViz implements ApplicationListener {
 				currentCircuit = new DrawableCircuit(new Biochip(), this);
 			}
 		} catch (Exception e) {
-			logger.error("Could not load " + bioFile + ": " + e.getMessage());
-			e.printStackTrace();
+			error = true;
+			errorMsg = "Could not load " + bioFile + ": " + e.getMessage();
+
+			//e.printStackTrace();
 		}
+
+		if (error) {
+			logger.error(errorMsg);
+		}
+
 		// clear on screen messages as they would otherwise remain visible
 		mc.clearHUDMessages();
 
