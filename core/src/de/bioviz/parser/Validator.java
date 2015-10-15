@@ -295,14 +295,14 @@ public class Validator {
 		if (v1 != null && v1.size() == v2.size()) {
 			logger.debug("Comparing actuation vectors {} <-> {}", v1, v2);
 			for (int i = 0; i < v1.size(); i++) {
-				ActuationVector.Actuation a = v1.get(i);
-				ActuationVector.Actuation b = v2.get(i);
+				Actuation a = v1.get(i);
+				Actuation b = v2.get(i);
 				if (a != b) {
 					if (strong) {
 						errors.add("Cell and pin actuations for " + what + " are not strongly compatible.");
 						break;
 					} else {
-						if (a != ActuationVector.Actuation.DONTCARE && b != ActuationVector.Actuation.DONTCARE) {
+						if (a != Actuation.DONTCARE && b != Actuation.DONTCARE) {
 							errors.add("Cell and pin actuations for " + what + " are not weakly compatible.");
 							break;
 						}

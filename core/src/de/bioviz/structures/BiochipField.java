@@ -66,7 +66,7 @@ public class BiochipField {
 	public boolean isActuated(int timeStep) {
 
 		Biochip circ = parent.currentCircuit.data;
-		ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
+		Actuation act = Actuation.OFF;
 
 		// TODO document that pin actuations win over cell actuations
 
@@ -81,11 +81,11 @@ public class BiochipField {
 			act = actVec.get(timeStep - 1);
 		} else {
 			if (circ.dropletOnPosition(pos, timeStep)) {
-				act = ActuationVector.Actuation.ON;
+				act = Actuation.ON;
 			}
 		}
 
-		return act == ActuationVector.Actuation.ON;
+		return act == Actuation.ON;
 	}
 
 	public boolean isPotentiallyBlocked() {
