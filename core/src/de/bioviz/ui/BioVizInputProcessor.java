@@ -67,6 +67,10 @@ public class BioVizInputProcessor implements InputProcessor {
 			if (ctrl) {
 				parentViz.callCloseFileListeners();
 			}
+		} else if (keycode == Keys.C){
+			if (ctrl) {
+				parentViz.currentCircuit.setShowCoordinates(!parentViz.currentCircuit.getShowCoordinates());
+			}
 		}
 		
 		return false;
