@@ -48,7 +48,7 @@ project(":desktop") {
     apply plugin: "java"
     
     apply plugin: "checkstyle"
-    checkstyle.ignoreFailures = true
+    checkstyle.ignoreFailures = false
     checkstyle.showViolations = true
     checkstyle {
         toolVersion = "6.0"
@@ -93,7 +93,7 @@ project(":core") {
              out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
     }
     checkstyleMain.finalizedBy checkstyleHtml
-    checkstyle.ignoreFailures = true
+    checkstyle.ignoreFailures = false
     checkstyle.showViolations = true
     checkstyle {
         toolVersion = "6.0"
