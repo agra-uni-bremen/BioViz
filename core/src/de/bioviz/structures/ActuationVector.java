@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
  * Created by keszocze on 31.07.15.
  */
 
-
+/**
+ * @author Oliver Keszöcze
+ */
 public class ActuationVector {
-
-	public enum Actuation {ON, OFF, DONTCARE}
 
 	public static String actToString(Actuation a) {
 		String act;
