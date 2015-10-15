@@ -35,10 +35,12 @@ public class DrawableDroplet extends DrawableSprite {
 
 	@Override
 	public String generateSVG() {
+		// TODO hier auch entsprechend auf die SVG Dateinamen zurückgreifen (über nen Manager)
+		float yCoord =  -this.droplet.smoothY + parentCircuit.data.getMaxCoord().snd - 1;
 		return
 				"<image x=\"" + this.droplet.smoothX + "\" " +
-						"y=\"" + (-this.droplet.smoothY + parentCircuit.data.getMaxCoord().snd - 1) + "\" " +
-						"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
+						"y=\"" + yCoord + "\" " +
+						"width=\"1\" height=\"1\" xlink:href=\"Droplet.svg\" />\n" +
 						this.route.generateSVG();
 	}
 

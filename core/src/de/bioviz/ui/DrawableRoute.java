@@ -24,7 +24,8 @@ public class DrawableRoute extends DrawableSprite {
 
 	@Override
 	public String generateSVG() {
-		String result = "";
+		StringBuilder sb = new StringBuilder();
+
 		int currentTime = droplet.parentCircuit.currentTime;
 		int displayAt;
 
@@ -47,18 +48,18 @@ public class DrawableRoute extends DrawableSprite {
 			float targetY = -y1 +
 					droplet.parentCircuit.data.getMaxCoord().snd - 1;
 			if (y1 == y2 && x2 > x1) {
-				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" xlink:href=\"StepMarker.svg\" />";
+				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" xlink:href=\"StepMarker.svg\" />\n");
 			} else if (y1 == y2 && x2 < x1) {
-				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(180 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />";
+				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(180 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />\n");
 			} else if (x1 == x2 && y2 > y1) {
-				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(270 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />";
+				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(270 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />\n");
 			} else if (x1 == x2 && y2 < y1) {
-				result += "<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(90 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />";
+				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(90 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />\n");
 			} else {
 				continue;
 			}
 		}
-		return result;
+		return sb.toString();
 	}
 
 	@Override
