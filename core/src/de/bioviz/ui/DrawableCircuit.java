@@ -342,8 +342,10 @@ public class DrawableCircuit implements Drawable {
 			d.draw();
 		}
 		
-		if (showCoordinates) {
+		if (getShowCoordinates()) {
 			displayCoordinates();
+		} else {
+			
 		}
 	}
 
@@ -422,6 +424,33 @@ public class DrawableCircuit implements Drawable {
 					leftXCoord,				// x
 					this.yCoordOnScreen(i), // y
 					col);					// message color, used for fading
+		}
+	}
+	
+	private void removeDisplayedCoordinates() {
+		int minX = Integer.MAX_VALUE,
+			minY = Integer.MAX_VALUE,
+			maxX = Integer.MIN_VALUE,
+			maxY = Integer.MIN_VALUE;
+
+		for (DrawableField f : this.fields) {
+			if (minX > f.field.x()) {
+				minX = f.field.x();
+			}
+			if (minY > f.field.y()) {
+				minY = f.field.y();
+			}
+			if (maxX < f.field.x()) {
+				maxX = f.field.x();
+			}
+			if (maxY < f.field.y()) {
+				maxY = f.field.y();
+			}
+		}
+		
+		// remove all HUD messages
+		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
+			this.parent.mc.removeHUDMessage(this.hashCode() + i);
 		}
 	}
 
@@ -681,5 +710,16 @@ public class DrawableCircuit implements Drawable {
 
 		result += "</svg>";
 		return result;
+	}
+
+	public boolean getShowCoordinates() {
+		return showCoordinates;
+	}
+
+	public void setShowCoordinates(boolean showCoordinates) {
+		this.showCoordinates = showCoordinates;
+		if (!showCoordinates) {
+			removeDisplayedCoordinates();
+		}
 	}
 }
