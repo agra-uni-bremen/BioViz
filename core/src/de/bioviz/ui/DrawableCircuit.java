@@ -55,6 +55,7 @@ public class DrawableCircuit implements Drawable {
 	private boolean showActuations = false;
 	private boolean showSourceTargetIcons = true;
 	private boolean showSourceTargetIDs = true;
+	private boolean showCoordinates = true;
 
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
@@ -323,7 +324,6 @@ public class DrawableCircuit implements Drawable {
 	 */
 	private void drawGates() {
 
-		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
 		if (autoAdvance) {
 			long current = new Date().getTime();
 			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
@@ -336,6 +336,35 @@ public class DrawableCircuit implements Drawable {
 
 		for (DrawableField f : this.fields) {
 			f.draw();
+		}
+		
+		for (DrawableDroplet d : this.droplets) {
+			d.draw();
+		}
+		
+		if (showCoordinates) {
+			displayCoordinates();
+		}
+	}
+
+	/**
+	 * Draws the coordinates of the grid on top of and to the left of the grid.
+	 * This in fact uses the message center to display the numbers, so the
+	 * actual drawing will be done after the rest has been drawn.
+	 * 
+	 * @author jannis
+	 */
+	private void displayCoordinates() {
+		// calculate current dimensions first so the coordinates can be either
+		// displayed at the edge of the viewport (if the grid boundaries are
+		// beyond the viewport boundaries) or at the edge of the grid (if they
+		// are within)
+		int minX = Integer.MAX_VALUE,
+			minY = Integer.MAX_VALUE,
+			maxX = Integer.MIN_VALUE,
+			maxY = Integer.MIN_VALUE;
+
+		for (DrawableField f : this.fields) {
 			if (minX > f.field.x()) {
 				minX = f.field.x();
 			}
@@ -350,6 +379,16 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 		
+		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
+		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
+			topYCoord = this.yCoordOnScreen(maxY + 1);
+		}
+		float leftXCoord = -Gdx.graphics.getWidth() / 2f + 32;
+		if (leftXCoord < this.xCoordOnScreen(minX - 1)) {
+			leftXCoord = this.xCoordOnScreen(minX - 1);
+		}
+		
+		// Defines when numbers should start fading and be completely hidden
 		float startFadingAtScale = 16f;
 		float endFadingAtScale = 12f;
 		
@@ -364,35 +403,25 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 		
-		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
-		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
-			topYCoord = this.yCoordOnScreen(maxY + 1);
-		}
-		float leftXCoord = -Gdx.graphics.getWidth() / 2f + 32;
-		if (leftXCoord < this.xCoordOnScreen(minX - 1)) {
-			leftXCoord = this.xCoordOnScreen(minX - 1);
-		}
-		
+		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
 			this.parent.mc.addHUDMessage(
-					this.hashCode() + i,				// unique ID for each message
-					Integer.toString(i),				// message
-					this.xCoordOnScreen(i),				// x
-					topYCoord, 							// y
-					col);								// message color, used for fading
+					this.hashCode() + i,	// unique ID for each message
+					Integer.toString(i),	// message
+					this.xCoordOnScreen(i),	// x
+					topYCoord, 				// y
+					col);					// message color, used for fading
 		}
 		
 		for (int i = minY; i < maxY + 1; i++) {
 			this.parent.mc.addHUDMessage(
-					this.hashCode() + maxX + i,			// unique ID for each message, starting after maxX
-					Integer.toString(i),				// message
-					leftXCoord,							// x
-					this.yCoordOnScreen(i), 			// y
-					col);								// message color, used for fading
-		}
+					this.hashCode() + maxX + Math.abs(minY) + 1 + i,
+				// unique ID for each message, starting after the previous ids
 
-		for (DrawableDroplet d : this.droplets) {
-			d.draw();
+					Integer.toString(i),	// message
+					leftXCoord,				// x
+					this.yCoordOnScreen(i), // y
+					col);					// message color, used for fading
 		}
 	}
 
