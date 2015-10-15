@@ -692,24 +692,25 @@ public class DrawableCircuit implements Drawable {
 
 	@Override
 	public String generateSVG() {
-		String result = "";
-		result +=
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(
 				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
 						this.data.getMinCoord().fst + " " +
 						(this.data.getMinCoord().snd - 1) + " " +
 						(this.data.getMaxCoord().fst + 1) + " " +
 						(this.data.getMaxCoord().snd + 1) +
-						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
+						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
 		for (Drawable d : this.fields) {
-			result += d.generateSVG();
+			sb.append(d.generateSVG());
 		}
 		for (Drawable d : this.droplets) {
-			result += d.generateSVG();
+			sb.append(d.generateSVG());
 		}
 
-		result += "</svg>";
-		return result;
+		sb.append("</svg>\n");
+		return sb.toString();
 	}
 
 	public boolean getShowCoordinates() {
