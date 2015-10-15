@@ -323,6 +323,7 @@ public class DrawableCircuit implements Drawable {
 	 */
 	private void drawGates() {
 
+		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
 		if (autoAdvance) {
 			long current = new Date().getTime();
 			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
@@ -335,6 +336,59 @@ public class DrawableCircuit implements Drawable {
 
 		for (DrawableField f : this.fields) {
 			f.draw();
+			if (minX > f.field.x()) {
+				minX = f.field.x();
+			}
+			if (minY > f.field.y()) {
+				minY = f.field.y();
+			}
+			if (maxX < f.field.x()) {
+				maxX = f.field.x();
+			}
+			if (maxY < f.field.y()) {
+				maxY = f.field.y();
+			}
+		}
+		
+		float startFadingAtScale = 16f;
+		float endFadingAtScale = 12f;
+		
+		Color col = Color.WHITE.cpy();
+		if (this.smoothScaleX < startFadingAtScale) {
+			if (this.smoothScaleX > endFadingAtScale) {
+				float alpha = 1f - ((startFadingAtScale - smoothScaleX) / (startFadingAtScale - endFadingAtScale));
+				col.a = alpha;
+			} else {
+				// TODO: don't draw!
+				col.a = 0;
+			}
+		}
+		
+		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
+		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
+			topYCoord = this.yCoordOnScreen(maxY + 1);
+		}
+		float leftXCoord = -Gdx.graphics.getWidth() / 2f + 32;
+		if (leftXCoord < this.xCoordOnScreen(minX - 1)) {
+			leftXCoord = this.xCoordOnScreen(minX - 1);
+		}
+		
+		for (int i = minX; i < maxX + 1; i++) {
+			this.parent.mc.addHUDMessage(
+					this.hashCode() + i,				// unique ID for each message
+					Integer.toString(i),				// message
+					this.xCoordOnScreen(i),				// x
+					topYCoord, 							// y
+					col);								// message color, used for fading
+		}
+		
+		for (int i = minY; i < maxY + 1; i++) {
+			this.parent.mc.addHUDMessage(
+					this.hashCode() + maxX + i,			// unique ID for each message, starting after maxX
+					Integer.toString(i),				// message
+					leftXCoord,							// x
+					this.yCoordOnScreen(i), 			// y
+					col);								// message color, used for fading
 		}
 
 		for (DrawableDroplet d : this.droplets) {
