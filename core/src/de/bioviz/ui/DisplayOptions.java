@@ -1,0 +1,36 @@
+package de.bioviz.ui;
+
+import java.util.HashMap;
+
+/**
+ * @author Oliver Keszöcze
+ */
+public class DisplayOptions {
+	private HashMap<BDisplayOptions,Boolean> options;
+
+	DisplayOptions() {
+		options = new HashMap<>();
+		for (BDisplayOptions o :BDisplayOptions.values()) {
+			setOption(o,false);
+		}
+		setOption(BDisplayOptions.SourceTargetIcons,true);
+		setOption(BDisplayOptions.SourceTargetIDs,true);
+		setOption(BDisplayOptions.Droplets,true);
+		setOption(BDisplayOptions.Coordinates,true);
+	}
+
+	public boolean getOption(BDisplayOptions opt) {
+		return options.get(opt);
+	}
+
+	public void setOption(BDisplayOptions opt, boolean val) {
+		options.put(opt,val);
+	}
+
+	public boolean toggleOption(BDisplayOptions opt) {
+		boolean val = !getOption(opt);
+		setOption(opt,val);
+		return val;
+	}
+
+}
