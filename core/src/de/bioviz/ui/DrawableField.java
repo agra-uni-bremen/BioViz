@@ -80,12 +80,12 @@ public class DrawableField extends DrawableSprite {
 			this.addLOD(Float.MAX_VALUE, "Detector.png");
 			drawDetector = true;
 		} else if (!this.field.source_ids.isEmpty()) {
-			if (circ.getShowSourceTargetIcons()) {
+			if (circ.options.getOption(BDisplayOptions.SourceTargetIcons)) {
 				this.addLOD(Float.MAX_VALUE, "Start.png");
 			} else {
 				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
 			}
-			if (circ.getShowSourceTargetIDs()) {
+			if (circ.options.getOption(BDisplayOptions.SourceTargetIDs)) {
 				ArrayList<Integer> sources = this.field.source_ids;
 				fieldHUDMsg = sources.get(0).toString();
 				if (sources.size() > 1) {
@@ -95,12 +95,12 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 		} else if (!this.field.target_ids.isEmpty()) {
-			if (circ.getShowSourceTargetIcons()) {
+			if (circ.options.getOption(BDisplayOptions.SourceTargetIcons)) {
 				this.addLOD(Float.MAX_VALUE, "Target.png");
 			} else {
 				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
 			}
-			if (circ.getShowSourceTargetIDs()) {
+			if (circ.options.getOption(BDisplayOptions.SourceTargetIDs)) {
 				ArrayList<Integer> targets = this.field.target_ids;
 				fieldHUDMsg = targets.get(0).toString();
 				if (targets.size() > 1) {
@@ -114,7 +114,7 @@ public class DrawableField extends DrawableSprite {
 
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show what
-		if (circ.getShowPins()) {
+		if (circ.options.getOption(BDisplayOptions.Pins)) {
 			if (this.field.pin != null) {
 				fieldHUDMsg = Integer.toString(this.field.pin.pinID);
 			}
@@ -140,7 +140,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
-		if (circ.getShowUsage()) {
+		if (circ.options.getOption(BDisplayOptions.CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max Usage verwenden)
 			float scalingFactor = 4f;
 
@@ -148,7 +148,7 @@ public class DrawableField extends DrawableSprite {
 			++colorOverlayCount;
 		}
 
-		if (circ.getShowActuations()) {
+		if (circ.options.getOption(BDisplayOptions.Actuations)) {
 			if (field.isActuated(t)) {
 				result.add(Colors.actautedColor);
 				++colorOverlayCount;
@@ -178,7 +178,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
+		if (circ.options.getOption(BDisplayOptions.Adjacency) && circ.data.getAdjacentActivations().contains(this.field)) {
 			result.add(0.5f, -0.5f, -0.5f, 0);
 		}
 

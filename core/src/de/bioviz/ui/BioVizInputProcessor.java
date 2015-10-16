@@ -55,7 +55,7 @@ public class BioVizInputProcessor implements InputProcessor {
 				parentViz.callSaveFileListeners();
 			}
 		} else if (keycode == Keys.A) {
-			parentViz.currentCircuit.toggleHighlightAdjacency();
+			parentViz.currentCircuit.options.toggleOption(BDisplayOptions.Adjacency);
 		}
 		else if (keycode == Keys.RIGHT || keycode == Keys.UP) {
 			parentViz.currentCircuit.nextStep();
@@ -69,7 +69,7 @@ public class BioVizInputProcessor implements InputProcessor {
 			}
 		} else if (keycode == Keys.C){
 			if (ctrl) {
-				parentViz.currentCircuit.setShowCoordinates(!parentViz.currentCircuit.getShowCoordinates());
+				parentViz.currentCircuit.options.toggleOption(BDisplayOptions.Coordinates);
 			}
 		}
 		

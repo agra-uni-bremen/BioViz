@@ -1,5 +1,8 @@
 package de.bioviz.ui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 
 /**
@@ -7,6 +10,7 @@ import java.util.HashMap;
  */
 public class DisplayOptions {
 	private HashMap<BDisplayOptions,Boolean> options;
+	static Logger logger = LoggerFactory.getLogger(DisplayOptions.class);
 
 	DisplayOptions() {
 		options = new HashMap<>();
@@ -24,6 +28,8 @@ public class DisplayOptions {
 	}
 
 	public void setOption(BDisplayOptions opt, boolean val) {
+
+		logger.debug("Setting option \"{}\" to {}",opt,val);
 		options.put(opt,val);
 	}
 
