@@ -134,6 +134,9 @@ public class DrawableCircuit implements Drawable {
 		else {
 			removeDisplayedCoordinates();
 		}
+		if (options.getOption(BDisplayOptions.CellUsage)) {
+
+		}
 
 		drawGates();
 
@@ -371,6 +374,18 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
+
+	public void toggleShowUsage() {
+		boolean doIt = options.toggleOption(BDisplayOptions.CellUsage);
+		if (doIt) {
+			data.computeCellUsage();
+		}
+	}
+
+	public void toggleShowDroplets() {
+		boolean showDroplets = options.toggleOption(BDisplayOptions.Droplets);
+		droplets.forEach(d -> {d.isVisible=showDroplets;});
+	}
 
 	/**
 	 * retrieves the current x scaling factor

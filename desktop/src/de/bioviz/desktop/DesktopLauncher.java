@@ -234,8 +234,7 @@ public class DesktopLauncher extends JFrame {
 																	 ()
 															 .height));
 		dropletButton.addActionListener(
-				e -> currentViz.currentCircuit.options.toggleOption(
-						BDisplayOptions.Droplets));
+				e -> currentViz.currentCircuit.toggleShowDroplets());
 
 		JButton usageButton = new JButton("Cell Usage");
 		usageButton.setPreferredSize(new Dimension(buttonWidth,
@@ -243,8 +242,7 @@ public class DesktopLauncher extends JFrame {
 														   .getPreferredSize()
 														   .height));
 		usageButton.addActionListener(
-				e -> currentViz.currentCircuit.options.toggleOption(
-						BDisplayOptions.CellUsage));
+				e -> currentViz.currentCircuit.toggleShowUsage());
 
 		JButton actuationButton = new JButton("Actuations");
 		actuationButton.setPreferredSize(new Dimension(buttonWidth,
