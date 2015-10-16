@@ -48,7 +48,7 @@ public class DrawableField extends DrawableSprite {
 		//		then add the total height of the circuit to have the element put
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
-		int yCoord = -this.field.y() + parentCircuit.data.getMaxCoord().snd - 1;
+		int yCoord = -this.field.y() + parentCircuit.data.getMaxCoord().snd;
 		return "<image x=\"" + this.field.x() + "\" y=\"" + yCoord + "\" width=\"1\" height=\"1\" xlink:href=\"GridMarker.svg\" />\n";
 	}
 

@@ -36,7 +36,7 @@ public class DrawableDroplet extends DrawableSprite {
 	@Override
 	public String generateSVG() {
 		// TODO hier auch entsprechend auf die SVG Dateinamen zurückgreifen (über nen Manager)
-		float yCoord =  -this.droplet.smoothY + parentCircuit.data.getMaxCoord().snd - 1;
+		float yCoord =  -this.droplet.smoothY + parentCircuit.data.getMaxCoord().snd;
 		return
 				"<image x=\"" + this.droplet.smoothX + "\" " +
 						"y=\"" + yCoord + "\" " +
