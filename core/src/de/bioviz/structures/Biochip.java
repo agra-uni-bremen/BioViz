@@ -19,17 +19,22 @@ public class Biochip {
 
 	static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
-	private HashMap<Point, BiochipField> field = new HashMap<Point, BiochipField>();
+	private HashMap<Point, BiochipField> field =
+			new HashMap<Point, BiochipField>();
 
-	public final ArrayList<Pair<Rectangle, Range>> blockages = new ArrayList<Pair<Rectangle, Range>>();
+	public final ArrayList<Pair<Rectangle, Range>> blockages =
+			new ArrayList<Pair<Rectangle, Range>>();
 	public final ArrayList<Detector> detectors = new ArrayList<Detector>();
 	public final HashMap<Integer, Pin> pins = new HashMap<>();
-	public final HashMap<Integer, ActuationVector> pinActuations = new HashMap<>();
-	public final HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
+	public final HashMap<Integer, ActuationVector> pinActuations =
+			new HashMap<>();
+	public final HashMap<Point, ActuationVector> cellActuations =
+			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 
-	private HashMap<Integer, String> fluidTypes = new HashMap<Integer, String>();
+	private HashMap<Integer, String> fluidTypes =
+			new HashMap<Integer, String>();
 
 	public void addFluidType(int fluidID, String fluidDescription) {
 		fluidTypes.put(fluidID, fluidDescription);
@@ -66,10 +71,12 @@ public class Biochip {
 
 
 	private int maxT = -1;
+	private int maxRouteLength = -1;
 
 
 	/**
-	 * All droplets of this chip. Use the get-method to retrieve them from other
+	 * All droplets of this chip. Use the get-method to retrieve them from
+	 * other
 	 * classes.
 	 */
 	private HashSet<Droplet> droplets = new HashSet<>();
@@ -188,7 +195,8 @@ public class Biochip {
 
 		if (adjacencyCache != null && !recalculateAdjacency) {
 			return adjacencyCache;
-		} else {
+		}
+		else {
 			logger.debug("Recalculating adjacency");
 			recalculateAdjacency = false;
 			HashSet<BiochipField> result = new HashSet<>();
@@ -206,21 +214,35 @@ public class Biochip {
 							Point p2 = d2.getPositionAt(timestep);
 							Point pp2 = d2.getPositionAt(timestep + 1);
 							/*
-							We actually need to differentiat the following three cases. The dynamic fluidic constraints
-							should highlight the cell that in the upcoming time step violates one of the constraints.
+							We actually need to differentiat the following
+							three cases. The dynamic fluidic constraints
+							should highlight the cell that in the upcoming
+							time step violates one of the constraints.
 							 */
 							if (Point.adjacent(p1, p2)) {
-								logger.trace("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 + ") are adjacent in time step " + timestep);
+								logger.trace(
+										"Points " + p1 + "(" + d1 + ") and " +
+										p2 + "(" + d2 +
+										") are adjacent in time step " +
+										timestep);
 								result.add(this.field.get(p1));
 								result.add(this.field.get(p2));
 							}
 							if (Point.adjacent(pp1, p2)) {
-								logger.trace("Points " + pp1 + "(" + d1 + ") and " + p2 + "(" + d2 + ") are adjacent in time step " + (timestep + 1) + "/" + timestep);
+								logger.trace(
+										"Points " + pp1 + "(" + d1 + ") and " +
+										p2 + "(" + d2 +
+										") are adjacent in time step " +
+										(timestep + 1) + "/" + timestep);
 								result.add(this.field.get(pp1));
 								result.add(this.field.get(p2));
 							}
 							if (Point.adjacent(p1, pp2)) {
-								logger.trace("Points " + p1 + "(" + d1 + ") and " + pp2 + "(" + d2 + ") are adjacent in time step " + timestep + "/" + (timestep + 1));
+								logger.trace(
+										"Points " + p1 + "(" + d1 + ") and " +
+										pp2 + "(" + d2 +
+										") are adjacent in time step " +
+										timestep + "/" + (timestep + 1));
 								result.add(this.field.get(p1));
 								result.add(this.field.get(pp2));
 							}
@@ -267,6 +289,21 @@ public class Biochip {
 
 
 	/**
+	 * @author Oliver Keszöcze
+	 * @return Length of the longest route
+	 */
+	public int getMaxRouteLength() {
+		if (maxRouteLength == -1) {
+
+			for (Droplet d : droplets) {
+				maxRouteLength = Math.max(maxRouteLength,d.getRouteLength());
+			}
+		}
+		return maxRouteLength;
+	}
+
+
+	/**
 	 * Retrieves field that is located at given coordinates.
 	 *
 	 * @param coords
@@ -278,8 +315,10 @@ public class Biochip {
 	public BiochipField getFieldAt(Point coords) {
 		if (this.field.containsKey(coords)) {
 			return this.field.get(coords);
-		} else {
-			throw new RuntimeException("Could not retrieve field at " + coords);
+		}
+		else {
+			throw new RuntimeException("Could not retrieve field at " +
+									   coords);
 		}
 	}
 
@@ -314,11 +353,14 @@ public class Biochip {
 
 	public void addField(Point coordinates, BiochipField field) {
 		if (field.x() != coordinates.fst || field.y() != coordinates.snd) {
-			logger.error("Field coordinates differ from those transmitted to the chip for this instance");
+			logger.error(
+					"Field coordinates differ from those transmitted to the " +
+					"chip for this instance");
 			coordinates = new Point(field.x(), field.y());
 		}
 		if (this.field.containsKey(coordinates)) {
-			logger.trace("Field added twice at " + coordinates + ", removed older instance");
+			logger.trace("Field added twice at " + coordinates +
+						 ", removed older instance");
 		}
 		this.field.put(coordinates, field);
 	}
