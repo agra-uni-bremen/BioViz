@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class DesktopLauncher extends JFrame {
 
 	public JSlider timeSlider;
-	protected JSlider routes;
+	protected JSlider displayRouteLengthSlider;
 
 	JLabel timeInfo = new JLabel("1");
 
@@ -260,12 +260,14 @@ public class DesktopLauncher extends JFrame {
 		tc = new timerCallback(timeSlider, timeInfo);
 
 
-		routes =
+		displayRouteLengthSlider =
 				new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute
 						.timesteps);
-		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		routes.addChangeListener(ce -> DrawableRoute.timesteps =
-				((JSlider) ce.getSource()).getValue());
+		displayRouteLengthSlider.setPreferredSize(
+				new Dimension(sliderWidth, sliderHeight));
+		displayRouteLengthSlider.addChangeListener(
+				ce -> DrawableRoute.timesteps =
+						((JSlider) ce.getSource()).getValue());
 		//tc = new timerCallback(timeSlider);
 
 		JButton adjacencyButton = new JButton("Adjacency");
@@ -342,7 +344,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(new JLabel("Options"));
 		panel.add(optionsSep);
 		panel.add(new JLabel("Route length"));
-		panel.add(routes);
+		panel.add(displayRouteLengthSlider);
 		panel.add(zoomButton);
 		panel.add(dropletButton);
 		panel.add(displayDropletIDsButton);
@@ -821,10 +823,10 @@ public class DesktopLauncher extends JFrame {
 				d.timeSlider.setMinimum(1);
 				d.timeSlider.setValue(0);
 
-				d.routes.setMaximum(
+				d.displayRouteLengthSlider.setMaximum(
 						currentViz.currentCircuit.data.getMaxRouteLength());
-				d.routes.setMinimum(0);
-				d.routes.setValue(0);
+				d.displayRouteLengthSlider.setMinimum(0);
+				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
 
@@ -836,9 +838,9 @@ public class DesktopLauncher extends JFrame {
 				d.timeSlider.setMinimum(1);
 				d.timeSlider.setValue(1);
 
-				d.routes.setMaximum(0);
-				d.routes.setMinimum(0);
-				d.routes.setValue(0);
+				d.displayRouteLengthSlider.setMaximum(0);
+				d.displayRouteLengthSlider.setMinimum(0);
+				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.programName);
 			}
