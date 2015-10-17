@@ -57,8 +57,8 @@ public class DrawableCircuit implements Drawable {
 	private boolean showSourceTargetIDs = true;
 	private boolean showCoordinates = true;
 
-	private Vector<DrawableField> fields = new Vector<>();
-	private Vector<DrawableDroplet> droplets = new Vector<>();
+	public Vector<DrawableField> fields = new Vector<>();
+	public Vector<DrawableDroplet> droplets = new Vector<>();
 
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);

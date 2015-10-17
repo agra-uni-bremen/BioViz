@@ -27,7 +27,7 @@ public class DrawableField extends DrawableSprite {
 
 	//private DrawableSprite adjacencyOverlay;
 
-	DrawableCircuit parentCircuit;
+	public DrawableCircuit parentCircuit;
 
 	public DrawableField(BiochipField field, DrawableCircuit parent) {
 		super("GridMarker.png", parent.parent);

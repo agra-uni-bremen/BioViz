@@ -12,7 +12,7 @@ public class DrawableRoute extends DrawableSprite {
 	public static int routeDisplayLength = 0;
 	public static int hoverTimesteps = 2 * routeDisplayLength + 8;
 
-	private DrawableDroplet droplet;
+	public DrawableDroplet droplet;
 
 	public Color baseColor = Color.BLACK;
 
@@ -32,7 +32,7 @@ public class DrawableRoute extends DrawableSprite {
 
 		/*
 		The prevoius code did some weird stuff here. The new rationale is
-		that we go, from the currentTime either as long as there actually
+		that we go from the currentTime either as long as there actually
 		is time or until we reached the end of the display length of the
 		route, whatever happens first.
 		 */

@@ -11,11 +11,11 @@ public class DrawableDroplet extends DrawableSprite {
 
 	public Droplet droplet;
 
-	private DrawableRoute route;
+	public DrawableRoute route;
 
 	private static Random randnum = null;
 
-	DrawableCircuit parentCircuit;
+	public DrawableCircuit parentCircuit;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
 		super("Droplet.png", parent.parent);
