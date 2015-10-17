@@ -16,6 +16,7 @@ public class DrawableRoute extends DrawableSprite {
 
 	public Color baseColor = Color.BLACK;
 
+
 	public DrawableRoute(DrawableDroplet droplet) {
 		super("StepMarker.png", droplet.viz);
 		this.droplet = droplet;
@@ -68,6 +69,7 @@ public class DrawableRoute extends DrawableSprite {
 
 
 		// TODO drawing of routes is now broken :(
+		// I totally do not get this if condition an what is supposed to be broken? (Oliver)
 		if (true) {
 
 			hoverTimesteps = 2 * timesteps + 8;
@@ -77,9 +79,12 @@ public class DrawableRoute extends DrawableSprite {
 				stepsToUse = hoverTimesteps;
 			}
 
+			this.setColor(this.baseColor.cpy());
+			if (droplet.parentCircuit.displayOptions.getOption(BDisplayOptions.ColorfulRoutes)) {
+				this.setColor(droplet.getColor().cpy());
+			}
 			for (int i = -stepsToUse; i < stepsToUse; i++) {
 
-				this.setColor(this.baseColor.cpy());
 				if (i >= 0) {
 					this.getColor().a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
 				} else {
