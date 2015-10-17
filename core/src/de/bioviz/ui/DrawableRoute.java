@@ -79,9 +79,12 @@ public class DrawableRoute extends DrawableSprite {
 				stepsToUse = hoverTimesteps;
 			}
 
-			this.setColor(this.baseColor.cpy());
-			if (droplet.parentCircuit.displayOptions.getOption(BDisplayOptions.ColorfulRoutes)) {
+
+			if (droplet.parentCircuit.displayOptions.getOption(
+					BDisplayOptions.ColorfulRoutes)) {
 				this.setColor(droplet.getColor().cpy());
+			} else {
+				this.setColor(this.baseColor.cpy());
 			}
 			for (int i = -stepsToUse; i < stepsToUse; i++) {
 
