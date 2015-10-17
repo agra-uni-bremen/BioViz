@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public class DesktopLauncher extends JFrame {
 
 	public JSlider timeSlider;
+	protected JSlider routes;
 
 	JLabel timeInfo = new JLabel("1");
 
@@ -253,12 +254,13 @@ public class DesktopLauncher extends JFrame {
 
 		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
 		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		timeSlider.addChangeListener(ce -> currentViz.currentCircuit.setCurrentTime(
-				((JSlider) ce.getSource()).getValue()));
+		timeSlider.addChangeListener(
+				ce -> currentViz.currentCircuit.setCurrentTime(
+						((JSlider) ce.getSource()).getValue()));
 		tc = new timerCallback(timeSlider, timeInfo);
 
 
-		JSlider routes =
+		routes =
 				new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute
 						.timesteps);
 		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
@@ -819,7 +821,13 @@ public class DesktopLauncher extends JFrame {
 				d.timeSlider.setMinimum(1);
 				d.timeSlider.setValue(0);
 
+				d.routes.setMaximum(
+						currentViz.currentCircuit.data.getMaxRouteLength());
+				d.routes.setMinimum(0);
+				d.routes.setValue(0);
+
 				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
+
 			}
 			else {
 				logger.trace("Last file closed, no more file to display.");
@@ -827,6 +835,10 @@ public class DesktopLauncher extends JFrame {
 				d.timeSlider.setMaximum(1);
 				d.timeSlider.setMinimum(1);
 				d.timeSlider.setValue(1);
+
+				d.routes.setMaximum(0);
+				d.routes.setMinimum(0);
+				d.routes.setValue(0);
 
 				d.setTitle(d.programName);
 			}
