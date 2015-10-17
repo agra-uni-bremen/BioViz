@@ -66,9 +66,5 @@ public class Button extends DrawableSprite {
 		this.setColor(c);
 	}
 
-	@Override
-	public String generateSVG() {
-		// TODO Auto-generated method stub
-		return "";
-	}
+
 }

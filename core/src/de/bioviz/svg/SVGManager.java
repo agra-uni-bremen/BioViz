@@ -100,7 +100,7 @@ public class SVGManager {
 		}
 	}
 
-	public String toSVG(DrawableCircuit circ) {
+	public static String toSVG(DrawableCircuit circ) {
 		StringBuilder sb = new StringBuilder();
 
 		Point minCoord = circ.data.getMinCoord();
@@ -117,17 +117,17 @@ public class SVGManager {
 				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
 		for (DrawableField field : circ.fields) {
-			sb.append(this.toSVG(field));
+			sb.append(SVGManager.toSVG(field));
 		}
 		for (DrawableDroplet drop : circ.droplets) {
-			sb.append(this.toSVG(drop));
+			sb.append(SVGManager.toSVG(drop));
 		}
 
 		sb.append("</svg>\n");
 		return sb.toString();
 	}
 
-	public String toSVG(DrawableField field) {
+	public static String toSVG(DrawableField field) {
 		// TODO When merged, use the TextureManager to get the filename
 		// TODO must be able to display sinks etc.
 		// why would we need to acces " (-this.field.y + BioViz.singleton
@@ -148,13 +148,13 @@ public class SVGManager {
 			   "/>\n";
 	}
 
-	public String toSVG(DrawableDroplet drawableDrop) {
+	public static String toSVG(DrawableDroplet drawableDrop) {
 		// TODO hier auch entsprechend auf die SVG Dateinamen zurückgreifen
 		// (über nen Manager)
 		float yCoord = -drawableDrop.droplet.smoothY +
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
 		float xCoord = drawableDrop.droplet.smoothX;
-		String route = this.toSVG(drawableDrop.route);
+		String route = SVGManager.toSVG(drawableDrop.route);
 		return
 				"<image x=\"" + xCoord + "\" " +
 				"y=\"" + yCoord + "\" " +
@@ -162,7 +162,7 @@ public class SVGManager {
 				route;
 	}
 
-	public String toSVG(DrawableRoute drawableRoute) {
+	public static String toSVG(DrawableRoute drawableRoute) {
 		StringBuilder sb = new StringBuilder();
 
 

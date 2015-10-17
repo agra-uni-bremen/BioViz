@@ -23,64 +23,6 @@ public class DrawableRoute extends DrawableSprite {
 	}
 
 	@Override
-	public String generateSVG() {
-		StringBuilder sb = new StringBuilder();
-
-		int currentTime = droplet.parentCircuit.currentTime;
-		int displayAt;
-
-
-		/*
-		The prevoius code did some weird stuff here. The new rationale is
-		that we go from the currentTime either as long as there actually
-		is time or until we reached the end of the display length of the
-		route, whatever happens first.
-		 */
-		int nSteps = Math.min(routeDisplayLength,droplet.parentCircuit.data.getMaxT())-1;
-		logger.debug("nSteps: {}",nSteps);
-
-		for (int i = 0; i < nSteps; i++) {
-
-			logger.debug("i: {}",i);
-
-
-			// TODO possible problem here due to casting
-			float alpha = 1 - (Math.abs((float) i) / ((float) routeDisplayLength));
-
-
-			displayAt = currentTime + i;
-
-			logger.debug("displayAt {}",displayAt);
-
-			Point p1 = droplet.droplet.getPositionAt(displayAt);
-			Point p2 = droplet.droplet.getPositionAt(displayAt + 1);
-
-			logger.debug("p1 {}; p2 {}",p1,p2);
-
-			int x1 = p1.fst;
-			int x2 = p2.fst;
-			int y1 = p1.snd;
-			int y2 = p2.snd;
-
-			float targetX = x1 + 0.5f;
-			float targetY = -y1 +
-					droplet.parentCircuit.data.getMaxCoord().snd - 1;
-			if (y1 == y2 && x2 > x1) {
-				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" xlink:href=\"StepMarker.svg\" />\n");
-			} else if (y1 == y2 && x2 < x1) {
-				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(180 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />\n");
-			} else if (x1 == x2 && y2 > y1) {
-				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(270 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />\n");
-			} else if (x1 == x2 && y2 < y1) {
-				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY + "\" width=\"1\" height=\"1\" transform=\"rotate(90 " + targetX + " " + (targetY + 0.5f) + " )\" opacity=\"" + alpha + "\" xlink:href=\"StepMarker.svg\" />\n");
-			} else {
-				continue;
-			}
-		}
-		return sb.toString();
-	}
-
-	@Override
 	public void draw() {
 		int currentTime = droplet.parentCircuit.currentTime;
 		int displayAt;

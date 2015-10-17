@@ -19,6 +19,7 @@ import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.parser.BioParser;
 
+import de.bioviz.svg.SVGManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -385,7 +386,7 @@ public class BioViz implements ApplicationListener {
 
 	public void saveSVG(String path) {
 		try {
-			String svg = currentCircuit.generateSVG();
+			String svg = SVGManager.toSVG(currentCircuit);
 			FileHandle handle = Gdx.files.absolute(path);
 			logger.debug("svg: {}",svg);
 			logger.debug("handle: {}", handle);
