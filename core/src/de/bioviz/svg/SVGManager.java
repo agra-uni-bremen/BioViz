@@ -42,14 +42,14 @@ public class SVGManager {
 	 * The location is relative to the assets folder.
 	 * @warning The folder name must not begin or end with a slash!
 	 */
-	SVGManager(String folder) {
+	public SVGManager(String folder) {
 		setFolder(folder);
 	}
 
 	/**
 	 * @brief SVGManager loading the default theme
 	 */
-	SVGManager() {
+	public SVGManager() {
 		this("");
 	}
 

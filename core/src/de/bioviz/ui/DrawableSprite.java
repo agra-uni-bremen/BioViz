@@ -57,6 +57,7 @@ public abstract class DrawableSprite implements Drawable {
 		this.targetColor.a = ALPHA_FULL;
 		this.currentColor.a = ALPHA_FULL;
 		this.viz = parent;
+
 	}
 
 	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
