@@ -249,7 +249,7 @@ public class DesktopLauncher extends JFrame {
 													   actuationButton
 															   .getPreferredSize().height));
 		actuationButton.addActionListener(
-				e -> currentViz.currentCircuit.options.toggleOption(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.Actuations));
 
 
@@ -273,7 +273,7 @@ public class DesktopLauncher extends JFrame {
 													   adjacencyButton
 															   .getPreferredSize().height));
 		adjacencyButton.addActionListener(
-				e -> currentViz.currentCircuit.options.getOption(
+				e -> currentViz.currentCircuit.displayOptions.getOption(
 						BDisplayOptions.Adjacency));
 
 
@@ -281,14 +281,14 @@ public class DesktopLauncher extends JFrame {
 		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth,
 															   displayDropletIDsButton.getPreferredSize().height));
 		displayDropletIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.options.toggleOption(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.DropletIDs));
 
 		JButton displayFluidIDsButton = new JButton("Fluid IDs");
 		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth,
 															 displayFluidIDsButton.getPreferredSize().height));
 		displayFluidIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.options.toggleOption(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.FluidIDs));
 
 		JButton pinButton = new JButton("Pins");
@@ -296,7 +296,7 @@ public class DesktopLauncher extends JFrame {
 												 pinButton.getPreferredSize()
 														 .height));
 		pinButton.addActionListener(
-				e -> currentViz.currentCircuit.options.toggleOption(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.Pins));
 
 		JButton stIconButton = new JButton("Source/Target icons");
@@ -306,7 +306,7 @@ public class DesktopLauncher extends JFrame {
 																	()
 															.height));
 		stIconButton.addActionListener(
-				e -> currentViz.currentCircuit.options.toggleOption(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.SourceTargetIcons));
 
 		JButton stIDButton = new JButton("Source/Target IDs");
@@ -314,7 +314,7 @@ public class DesktopLauncher extends JFrame {
 												  stIDButton.getPreferredSize
 														  ().height));
 		stIDButton.addActionListener(
-				e -> currentViz.currentCircuit.options.toggleOption(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.SourceTargetIDs));
 
 

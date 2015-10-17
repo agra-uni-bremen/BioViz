@@ -50,7 +50,7 @@ public class DrawableCircuit implements Drawable {
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
 
-	public DisplayOptions options = new DisplayOptions();
+	public DisplayOptions displayOptions = new DisplayOptions();
 
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
@@ -128,13 +128,13 @@ public class DrawableCircuit implements Drawable {
 		smoothOffsetX += (offsetX - smoothOffsetX) / scalingDelay;
 		smoothOffsetY += (offsetY - smoothOffsetY) / scalingDelay;
 
-		if (options.getOption(BDisplayOptions.Coordinates)) {
+		if (displayOptions.getOption(BDisplayOptions.Coordinates)) {
 			displayCoordinates();
 		}
 		else {
 			removeDisplayedCoordinates();
 		}
-		if (options.getOption(BDisplayOptions.CellUsage)) {
+		if (displayOptions.getOption(BDisplayOptions.CellUsage)) {
 
 		}
 
@@ -376,14 +376,14 @@ public class DrawableCircuit implements Drawable {
 
 
 	public void toggleShowUsage() {
-		boolean doIt = options.toggleOption(BDisplayOptions.CellUsage);
+		boolean doIt = displayOptions.toggleOption(BDisplayOptions.CellUsage);
 		if (doIt) {
 			data.computeCellUsage();
 		}
 	}
 
 	public void toggleShowDroplets() {
-		boolean showDroplets = options.toggleOption(BDisplayOptions.Droplets);
+		boolean showDroplets = displayOptions.toggleOption(BDisplayOptions.Droplets);
 		droplets.forEach(d -> {d.isVisible=showDroplets;});
 	}
 
