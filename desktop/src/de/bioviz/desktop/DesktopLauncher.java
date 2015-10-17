@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class DesktopLauncher extends JFrame {
 
-	public JSlider time;
+	public JSlider timeSlider;
 
 	JLabel timeInfo = new JLabel("1");
 
@@ -251,11 +251,11 @@ public class DesktopLauncher extends JFrame {
 				e -> currentViz.currentCircuit.toggleShowActuations());
 
 
-		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
-		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		time.addChangeListener(ce -> currentViz.currentCircuit.setCurrentTime(
+		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
+		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
+		timeSlider.addChangeListener(ce -> currentViz.currentCircuit.setCurrentTime(
 				((JSlider) ce.getSource()).getValue()));
-		tc = new timerCallback(time, timeInfo);
+		tc = new timerCallback(timeSlider, timeInfo);
 
 
 		JSlider routes =
@@ -264,7 +264,7 @@ public class DesktopLauncher extends JFrame {
 		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		routes.addChangeListener(ce -> DrawableRoute.timesteps =
 				((JSlider) ce.getSource()).getValue());
-		//tc = new timerCallback(time);
+		//tc = new timerCallback(timeSlider);
 
 		JButton adjacencyButton = new JButton("Adjacency");
 		adjacencyButton.setPreferredSize(new Dimension(buttonWidth,
@@ -359,7 +359,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(autoplaytButton);
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
-		panel.add(time);
+		panel.add(timeSlider);
 
 
 		input = new LwjglAWTInput(canvas.getCanvas());
@@ -815,18 +815,18 @@ public class DesktopLauncher extends JFrame {
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
-				d.time.setMaximum(currentViz.currentCircuit.data.getMaxT());
-				d.time.setMinimum(1);
-				d.time.setValue(0);
+				d.timeSlider.setMaximum(currentViz.currentCircuit.data.getMaxT());
+				d.timeSlider.setMinimum(1);
+				d.timeSlider.setValue(0);
 
 				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
 			}
 			else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
-				d.time.setMaximum(1);
-				d.time.setMinimum(1);
-				d.time.setValue(1);
+				d.timeSlider.setMaximum(1);
+				d.timeSlider.setMinimum(1);
+				d.timeSlider.setValue(1);
 
 				d.setTitle(d.programName);
 			}
