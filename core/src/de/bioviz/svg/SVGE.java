@@ -1,7 +1,9 @@
 package de.bioviz.svg;
 
 /**
- * Created by keszocze on 17.10.15.
+ * @author Oliver Keszöcze
  */
 public enum SVGE {
+	Droplet, Sink, Dispenser, Detector, Start, Target, AdjacencyMarker,
+	BlackPixel, Blockage, GridMarker, StepMarker
 }

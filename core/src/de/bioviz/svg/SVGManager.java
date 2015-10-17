@@ -6,6 +6,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 /**
@@ -18,22 +23,23 @@ import java.util.HashMap;
  */
 public class SVGManager {
 
-	private HashMap<TextureE, TextureRegion> textures = new HashMap<>();
+	private HashMap<SVGE, String> svgs = new HashMap<>();
 
-	private HashMap<TextureE, String> textureFileNames = new HashMap<>();
 
-	private String textureFolder;
+	private String svgFolder;
 
-	private final String baseFolder = "images";
+	// TODO currently unused; use it after Jannis finally accepts some merge
+	// requests
+	private final String baseFolder = "";
 
 
 	/**
 	 * @param folder
-	 * 		The name of the folder containing the theme, relative to the
-	 * 		assets/images folder
-	 * @brief TextureManager loading the theme at the specified location.
+	 * 		The name of the folder containing the theme, relative to the assets
+	 * 		folder
+	 * @brief SVGManager loading the theme at the specified location.
 	 * <p>
-	 * The location is relative to the assets/images folder.
+	 * The location is relative to the assets folder.
 	 * @warning The folder name must not begin or end with a slash!
 	 */
 	SVGManager(String folder) {
@@ -41,19 +47,19 @@ public class SVGManager {
 	}
 
 	/**
-	 * @brief TextureManager loading the default theme
+	 * @brief SVGManager loading the default theme
 	 */
 	SVGManager() {
-		this("default");
+		this("");
 	}
 
 	/**
 	 * @param folder
-	 * 		The name of the folder containing the theme, relative to the
-	 * 		assets/images folder
-	 * @brief Tells the manager where to find the textures (i.e. png images).
+	 * 		The name of the folder containing the theme, relative to the assets
+	 * 		folder
+	 * @brief Tells the manager where to find the svgs (i.e. .svg images).
 	 * <p>
-	 * The location is relative to the assets/images folder.
+	 * The location is relative to the assets folder.
 	 * <p>
 	 * Every time this method is called, all previously loaded textures are
 	 * flushed.
@@ -62,47 +68,33 @@ public class SVGManager {
 	 * @warning The folder name must not begin or end with a slash!
 	 */
 	public void setFolder(String folder) {
-		textures.clear();
+		svgs.clear();
 
-		textureFolder = folder;
-		for (TextureE t : TextureE.values()) {
-			textureFileNames.put(t, baseFolder + "/" + textureFolder + "/" +
-									t +
-									".png");
+		svgFolder = folder;
+		for (SVGE s : SVGE.values()) {
+			String svgCoreFile = baseFolder + "/" + svgFolder + "/" +
+								 s +
+								 ".core";
+			Path svgCoreFilePath =
+					Gdx.files.internal(svgCoreFile).file().toPath();
+
+			try {
+				String svgCore =
+						new String(Files.readAllBytes(svgCoreFilePath));
+				svgs.put(s, svgCore);
+			} catch (IOException e) {
+				// TODO log if stuff goes wrong
+				e.printStackTrace();
+			}
+
+
 		}
 	}
 
 
-	/**
-	 * @param texture
-	 * 		The name of the texture to receive
-	 * @return The Texture(Region) of the requested texture
-	 * @brief Returns the texture for the given texture name.
-	 * <p>
-	 * The texture is loaded if not already in memory.
-	 */
-	public TextureRegion getTexture(TextureE texture) {
-
-
-		if (textures.containsKey(texture)) {
-			return textures.get(texture);
-		}
-		else {
-
-			if (!textureFileNames.containsKey(texture)) {
-				throw new RuntimeException(
-						"Texture " + texture + " has no associated filename");
-			}
-
-			Texture t = new Texture(
-					Gdx.files.internal(textureFileNames.get(texture)), true);
-			t.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter
-					.Linear);
-			TextureRegion region =
-					new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
-			textures.put(texture, region);
-			return region;
-		}
+	public String getSVG(SVGE svg) {
+		// TODO no error handling, let's see how far that gets us :|
+		return svgs.get(svg);
 	}
 
 }
