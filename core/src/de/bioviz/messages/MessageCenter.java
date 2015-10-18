@@ -14,7 +14,7 @@ import java.util.Vector;
 /**
  * This class provides some methods to draw text.
  *
- * @author jannis
+ * @author Jannis Stoppe, Oliver Keszöcze
  */
 public class MessageCenter {
 
@@ -24,6 +24,10 @@ public class MessageCenter {
 	public boolean hidden = false;
 
 	public static final int MAX_MESSAGES_IN_UI = 5;
+
+	private float scaleHUD = 1f;
+	private float scaleMsg = 1f;
+	private final float SCALEINCSTEP = 0.5f;
 
 	BioViz parent;
 
@@ -106,6 +110,7 @@ public class MessageCenter {
 				else {
 					font.setColor(Color.WHITE);
 				}
+				font.setScale(scaleMsg);
 				int start_x = spacing;
 				int start_y = yCoord;
 				font.draw(parent.batch, m.message, start_x,
@@ -122,6 +127,7 @@ public class MessageCenter {
 							   Gdx.graphics.getWidth() / 2);
 				int y = (int) ((s.y + tb.height / 2f) +
 							   Gdx.graphics.getHeight() / 2);
+				font.setScale(scaleHUD);
 				font.draw(parent.batch, s.message, x, y);
 			}
 
@@ -168,8 +174,8 @@ public class MessageCenter {
 	 * @param col
 	 * 		the color of the message
 	 */
-	public void addHUDMessage(int key, String message, float x, float y, Color
-			col) {
+	public void addHUDMessage(final int key, final String message, final float
+			x, final float y, final Color col) {
 		HUDMessage hm;
 		if (!this.HUDMessages.containsKey(key)) {
 			hm = new HUDMessage(message, x, y);
@@ -194,5 +200,57 @@ public class MessageCenter {
 
 	public void clearHUDMessages() {
 		this.HUDMessages.clear();
+	}
+
+	public void resetScales() {
+		resetMsgScale();
+		resetHUDScale();
+	}
+
+	public void resetMsgScale() {
+		scaleMsg = 1f;
+	}
+
+	public void resetHUDScale() {
+		scaleHUD = 1f;
+	}
+
+	public void incScales() {
+		incScaleHUD();
+		incScaleMsg();
+	}
+
+	public void incScaleHUD() {
+		scaleHUD = scaleMsg + SCALEINCSTEP;
+	}
+
+	public void incScaleMsg() {
+		scaleMsg = scaleMsg + SCALEINCSTEP;
+	}
+
+	public void deccScales() {
+		decScaleHUD();
+		decScaleMsg();
+	}
+
+	public void decScaleHUD() {
+		scaleHUD = scaleMsg + SCALEINCSTEP;
+	}
+
+	public void decScaleMsg() {
+		scaleMsg = scaleMsg + SCALEINCSTEP;
+	}
+
+	public void setScales(final float scale) {
+		setScaleHUD(scale);
+		setScaleMsg(scale);
+	}
+
+	public void setScaleHUD(final float scaleHUD) {
+		this.scaleHUD = scaleHUD;
+	}
+
+	public void setScaleMsg(final float scaleMsg) {
+		this.scaleMsg = scaleMsg;
 	}
 }
