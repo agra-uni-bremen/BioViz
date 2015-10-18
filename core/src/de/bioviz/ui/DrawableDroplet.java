@@ -93,18 +93,15 @@ public class DrawableDroplet extends DrawableSprite {
 					}
 				}
 
-				if (msg != null) {
-					parentCircuit.parent.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
-				} else {
-					parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
-				}
+
+				displayText(msg);
 
 				super.draw();
 			}
 		}
 		if (!withinTimeRange) {
 			// make sure that previous numbers are removed when the droplet is removed.
-			parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
+			displayText(null);
 		}
 	}
 }
