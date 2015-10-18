@@ -13,38 +13,38 @@ import java.util.Vector;
 
 /**
  * This class provides some methods to draw text.
- * 
- * @author jannis
  *
+ * @author jannis
  */
-public class MessageCenter  {
+public class MessageCenter {
 
 
 	private Vector<Message> messages;
 	private BitmapFont font;
 	public boolean hidden = false;
 
-	public static final int MAX_MESSAGES_IN_UI	= 5;
-	
+	public static final int MAX_MESSAGES_IN_UI = 5;
+
 	BioViz parent;
-	
+
 	public MessageCenter(BioViz parent) {
 		this.parent = parent;
 		messages = new Vector<Message>();
 	}
 
 	public BitmapFont getFont() {
-		if (font == null)
+		if (font == null) {
 			font = new BitmapFont();
+		}
 		return font;
 	}
-	
+
 	private class HUDMessage {
 		public String message;
 		public float x;
 		public float y;
 		public Color color;
-		
+
 		public HUDMessage(String message, float x, float y) {
 			this.message = message;
 			this.x = x;
@@ -52,7 +52,9 @@ public class MessageCenter  {
 			this.color = Color.WHITE;
 		}
 	}
-	private HashMap<Integer, HUDMessage> HUDMessages = new HashMap<Integer, HUDMessage>();
+
+	private HashMap<Integer, HUDMessage> HUDMessages =
+			new HashMap<Integer, HUDMessage>();
 
 	public boolean isHidden() {
 		return hidden;
@@ -61,25 +63,27 @@ public class MessageCenter  {
 
 	/**
 	 * Add a message that is shown for some time and then disappears.
-	 * 
-	 * @param message the message to be displayed
+	 *
+	 * @param message
+	 * 		the message to be displayed
 	 */
 	public void addMessage(String message) {
-			Message m = new Message(message);
+		Message m = new Message(message);
 
-			// Meh. libgdx doesn't draw line breaks... 
-			if (message.contains("\n")) {
-				String[] lines = message.split("\n");
-				for (String line : lines) {
-					addMessage(line);
-				}
-			} else {
-				this.messages.add(m);
+		// Meh. libgdx doesn't draw line breaks...
+		if (message.contains("\n")) {
+			String[] lines = message.split("\n");
+			for (String line : lines) {
+				addMessage(line);
 			}
+		}
+		else {
+			this.messages.add(m);
+		}
 
-			if (messages.size() > MAX_MESSAGES_IN_UI) {
-				messages.remove(0);
-			}
+		if (messages.size() > MAX_MESSAGES_IN_UI) {
+			messages.remove(0);
+		}
 	}
 
 	public void render() {
@@ -88,35 +92,43 @@ public class MessageCenter  {
 				font = new BitmapFont();
 			}
 
-			Matrix4 normalProjection = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
+			Matrix4 normalProjection =
+					new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
+											   Gdx.graphics.getHeight());
 			parent.batch.setProjectionMatrix(normalProjection);
 
 			int spacing = 18;
 			int yCoord = Gdx.graphics.getHeight() - spacing;
 			for (Message m : this.messages) {
-				if (m.color != null)
+				if (m.color != null) {
 					font.setColor(m.color);
-				else
+				}
+				else {
 					font.setColor(Color.WHITE);
+				}
 				int start_x = spacing;
 				int start_y = yCoord;
-				font.draw(parent.batch, m.message, start_x, start_y); // TODO name of closestHit
-
+				font.draw(parent.batch, m.message, start_x,
+						  start_y); // TODO name of closestHit
 
 
 				yCoord -= spacing;
 			}
 
-			for (HUDMessage s: this.HUDMessages.values()) {
+			for (HUDMessage s : this.HUDMessages.values()) {
 				font.setColor(s.color);
 				TextBounds tb = font.getBounds(s.message);
-				int x = (int) ((s.x - tb.width / 2f) + Gdx.graphics.getWidth() / 2);
-				int y = (int) ((s.y + tb.height / 2f) + Gdx.graphics.getHeight() / 2);
+				int x = (int) ((s.x - tb.width / 2f) +
+							   Gdx.graphics.getWidth() / 2);
+				int y = (int) ((s.y + tb.height / 2f) +
+							   Gdx.graphics.getHeight() / 2);
 				font.draw(parent.batch, s.message, x, y);
 			}
 
 			long curTime = System.currentTimeMillis();
-			while(this.messages.size() > 0 && this.messages.get(0).displayTime + this.messages.get(0).createdOn < curTime) {
+			while (this.messages.size() > 0 &&
+				   this.messages.get(0).displayTime +
+				   this.messages.get(0).createdOn < curTime) {
 				this.messages.remove(0);
 			}
 		}
@@ -124,47 +136,62 @@ public class MessageCenter  {
 
 	/**
 	 * Use this to draw text somewhere on the screen.
-	 * @param key a unique identifier; subsequent calls with the same key will erase
-	 * the previous message, so you can move the text around
-	 * @param message the message to display
-	 * @param x the x coordinate to show the message at
-	 * @param y the y coordinate to show the message at
+	 *
+	 * @param key
+	 * 		a unique identifier; subsequent calls with the same key will erase
+	 * 		the
+	 * 		previous message, so you can move the text around
+	 * @param message
+	 * 		the message to display
+	 * @param x
+	 * 		the x coordinate to show the message at
+	 * @param y
+	 * 		the y coordinate to show the message at
 	 */
 	public void addHUDMessage(int key, String message, float x, float y) {
 		addHUDMessage(key, message, x, y, null);
 	}
-	
+
 	/**
 	 * Use this to draw text somewhere on the screen.
-	 * @param key a unique identifier; subsequent calls with the same key will erase
-	 * the previous message, so you can move the text around
-	 * @param message the message to display
-	 * @param x the x coordinate to show the message at
-	 * @param y the y coordinate to show the message at
-	 * @param col the color of the message
+	 *
+	 * @param key
+	 * 		a unique identifier; subsequent calls with the same key will erase
+	 * 		the
+	 * 		previous message, so you can move the text around
+	 * @param message
+	 * 		the message to display
+	 * @param x
+	 * 		the x coordinate to show the message at
+	 * @param y
+	 * 		the y coordinate to show the message at
+	 * @param col
+	 * 		the color of the message
 	 */
-	public void addHUDMessage(int key, String message, float x, float y, Color col) {
-		HUDMessage hm ;
+	public void addHUDMessage(int key, String message, float x, float y, Color
+			col) {
+		HUDMessage hm;
 		if (!this.HUDMessages.containsKey(key)) {
 			hm = new HUDMessage(message, x, y);
 			HUDMessages.put(key, hm);
-		} else {
+		}
+		else {
 			hm = HUDMessages.get(key);
 			hm.message = message;
 			hm.x = x;
 			hm.y = y;
 		}
-		if(col != null) {
+		if (col != null) {
 			hm.color = col;
 		}
 	}
-	
+
 	public void removeHUDMessage(int key) {
 		if (this.HUDMessages.containsKey(key)) {
 			this.HUDMessages.remove(key);
 		}
 	}
-	
+
 	public void clearHUDMessages() {
 		this.HUDMessages.clear();
 	}
