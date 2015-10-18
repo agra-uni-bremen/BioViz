@@ -54,6 +54,8 @@ public class DrawableField extends DrawableSprite {
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = parentCircuit;
 
+		TextureE texture = TextureE.GridMarker;
+
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
 
@@ -120,7 +122,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		return new DisplayValues(null,fieldHUDMsg,null);
+		return new DisplayValues(null,fieldHUDMsg,texture);
 	}
 
 	@Override

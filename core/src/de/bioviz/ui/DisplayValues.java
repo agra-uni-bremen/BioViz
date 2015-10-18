@@ -16,7 +16,7 @@ public class DisplayValues {
 	//! The message displayed above the drawable
 	public final String msg;
 	//! The texture of the drawable
-	public final TextureRegion texture;
+	public final TextureE texture;
 
 	/**
 	 *
@@ -24,7 +24,7 @@ public class DisplayValues {
 	 * @param msg The message displayed above the drawable
 	 * @param texture The texture of the drawable
 	 */
-	public DisplayValues(final Color color, final String msg, final TextureRegion texture) {
+	public DisplayValues(final Color color, final String msg, final TextureE texture) {
 		this.color = color;
 		this.msg = msg;
 		this.texture = texture;
