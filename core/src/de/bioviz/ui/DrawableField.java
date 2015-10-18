@@ -11,7 +11,8 @@ import java.util.ArrayList;
 
 public class DrawableField extends DrawableSprite {
 
-	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
+	private static Logger logger = LoggerFactory.getLogger(DrawableField
+																   .class);
 
 	public BiochipField field;
 
@@ -33,20 +34,24 @@ public class DrawableField extends DrawableSprite {
 		super(TextureE.GridMarker, parent.parent);
 		this.parentCircuit = parent;
 		this.field = field;
-		super.addLOD(8,TextureE.BlackPixel);
+		super.addLOD(8, TextureE.BlackPixel);
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 
 	@Override
 	public String generateSVG() {
-		// FIXME why would we need to acces " (-this.field.y + BioViz.singleton.currentCircuit.data.field[0].length - 1)"?
+		// FIXME why would we need to acces " (-this.field.y + BioViz
+		// .singleton.currentCircuit.data.field[0].length - 1)"?
 		// @jannis please check and fix
 		// @keszocze Because the coordinate system in SVG is inverted on its
 		//		y-axis. I need to first put it upside down (-this.field.y) and
-		//		then add the total height of the circuit to have the element put
+		//		then add the total height of the circuit to have the element
+		// put
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
-		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + parentCircuit.data.getMaxCoord().snd - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
+		return "<image x=\"" + this.field.x() + "\" y=\"" +
+			   (-this.field.y() + parentCircuit.data.getMaxCoord().snd - 1) +
+			   "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
 
@@ -66,28 +71,35 @@ public class DrawableField extends DrawableSprite {
 
 
 		// TODO what happens if some of these options overlap?
-		// Right now only the first occurrence according the order below is taken. This might not be what is intended
+		// Right now only the first occurrence according the order below is
+		// taken. This might not be what is intended
 		// In general, a detector, for example, is a very valid routing target
 		if (this.field.isSink && !drawSink) {
-			this.addLOD(Float.MAX_VALUE, TextureE.Sink);
+			texture = TextureE.Sink;
 			drawSink = true;
-		} else if (this.field.isDispenser) {
-			this.addLOD(Float.MAX_VALUE, TextureE.Dispenser);
+		}
+		else if (this.field.isDispenser) {
+			texture = TextureE.Dispenser;
 			fieldHUDMsg = Integer.toString(field.fluidID);
-		} else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
-			this.addLOD(Float.MAX_VALUE, TextureE.Blockage);
+		}
+		else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
+			texture = TextureE.Blockage;
 			drawBlockage = true;
-		} else if (this.field.getDetector() != null && !drawDetector) {
-			this.addLOD(Float.MAX_VALUE, TextureE.Detector);
+		}
+		else if (this.field.getDetector() != null && !drawDetector) {
+			texture = TextureE.Detector;
 			drawDetector = true;
-		} else if (!this.field.source_ids.isEmpty()) {
+		}
+		else if (!this.field.source_ids.isEmpty()) {
 			if (circ.displayOptions.getOption(BDisplayOptions
 													  .SourceTargetIcons)) {
-				this.addLOD(Float.MAX_VALUE,  TextureE.Start);
-			} else {
-				this.addLOD(Float.MAX_VALUE, TextureE.GridMarker);
+				texture = TextureE.Start;
 			}
-			if (circ.displayOptions.getOption(BDisplayOptions.SourceTargetIDs)) {
+			else {
+				texture = TextureE.GridMarker;
+			}
+			if (circ.displayOptions.getOption(
+					BDisplayOptions.SourceTargetIDs)) {
 				ArrayList<Integer> sources = this.field.source_ids;
 				fieldHUDMsg = sources.get(0).toString();
 				if (sources.size() > 1) {
@@ -96,13 +108,17 @@ public class DrawableField extends DrawableSprite {
 					}
 				}
 			}
-		} else if (!this.field.target_ids.isEmpty()) {
-			if (circ.displayOptions.getOption(BDisplayOptions.SourceTargetIcons)) {
-				this.addLOD(Float.MAX_VALUE,TextureE.Target);
-			} else {
-				this.addLOD(Float.MAX_VALUE, TextureE.GridMarker);
+		}
+		else if (!this.field.target_ids.isEmpty()) {
+			if (circ.displayOptions.getOption(
+					BDisplayOptions.SourceTargetIcons)) {
+				texture = TextureE.Target;
 			}
-			if (circ.displayOptions.getOption(BDisplayOptions.SourceTargetIDs)) {
+			else {
+				texture = TextureE.GridMarker;
+			}
+			if (circ.displayOptions.getOption(
+					BDisplayOptions.SourceTargetIDs)) {
 				ArrayList<Integer> targets = this.field.target_ids;
 				fieldHUDMsg = targets.get(0).toString();
 				if (targets.size() > 1) {
@@ -115,14 +131,15 @@ public class DrawableField extends DrawableSprite {
 
 
 		// note: this overwrites any previous message
-		// TODO we really need some kind of mechanism of deciding when to show what
+		// TODO we really need some kind of mechanism of deciding when to show
+		// what
 		if (circ.displayOptions.getOption(BDisplayOptions.Pins)) {
 			if (this.field.pin != null) {
 				fieldHUDMsg = Integer.toString(this.field.pin.pinID);
 			}
 		}
 
-		return new DisplayValues(null,fieldHUDMsg,texture);
+		return new DisplayValues(null, fieldHUDMsg, texture);
 	}
 
 	@Override
@@ -132,12 +149,13 @@ public class DrawableField extends DrawableSprite {
 		DisplayValues vals = getDisplayValues();
 
 		displayText(vals.msg);
-
+		this.addLOD(Float.MAX_VALUE, vals.texture);
 
 
 		int colorOverlayCount = 0;
 		/*
-		We need to create a copy of the fieldEmptyColor as that value is final and thus can not be modified.
+		We need to create a copy of the fieldEmptyColor as that value is final
+		 and thus can not be modified.
 		If that value is unchangeable, the cells all stay white
 		 */
 		Color result = new Color(Colors.fieldEmptyColor);
@@ -148,8 +166,10 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
-		if (parentCircuit.displayOptions.getOption(BDisplayOptions.CellUsage)) {
-			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max Usage verwenden)
+		if (parentCircuit.displayOptions.getOption(BDisplayOptions
+														   .CellUsage)) {
+			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
+			// Usage verwenden)
 			float scalingFactor = 4f;
 
 			result.add(new Color(0, this.field.usage / scalingFactor, 0, 0));
@@ -158,23 +178,28 @@ public class DrawableField extends DrawableSprite {
 
 
 		int t = parentCircuit.currentTime;
-		if (parentCircuit.displayOptions.getOption(BDisplayOptions.Actuations)) {
+		if (parentCircuit.displayOptions.getOption(
+				BDisplayOptions.Actuations)) {
 			if (field.isActuated(t)) {
 				result.add(Colors.actautedColor);
 				++colorOverlayCount;
 			}
 		}
 
-		// TODO why do we only add something if the count is zero? Save computation time?
-		// nope it seems that the cell usage is supposed to override the other overlays
+		// TODO why do we only add something if the count is zero? Save
+		// computation time?
+		// nope it seems that the cell usage is supposed to override the other
+		// overlays
 		if (colorOverlayCount == 0) {
 			if (this.field.isSink) {
 				result.add(sinkDefaultColor);
 				colorOverlayCount++;
-			} else if (this.field.isDispenser) {
+			}
+			else if (this.field.isDispenser) {
 				result.add(sourceDefaultColor);
 				colorOverlayCount++;
-			} else {
+			}
+			else {
 				result.add(fieldDefaultColor);
 				colorOverlayCount++;
 			}
@@ -188,7 +213,9 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		if (parentCircuit.displayOptions.getOption(BDisplayOptions.Adjacency) && parentCircuit.data.getAdjacentActivations().contains(this.field)) {
+		if (parentCircuit.displayOptions.getOption(BDisplayOptions
+														   .Adjacency) &&
+			parentCircuit.data.getAdjacentActivations().contains(this.field)) {
 			result.add(0.5f, -0.5f, -0.5f, 0);
 		}
 
