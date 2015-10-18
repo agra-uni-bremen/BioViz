@@ -20,15 +20,15 @@ import de.bioviz.messages.MessageCenter;
 public abstract class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
-	private static HashMap<String, TextureRegion> allTextures;
+	static TextureManager textures;
 	private Color targetColor = Color.WHITE.cpy();
 	private Color currentColor = Color.WHITE.cpy();
 	private Color originColor = Color.WHITE.cpy();
 	private long colorTransitionStartTime = 0;
 	private long colorTransitionEndTime = 0;
 	private final long colorTransitionDuration = 500;
-	private HashMap<Float, String> levelOfDetailTextures = new HashMap<>();
-	private String currentTextureName;
+	private HashMap<Float, TextureE> levelOfDetailTextures = new HashMap<>();
+	private TextureE currentTexture;
 	protected boolean isVisible = true;
 
 	public static final float DEFAULT_LOD_THRESHOLD = 8f;
@@ -44,21 +44,21 @@ public abstract class DrawableSprite implements Drawable {
 	 * This constructor checks if the given texture has been loaded before and
 	 * does so if that's not the case. A sprite is initialized accordingly.
 	 *
-	 * @param textureFilename
+	 * @param texture
 	 * 		the texture to use
 	 */
-	public DrawableSprite(String textureFilename, float sizeX, float sizeY,
+	public DrawableSprite(TextureE texture, float sizeX, float sizeY,
 						  BioViz parent) {
 		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
 		}
 		this.viz = parent;
 
-		currentTextureName = textureFilename;
-		if (allTextures == null) {
-			allTextures = new HashMap<>();
+		currentTexture = texture;
+		if (textures == null) {
+			textures = new TextureManager("images");
 		}
-		this.addLOD(Float.MAX_VALUE, textureFilename);
+		this.addLOD(Float.MAX_VALUE, texture);
 		this.targetColor.a = ALPHA_FULL;
 		this.currentColor.a = ALPHA_FULL;
 	}
@@ -71,13 +71,14 @@ public abstract class DrawableSprite implements Drawable {
 		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
 	}
 
-	public DrawableSprite(String textureFilename, BioViz parent) {
-		this(textureFilename, 1, 1, parent);
+	public DrawableSprite(TextureE texture, BioViz parent) {
+		this(texture, 1, 1, parent);
 	}
 
 	/**
+	 * @param msg
+	 * 		Message to be displayed
 	 * @brief Displays a text above the sprite
-	 * @param msg Message to be displayed
 	 */
 	public void displayText(String msg) {
 		MessageCenter mc = viz.mc;
@@ -94,7 +95,7 @@ public abstract class DrawableSprite implements Drawable {
 		if (isVisible) {
 
 			if (sprite == null) {
-				TextureRegion region = loadTexture(currentTextureName);
+				TextureRegion region = textures.getTexture(currentTexture);
 				initializeSprite(1, 1, region);
 			}
 
@@ -110,7 +111,7 @@ public abstract class DrawableSprite implements Drawable {
 					}
 				}
 				if (foundLOD) {
-					currentTextureName =
+					currentTexture =
 							levelOfDetailTextures.get(bestLODFactor);
 				}
 
@@ -133,36 +134,18 @@ public abstract class DrawableSprite implements Drawable {
 		this.scaleY = dimY / this.sprite.getHeight();
 	}
 
-	protected TextureRegion loadTexture(String textureFilename) {
-		if (!allTextures.containsKey(textureFilename)) {
-			Texture t =
-					new Texture(Gdx.files.internal("images/" +
-												   textureFilename),
-								true);
-			t.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter
-					.Linear);
-			TextureRegion region =
-					new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
-			allTextures.put(textureFilename, region);
-			return region;
-		}
-		else {
-			return allTextures.get(textureFilename);
-		}
-	}
 
+	// TODO what is the rationale of this method?
 	private void setTexture() {
-		if (!this.allTextures.containsKey(currentTextureName)) {
-			this.loadTexture(currentTextureName);
-		}
+
 		if (this.sprite != null) {
-			this.sprite.setRegion(this.allTextures.get(currentTextureName));
+			this.sprite.setRegion(this.textures.getTexture(currentTexture));
 		}
 	}
 
-	public void addLOD(float scaleFactorMax, String textureFilename) {
-		loadTexture(textureFilename);
-		this.levelOfDetailTextures.put(scaleFactorMax, textureFilename);
+	// TODO check whether this is still needed
+	public void addLOD(float scaleFactorMax, TextureE texture) {
+		this.levelOfDetailTextures.put(scaleFactorMax, texture);
 	}
 
 	public void removeLOD(float scaleFactorMax) {
@@ -222,7 +205,8 @@ public abstract class DrawableSprite implements Drawable {
 			this.targetColor = color;
 			Date d = new Date();
 			this.colorTransitionStartTime = d.getTime();
-			this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
+			this.colorTransitionEndTime = d.getTime() +
+										  colorTransitionDuration;
 		}
 	}
 }
