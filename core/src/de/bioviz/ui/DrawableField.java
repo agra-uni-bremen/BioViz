@@ -59,14 +59,14 @@ public class DrawableField extends DrawableSprite {
 	public DisplayValues getDisplayValues() {
 
 
-		Pair<String,TextureE> msgTexture = getMsgTexture();
+		Pair<String, TextureE> msgTexture = getMsgTexture();
 
 		Color color = getColor();
 
 		return new DisplayValues(color, msgTexture.fst, msgTexture.snd);
 	}
 
-	public Pair<String,TextureE> getMsgTexture() {
+	public Pair<String, TextureE> getMsgTexture() {
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = parentCircuit;
 
@@ -85,19 +85,25 @@ public class DrawableField extends DrawableSprite {
 		// Right now only the first occurrence according the order below is
 		// taken. This might not be what is intended
 		// In general, a detector, for example, is a very valid routing target
-		if (this.field.isSink && !drawSink) {
+		if (this.field.isSink && !drawSink &&
+			circ.displayOptions.getOption(BDisplayOptions.SinkIcon)) {
 			texture = TextureE.Sink;
 			drawSink = true;
 		}
 		else if (this.field.isDispenser) {
-			texture = TextureE.Dispenser;
-			fieldHUDMsg = Integer.toString(field.fluidID);
+			if (circ.displayOptions.getOption(BDisplayOptions.DispenserIcon)) {
+				texture = TextureE.Dispenser;
+			}
+			if (circ.displayOptions.getOption(BDisplayOptions.DispenserID)) {
+				fieldHUDMsg = Integer.toString(field.fluidID);
+			}
 		}
 		else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
 			texture = TextureE.Blockage;
 			drawBlockage = true;
 		}
-		else if (this.field.getDetector() != null && !drawDetector) {
+		else if (this.field.getDetector() != null && !drawDetector &&
+				 circ.displayOptions.getOption(BDisplayOptions.DetectorIcon)) {
 			texture = TextureE.Detector;
 			drawDetector = true;
 		}
@@ -150,7 +156,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		return Pair.mkPair(fieldHUDMsg,texture);
+		return Pair.mkPair(fieldHUDMsg, texture);
 	}
 
 	public Color getColor() {
