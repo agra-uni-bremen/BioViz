@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import de.bioviz.messages.MessageCenter;
 
 /**
  * This is a wrapper for the 2d drawing methods.
@@ -46,9 +47,11 @@ public abstract class DrawableSprite implements Drawable {
 	 * @param textureFilename
 	 * 		the texture to use
 	 */
-	public DrawableSprite(String textureFilename, float sizeX, float sizeY, BioViz parent) {
-		if (parent == null)
+	public DrawableSprite(String textureFilename, float sizeX, float sizeY,
+						  BioViz parent) {
+		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
+		}
 		currentTextureName = textureFilename;
 		if (allTextures == null) {
 			allTextures = new HashMap<>();
@@ -59,7 +62,8 @@ public abstract class DrawableSprite implements Drawable {
 		this.viz = parent;
 	}
 
-	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
+	private void initializeSprite(float sizeX, float sizeY, TextureRegion
+			region) {
 		sprite = new Sprite(region);
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
@@ -68,6 +72,21 @@ public abstract class DrawableSprite implements Drawable {
 
 	public DrawableSprite(String textureFilename, BioViz parent) {
 		this(textureFilename, 1, 1, parent);
+	}
+
+	/**
+	 * @brief Displays a text above the sprite
+	 * @param msg Message to be displayed
+	 * @param circ Reference to the drawable circuit this sprite belongs to
+	 */
+	public void displayText(String msg, DrawableCircuit circ) {
+		MessageCenter mc = circ.parent.mc;
+		if (msg != null) {
+			mc.addHUDMessage(this.hashCode(), msg, this.x, this.y);
+		}
+		else {
+			mc.removeHUDMessage(this.hashCode());
+		}
 	}
 
 	public void draw() {
@@ -91,7 +110,8 @@ public abstract class DrawableSprite implements Drawable {
 					}
 				}
 				if (foundLOD) {
-					currentTextureName = levelOfDetailTextures.get(bestLODFactor);
+					currentTextureName =
+							levelOfDetailTextures.get(bestLODFactor);
 				}
 
 				this.setTexture();
@@ -99,7 +119,8 @@ public abstract class DrawableSprite implements Drawable {
 
 			update();
 
-			this.sprite.setPosition(x - sprite.getWidth() / 2f, y - sprite.getHeight() / 2f);
+			this.sprite.setPosition(x - sprite.getWidth() / 2f,
+									y - sprite.getHeight() / 2f);
 			this.sprite.setScale(scaleX, scaleY);
 			this.sprite.setRotation(rotation);
 			this.sprite.setColor(currentColor);
@@ -114,12 +135,18 @@ public abstract class DrawableSprite implements Drawable {
 
 	protected TextureRegion loadTexture(String textureFilename) {
 		if (!allTextures.containsKey(textureFilename)) {
-			Texture t = new Texture(Gdx.files.internal("images/" + textureFilename), true);
-			t.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
-			TextureRegion region = new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
+			Texture t =
+					new Texture(Gdx.files.internal("images/" +
+												   textureFilename),
+								true);
+			t.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter
+					.Linear);
+			TextureRegion region =
+					new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
 			allTextures.put(textureFilename, region);
 			return region;
-		} else {
+		}
+		else {
 			return allTextures.get(textureFilename);
 		}
 	}
@@ -151,8 +178,12 @@ public abstract class DrawableSprite implements Drawable {
 
 			Rectangle viewport = viz.currentCircuit.getViewBounds();
 
-			float viewMouseX = (((float) mouseX / (float) resX) * viewport.width + viewport.x);
-			float viewMouseY = -(((float) mouseY / (float) resY) * viewport.height + viewport.y);
+			float viewMouseX =
+					(((float) mouseX / (float) resX) * viewport.width +
+					 viewport.x);
+			float viewMouseY =
+					-(((float) mouseY / (float) resY) * viewport.height +
+					  viewport.y);
 
 			float xCoord = viz.currentCircuit.xCoordInGates(this.x);
 			float yCoord = viz.currentCircuit.yCoordInGates(this.y);
@@ -170,10 +201,14 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	protected void update() {
-		float transitionProgress = Math.max(0, Math.min(1, (float) (new Date().getTime() - colorTransitionStartTime) / (float) (colorTransitionEndTime - colorTransitionStartTime)));
-		float totalProgress = (float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
+		float transitionProgress = Math.max(0, Math.min(1, (float) (
+				new Date().getTime() - colorTransitionStartTime) / (float) (
+				colorTransitionEndTime - colorTransitionStartTime)));
+		float totalProgress =
+				(float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
 
-		currentColor = this.originColor.cpy().mul(1 - totalProgress).add(this.targetColor.cpy().mul(totalProgress));
+		currentColor = this.originColor.cpy().mul(1 - totalProgress).add(
+				this.targetColor.cpy().mul(totalProgress));
 	}
 
 	public Color getColor() {

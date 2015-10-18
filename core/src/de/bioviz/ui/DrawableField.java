@@ -121,11 +121,9 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		if (fieldHUDMsg != null) {
-			parentCircuit.parent.mc.addHUDMessage(this.hashCode(), fieldHUDMsg, xCoord, yCoord);
-		} else {
-			parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
-		}
+
+		displayText(fieldHUDMsg,parentCircuit);
+		
 
 
 		int colorOverlayCount = 0;
