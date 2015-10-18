@@ -19,6 +19,7 @@ import de.bioviz.messages.MessageCenter;
  */
 public abstract class DrawableSprite implements Drawable {
 
+
 	protected Sprite sprite;
 	static TextureManager textures;
 	private Color targetColor = Color.WHITE.cpy();
@@ -56,7 +57,7 @@ public abstract class DrawableSprite implements Drawable {
 
 		currentTexture = texture;
 		if (textures == null) {
-			textures = new TextureManager("images");
+			textures = new TextureManager();
 		}
 		this.addLOD(Float.MAX_VALUE, texture);
 		this.targetColor.a = ALPHA_FULL;
