@@ -122,8 +122,8 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
-		displayText(fieldHUDMsg,parentCircuit);
-		
+		displayText(fieldHUDMsg);
+
 
 
 		int colorOverlayCount = 0;

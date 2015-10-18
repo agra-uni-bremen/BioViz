@@ -52,6 +52,8 @@ public abstract class DrawableSprite implements Drawable {
 		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
 		}
+		this.viz = parent;
+
 		currentTextureName = textureFilename;
 		if (allTextures == null) {
 			allTextures = new HashMap<>();
@@ -59,7 +61,6 @@ public abstract class DrawableSprite implements Drawable {
 		this.addLOD(Float.MAX_VALUE, textureFilename);
 		this.targetColor.a = ALPHA_FULL;
 		this.currentColor.a = ALPHA_FULL;
-		this.viz = parent;
 	}
 
 	private void initializeSprite(float sizeX, float sizeY, TextureRegion
@@ -77,10 +78,9 @@ public abstract class DrawableSprite implements Drawable {
 	/**
 	 * @brief Displays a text above the sprite
 	 * @param msg Message to be displayed
-	 * @param circ Reference to the drawable circuit this sprite belongs to
 	 */
-	public void displayText(String msg, DrawableCircuit circ) {
-		MessageCenter mc = circ.parent.mc;
+	public void displayText(String msg) {
+		MessageCenter mc = viz.mc;
 		if (msg != null) {
 			mc.addHUDMessage(this.hashCode(), msg, this.x, this.y);
 		}
