@@ -65,17 +65,13 @@ public class MessageCenter  {
 	 * @param message the message to be displayed
 	 */
 	public void addMessage(String message) {
-		addMessage(message,false);
-	}
-	
-	private void addMessage(String message,boolean recursion) {
 			Message m = new Message(message);
 
 			// Meh. libgdx doesn't draw line breaks... 
 			if (message.contains("\n")) {
 				String[] lines = message.split("\n");
 				for (String line : lines) {
-					addMessage(line, true);
+					addMessage(line);
 				}
 			} else {
 				this.messages.add(m);
