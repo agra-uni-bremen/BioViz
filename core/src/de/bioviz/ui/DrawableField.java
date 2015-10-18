@@ -49,12 +49,11 @@ public class DrawableField extends DrawableSprite {
 		return "<image x=\"" + this.field.x() + "\" y=\"" + (-this.field.y() + parentCircuit.data.getMaxCoord().snd - 1) + "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
-	@Override
-	public void draw() {
 
+	public DisplayValues getDisplayValues() {
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = parentCircuit;
-		int t = circ.currentTime;
+
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
 
@@ -121,8 +120,16 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
+		return new DisplayValues(null,fieldHUDMsg,null);
+	}
 
-		displayText(fieldHUDMsg);
+	@Override
+	public void draw() {
+
+
+		DisplayValues vals = getDisplayValues();
+
+		displayText(vals.msg);
 
 
 
@@ -133,13 +140,13 @@ public class DrawableField extends DrawableSprite {
 		 */
 		Color result = new Color(Colors.fieldEmptyColor);
 
-		if (field.isBlocked(circ.currentTime)) {
+		if (field.isBlocked(parentCircuit.currentTime)) {
 			result.add(blockedColor);
 			colorOverlayCount++;
 		}
 
 
-		if (circ.displayOptions.getOption(BDisplayOptions.CellUsage)) {
+		if (parentCircuit.displayOptions.getOption(BDisplayOptions.CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max Usage verwenden)
 			float scalingFactor = 4f;
 
@@ -147,7 +154,9 @@ public class DrawableField extends DrawableSprite {
 			++colorOverlayCount;
 		}
 
-		if (circ.displayOptions.getOption(BDisplayOptions.Actuations)) {
+
+		int t = parentCircuit.currentTime;
+		if (parentCircuit.displayOptions.getOption(BDisplayOptions.Actuations)) {
 			if (field.isActuated(t)) {
 				result.add(Colors.actautedColor);
 				++colorOverlayCount;
@@ -177,7 +186,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		if (circ.displayOptions.getOption(BDisplayOptions.Adjacency) && circ.data.getAdjacentActivations().contains(this.field)) {
+		if (parentCircuit.displayOptions.getOption(BDisplayOptions.Adjacency) && parentCircuit.data.getAdjacentActivations().contains(this.field)) {
 			result.add(0.5f, -0.5f, -0.5f, 0);
 		}
 
