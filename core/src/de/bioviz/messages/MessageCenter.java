@@ -228,17 +228,26 @@ public class MessageCenter {
 		scaleMsg = scaleMsg + SCALEINCSTEP;
 	}
 
-	public void deccScales() {
+	public void decScales() {
 		decScaleHUD();
 		decScaleMsg();
 	}
 
 	public void decScaleHUD() {
-		scaleHUD = scaleMsg + SCALEINCSTEP;
+
+		// only decrease size if not going below zero
+		float res = scaleHUD - SCALEINCSTEP;
+		if (res > 0) {
+			scaleHUD = scaleHUD - SCALEINCSTEP;
+		}
 	}
 
 	public void decScaleMsg() {
-		scaleMsg = scaleMsg + SCALEINCSTEP;
+		// only decrease size if not going below zero
+		float res = scaleMsg - SCALEINCSTEP;
+		if (res > 0) {
+			scaleMsg = scaleMsg - SCALEINCSTEP;
+		}
 	}
 
 	public void setScales(final float scale) {
