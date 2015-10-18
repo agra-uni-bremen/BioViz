@@ -3,6 +3,7 @@ package de.bioviz.ui;
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Mixer;
+import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,16 @@ public class DrawableField extends DrawableSprite {
 
 
 	public DisplayValues getDisplayValues() {
+
+
+		Pair<String,TextureE> msgTexture = getMsgTexture();
+
+		Color color = getColor();
+
+		return new DisplayValues(color, msgTexture.fst, msgTexture.snd);
+	}
+
+	public Pair<String,TextureE> getMsgTexture() {
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = parentCircuit;
 
@@ -139,17 +150,10 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		return new DisplayValues(null, fieldHUDMsg, texture);
+		return Pair.mkPair(fieldHUDMsg,texture);
 	}
 
-	@Override
-	public void draw() {
-
-
-		DisplayValues vals = getDisplayValues();
-
-		displayText(vals.msg);
-		this.addLOD(Float.MAX_VALUE, vals.texture);
+	public Color getColor() {
 
 
 		int colorOverlayCount = 0;
@@ -223,7 +227,21 @@ public class DrawableField extends DrawableSprite {
 
 		result.clamp();
 
-		setColor(result);
+
+		return result;
+	}
+
+	@Override
+	public void draw() {
+
+
+		DisplayValues vals = getDisplayValues();
+
+		displayText(vals.msg);
+		this.addLOD(Float.MAX_VALUE, vals.texture);
+
+
+		setColor(vals.color);
 
 		super.draw();
 	}
