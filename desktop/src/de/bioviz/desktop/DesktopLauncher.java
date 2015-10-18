@@ -273,7 +273,7 @@ public class DesktopLauncher extends JFrame {
 													   adjacencyButton
 															   .getPreferredSize().height));
 		adjacencyButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.getOption(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.Adjacency));
 
 
