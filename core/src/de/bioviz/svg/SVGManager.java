@@ -2,6 +2,7 @@ package de.bioviz.svg;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -39,7 +40,7 @@ public class SVGManager {
 
 	// TODO currently unused; use it after Jannis finally accepts some merge
 	// requests
-	private final String baseFolder = ".";
+	private final String baseFolder = null;
 
 
 	/**
@@ -59,7 +60,7 @@ public class SVGManager {
 	 * @brief SVGManager loading the default theme
 	 */
 	public SVGManager() {
-		this("");
+		this("images");
 	}
 
 	/**
@@ -81,9 +82,15 @@ public class SVGManager {
 
 		svgFolder = folder;
 		for (SVGE s : SVGE.values()) {
-			String svgCoreFile = baseFolder + "/" + svgFolder + "/" +
+
+			String tmp = "";
+			if (baseFolder != null) {
+				tmp = baseFolder + "/";
+			}
+			String svgCoreFile = tmp + svgFolder + "/" +
 								 s +
 								 ".core";
+			logger.debug("Loading SVG core for {}",svgCoreFile);
 			Path svgCoreFilePath =
 					Gdx.files.internal(svgCoreFile).file().toPath();
 
@@ -100,7 +107,7 @@ public class SVGManager {
 		}
 	}
 
-	public static String toSVG(DrawableCircuit circ) {
+	public String toSVG(DrawableCircuit circ) {
 		StringBuilder sb = new StringBuilder();
 
 		Point minCoord = circ.data.getMinCoord();
@@ -116,18 +123,22 @@ public class SVGManager {
 				"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
 				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
+		// simply always put every definition in the file. File size and/or
+		// computation time does not really matter here.
+
+
 		for (DrawableField field : circ.fields) {
-			sb.append(SVGManager.toSVG(field));
+			sb.append(toSVG(field));
 		}
 		for (DrawableDroplet drop : circ.droplets) {
-			sb.append(SVGManager.toSVG(drop));
+			sb.append(toSVG(drop));
 		}
 
 		sb.append("</svg>\n");
 		return sb.toString();
 	}
 
-	public static String toSVG(DrawableField field) {
+	public String toSVG(DrawableField field) {
 		// TODO When merged, use the TextureManager to get the filename
 		// TODO must be able to display sinks etc.
 		// why would we need to acces " (-this.field.y + BioViz.singleton
@@ -148,13 +159,13 @@ public class SVGManager {
 			   "/>\n";
 	}
 
-	public static String toSVG(DrawableDroplet drawableDrop) {
+	public String toSVG(DrawableDroplet drawableDrop) {
 		// TODO hier auch entsprechend auf die SVG Dateinamen zurückgreifen
 		// (über nen Manager)
 		float yCoord = -drawableDrop.droplet.smoothY +
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
 		float xCoord = drawableDrop.droplet.smoothX;
-		String route = SVGManager.toSVG(drawableDrop.route);
+		String route = toSVG(drawableDrop.route);
 		return
 				"<image x=\"" + xCoord + "\" " +
 				"y=\"" + yCoord + "\" " +
@@ -162,7 +173,7 @@ public class SVGManager {
 				route;
 	}
 
-	public static String toSVG(DrawableRoute drawableRoute) {
+	public String toSVG(DrawableRoute drawableRoute) {
 		StringBuilder sb = new StringBuilder();
 
 
