@@ -39,7 +39,7 @@ public class SVGManager {
 
 	// TODO currently unused; use it after Jannis finally accepts some merge
 	// requests
-	private final String baseFolder = "";
+	private final String baseFolder = ".";
 
 
 	/**
