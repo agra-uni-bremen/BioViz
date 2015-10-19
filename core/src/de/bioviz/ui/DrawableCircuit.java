@@ -138,23 +138,6 @@ public class DrawableCircuit implements Drawable {
 
 		}
 
-		drawGates();
-
-		drawOverlay();
-	}
-
-	/**
-	 * Draws additional overlaid information (currently only the moving rule overlay)
-	 */
-	private void drawOverlay() {
-
-	}
-
-	/**
-	 * Draws the gates
-	 */
-	private void drawGates() {
-
 		if (autoAdvance) {
 			long current = new Date().getTime();
 			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
@@ -168,11 +151,12 @@ public class DrawableCircuit implements Drawable {
 		for (DrawableField f : this.fields) {
 			f.draw();
 		}
-		
+
 		for (DrawableDroplet d : this.droplets) {
 			d.draw();
 		}
 	}
+
 
 	/**
 	 * Draws the coordinates of the grid on top of and to the left of the grid.
@@ -290,6 +274,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
+	 * TODO remove the "gate-space" reference
 	 * Calculates the x coordinate of a given value. Keep in mind that
 	 * this is still in gate-space, so a value of 0 would be at the center
 	 * of the circuit's first gate.
@@ -315,6 +300,7 @@ public class DrawableCircuit implements Drawable {
 		return yCoord;
 	}
 
+	// TODO rename method
 	protected float yCoordInGates(float i) {
 		float yCoord = i;
 		yCoord /= smoothScaleY;
@@ -322,6 +308,7 @@ public class DrawableCircuit implements Drawable {
 		return yCoord;
 	}
 
+	// TODO rename method
 	protected float xCoordInGates(float i) {
 		float xCoord = i;
 		xCoord /= smoothScaleX;
@@ -424,7 +411,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the screen bounds in gate-space
+	 * Calculates the screen bounds
 	 *
 	 * @return the screen bounds
 	 */
@@ -440,7 +427,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Sets the screen bounds in gate-space
+	 * Sets the screen bounds
 	 *
 	 * @param bounds the area the viewport is supposed to show.
 	 */
