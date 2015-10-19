@@ -40,7 +40,7 @@ public class SVGManager {
 
 	// TODO currently unused; use it after Jannis finally accepts some merge
 	// requests
-	private final String baseFolder = null;
+	private final String baseFolder = "images";
 
 	/*
 	Warning: magic numbers ahead
@@ -90,11 +90,7 @@ public class SVGManager {
 		svgFolder = folder;
 		for (SVGE s : SVGE.values()) {
 
-			String tmp = "";
-			if (baseFolder != null) {
-				tmp = baseFolder + "/";
-			}
-			String svgCoreFile = tmp + svgFolder + "/" +
+			String svgCoreFile = baseFolder + "/" + svgFolder + "/" +
 								 s +
 								 ".core";
 			logger.debug("Loading SVG core for {}",svgCoreFile);
@@ -176,8 +172,6 @@ public class SVGManager {
 	}
 
 	private String toSVG(DrawableDroplet drawableDrop) {
-		// TODO hier auch entsprechend auf die SVG Dateinamen zurückgreifen
-		// (über nen Manager)
 		float yCoord = -drawableDrop.droplet.smoothY +
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
 		float xCoord = drawableDrop.droplet.smoothX;

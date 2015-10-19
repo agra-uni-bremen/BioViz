@@ -30,10 +30,10 @@ public class DrawableField extends DrawableSprite {
 	public DrawableCircuit parentCircuit;
 
 	public DrawableField(BiochipField field, DrawableCircuit parent) {
-		super("GridMarker.png", parent.parent);
+		super(TextureE.GridMarker, parent.parent);
 		this.parentCircuit = parent;
 		this.field = field;
-		super.addLOD(8, "BlackPixel.png");
+		super.addLOD(8, TextureE.BlackPixel);
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 
@@ -57,24 +57,25 @@ public class DrawableField extends DrawableSprite {
 		// Right now only the first occurrence according the order below is taken. This might not be what is intended
 		// In general, a detector, for example, is a very valid routing target
 		if (this.field.isSink && !drawSink) {
-			this.addLOD(Float.MAX_VALUE, "Sink.png");
+			this.addLOD(Float.MAX_VALUE, TextureE.Sink);
 			drawSink = true;
 		} else if (this.field.isDispenser) {
-			this.addLOD(Float.MAX_VALUE, "Source.png");
+			this.addLOD(Float.MAX_VALUE, TextureE.Dispenser);
 			fieldHUDMsg = Integer.toString(field.fluidID);
 		} else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
-			this.addLOD(Float.MAX_VALUE, "Blockage.png");
+			this.addLOD(Float.MAX_VALUE, TextureE.Blockage);
 			drawBlockage = true;
 		} else if (this.field.getDetector() != null && !drawDetector) {
-			this.addLOD(Float.MAX_VALUE, "Detector.png");
+			this.addLOD(Float.MAX_VALUE, TextureE.Detector);
 			drawDetector = true;
 		} else if (!this.field.source_ids.isEmpty()) {
-			if (circ.getShowSourceTargetIcons()) {
-				this.addLOD(Float.MAX_VALUE, "Start.png");
+			if (circ.displayOptions.getOption(BDisplayOptions
+													  .SourceTargetIcons)) {
+				this.addLOD(Float.MAX_VALUE, TextureE.Start);
 			} else {
-				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
+				this.addLOD(Float.MAX_VALUE, TextureE.GridMarker);
 			}
-			if (circ.getShowSourceTargetIDs()) {
+			if (circ.displayOptions.getOption(BDisplayOptions.SourceTargetIDs)) {
 				ArrayList<Integer> sources = this.field.source_ids;
 				fieldHUDMsg = sources.get(0).toString();
 				if (sources.size() > 1) {
@@ -84,12 +85,12 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 		} else if (!this.field.target_ids.isEmpty()) {
-			if (circ.getShowSourceTargetIcons()) {
-				this.addLOD(Float.MAX_VALUE, "Target.png");
+			if (circ.displayOptions.getOption(BDisplayOptions.SourceTargetIcons)) {
+				this.addLOD(Float.MAX_VALUE,TextureE.Target);
 			} else {
-				this.addLOD(Float.MAX_VALUE, "GridMarker.png");
+				this.addLOD(Float.MAX_VALUE, TextureE.GridMarker);
 			}
-			if (circ.getShowSourceTargetIDs()) {
+			if (circ.displayOptions.getOption(BDisplayOptions.SourceTargetIDs)) {
 				ArrayList<Integer> targets = this.field.target_ids;
 				fieldHUDMsg = targets.get(0).toString();
 				if (targets.size() > 1) {
@@ -103,7 +104,7 @@ public class DrawableField extends DrawableSprite {
 
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show what
-		if (circ.getShowPins()) {
+		if (circ.displayOptions.getOption(BDisplayOptions.Pins)) {
 			if (this.field.pin != null) {
 				fieldHUDMsg = Integer.toString(this.field.pin.pinID);
 			}
@@ -129,7 +130,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
-		if (circ.getShowUsage()) {
+		if (circ.displayOptions.getOption(BDisplayOptions.CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max Usage verwenden)
 			float scalingFactor = 4f;
 
@@ -137,7 +138,7 @@ public class DrawableField extends DrawableSprite {
 			++colorOverlayCount;
 		}
 
-		if (circ.getShowActuations()) {
+		if (circ.displayOptions.getOption(BDisplayOptions.Actuations)) {
 			if (field.isActuated(t)) {
 				result.add(Colors.actautedColor);
 				++colorOverlayCount;
@@ -167,7 +168,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		if (circ.getHighlightAdjacency() && circ.data.getAdjacentActivations().contains(this.field)) {
+		if (circ.displayOptions.getOption(BDisplayOptions.Adjacency) && circ.data.getAdjacentActivations().contains(this.field)) {
 			result.add(0.5f, -0.5f, -0.5f, 0);
 		}
 

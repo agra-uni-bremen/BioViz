@@ -18,13 +18,13 @@ public class DrawableDroplet extends DrawableSprite {
 	public DrawableCircuit parentCircuit;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
-		super("Droplet.png", parent.parent);
+		super(TextureE.Droplet, parent.parent);
 		this.parentCircuit = parent;
 		if (randnum == null) {
 			randnum = new Random();
 		}
 		this.droplet = droplet;
-		super.addLOD(DEFAULT_LOD_THRESHOLD, "BlackPixel.png");
+		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 		randnum.setSeed(droplet.getID());
 		super.setColor(new Color(randnum.nextInt()));
 		Color c = super.getColor();
@@ -73,10 +73,10 @@ public class DrawableDroplet extends DrawableSprite {
 
 				String msg = null;
 
-				if (circ.getDisplayDropletIDs()) {
+				if (circ.displayOptions.getOption(BDisplayOptions.DropletIDs)) {
 					msg = Integer.toString(droplet.getID());
 				}
-				if (circ.getDisplayFluidIDs()) {
+				if (circ.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 					// note: fluidID may be null!
 					Integer fluidID = circ.data.fluidID(droplet.getID());
 					if (fluidID != null) {

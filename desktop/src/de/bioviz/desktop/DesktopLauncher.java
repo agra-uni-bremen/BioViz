@@ -28,6 +28,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
+import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.BioViz;
 import de.bioviz.ui.BioVizEvent;
 import de.bioviz.ui.DrawableRoute;
@@ -38,7 +39,8 @@ import org.slf4j.LoggerFactory;
 
 public class DesktopLauncher extends JFrame {
 
-	public JSlider time;
+	public JSlider timeSlider;
+	protected JSlider displayRouteLengthSlider;
 
 	JLabel timeInfo = new JLabel("1");
 
@@ -248,50 +250,58 @@ public class DesktopLauncher extends JFrame {
 													   actuationButton
 															   .getPreferredSize().height));
 		actuationButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowActuations());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Actuations));
 
 
-		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
-		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		time.addChangeListener(ce -> currentViz.currentCircuit.setCurrentTime(
-				((JSlider) ce.getSource()).getValue()));
-		tc = new timerCallback(time, timeInfo);
+		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
+		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
+		timeSlider.addChangeListener(
+				ce -> currentViz.currentCircuit.setCurrentTime(
+						((JSlider) ce.getSource()).getValue()));
+		tc = new timerCallback(timeSlider, timeInfo);
 
 
-		JSlider routes =
+		displayRouteLengthSlider =
 				new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute
 						.routeDisplayLength);
-		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		routes.addChangeListener(ce -> DrawableRoute.routeDisplayLength =
-				((JSlider) ce.getSource()).getValue());
-		//tc = new timerCallback(time);
+		displayRouteLengthSlider.setPreferredSize(
+				new Dimension(sliderWidth, sliderHeight));
+		displayRouteLengthSlider.addChangeListener(
+				ce -> DrawableRoute.routeDisplayLength =
+						((JSlider) ce.getSource()).getValue());
+		//tc = new timerCallback(timeSlider);
 
 		JButton adjacencyButton = new JButton("Adjacency");
 		adjacencyButton.setPreferredSize(new Dimension(buttonWidth,
 													   adjacencyButton
 															   .getPreferredSize().height));
 		adjacencyButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleHighlightAdjacency());
+				e -> currentViz.currentCircuit.displayOptions.getOption(
+						BDisplayOptions.Adjacency));
 
 
 		JButton displayDropletIDsButton = new JButton("Drop IDs");
 		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth,
 															   displayDropletIDsButton.getPreferredSize().height));
 		displayDropletIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleDisplayDropletIDs());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.DropletIDs));
 
 		JButton displayFluidIDsButton = new JButton("Fluid IDs");
 		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth,
 															 displayFluidIDsButton.getPreferredSize().height));
 		displayFluidIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleDisplayFluidIDs());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.FluidIDs));
 
 		JButton pinButton = new JButton("Pins");
 		pinButton.setPreferredSize(new Dimension(buttonWidth,
 												 pinButton.getPreferredSize()
 														 .height));
 		pinButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowPins());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Pins));
 
 		JButton stIconButton = new JButton("Source/Target icons");
 		stIconButton.setPreferredSize(new Dimension(buttonWidth,
@@ -300,14 +310,16 @@ public class DesktopLauncher extends JFrame {
 																	()
 															.height));
 		stIconButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowSourceTargetIcons());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.SourceTargetIcons));
 
 		JButton stIDButton = new JButton("Source/Target IDs");
 		stIDButton.setPreferredSize(new Dimension(buttonWidth,
 												  stIDButton.getPreferredSize
 														  ().height));
 		stIDButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowSourceTargetIDs());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.SourceTargetIDs));
 
 
 		JButton nextStepButton = new JButton("->");
@@ -340,7 +352,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(new JLabel("Options"));
 		panel.add(optionsSep);
 		panel.add(new JLabel("Route length"));
-		panel.add(routes);
+		panel.add(displayRouteLengthSlider);
 		panel.add(zoomButton);
 		panel.add(dropletButton);
 		panel.add(displayDropletIDsButton);
@@ -359,7 +371,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(autoplaytButton);
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
-		panel.add(time);
+		panel.add(timeSlider);
 
 
 		input = new LwjglAWTInput(canvas.getCanvas());
@@ -815,18 +827,27 @@ public class DesktopLauncher extends JFrame {
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
-				d.time.setMaximum(currentViz.currentCircuit.data.getMaxT());
-				d.time.setMinimum(1);
-				d.time.setValue(0);
+				d.timeSlider.setMaximum(currentViz.currentCircuit.data.getMaxT());
+				d.timeSlider.setMinimum(1);
+				d.timeSlider.setValue(0);
+
+				d.displayRouteLengthSlider.setMaximum(
+						currentViz.currentCircuit.data.getMaxRouteLength());
+				d.displayRouteLengthSlider.setMinimum(0);
+				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
 			}
 			else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
-				d.time.setMaximum(1);
-				d.time.setMinimum(1);
-				d.time.setValue(1);
+				d.timeSlider.setMaximum(1);
+				d.timeSlider.setMinimum(1);
+				d.timeSlider.setValue(1);
+
+				d.displayRouteLengthSlider.setMaximum(0);
+				d.displayRouteLengthSlider.setMinimum(0);
+				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.programName);
 			}
