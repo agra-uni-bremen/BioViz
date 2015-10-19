@@ -16,6 +16,7 @@ public class DrawableRoute extends DrawableSprite {
 
 	public Color baseColor = Color.BLACK.cpy();
 
+
 	public DrawableRoute(DrawableDroplet droplet) {
 		super(TextureE.StepMarker, droplet.viz);
 		this.droplet = droplet;
@@ -68,6 +69,7 @@ public class DrawableRoute extends DrawableSprite {
 
 
 		// TODO drawing of routes is now broken :(
+		// I totally do not get this if condition an what is supposed to be broken? (Oliver)
 		if (true) {
 
 			hoverTimesteps = 2 * timesteps + 8;
@@ -80,12 +82,18 @@ public class DrawableRoute extends DrawableSprite {
 			for (int i = -stepsToUse; i < stepsToUse; i++) {
 
 				Color c = this.baseColor.cpy();
+				if (droplet.parentCircuit.displayOptions.getOption(
+						BDisplayOptions.ColorfulRoutes)) {
+					c = this.droplet.getColor().cpy();
+				}
+				
 				if (i >= 0) {
 					c.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
 				} else {
 					c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
 				}
 				this.setColorImmediately(c);
+				
 
 				displayAt = currentTime + i;
 				Point p1 = droplet.droplet.getSafePositionAt(displayAt);

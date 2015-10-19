@@ -28,6 +28,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
+import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.BioViz;
 import de.bioviz.ui.BioVizEvent;
 import de.bioviz.ui.DrawableRoute;
@@ -249,7 +250,8 @@ public class DesktopLauncher extends JFrame {
 													   actuationButton
 															   .getPreferredSize().height));
 		actuationButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowActuations());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Actuations));
 
 
 		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
@@ -275,27 +277,31 @@ public class DesktopLauncher extends JFrame {
 													   adjacencyButton
 															   .getPreferredSize().height));
 		adjacencyButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleHighlightAdjacency());
+				e -> currentViz.currentCircuit.displayOptions.getOption(
+						BDisplayOptions.Adjacency));
 
 
 		JButton displayDropletIDsButton = new JButton("Drop IDs");
 		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth,
 															   displayDropletIDsButton.getPreferredSize().height));
 		displayDropletIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleDisplayDropletIDs());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.DropletIDs));
 
 		JButton displayFluidIDsButton = new JButton("Fluid IDs");
 		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth,
 															 displayFluidIDsButton.getPreferredSize().height));
 		displayFluidIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleDisplayFluidIDs());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.FluidIDs));
 
 		JButton pinButton = new JButton("Pins");
 		pinButton.setPreferredSize(new Dimension(buttonWidth,
 												 pinButton.getPreferredSize()
 														 .height));
 		pinButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowPins());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Pins));
 
 		JButton stIconButton = new JButton("Source/Target icons");
 		stIconButton.setPreferredSize(new Dimension(buttonWidth,
@@ -304,14 +310,16 @@ public class DesktopLauncher extends JFrame {
 																	()
 															.height));
 		stIconButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowSourceTargetIcons());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.SourceTargetIcons));
 
 		JButton stIDButton = new JButton("Source/Target IDs");
 		stIDButton.setPreferredSize(new Dimension(buttonWidth,
 												  stIDButton.getPreferredSize
 														  ().height));
 		stIDButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowSourceTargetIDs());
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.SourceTargetIDs));
 
 
 		JButton nextStepButton = new JButton("->");

@@ -1,11 +1,8 @@
 package de.bioviz.ui;
 
-import java.util.Date;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Rectangle;
 
 import org.slf4j.Logger;
@@ -55,7 +52,8 @@ public class BioVizInputProcessor implements InputProcessor {
 				parentViz.callSaveFileListeners();
 			}
 		} else if (keycode == Keys.A) {
-			parentViz.currentCircuit.toggleHighlightAdjacency();
+			parentViz.currentCircuit.displayOptions.toggleOption(
+					BDisplayOptions.Adjacency);
 		}
 		else if (keycode == Keys.RIGHT || keycode == Keys.UP) {
 			parentViz.currentCircuit.nextStep();
@@ -67,9 +65,14 @@ public class BioVizInputProcessor implements InputProcessor {
 			if (ctrl) {
 				parentViz.callCloseFileListeners();
 			}
-		} else if (keycode == Keys.C){
+		}
+		else if (keycode == Keys.R) {
+			parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.ColorfulRoutes);
+		}
+		else if (keycode == Keys.C){
 			if (ctrl) {
-				parentViz.currentCircuit.setShowCoordinates(!parentViz.currentCircuit.getShowCoordinates());
+				parentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Coordinates);
 			}
 		}
 		
