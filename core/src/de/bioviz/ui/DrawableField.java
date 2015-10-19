@@ -63,6 +63,10 @@ public class DrawableField extends DrawableSprite {
 
 		Color color = getColor();
 
+		if (msgTexture.snd == TextureE.Detector) {
+			logger.debug("Detector was set");
+		}
+
 		return new DisplayValues(color, msgTexture.fst, msgTexture.snd);
 	}
 
@@ -102,9 +106,10 @@ public class DrawableField extends DrawableSprite {
 			texture = TextureE.Blockage;
 			drawBlockage = true;
 		}
-		else if (this.field.getDetector() != null && !drawDetector &&
-				 circ.displayOptions.getOption(BDisplayOptions.DetectorIcon)) {
+		else if (this.field.getDetector() != null && !drawDetector ) {
+			logger.debug("Show detectors: {}",circ.displayOptions.getOption(BDisplayOptions.DetectorIcon));
 			texture = TextureE.Detector;
+			logger.debug("Value of texture: {}",texture);
 			drawDetector = true;
 		}
 		else if (!this.field.source_ids.isEmpty()) {
@@ -244,6 +249,11 @@ public class DrawableField extends DrawableSprite {
 		DisplayValues vals = getDisplayValues();
 
 		displayText(vals.msg);
+
+		if (vals.texture == TextureE.Detector) {
+			logger.debug("Detector texture in draw()");
+		}
+
 		this.addLOD(Float.MAX_VALUE, vals.texture);
 
 
