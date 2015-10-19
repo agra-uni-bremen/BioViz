@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
 
 public class DesktopLauncher extends JFrame {
 
-	public JSlider time;
+	public JSlider timeSlider;
+	protected JSlider displayRouteLengthSlider;
 
 	JLabel timeInfo = new JLabel("1");
 
@@ -251,20 +252,23 @@ public class DesktopLauncher extends JFrame {
 				e -> currentViz.currentCircuit.toggleShowActuations());
 
 
-		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
-		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		time.addChangeListener(ce -> currentViz.currentCircuit.setCurrentTime(
-				((JSlider) ce.getSource()).getValue()));
-		tc = new timerCallback(time, timeInfo);
+		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
+		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
+		timeSlider.addChangeListener(
+				ce -> currentViz.currentCircuit.setCurrentTime(
+						((JSlider) ce.getSource()).getValue()));
+		tc = new timerCallback(timeSlider, timeInfo);
 
 
-		JSlider routes =
+		displayRouteLengthSlider =
 				new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute
 						.timesteps);
-		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		routes.addChangeListener(ce -> DrawableRoute.timesteps =
-				((JSlider) ce.getSource()).getValue());
-		//tc = new timerCallback(time);
+		displayRouteLengthSlider.setPreferredSize(
+				new Dimension(sliderWidth, sliderHeight));
+		displayRouteLengthSlider.addChangeListener(
+				ce -> DrawableRoute.timesteps =
+						((JSlider) ce.getSource()).getValue());
+		//tc = new timerCallback(timeSlider);
 
 		JButton adjacencyButton = new JButton("Adjacency");
 		adjacencyButton.setPreferredSize(new Dimension(buttonWidth,
@@ -340,7 +344,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(new JLabel("Options"));
 		panel.add(optionsSep);
 		panel.add(new JLabel("Route length"));
-		panel.add(routes);
+		panel.add(displayRouteLengthSlider);
 		panel.add(zoomButton);
 		panel.add(dropletButton);
 		panel.add(displayDropletIDsButton);
@@ -359,7 +363,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(autoplaytButton);
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
-		panel.add(time);
+		panel.add(timeSlider);
 
 
 		input = new LwjglAWTInput(canvas.getCanvas());
@@ -815,18 +819,28 @@ public class DesktopLauncher extends JFrame {
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
-				d.time.setMaximum(currentViz.currentCircuit.data.getMaxT());
-				d.time.setMinimum(1);
-				d.time.setValue(0);
+				d.timeSlider.setMaximum(currentViz.currentCircuit.data.getMaxT());
+				d.timeSlider.setMinimum(1);
+				d.timeSlider.setValue(0);
+
+				d.displayRouteLengthSlider.setMaximum(
+						currentViz.currentCircuit.data.getMaxRouteLength());
+				d.displayRouteLengthSlider.setMinimum(0);
+				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
+
 			}
 			else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
-				d.time.setMaximum(1);
-				d.time.setMinimum(1);
-				d.time.setValue(1);
+				d.timeSlider.setMaximum(1);
+				d.timeSlider.setMinimum(1);
+				d.timeSlider.setValue(1);
+
+				d.displayRouteLengthSlider.setMaximum(0);
+				d.displayRouteLengthSlider.setMinimum(0);
+				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.programName);
 			}

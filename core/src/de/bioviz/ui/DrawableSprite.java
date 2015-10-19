@@ -190,4 +190,16 @@ public abstract class DrawableSprite implements Drawable {
 			this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
 		}
 	}
+	
+	/**
+	 * Sets the color of this sprite without fading towards it
+	 * @param color the color this sprite should assume immediately
+	 */
+	public void setColorImmediately(Color color) {
+		this.originColor = color;
+		this.targetColor = color;
+		Date d = new Date();
+		this.colorTransitionStartTime = d.getTime();
+		this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
+	}
 }
