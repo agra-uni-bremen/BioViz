@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
+
 /**
  * This is a wrapper for the 2d drawing methods.
  *
@@ -19,15 +20,15 @@ import com.badlogic.gdx.math.Rectangle;
 public abstract class DrawableSprite implements Drawable {
 
 	protected Sprite sprite;
-	private static HashMap<String, TextureRegion> allTextures;
+	private static TextureManager textures;
 	private Color targetColor = Color.WHITE.cpy();
 	private Color currentColor = Color.WHITE.cpy();
 	private Color originColor = Color.WHITE.cpy();
 	private long colorTransitionStartTime = 0;
 	private long colorTransitionEndTime = 0;
 	private final long colorTransitionDuration = 500;
-	private HashMap<Float, String> levelOfDetailTextures = new HashMap<>();
-	private String currentTextureName;
+	private HashMap<Float, TextureE> levelOfDetailTextures = new HashMap<>();
+	private TextureE currentTexture;
 	protected boolean isVisible = true;
 
 	public static final float DEFAULT_LOD_THRESHOLD = 8f;
@@ -43,39 +44,47 @@ public abstract class DrawableSprite implements Drawable {
 	 * This constructor checks if the given texture has been loaded before and
 	 * does so if that's not the case. A sprite is initialized accordingly.
 	 *
-	 * @param textureFilename
+	 * @param texture
 	 * 		the texture to use
 	 */
-	public DrawableSprite(String textureFilename, float sizeX, float sizeY, BioViz parent) {
-		if (parent == null)
+	public DrawableSprite(TextureE texture, float sizeX, float sizeY, BioViz
+			parent) {
+		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
-		currentTextureName = textureFilename;
-		if (allTextures == null) {
-			allTextures = new HashMap<>();
 		}
-		this.addLOD(Float.MAX_VALUE, textureFilename);
+
+
+		if (textures == null) {
+			textures = new TextureManager();
+		}
+
+
+		currentTexture = texture;
+		this.addLOD(Float.MAX_VALUE, texture);
 		this.targetColor.a = ALPHA_FULL;
 		this.currentColor.a = ALPHA_FULL;
 		this.viz = parent;
 	}
 
-	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
+	public DrawableSprite(TextureE texture, BioViz parent) {
+		this(texture, 1, 1, parent);
+	}
+
+	private void initializeSprite(float sizeX, float sizeY, TextureRegion
+			region) {
 		sprite = new Sprite(region);
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
 		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
 	}
 
-	public DrawableSprite(String textureFilename, BioViz parent) {
-		this(textureFilename, 1, 1, parent);
-	}
 
 	public void draw() {
 
 		if (isVisible) {
 
 			if (sprite == null) {
-				TextureRegion region = loadTexture(currentTextureName);
+				TextureRegion region = textures.getTexture(currentTexture);
 				initializeSprite(1, 1, region);
 			}
 
@@ -91,7 +100,8 @@ public abstract class DrawableSprite implements Drawable {
 					}
 				}
 				if (foundLOD) {
-					currentTextureName = levelOfDetailTextures.get(bestLODFactor);
+					currentTexture =
+							levelOfDetailTextures.get(bestLODFactor);
 				}
 
 				this.setTexture();
@@ -99,7 +109,8 @@ public abstract class DrawableSprite implements Drawable {
 
 			update();
 
-			this.sprite.setPosition(x - sprite.getWidth() / 2f, y - sprite.getHeight() / 2f);
+			this.sprite.setPosition(x - sprite.getWidth() / 2f,
+									y - sprite.getHeight() / 2f);
 			this.sprite.setScale(scaleX, scaleY);
 			this.sprite.setRotation(rotation);
 			this.sprite.setColor(currentColor);
@@ -112,30 +123,18 @@ public abstract class DrawableSprite implements Drawable {
 		this.scaleY = dimY / this.sprite.getHeight();
 	}
 
-	protected TextureRegion loadTexture(String textureFilename) {
-		if (!allTextures.containsKey(textureFilename)) {
-			Texture t = new Texture(Gdx.files.internal("images/" + textureFilename), true);
-			t.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
-			TextureRegion region = new TextureRegion(t, 0, 0, t.getWidth(), t.getHeight());
-			allTextures.put(textureFilename, region);
-			return region;
-		} else {
-			return allTextures.get(textureFilename);
-		}
-	}
 
+
+	// TODO what is the rationale of this method?
 	private void setTexture() {
-		if (!this.allTextures.containsKey(currentTextureName)) {
-			this.loadTexture(currentTextureName);
-		}
 		if (this.sprite != null) {
-			this.sprite.setRegion(this.allTextures.get(currentTextureName));
+			this.sprite.setRegion(this.textures.getTexture(currentTexture));
 		}
 	}
 
-	public void addLOD(float scaleFactorMax, String textureFilename) {
-		loadTexture(textureFilename);
-		this.levelOfDetailTextures.put(scaleFactorMax, textureFilename);
+	// TODO check whether this is still needed
+	public void addLOD(float scaleFactorMax, TextureE texture) {
+		this.levelOfDetailTextures.put(scaleFactorMax, texture);
 	}
 
 	public void removeLOD(float scaleFactorMax) {
@@ -151,8 +150,12 @@ public abstract class DrawableSprite implements Drawable {
 
 			Rectangle viewport = viz.currentCircuit.getViewBounds();
 
-			float viewMouseX = (((float) mouseX / (float) resX) * viewport.width + viewport.x);
-			float viewMouseY = -(((float) mouseY / (float) resY) * viewport.height + viewport.y);
+			float viewMouseX =
+					(((float) mouseX / (float) resX) * viewport.width +
+					 viewport.x);
+			float viewMouseY =
+					-(((float) mouseY / (float) resY) * viewport.height +
+					  viewport.y);
 
 			float xCoord = viz.currentCircuit.xCoordInGates(this.x);
 			float yCoord = viz.currentCircuit.yCoordInGates(this.y);
@@ -170,10 +173,14 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	protected void update() {
-		float transitionProgress = Math.max(0, Math.min(1, (float) (new Date().getTime() - colorTransitionStartTime) / (float) (colorTransitionEndTime - colorTransitionStartTime)));
-		float totalProgress = (float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
+		float transitionProgress = Math.max(0, Math.min(1, (float) (
+				new Date().getTime() - colorTransitionStartTime) / (float) (
+				colorTransitionEndTime - colorTransitionStartTime)));
+		float totalProgress =
+				(float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
 
-		currentColor = this.originColor.cpy().mul(1 - totalProgress).add(this.targetColor.cpy().mul(totalProgress));
+		currentColor = this.originColor.cpy().mul(1 - totalProgress).add(
+				this.targetColor.cpy().mul(totalProgress));
 	}
 
 	public Color getColor() {

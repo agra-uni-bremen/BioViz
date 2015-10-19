@@ -18,13 +18,13 @@ public class DrawableDroplet extends DrawableSprite {
 	DrawableCircuit parentCircuit;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
-		super("Droplet.png", parent.parent);
+		super(TextureE.Droplet, parent.parent);
 		this.parentCircuit = parent;
 		if (randnum == null) {
 			randnum = new Random();
 		}
 		this.droplet = droplet;
-		super.addLOD(DEFAULT_LOD_THRESHOLD, "BlackPixel.png");
+		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 		randnum.setSeed(droplet.getID());
 		super.setColor(new Color(randnum.nextInt()));
 		Color c = super.getColor();

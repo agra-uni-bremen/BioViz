@@ -17,9 +17,9 @@ public class DrawableRoute extends DrawableSprite {
 	public Color baseColor = Color.BLACK.cpy();
 
 	public DrawableRoute(DrawableDroplet droplet) {
-		super("StepMarker.png", droplet.viz);
+		super(TextureE.StepMarker, droplet.viz);
 		this.droplet = droplet;
-		super.addLOD(DEFAULT_LOD_THRESHOLD, "BlackPixel.png");
+		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 	}
 
 	@Override
