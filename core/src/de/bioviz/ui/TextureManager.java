@@ -2,6 +2,7 @@ package de.bioviz.ui;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -70,6 +71,16 @@ public class TextureManager {
 									t +
 									".png");
 		}
+	}
+
+
+	/**
+	 * @brief Returns a FileHandle for the specified texture
+	 * @param texture The texture whose file is to be retrieved
+	 * @return FileHandle to the file storing the texture
+	 */
+	public FileHandle getFileHandle(TextureE texture) {
+		return Gdx.files.internal(textureFileNames.get(texture));
 	}
 
 
