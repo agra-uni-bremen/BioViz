@@ -106,6 +106,8 @@ public abstract class DrawableSprite implements Drawable {
 				initializeSprite(1, 1, region);
 			}
 
+
+
 			// if LOD is set, enable LOD calculation and set
 			// sprite accordingly
 			if (this.levelOfDetailTextures.size() > 0) {

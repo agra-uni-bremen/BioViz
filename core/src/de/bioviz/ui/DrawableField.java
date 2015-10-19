@@ -23,10 +23,6 @@ public class DrawableField extends DrawableSprite {
 	static final Color mixerDefaultColor = Colors.mixerColor;
 	static final Color blockedColor = Colors.blockedColor;
 
-	private boolean drawSink = false;
-	private boolean drawBlockage = false;
-	private boolean drawDetector = false;
-
 	//private DrawableSprite adjacencyOverlay;
 
 	DrawableCircuit parentCircuit;
@@ -80,19 +76,13 @@ public class DrawableField extends DrawableSprite {
 		this.scaleX = circ.smoothScaleX;
 		this.scaleY = circ.smoothScaleY;
 
-		drawSink = false;
-		drawBlockage = false;
-		drawDetector = false;
-
 
 		// TODO what happens if some of these options overlap?
 		// Right now only the first occurrence according the order below is
 		// taken. This might not be what is intended
 		// In general, a detector, for example, is a very valid routing target
-		if (this.field.isSink && !drawSink &&
-			circ.displayOptions.getOption(BDisplayOptions.SinkIcon)) {
+		if (this.field.isSink && circ.displayOptions.getOption(BDisplayOptions.SinkIcon)) {
 			texture = TextureE.Sink;
-			drawSink = true;
 		}
 		else if (this.field.isDispenser) {
 			if (circ.displayOptions.getOption(BDisplayOptions.DispenserIcon)) {
@@ -102,23 +92,19 @@ public class DrawableField extends DrawableSprite {
 				fieldHUDMsg = Integer.toString(field.fluidID);
 			}
 		}
-		else if (this.field.isPotentiallyBlocked() && !drawBlockage) {
+		else if (this.field.isPotentiallyBlocked()) {
 			texture = TextureE.Blockage;
-			drawBlockage = true;
 		}
-		else if (this.field.getDetector() != null && !drawDetector &&
+		else if (this.field.getDetector() != null &&
 				 circ.displayOptions.getOption(BDisplayOptions.DetectorIcon)) {
 			texture = TextureE.Detector;
-			drawDetector = true;
 		}
 		else if (!this.field.source_ids.isEmpty()) {
 			if (circ.displayOptions.getOption(BDisplayOptions
 													  .SourceTargetIcons)) {
 				texture = TextureE.Start;
 			}
-			else {
-				texture = TextureE.GridMarker;
-			}
+
 			if (circ.displayOptions.getOption(
 					BDisplayOptions.SourceTargetIDs)) {
 				ArrayList<Integer> sources = this.field.source_ids;
@@ -134,9 +120,6 @@ public class DrawableField extends DrawableSprite {
 			if (circ.displayOptions.getOption(
 					BDisplayOptions.SourceTargetIcons)) {
 				texture = TextureE.Target;
-			}
-			else {
-				texture = TextureE.GridMarker;
 			}
 			if (circ.displayOptions.getOption(
 					BDisplayOptions.SourceTargetIDs)) {
