@@ -80,6 +80,10 @@ public class DrawableField extends DrawableSprite {
 		this.scaleX = circ.smoothScaleX;
 		this.scaleY = circ.smoothScaleY;
 
+		drawSink = false;
+		drawBlockage = false;
+		drawDetector = false;
+
 
 		// TODO what happens if some of these options overlap?
 		// Right now only the first occurrence according the order below is

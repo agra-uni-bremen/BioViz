@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import de.bioviz.messages.MessageCenter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a wrapper for the 2d drawing methods.
@@ -33,6 +35,8 @@ public abstract class DrawableSprite implements Drawable {
 	protected boolean isVisible = true;
 
 	public static final float DEFAULT_LOD_THRESHOLD = 8f;
+
+	private static Logger logger = LoggerFactory.getLogger(DrawableSprite.class);
 
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 
@@ -93,6 +97,8 @@ public abstract class DrawableSprite implements Drawable {
 
 	public void draw() {
 
+
+
 		if (isVisible) {
 
 			if (sprite == null) {
@@ -115,6 +121,7 @@ public abstract class DrawableSprite implements Drawable {
 					currentTexture =
 							levelOfDetailTextures.get(bestLODFactor);
 				}
+
 
 				this.setTexture();
 			}
