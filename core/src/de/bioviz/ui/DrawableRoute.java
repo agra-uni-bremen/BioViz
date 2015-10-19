@@ -14,7 +14,7 @@ public class DrawableRoute extends DrawableSprite {
 
 	private DrawableDroplet droplet;
 
-	public Color baseColor = Color.BLACK;
+	public Color baseColor = Color.BLACK.cpy();
 
 	public DrawableRoute(DrawableDroplet droplet) {
 		super("StepMarker.png", droplet.viz);
@@ -79,12 +79,13 @@ public class DrawableRoute extends DrawableSprite {
 
 			for (int i = -stepsToUse; i < stepsToUse; i++) {
 
-				this.setColor(this.baseColor.cpy());
+				Color c = this.baseColor.cpy();
 				if (i >= 0) {
-					this.getColor().a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
+					c.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
 				} else {
-					this.getColor().a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+					c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
 				}
+				this.setColorImmediately(c);
 
 				displayAt = currentTime + i;
 				Point p1 = droplet.droplet.getSafePositionAt(displayAt);
