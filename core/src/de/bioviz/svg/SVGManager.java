@@ -125,7 +125,9 @@ public class SVGManager {
 
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
-
+		sb.append("<defs>\n");
+		svgs.forEach((name,svgcode)-> sb.append(svgcode));
+		sb.append("</defs>\n");
 
 		for (DrawableField field : circ.fields) {
 			sb.append(toSVG(field));
@@ -138,7 +140,7 @@ public class SVGManager {
 		return sb.toString();
 	}
 
-	public String toSVG(DrawableField field) {
+	private String toSVG(DrawableField field) {
 		// TODO When merged, use the TextureManager to get the filename
 		// TODO must be able to display sinks etc.
 		// why would we need to acces " (-this.field.y + BioViz.singleton
@@ -154,12 +156,12 @@ public class SVGManager {
 		int yCoord =
 				-field.field.y() + field.parentCircuit.data.getMaxCoord().snd;
 		int xCoord = field.field.x();
-		return "<image x=\"" + xCoord + "\" y=\"" + yCoord +
-			   "\" width=\"1\" height=\"1\" xlink:href=\"GridMarker.svg\" " +
+		return "<use x=\"" + xCoord + "\" y=\"" + yCoord +
+			   "\" width=\"1\" height=\"1\" xlink:href=\"#GridMarker\" " +
 			   "/>\n";
 	}
 
-	public String toSVG(DrawableDroplet drawableDrop) {
+	private String toSVG(DrawableDroplet drawableDrop) {
 		// TODO hier auch entsprechend auf die SVG Dateinamen zurückgreifen
 		// (über nen Manager)
 		float yCoord = -drawableDrop.droplet.smoothY +
@@ -167,13 +169,13 @@ public class SVGManager {
 		float xCoord = drawableDrop.droplet.smoothX;
 		String route = toSVG(drawableDrop.route);
 		return
-				"<image x=\"" + xCoord + "\" " +
+				"<use x=\"" + xCoord + "\" " +
 				"y=\"" + yCoord + "\" " +
-				"width=\"1\" height=\"1\" xlink:href=\"Droplet.svg\" />\n" +
+				"width=\"1\" height=\"1\" xlink:href=\"#Droplet\" />\n" +
 				route;
 	}
 
-	public String toSVG(DrawableRoute drawableRoute) {
+	private String toSVG(DrawableRoute drawableRoute) {
 		StringBuilder sb = new StringBuilder();
 
 
@@ -221,36 +223,35 @@ public class SVGManager {
 			float targetX = x1 + 0.5f;
 			float targetY = -y1 + circ.getMaxCoord().snd - 1;
 			if (y1 == y2 && x2 > x1) {
-				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY +
+				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
 						  "\" width=\"1\" height=\"1\" " +
-						  "xlink:href=\"StepMarker" +
-						  ".svg\" />\n");
+						  "xlink:href=\"#StepMarker\" />\n");
 			}
 			else if (y1 == y2 && x2 < x1) {
-				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY +
+				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
 						  "\" width=\"1\" height=\"1\" transform=\"rotate" +
 						  "(180" +
 						  " " +
 						  targetX + " " + (targetY + 0.5f) + " )\" " +
 						  "opacity=\"" +
-						  alpha + "\" xlink:href=\"StepMarker.svg\" />\n");
+						  alpha + "\" xlink:href=\"#StepMarker\" />\n");
 			}
 			else if (x1 == x2 && y2 > y1) {
-				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY +
+				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
 						  "\" width=\"1\" height=\"1\" transform=\"rotate" +
 						  "(270" +
 						  " " +
 						  targetX + " " + (targetY + 0.5f) + " )\" " +
 						  "opacity=\"" +
-						  alpha + "\" xlink:href=\"StepMarker.svg\" />\n");
+						  alpha + "\" xlink:href=\"#StepMarker\" />\n");
 			}
 			else if (x1 == x2 && y2 < y1) {
-				sb.append("<image x=\"" + targetX + "\" y=\"" + targetY +
+				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
 						  "\" width=\"1\" height=\"1\" transform=\"rotate(90" +
 						  " " +
 						  targetX + " " + (targetY + 0.5f) + " )\" " +
 						  "opacity=\"" +
-						  alpha + "\" xlink:href=\"StepMarker.svg\" />\n");
+						  alpha + "\" xlink:href=\"#StepMarker\" />\n");
 			}
 			else {
 				continue;
@@ -258,11 +259,4 @@ public class SVGManager {
 		}
 		return sb.toString();
 	}
-
-
-	public String getSVG(SVGE svg) {
-		// TODO no error handling, let's see how far that gets us :|
-		return svgs.get(svg);
-	}
-
 }
