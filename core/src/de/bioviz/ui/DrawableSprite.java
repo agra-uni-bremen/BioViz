@@ -55,7 +55,7 @@ public abstract class DrawableSprite implements Drawable {
 
 
 		if (textures == null) {
-			textures = new TextureManager();
+			textures = parent.textures;
 		}
 
 

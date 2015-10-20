@@ -40,7 +40,7 @@ public class BioViz implements ApplicationListener {
 	private HashMap<String, DrawableCircuit> loadedCircuits;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 
-	AssetManager manager = new AssetManager();
+	public TextureManager textures;
 	public MessageCenter mc;
 
 	private File bioFile;
@@ -89,6 +89,7 @@ public class BioViz implements ApplicationListener {
 		logger.info("Usage: java -jar BioViz.jar <filename>");
 		this.bioFile = null;
 		loadedCircuits = new HashMap<>();
+		textures = new TextureManager();
 	}
 
 	public BioViz(File bioFile) {
@@ -100,7 +101,6 @@ public class BioViz implements ApplicationListener {
 	@Override
 	public void create() {
 		mc = new MessageCenter(this);
-
 
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
@@ -119,7 +119,7 @@ public class BioViz implements ApplicationListener {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		manager.dispose();
+		// TODO: Dispose textures?
 		Gdx.app.exit();
 	}
 
@@ -435,13 +435,15 @@ public class BioViz implements ApplicationListener {
 	public FileHandle getApplicationIcon() {
 		Random rnd = new Random();
 		int r = rnd.nextInt(3);
+		logger.debug("Retrieving icon no. " + r);
 		FileHandle handle;
 		if (r == 0)
-			handle = Gdx.files.internal("images/Droplet.png");
+			handle = textures.getFileHandle(TextureE.Droplet);
 		else if (r == 1)
-			handle = Gdx.files.internal("images/Source.png");
+			handle = textures.getFileHandle(TextureE.Dispenser);
 		else
-			handle = Gdx.files.internal("images/Sink.png");
+			handle = textures.getFileHandle(TextureE.Sink);
+		logger.debug("Setting application icon to " + handle.name());
 		return handle;
 	}
 }
