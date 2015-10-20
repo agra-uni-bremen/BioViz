@@ -35,6 +35,8 @@ public class MessageCenter {
 	private float scaleMsg = 0.25f;
 	private final float SCALEINCSTEP = 0.125f;
 	
+	public static final int textRenderResolution = 100;
+	
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
 	BioViz parent;
@@ -48,7 +50,7 @@ public class MessageCenter {
 		if (font == null) {
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("images/FreeUniversal-Regular.ttf"));
 			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-			parameter.size = 64;
+			parameter.size = textRenderResolution;
 			parameter.color = Color.WHITE.cpy();
 			parameter.borderWidth = 4;
 			parameter.borderColor = Color.BLACK.cpy();
@@ -66,12 +68,14 @@ public class MessageCenter {
 		public float x;
 		public float y;
 		public Color color;
+		public float size;
 
 		public HUDMessage(String message, float x, float y) {
 			this.message = message;
 			this.x = x;
 			this.y = y;
 			this.color = Color.WHITE;
+			this.size = -1f;
 		}
 	}
 
@@ -145,7 +149,11 @@ public class MessageCenter {
 							   Gdx.graphics.getWidth() / 2);
 				int y = (int) ((s.y + tb.height / 2f) +
 							   Gdx.graphics.getHeight() / 2);
-				font.setScale(scaleHUD);
+				if (s.size > 0) {
+					font.setScale(s.size / 100f);
+				} else {
+					font.setScale(scaleHUD);
+				}
 				font.draw(parent.batch, s.message, x, y);
 			}
 
@@ -173,7 +181,7 @@ public class MessageCenter {
 	 * 		the y coordinate to show the message at
 	 */
 	public void addHUDMessage(int key, String message, float x, float y) {
-		addHUDMessage(key, message, x, y, null);
+		addHUDMessage(key, message, x, y, null, -1f);
 	}
 
 	/**
@@ -193,7 +201,7 @@ public class MessageCenter {
 	 * 		the color of the message
 	 */
 	public void addHUDMessage(final int key, final String message, final float
-			x, final float y, final Color col) {
+			x, final float y, final Color col, final float size) {
 		HUDMessage hm;
 		if (!this.HUDMessages.containsKey(key)) {
 			hm = new HUDMessage(message, x, y);
@@ -208,6 +216,7 @@ public class MessageCenter {
 		if (col != null) {
 			hm.color = col;
 		}
+		hm.size = size;
 	}
 
 	public void removeHUDMessage(int key) {
