@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import de.bioviz.messages.MessageCenter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -18,6 +21,7 @@ import com.badlogic.gdx.math.Rectangle;
  * @author Jannis Stoppe
  */
 public abstract class DrawableSprite implements Drawable {
+
 
 	protected Sprite sprite;
 	private static TextureManager textures;
@@ -33,6 +37,8 @@ public abstract class DrawableSprite implements Drawable {
 
 	public static final float DEFAULT_LOD_THRESHOLD = 8f;
 
+	private static Logger logger = LoggerFactory.getLogger(DrawableSprite.class);
+
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 
 	float ALPHA_FULL = 0;
@@ -47,8 +53,8 @@ public abstract class DrawableSprite implements Drawable {
 	 * @param texture
 	 * 		the texture to use
 	 */
-	public DrawableSprite(TextureE texture, float sizeX, float sizeY, BioViz
-			parent) {
+	public DrawableSprite(TextureE texture, float sizeX, float sizeY,
+		  BioViz parent) {
 		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
 		}
@@ -58,16 +64,11 @@ public abstract class DrawableSprite implements Drawable {
 			textures = parent.textures;
 		}
 
-
 		currentTexture = texture;
 		this.addLOD(Float.MAX_VALUE, texture);
 		this.targetColor.a = ALPHA_FULL;
 		this.currentColor.a = ALPHA_FULL;
 		this.viz = parent;
-	}
-
-	public DrawableSprite(TextureE texture, BioViz parent) {
-		this(texture, 1, 1, parent);
 	}
 
 	private void initializeSprite(float sizeX, float sizeY, TextureRegion
@@ -78,8 +79,28 @@ public abstract class DrawableSprite implements Drawable {
 		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
 	}
 
+	public DrawableSprite(TextureE texture, BioViz parent) {
+		this(texture, 1, 1, parent);
+	}
+
+	/**
+	 * @param msg
+	 * 		Message to be displayed
+	 * @brief Displays a text above the sprite
+	 */
+	public void displayText(String msg) {
+		MessageCenter mc = viz.mc;
+		if (msg != null) {
+			mc.addHUDMessage(this.hashCode(), msg, this.x, this.y);
+		}
+		else {
+			mc.removeHUDMessage(this.hashCode());
+		}
+	}
 
 	public void draw() {
+
+
 
 		if (isVisible) {
 
@@ -87,6 +108,8 @@ public abstract class DrawableSprite implements Drawable {
 				TextureRegion region = textures.getTexture(currentTexture);
 				initializeSprite(1, 1, region);
 			}
+
+
 
 			// if LOD is set, enable LOD calculation and set
 			// sprite accordingly
@@ -103,6 +126,7 @@ public abstract class DrawableSprite implements Drawable {
 					currentTexture =
 							levelOfDetailTextures.get(bestLODFactor);
 				}
+
 
 				this.setTexture();
 			}
@@ -122,8 +146,6 @@ public abstract class DrawableSprite implements Drawable {
 		this.scaleX = dimX / this.sprite.getWidth();
 		this.scaleY = dimY / this.sprite.getHeight();
 	}
-
-
 
 	// TODO what is the rationale of this method?
 	private void setTexture() {
@@ -194,7 +216,8 @@ public abstract class DrawableSprite implements Drawable {
 			this.targetColor = color;
 			Date d = new Date();
 			this.colorTransitionStartTime = d.getTime();
-			this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
+			this.colorTransitionEndTime = d.getTime() +
+										  colorTransitionDuration;
 		}
 	}
 	

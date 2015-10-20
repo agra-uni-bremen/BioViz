@@ -20,7 +20,10 @@ public class DisplayOptions {
 		setOption(BDisplayOptions.SourceTargetIcons,true);
 		setOption(BDisplayOptions.SourceTargetIDs,true);
 		setOption(BDisplayOptions.Droplets,true);
-		setOption(BDisplayOptions.Coordinates,true);
+		//setOption(BDisplayOptions.Coordinates,true);
+		setOption(BDisplayOptions.DispenserIcon,true);
+		setOption(BDisplayOptions.DispenserID,true);
+		setOption(BDisplayOptions.DetectorIcon,true);
 	}
 
 	public boolean getOption(BDisplayOptions opt) {

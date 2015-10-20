@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.HashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,12 +70,14 @@ public class TextureManager {
 
 		textureFolder = folder;
 		for (TextureE t : TextureE.values()) {
-			textureFileNames.put(t, getFullTextureFilename(t));
+			textureFileNames.put(t,baseFolder + "/" + textureFolder+"/"+t.toString()+".png");
 		}
 	}
 
 
 	/**
+<<<<<<< HEAD
+=======
 	 * @brief Returns a FileHandle for the specified texture
 	 * @param texture The texture whose file is to be retrieved
 	 * @return FileHandle to the file storing the texture
@@ -88,6 +89,7 @@ public class TextureManager {
 
 
 	/**
+>>>>>>> master
 	 * @param texture
 	 * 		The name of the texture to receive
 	 * @return The Texture(Region) of the requested texture
