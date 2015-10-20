@@ -24,7 +24,7 @@ public class DrawableDroplet extends DrawableSprite {
 			randnum = new Random();
 		}
 		this.droplet = droplet;
-		super.addLOD(DEFAULT_LOD_THRESHOLD,TextureE.BlackPixel);
+		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 		randnum.setSeed(droplet.getID());
 		super.setColor(new Color(randnum.nextInt()));
 		Color c = super.getColor();

@@ -14,6 +14,7 @@ import de.bioviz.messages.MessageCenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * This is a wrapper for the 2d drawing methods.
  *
@@ -23,7 +24,7 @@ public abstract class DrawableSprite implements Drawable {
 
 
 	protected Sprite sprite;
-	static TextureManager textures;
+	private static TextureManager textures;
 	private Color targetColor = Color.WHITE.cpy();
 	private Color currentColor = Color.WHITE.cpy();
 	private Color originColor = Color.WHITE.cpy();
@@ -53,19 +54,21 @@ public abstract class DrawableSprite implements Drawable {
 	 * 		the texture to use
 	 */
 	public DrawableSprite(TextureE texture, float sizeX, float sizeY,
-						  BioViz parent) {
+		  BioViz parent) {
 		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
 		}
-		this.viz = parent;
+
+
+		if (textures == null) {
+			textures = parent.textures;
+		}
 
 		currentTexture = texture;
-		if (textures == null) {
-			textures = new TextureManager();
-		}
 		this.addLOD(Float.MAX_VALUE, texture);
 		this.targetColor.a = ALPHA_FULL;
 		this.currentColor.a = ALPHA_FULL;
+		this.viz = parent;
 	}
 
 	private void initializeSprite(float sizeX, float sizeY, TextureRegion
@@ -144,10 +147,8 @@ public abstract class DrawableSprite implements Drawable {
 		this.scaleY = dimY / this.sprite.getHeight();
 	}
 
-
 	// TODO what is the rationale of this method?
 	private void setTexture() {
-
 		if (this.sprite != null) {
 			this.sprite.setRegion(this.textures.getTexture(currentTexture));
 		}
@@ -218,5 +219,17 @@ public abstract class DrawableSprite implements Drawable {
 			this.colorTransitionEndTime = d.getTime() +
 										  colorTransitionDuration;
 		}
+	}
+	
+	/**
+	 * Sets the color of this sprite without fading towards it
+	 * @param color the color this sprite should assume immediately
+	 */
+	public void setColorImmediately(Color color) {
+		this.originColor = color;
+		this.targetColor = color;
+		Date d = new Date();
+		this.colorTransitionStartTime = d.getTime();
+		this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
 	}
 }
