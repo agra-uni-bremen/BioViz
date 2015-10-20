@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-
+import de.bioviz.messages.MessageCenter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a wrapper for the 2d drawing methods.
@@ -33,6 +35,8 @@ public abstract class DrawableSprite implements Drawable {
 
 	public static final float DEFAULT_LOD_THRESHOLD = 8f;
 
+	private static Logger logger = LoggerFactory.getLogger(DrawableSprite.class);
+
 	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 
 	float ALPHA_FULL = 0;
@@ -54,6 +58,7 @@ public abstract class DrawableSprite implements Drawable {
 		}
 
 
+
 		if (textures == null) {
 			textures = new TextureManager();
 		}
@@ -64,21 +69,33 @@ public abstract class DrawableSprite implements Drawable {
 		this.targetColor.a = ALPHA_FULL;
 		this.currentColor.a = ALPHA_FULL;
 		this.viz = parent;
-
 	}
 
-	public DrawableSprite(TextureE texture, BioViz parent) {
-		this(texture, 1, 1, parent);
-	}
-
-	private void initializeSprite(float sizeX, float sizeY, TextureRegion
-			region) {
+	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
 		sprite = new Sprite(region);
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
 		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
 	}
 
+	public DrawableSprite(TextureE texture, BioViz parent) {
+		this(texture, 1, 1, parent);
+	}
+
+	/**
+	 * @param msg
+	 * 		Message to be displayed
+	 * @brief Displays a text above the sprite
+	 */
+	public void displayText(String msg) {
+		MessageCenter mc = viz.mc;
+		if (msg != null) {
+			mc.addHUDMessage(this.hashCode(), msg, this.x, this.y);
+		}
+		else {
+			mc.removeHUDMessage(this.hashCode());
+		}
+	}
 
 	public void draw() {
 
@@ -125,9 +142,9 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 
-
 	// TODO what is the rationale of this method?
 	private void setTexture() {
+
 		if (this.sprite != null) {
 			this.sprite.setRegion(this.textures.getTexture(currentTexture));
 		}
@@ -198,7 +215,7 @@ public abstract class DrawableSprite implements Drawable {
 			this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
 		}
 	}
-	
+
 	/**
 	 * Sets the color of this sprite without fading towards it
 	 * @param color the color this sprite should assume immediately

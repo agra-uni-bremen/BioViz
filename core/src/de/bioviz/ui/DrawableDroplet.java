@@ -33,6 +33,45 @@ public class DrawableDroplet extends DrawableSprite {
 		route = new DrawableRoute(this);
 	}
 
+	public Color getDisplayColor() {
+
+		DrawableCircuit circ = parentCircuit;
+
+		Color color = this.getColor().cpy();
+
+		Point p = droplet.getPositionAt(circ.currentTime);
+		boolean withinTimeRange = false;
+
+		if (p == null) {
+			color = color.sub(0, 0, 0, 1).clamp();
+
+			if (circ.currentTime < droplet.getSpawnTime()) {
+				p = droplet.getFirstPosition();
+			} else if (circ.currentTime > droplet.getMaxTime()) {
+				p = droplet.getLastPosition();
+			}
+		} else {
+			color = color.add(0, 0, 0, 1).clamp();
+		}
+
+		return color;
+	}
+
+	public String getMsg() {
+		String msg = null;
+
+		if (parentCircuit.displayOptions.getOption(BDisplayOptions.DropletIDs)) {
+			msg = Integer.toString(droplet.getID());
+		}
+		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
+			// note: fluidID may be null!
+			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
+			if (fluidID != null) {
+				msg = fluidID.toString();
+			}
+		}
+		return msg;
+	}
 	@Override
 	public void draw() {
 
@@ -45,15 +84,15 @@ public class DrawableDroplet extends DrawableSprite {
 
 			if (circ.currentTime < droplet.getSpawnTime()) {
 				p = droplet.getFirstPosition();
-				this.setColor(this.getColor().cpy().sub(0, 0, 0, 1).clamp());
+			
 			} else if (circ.currentTime > droplet.getMaxTime()) {
 				p = droplet.getLastPosition();
-				this.setColor(this.getColor().cpy().sub(0, 0, 0, 1).clamp());
-			}
+						}
 		} else {
-			this.setColor(this.getColor().cpy().add(0, 0, 0, 1).clamp());
 			withinTimeRange = true;
 		}
+
+		this.setColor(getDisplayColor());
 
 		if (p != null) {
 			droplet.setTargetPosition(p.fst, p.snd);
@@ -71,31 +110,17 @@ public class DrawableDroplet extends DrawableSprite {
 				this.scaleY = circ.smoothScaleY;
 
 
-				String msg = null;
 
-				if (circ.displayOptions.getOption(BDisplayOptions.DropletIDs)) {
-					msg = Integer.toString(droplet.getID());
-				}
-				if (circ.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
-					// note: fluidID may be null!
-					Integer fluidID = circ.data.fluidID(droplet.getID());
-					if (fluidID != null) {
-						msg = fluidID.toString();
-					}
-				}
+				String msg= getMsg();
 
-				if (msg != null) {
-					parentCircuit.parent.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
-				} else {
-					parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
-				}
+				displayText(msg);
 
 				super.draw();
 			}
 		}
 		if (!withinTimeRange) {
 			// make sure that previous numbers are removed when the droplet is removed.
-			parentCircuit.parent.mc.removeHUDMessage(this.hashCode());
+			displayText(null);
 		}
 	}
 }
