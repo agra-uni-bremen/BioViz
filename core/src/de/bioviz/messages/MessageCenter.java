@@ -5,11 +5,17 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 import de.bioviz.ui.BioViz;
+import de.bioviz.ui.DrawableCircuit;
 
 import java.util.HashMap;
 import java.util.Vector;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides some methods to draw text.
@@ -25,9 +31,11 @@ public class MessageCenter {
 
 	public static final int MAX_MESSAGES_IN_UI = 5;
 
-	private float scaleHUD = 1f;
-	private float scaleMsg = 1f;
-	private final float SCALEINCSTEP = 0.5f;
+	private float scaleHUD = 0.25f;
+	private float scaleMsg = 0.25f;
+	private final float SCALEINCSTEP = 0.25f;
+	
+	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
 	BioViz parent;
 
@@ -38,7 +46,17 @@ public class MessageCenter {
 
 	public BitmapFont getFont() {
 		if (font == null) {
-			font = new BitmapFont();
+			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("images/FreeUniversal-Regular.ttf"));
+			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+			parameter.size = 64;
+			parameter.color = Color.WHITE.cpy();
+			parameter.borderWidth = 4;
+			parameter.borderColor = Color.BLACK.cpy();
+			BitmapFont font12 = generator.generateFont(parameter); // font size 12 pixels
+			generator.dispose(); // don't forget to dispose to avoid memory leaks!
+			logger.debug("set up font");
+			
+			font = font12;//new BitmapFont();
 		}
 		return font;
 	}
@@ -93,7 +111,7 @@ public class MessageCenter {
 	public void render() {
 		if (!hidden) {
 			if (font == null) {
-				font = new BitmapFont();
+				getFont();
 			}
 
 			Matrix4 normalProjection =
