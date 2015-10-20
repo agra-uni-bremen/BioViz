@@ -67,7 +67,7 @@ public class SVGManager {
 	 * @brief SVGManager loading the default theme
 	 */
 	public SVGManager() {
-		this("images");
+		this("default");
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class SVGManager {
 			String svgCoreFile = baseFolder + "/" + svgFolder + "/" +
 								 s +
 								 ".core";
-			logger.debug("Loading SVG core for {}",svgCoreFile);
+			logger.debug("Loading SVG core for {}", svgCoreFile);
 			Path svgCoreFilePath =
 					Gdx.files.internal(svgCoreFile).file().toPath();
 
@@ -127,14 +127,15 @@ public class SVGManager {
 //				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
 		sb.append("<svg xmlns=\"http://www.w3.org/2000/svg\" " +
-				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
+				  "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
-		svgs.forEach((name,svgcode)-> sb.append(svgcode));
+		svgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
-		sb.append("<g transform=\"scale("+scaleFactor + " " + scaleFactor+")\" >\n");
+		sb.append("<g transform=\"scale(" + scaleFactor + " " + scaleFactor +
+				  ")\" >\n");
 
 		for (DrawableField field : circ.fields) {
 			sb.append(toSVG(field));
@@ -166,9 +167,14 @@ public class SVGManager {
 		int yCoord =
 				-field.field.y() + field.parentCircuit.data.getMaxCoord().snd;
 		int xCoord = field.field.x();
-		yCoord = yCoord*coordinateMultiplier;
-		xCoord = xCoord*coordinateMultiplier;
-		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\" xlink:href=\"#GridMarker\" />\n";
+		yCoord = yCoord * coordinateMultiplier;
+		xCoord = xCoord * coordinateMultiplier;
+
+		DisplayValues vals = field.getDisplayValues();
+		logger.debug("Color: {}", vals.color);
+		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\" " +
+			   "xlink:href=\"#" +
+			   vals.texture + "\" />\n";
 	}
 
 	private String toSVG(DrawableDroplet drawableDrop) {
@@ -176,9 +182,9 @@ public class SVGManager {
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
 		float xCoord = drawableDrop.droplet.smoothX;
 
-		logger.debug("(x,y) = ({},{})",yCoord,xCoord);
-		yCoord = ((int) yCoord)*coordinateMultiplier;
-		xCoord = ((int) xCoord)*coordinateMultiplier;
+		logger.debug("(x,y) = ({},{})", yCoord, xCoord);
+		yCoord = ((int) yCoord) * coordinateMultiplier;
+		xCoord = ((int) xCoord) * coordinateMultiplier;
 
 
 		String route = toSVG(drawableDrop.route);
@@ -237,10 +243,11 @@ public class SVGManager {
 			float targetY = -y1 + circ.getMaxCoord().snd - 1;
 
 			if (y1 == y2 && x2 > x1) {
-				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY + "\" xlink:href=\"#StepMarker\" />\n");
+				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
+						  "\" xlink:href=\"#StepMarker\" />\n");
 			}
 			else if (y1 == y2 && x2 < x1) {
-				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY + "\""+
+				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY + "\"" +
 						  "\" width=\"1\" height=\"1\" transform=\"rotate" +
 						  "(180" +
 						  " " +
