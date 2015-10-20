@@ -2,22 +2,15 @@ package de.bioviz.svg;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import de.bioviz.structures.Biochip;
-import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
 import de.bioviz.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
 /**
@@ -49,9 +42,17 @@ public class SVGManager {
 	private final double scaleFactor = 0.04;
 	private final int coordinateMultiplier = 224;
 
-	public String getScaleString() {
-		return " transform=\"scale(" + scaleFactor + " " + scaleFactor +
-			   ")\" ";
+
+	public String getTransformation(String params) {
+		return " transform=\"" + params + "\" ";
+	}
+
+	public String getScaleTransformation() {
+		return getTransformation(getScale());
+	}
+
+	public String getScale() {
+		return "scale(" + scaleFactor + " " + scaleFactor + ")";
 	}
 
 	/**
@@ -175,7 +176,8 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 		logger.debug("Color: {}", vals.color);
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-			   getScaleString() + " xlink:href=\"#" + vals.texture + "\" />\n";
+			   getScaleTransformation() + " xlink:href=\"#" + vals.texture +
+			   "\" />\n";
 	}
 
 	private String toSVG(DrawableDroplet drawableDrop) {
@@ -191,7 +193,8 @@ public class SVGManager {
 		String route = toSVG(drawableDrop.route);
 		return
 				"<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +
-				getScaleString() + " xlink:href=\"#Droplet\" />\n" + route;
+				getScaleTransformation() + " xlink:href=\"#Droplet\" />\n" +
+				route;
 	}
 
 	private String toSVG(DrawableRoute drawableRoute) {
@@ -242,33 +245,43 @@ public class SVGManager {
 			float targetX = x1 + 0.5f;
 			float targetY = -y1 + circ.getMaxCoord().snd - 1;
 
+			String position = " x=\"" + targetX + "\" y=\"" + targetY + "\" ";
+			String widthHeight = "";
+			String transFormationParams = getScale();
+			String opacity = " opacity=\"" + alpha + "\" ";
+			boolean app = true;
+
 			if (y1 == y2 && x2 > x1) {
-				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY + "\"" +
-						  getScaleString() + "xlink:href=\"#StepMarker\" " +
-						  "/>\n");
+				// intentionally do nothing here
 			}
 			else if (y1 == y2 && x2 < x1) {
-				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY + "\"" +
-						  "\" width=\"1\" height=\"1\" transform=\"rotate" +
-						  "(180" + " " + targetX + " " + (targetY + 0.5f) +
-						  " )\" " + "opacity=\"" + alpha + "\"" +
-						  getScaleString() + "xlink:href=\"#StepMarker\" " +
-						  "/>\n");
+				widthHeight = " width=\"1\" height=\"1\" ";
+				transFormationParams +=
+						" rotate(180 " + targetX + " " + (targetY + 0.5f) +
+						") ";
 			}
 			else if (x1 == x2 && y2 > y1) {
-				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
-						  "\" width=\"1\" height=\"1\" transform=\"rotate" +
-						  "(270" +  " " +  targetX + " " + (targetY + 0.5f) + " )\" " +
-						  "opacity=\"" + alpha + "\""+ getScaleString()+ " xlink:href=\"#StepMarker\" />\n");
+				widthHeight = " width=\"1\" height=\"1\" ";
+				transFormationParams +=
+						" rotate(270 " + targetX + " " + (targetY + 0.5f) +
+						") ";
 			}
 			else if (x1 == x2 && y2 < y1) {
-				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
-						  "\" width=\"1\" height=\"1\" transform=\"rotate(90" +
-						  " " +	  targetX + " " + (targetY + 0.5f) + " )\" " +
-						  "opacity=\"" +  alpha + "\""+getScaleString()+" xlink:href=\"#StepMarker\" />\n");
+				widthHeight = " width=\"1\" height=\"1\" ";
+				transFormationParams +=
+						"rotate(90 " + targetX + " " + (targetY + 0.5f) + ") ";
 			}
 			else {
-				continue;
+				app = false;
+			}
+			if (app) {
+				sb.append("<use");
+				sb.append(position);
+				sb.append(widthHeight);
+				sb.append(getTransformation(transFormationParams));
+				sb.append(opacity);
+				sb.append("xlink:href=\"#StepMarker\"");
+				sb.append(" />\n");
 			}
 		}
 		return sb.toString();
