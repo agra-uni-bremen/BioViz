@@ -46,9 +46,13 @@ public class SVGManager {
 	Warning: magic numbers ahead
 	 */
 
-	private final double scaleFactor = 0.1;
+	private final double scaleFactor = 0.04;
 	private final int coordinateMultiplier = 224;
 
+	public String getScaleString() {
+		return " transform=\"scale(" + scaleFactor + " " + scaleFactor +
+			   ")\" ";
+	}
 
 	/**
 	 * @param folder
@@ -90,23 +94,25 @@ public class SVGManager {
 		svgFolder = folder;
 		for (SVGE s : SVGE.values()) {
 
-			String svgCoreFile = baseFolder + "/" + svgFolder + "/" +
-								 s +
-								 ".core";
-			logger.debug("Loading SVG core for {}", svgCoreFile);
-			Path svgCoreFilePath =
-					Gdx.files.internal(svgCoreFile).file().toPath();
+			// TODO Add BlackPixel svg!
+			if (s != SVGE.BlackPixel) {
+				String svgCoreFile = baseFolder + "/" + svgFolder + "/" +
+									 s +
+									 ".core";
+				logger.debug("Loading SVG core for {}", svgCoreFile);
+				Path svgCoreFilePath =
+						Gdx.files.internal(svgCoreFile).file().toPath();
 
-			try {
-				String svgCore =
-						new String(Files.readAllBytes(svgCoreFilePath));
-				svgs.put(s, svgCore);
-			} catch (IOException e) {
-				// TODO log if stuff goes wrong
-				e.printStackTrace();
+				try {
+					String svgCore =
+							new String(Files.readAllBytes(svgCoreFilePath));
+					svgs.put(s, svgCore);
+				} catch (IOException e) {
+					// TODO log if stuff goes wrong
+					e.printStackTrace();
+				}
+
 			}
-
-
 		}
 	}
 
@@ -134,8 +140,6 @@ public class SVGManager {
 		sb.append("<defs>\n");
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
-		sb.append("<g transform=\"scale(" + scaleFactor + " " + scaleFactor +
-				  ")\" >\n");
 
 		for (DrawableField field : circ.fields) {
 			sb.append(toSVG(field));
@@ -152,8 +156,6 @@ public class SVGManager {
 	}
 
 	private String toSVG(DrawableField field) {
-		// TODO When merged, use the TextureManager to get the filename
-		// TODO must be able to display sinks etc.
 		// why would we need to acces " (-this.field.y + BioViz.singleton
 		// .currentCircuit.data.field[0].length - 1)"?
 		// @jannis please check and fix
@@ -172,9 +174,8 @@ public class SVGManager {
 
 		DisplayValues vals = field.getDisplayValues();
 		logger.debug("Color: {}", vals.color);
-		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\" " +
-			   "xlink:href=\"#" +
-			   vals.texture + "\" />\n";
+		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
+			   getScaleString() + " xlink:href=\"#" + vals.texture + "\" />\n";
 	}
 
 	private String toSVG(DrawableDroplet drawableDrop) {
@@ -189,9 +190,8 @@ public class SVGManager {
 
 		String route = toSVG(drawableDrop.route);
 		return
-				"<use x=\"" + xCoord + "\" " +
-				"y=\"" + yCoord + "\"  xlink:href=\"#Droplet\" />\n" +
-				route;
+				"<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +
+				getScaleString() + " xlink:href=\"#Droplet\" />\n" + route;
 	}
 
 	private String toSVG(DrawableRoute drawableRoute) {
@@ -243,34 +243,29 @@ public class SVGManager {
 			float targetY = -y1 + circ.getMaxCoord().snd - 1;
 
 			if (y1 == y2 && x2 > x1) {
-				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
-						  "\" xlink:href=\"#StepMarker\" />\n");
+				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY + "\"" +
+						  getScaleString() + "xlink:href=\"#StepMarker\" " +
+						  "/>\n");
 			}
 			else if (y1 == y2 && x2 < x1) {
 				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY + "\"" +
 						  "\" width=\"1\" height=\"1\" transform=\"rotate" +
-						  "(180" +
-						  " " +
-						  targetX + " " + (targetY + 0.5f) + " )\" " +
-						  "opacity=\"" +
-						  alpha + "\" xlink:href=\"#StepMarker\" />\n");
+						  "(180" + " " + targetX + " " + (targetY + 0.5f) +
+						  " )\" " + "opacity=\"" + alpha + "\"" +
+						  getScaleString() + "xlink:href=\"#StepMarker\" " +
+						  "/>\n");
 			}
 			else if (x1 == x2 && y2 > y1) {
 				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
 						  "\" width=\"1\" height=\"1\" transform=\"rotate" +
-						  "(270" +
-						  " " +
-						  targetX + " " + (targetY + 0.5f) + " )\" " +
-						  "opacity=\"" +
-						  alpha + "\" xlink:href=\"#StepMarker\" />\n");
+						  "(270" +  " " +  targetX + " " + (targetY + 0.5f) + " )\" " +
+						  "opacity=\"" + alpha + "\""+ getScaleString()+ " xlink:href=\"#StepMarker\" />\n");
 			}
 			else if (x1 == x2 && y2 < y1) {
 				sb.append("<use x=\"" + targetX + "\" y=\"" + targetY +
 						  "\" width=\"1\" height=\"1\" transform=\"rotate(90" +
-						  " " +
-						  targetX + " " + (targetY + 0.5f) + " )\" " +
-						  "opacity=\"" +
-						  alpha + "\" xlink:href=\"#StepMarker\" />\n");
+						  " " +	  targetX + " " + (targetY + 0.5f) + " )\" " +
+						  "opacity=\"" +  alpha + "\""+getScaleString()+" xlink:href=\"#StepMarker\" />\n");
 			}
 			else {
 				continue;
