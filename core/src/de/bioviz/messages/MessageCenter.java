@@ -33,7 +33,7 @@ public class MessageCenter {
 
 	private float scaleHUD = 0.25f;
 	private float scaleMsg = 0.25f;
-	private final float SCALEINCSTEP = 0.25f;
+	private final float SCALEINCSTEP = 0.125f;
 	
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
