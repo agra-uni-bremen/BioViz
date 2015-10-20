@@ -237,17 +237,17 @@ public class SVGManager {
 
 			logger.debug("p1 {}; p2 {}", p1, p2);
 
-			int x1 = p1.fst;
-			int x2 = p2.fst;
-			int y1 = p1.snd;
-			int y2 = p2.snd;
+			int x1 = p1.fst*coordinateMultiplier;
+			int x2 = p2.fst*coordinateMultiplier;
+			int y1 = p1.snd*coordinateMultiplier;
+			int y2 = p2.snd*coordinateMultiplier;
 
-			float targetX = x1 + 0.5f;
-			float targetY = -y1 + circ.getMaxCoord().snd - 1;
+			float targetX = x1 + (0.5f*coordinateMultiplier);
+			float targetY = -y1 + (circ.getMaxCoord().snd - 1)*coordinateMultiplier;
 
 			String position = " x=\"" + targetX + "\" y=\"" + targetY + "\" ";
-			String widthHeight = "";
-			String transFormationParams = getScale();
+			String widthHeight = " width=\"1\" height=\"1\" ";
+			String transFormParams = getScale();
 			String opacity = " opacity=\"" + alpha + "\" ";
 			boolean app = true;
 
@@ -255,20 +255,17 @@ public class SVGManager {
 				// intentionally do nothing here
 			}
 			else if (y1 == y2 && x2 < x1) {
-				widthHeight = " width=\"1\" height=\"1\" ";
-				transFormationParams +=
+				transFormParams +=
 						" rotate(180 " + targetX + " " + (targetY + 0.5f) +
 						") ";
 			}
 			else if (x1 == x2 && y2 > y1) {
-				widthHeight = " width=\"1\" height=\"1\" ";
-				transFormationParams +=
+				transFormParams +=
 						" rotate(270 " + targetX + " " + (targetY + 0.5f) +
 						") ";
 			}
 			else if (x1 == x2 && y2 < y1) {
-				widthHeight = " width=\"1\" height=\"1\" ";
-				transFormationParams +=
+				transFormParams +=
 						"rotate(90 " + targetX + " " + (targetY + 0.5f) + ") ";
 			}
 			else {
@@ -278,7 +275,7 @@ public class SVGManager {
 				sb.append("<use");
 				sb.append(position);
 				sb.append(widthHeight);
-				sb.append(getTransformation(transFormationParams));
+				sb.append(getTransformation(transFormParams));
 				sb.append(opacity);
 				sb.append("xlink:href=\"#StepMarker\"");
 				sb.append(" />\n");
