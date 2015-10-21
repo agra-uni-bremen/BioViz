@@ -234,7 +234,7 @@ public class DrawableCircuit implements Drawable {
 		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
-			this.parent.mc.addHUDMessage(
+			this.parent.messageCenter.addHUDMessage(
 					this.hashCode() + i,	// unique ID for each message
 					Integer.toString(i),	// message
 					this.xCoordOnScreen(i),	// x
@@ -243,7 +243,7 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		for (int i = minY; i < maxY + 1; i++) {
-			this.parent.mc.addHUDMessage(
+			this.parent.messageCenter.addHUDMessage(
 					this.hashCode() + maxX + Math.abs(minY) + 1 + i,
 				// unique ID for each message, starting after the previous ids
 
@@ -277,7 +277,7 @@ public class DrawableCircuit implements Drawable {
 		
 		// remove all HUD messages
 		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
-			this.parent.mc.removeHUDMessage(this.hashCode() + i);
+			this.parent.messageCenter.removeHUDMessage(this.hashCode() + i);
 		}
 	}
 

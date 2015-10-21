@@ -5,7 +5,6 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -24,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,7 +40,7 @@ public class BioViz implements ApplicationListener {
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 
 	public TextureManager textures;
-	public MessageCenter mc;
+	public MessageCenter messageCenter;
 
 	private File bioFile;
 	private BioVizInputProcessor inputProcessor;
@@ -117,7 +115,7 @@ public class BioViz implements ApplicationListener {
 
 	@Override
 	public void create() {
-		mc = new MessageCenter(this);
+		messageCenter = new MessageCenter(this);
 
 
 		float w = Gdx.graphics.getWidth();
@@ -168,7 +166,7 @@ public class BioViz implements ApplicationListener {
 			drawable.draw();
 		}
 
-		mc.render();
+		messageCenter.render();
 
 		batch.end();
 
@@ -354,7 +352,7 @@ public class BioViz implements ApplicationListener {
 		}
 
 		// clear on screen messages as they would otherwise remain visible
-		mc.clearHUDMessages();
+		messageCenter.clearHUDMessages();
 
 
 		this.callLoadedFileListeners();

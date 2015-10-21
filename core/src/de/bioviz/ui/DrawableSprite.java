@@ -5,8 +5,6 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -87,7 +85,7 @@ public abstract class DrawableSprite implements Drawable {
 	 * @brief Displays a text above the sprite
 	 */
 	public void displayText(String msg) {
-		MessageCenter mc = viz.mc;
+		MessageCenter mc = viz.messageCenter;
 		if (msg != null) {
 			mc.addHUDMessage(this.hashCode(), msg, this.x, this.y);
 		}
