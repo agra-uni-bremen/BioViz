@@ -2,11 +2,14 @@ package de.bioviz.ui;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.HashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Oliver Keszöcze
@@ -26,6 +29,7 @@ public class TextureManager {
 
 	private final String baseFolder = "images";
 
+	static Logger logger = LoggerFactory.getLogger(TextureManager.class);
 
 	/**
 	 * @param folder
@@ -66,14 +70,26 @@ public class TextureManager {
 
 		textureFolder = folder;
 		for (TextureE t : TextureE.values()) {
-			textureFileNames.put(t, baseFolder + "/" + textureFolder + "/" +
-									t +
-									".png");
+			textureFileNames.put(t,baseFolder + "/" + textureFolder+"/"+t.toString()+".png");
 		}
 	}
 
 
 	/**
+<<<<<<< HEAD
+=======
+	 * @brief Returns a FileHandle for the specified texture
+	 * @param texture The texture whose file is to be retrieved
+	 * @return FileHandle to the file storing the texture
+	 */
+	public FileHandle getFileHandle(TextureE texture) {
+		logger.debug("retrieving file handle for " + texture + ": " + getFullTextureFilename(texture));
+		return Gdx.files.internal(getFullTextureFilename(texture));
+	}
+
+
+	/**
+>>>>>>> master
 	 * @param texture
 	 * 		The name of the texture to receive
 	 * @return The Texture(Region) of the requested texture
@@ -103,6 +119,12 @@ public class TextureManager {
 			textures.put(texture, region);
 			return region;
 		}
+	}
+	
+	private String getFullTextureFilename(TextureE texture) {
+		return baseFolder + "/" + textureFolder + "/" +
+				texture +
+				".png";
 	}
 
 }

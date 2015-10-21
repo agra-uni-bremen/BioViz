@@ -51,7 +51,11 @@ public class BioVizInputProcessor implements InputProcessor {
 			if (ctrl) {
 				parentViz.callSaveFileListeners();
 			}
-		} 
+			if (shift) {
+				parentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.SinkIcon);
+			}
+		}
 		else if (keycode == Keys.A) {
 			if (ctrl) {
 				parentViz.currentCircuit.displayOptions.toggleOption(
@@ -84,7 +88,11 @@ public class BioVizInputProcessor implements InputProcessor {
 			if (ctrl) {
 				parentViz.callCloseFileListeners();
 			}
-		} else if (keycode == Keys.C){
+		}
+		else if (keycode == Keys.R) {
+			parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.ColorfulRoutes);
+		}
+		else if (keycode == Keys.C){
 			if (ctrl) {
 				parentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.Coordinates);

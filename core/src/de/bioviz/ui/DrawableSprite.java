@@ -58,7 +58,6 @@ public abstract class DrawableSprite implements Drawable {
 		}
 
 
-
 		if (textures == null) {
 			textures = new TextureManager();
 		}
@@ -142,9 +141,9 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 
+
 	// TODO what is the rationale of this method?
 	private void setTexture() {
-
 		if (this.sprite != null) {
 			this.sprite.setRegion(this.textures.getTexture(currentTexture));
 		}
@@ -215,7 +214,7 @@ public abstract class DrawableSprite implements Drawable {
 			this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
 		}
 	}
-
+	
 	/**
 	 * Sets the color of this sprite without fading towards it
 	 * @param color the color this sprite should assume immediately

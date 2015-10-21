@@ -41,7 +41,7 @@ public class BioViz implements ApplicationListener {
 	private HashMap<String, DrawableCircuit> loadedCircuits;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 
-	AssetManager manager = new AssetManager();
+	public TextureManager textures;
 	public MessageCenter mc;
 
 	private File bioFile;
@@ -106,6 +106,7 @@ public class BioViz implements ApplicationListener {
 		logger.info("Usage: java -jar BioViz.jar <filename>");
 		this.bioFile = null;
 		loadedCircuits = new HashMap<>();
+		textures = new TextureManager();
 	}
 
 	public BioViz(File bioFile) {
@@ -136,7 +137,7 @@ public class BioViz implements ApplicationListener {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		manager.dispose();
+		// TODO: Dispose textures?
 		Gdx.app.exit();
 	}
 
@@ -336,7 +337,8 @@ public class BioViz implements ApplicationListener {
 			}
 			else {
 				logger.debug(
-						"File to be set is empty, setting empty visualization" +
+						"File to be set is empty, setting empty " +
+						"visualization" +
 						".");
 				currentCircuit = new DrawableCircuit(new Biochip(), this);
 			}
@@ -400,9 +402,6 @@ public class BioViz implements ApplicationListener {
 		}
 	}
 
-
-	
-
 	public void addSaveFileListener(BioVizEvent listener) {
 		saveFileListeners.add(listener);
 	}
@@ -428,7 +427,6 @@ public class BioViz implements ApplicationListener {
 	}
 
 	public void saveSVG(String path) {
-		spawnSVGManager();
 		try {
 			String svg = svgManager.toSVG(currentCircuit);
 			FileHandle handle = Gdx.files.absolute(path);
@@ -497,14 +495,15 @@ public class BioViz implements ApplicationListener {
 		int r = rnd.nextInt(3);
 		FileHandle handle;
 		if (r == 0) {
-			handle = Gdx.files.internal("images/Droplet.png");
+			handle = textures.getFileHandle(TextureE.Droplet);
 		}
 		else if (r == 1) {
-			handle = Gdx.files.internal("images/Source.png");
+			handle = textures.getFileHandle(TextureE.Dispenser);
 		}
 		else {
-			handle = Gdx.files.internal("images/Sink.png");
+			handle = textures.getFileHandle(TextureE.Sink);
 		}
+		logger.debug("Setting application icon to " + handle.name());
 		return handle;
 	}
 }

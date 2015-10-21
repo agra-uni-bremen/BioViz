@@ -110,7 +110,6 @@ public class DrawableDroplet extends DrawableSprite {
 				this.scaleY = circ.smoothScaleY;
 
 
-
 				String msg= getMsg();
 
 				displayText(msg);
