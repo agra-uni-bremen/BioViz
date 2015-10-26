@@ -27,7 +27,7 @@ public class Validator {
 	 * actually a position of the chip
 	 *
 	 * @param drops
-	 * 		Droplets, whose positions should be valided
+	 * 		Droplets, whose positions should be validated
 	 * @param points
 	 * 		The possible positions of
 	 * @return List of errors
