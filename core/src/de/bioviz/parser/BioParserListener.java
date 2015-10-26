@@ -414,6 +414,8 @@ public class BioParserListener extends BioBaseListener {
 
 		chip.blockages.addAll(blockages);
 
+		errors.addAll(Validator.checkPathForBlockages(chip));
+
 		errors.addAll(Validator.checkForDetectorPositions(chip,detectors,true));
 		// only valid detectors are left -> we can happily add them to the chip
 		detectors.forEach(det -> {
