@@ -56,12 +56,14 @@ public class Validator {
 			Vector<Point> positions = drop.getPositions();
 			for (int i = 0; i < positions.size(); i++) {
 				Point pos = positions.get(i);
-				int timestep = i + drop.getSpawnTime();
-				BiochipField field = chip.getFieldAt(pos);
-				if (field.isBlocked(timestep)) {
-					errors.add("Droplet " + drop.getID() +
-							   " moves into blockage at " + pos +
-							   " in time step " + timestep);
+				if (chip.hasFieldAt(pos)) {
+					int timestep = i + drop.getSpawnTime();
+					BiochipField field = chip.getFieldAt(pos);
+					if (field.isBlocked(timestep)) {
+						errors.add("Droplet " + drop.getID() +
+								   " moves into blockage at " + pos +
+								   " in time step " + timestep);
+					}
 				}
 			}
 		}
