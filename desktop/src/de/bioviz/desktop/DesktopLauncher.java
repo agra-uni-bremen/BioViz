@@ -15,7 +15,18 @@ import java.io.File;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JSlider;
+import javax.swing.JLabel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -36,23 +47,82 @@ import de.bioviz.ui.DrawableRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * This class is the single desktop starter class.
+ * It starts the cross-platform core application and
+ * provides a basic java desktop UI to control it.
+ *
+ * @author jannis
+ *
+ */
 public class DesktopLauncher extends JFrame {
 
-	public JSlider timeSlider;
-	protected JSlider displayRouteLengthSlider;
+	/**
+	 * The slider to control the simulation time from the desktop UI.
+	 */
+	private JSlider timeSlider;
 
+	/**
+	 * The slider to control the length of the displayed droplet routes.
+	 */
+	private JSlider displayRouteLengthSlider;
+
+	/**
+	 * The label to display the current simulation time.
+	 */
 	JLabel timeInfo = new JLabel("1");
 
+	/**
+	 * Callback to be used upon time changes.
+	 */
 	timerCallback tc;
-	loadFileCallback load_cb;
-	loadedFileCallback loaded_cb;
-	saveFileCallback save_cb;
+
+	/**
+	 * Callback to be used when a new file is supposed to be loaded.
+	 */
+	loadFileCallback loadCB;
+
+	/**
+	 * Callback to be used when loading a new file is done.
+	 */
+	loadedFileCallback loadedCB;
+
+	/**
+	 * Callback to be used when the file is supposed to be saved.
+	 */
+	saveFileCallback saveCB;
+
+	/**
+	 * The one single instance of the desktop launcher.
+	 * There shouldn't be a second visualization window in the same process, so
+	 * a singleton is pretty much a valid approach to manage access to the
+	 * instance.
+	 */
 	public static DesktopLauncher singleton;
+
+	/**
+	 * The visualization instance.
+	 * From the DesktopLauncher, this field is usd to get access to any
+	 * properties of the currently running visualization.
+	 * Notice that despite the application seemingly opening several files at
+	 * once in tabs, there is still only one visualization which then displays
+	 * several different circuits.
+	 */
 	private BioViz bioViz;
+
+	/**
+	 * The element that is used to draw the libgdx core stuff on
+	 */
 	LwjglAWTCanvas canvas;
+
+	/**
+	 * Needed for input handling
+	 */
 	LwjglAWTInput input;
 
+	/**
+	 * The name that is displayed as the program name in the OS's UI
+	 */
 	public final String programName = "BioViz";
 
 	private static JFileChooser fileDialog = null;
@@ -211,15 +281,15 @@ public class DesktopLauncher extends JFrame {
 		openButton.setPreferredSize(new Dimension(buttonWidth,
 												  openButton.getPreferredSize
 														  ().height));
-		load_cb = new loadFileCallback();
-		openButton.addActionListener(e -> load_cb.bioVizEvent());
+		loadCB = new loadFileCallback();
+		openButton.addActionListener(e -> loadCB.bioVizEvent());
 
 		JButton saveButton = new JButton("Save SVG");
 		saveButton.setPreferredSize(new Dimension(buttonWidth,
 												  saveButton.getPreferredSize
 														  ().height));
-		save_cb = new saveFileCallback();
-		saveButton.addActionListener(e -> save_cb.bioVizEvent());
+		saveCB = new saveFileCallback();
+		saveButton.addActionListener(e -> saveCB.bioVizEvent());
 
 		JButton zoomButton = new JButton("Center");
 		zoomButton.setPreferredSize(new Dimension(buttonWidth,
@@ -385,11 +455,11 @@ public class DesktopLauncher extends JFrame {
 		tabContainer.add(visualizationTabs, BorderLayout.NORTH);
 		tabContainer.add(canvas.getCanvas(), BorderLayout.CENTER);
 
-		loaded_cb = new loadedFileCallback();
-		currentViz.addLoadedFileListener(loaded_cb);
+		loadedCB = new loadedFileCallback();
+		currentViz.addLoadedFileListener(loadedCB);
 
-		save_cb = new saveFileCallback();
-		currentViz.addSaveFileListener(save_cb);
+		saveCB = new saveFileCallback();
+		currentViz.addSaveFileListener(saveCB);
 
 		try {
 			this.setIconImage(
