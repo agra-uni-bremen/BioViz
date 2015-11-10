@@ -22,6 +22,10 @@ public class DrawableRoute extends DrawableSprite {
 		this.droplet = droplet;
 		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 	}
+	
+	public static void setTimesteps(final int value) {
+		timesteps = value;
+	}
 
 	@Override
 	public String generateSVG() {
