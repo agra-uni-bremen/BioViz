@@ -449,7 +449,12 @@ public class DesktopLauncher extends JFrame {
 			// handle exception
 		}
 
-		File file = askForFile();
+		File file;
+		if (args.length <= 0) {
+			file = askForFile();
+		} else {
+			file = new File(args[0]);
+		}
 		JFrame frame = new DesktopLauncher(10, file);
 
 
