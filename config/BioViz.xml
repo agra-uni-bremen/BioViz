@@ -27,6 +27,9 @@
     <option name="FOR_BRACE_FORCE" value="3" />
     <option name="WRAP_LONG_LINES" value="true" />
     <option name="ENUM_CONSTANTS_WRAP" value="1" />
+    <module name="RightCurly">
+      <property name="option" value="same"/>
+    </module>
     <indentOptions>
       <option name="USE_TAB_CHARACTER" value="true" />
     </indentOptions>
