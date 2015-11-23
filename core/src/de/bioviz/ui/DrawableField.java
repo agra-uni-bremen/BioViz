@@ -230,7 +230,7 @@ public class DrawableField extends DrawableSprite {
 
 		DisplayValues vals = getDisplayValues();
 
-		displayText(vals.msg);
+		//displayText(vals.msg);
 		this.addLOD(Float.MAX_VALUE, vals.texture);
 
 
