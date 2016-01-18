@@ -13,6 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.HashMap;
+import java.util.prefs.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -35,7 +36,6 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
@@ -542,9 +542,10 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private static File askForFile() {
 		File path = null;
-		Preferences prefs = Gdx.app.getPreferences("BioVizPreferences");
-		path = new File(
-			prefs.getString("lastFilePath", System.getProperty("user.dir")));
+		
+		java.util.prefs.Preferences prefs =
+			java.util.prefs.Preferences.userNodeForPackage(DesktopLauncher.class);
+		path = new File(prefs.get("lastFilePath", "."));
 
 		JFileChooser fileDialog = new JFileChooser(path);
 		int choice = fileDialog.showOpenDialog(null);
@@ -1038,13 +1039,13 @@ public class DesktopLauncher extends JFrame {
 			try {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						Preferences prefs =
-								Gdx.app.getPreferences("BioVizPreferences");
+						java.util.prefs.Preferences prefs =
+							java.util.prefs.Preferences.userNodeForPackage(DesktopLauncher.class);
+						String name = prefs.get("saveFolder", ".");
 						logger.debug(
 								"Desktop received save event, opening "
 								+ "dialog...");
 
-						String name = prefs.getString("saveFolder", ".");
 						JFileChooser fileDialog = new JFileChooser();
 						int fcresult = fileDialog.showSaveDialog(null);
 
