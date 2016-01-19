@@ -827,7 +827,8 @@ public class DesktopLauncher extends JFrame {
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
-				d.timeSlider.setMaximum(currentViz.currentCircuit.data.getMaxT());
+				d.timeSlider.setMaximum(
+						currentViz.currentCircuit.data.getMaxT());
 				d.timeSlider.setMinimum(1);
 				d.timeSlider.setValue(0);
 
@@ -879,9 +880,10 @@ public class DesktopLauncher extends JFrame {
 							prefs.putString("saveFolder",
 											fileDialog.getSelectedFile()
 													.getAbsolutePath());
-							currentViz.saveSVG(
-									fileDialog.getSelectedFile()
-											.getAbsolutePath());
+							String svgFile = fileDialog.getSelectedFile()
+									.getAbsolutePath();
+							logger.debug("[SVG] Trying to save SVG to file {}",svgFile);
+							currentViz.saveSVG(svgFile);
 						}
 					}
 				});

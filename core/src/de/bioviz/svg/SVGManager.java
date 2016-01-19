@@ -118,6 +118,9 @@ public class SVGManager {
 	}
 
 	public String toSVG(DrawableCircuit circ) {
+
+
+		logger.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
 
 		Point minCoord = circ.data.getMinCoord();
@@ -139,6 +142,7 @@ public class SVGManager {
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
+		logger.debug("svgs: {}",svgs);
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
 
