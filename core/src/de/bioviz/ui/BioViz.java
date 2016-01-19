@@ -45,13 +45,13 @@ public class BioViz implements ApplicationListener {
 
 	private File bioFile;
 	private BioVizInputProcessor inputProcessor;
-	
+
 	/**
 	 * This stores the last time a frame was rendered.
 	 * Used to limit the framerate on faster systems to save resources.
 	 */
 	private long lastRenderTimestamp = 0;
-	
+
 	/**
 	 * The desired framerate in fps.
 	 */
@@ -125,10 +125,10 @@ public class BioViz implements ApplicationListener {
 
 	@Override
 	public synchronized void render() {
-		
+
 		long currentTimestamp = new Date().getTime();
-		
-		
+
+
 		if (loadFileOnUpdate) {
 			loadNewFileNow();
 			loadFileOnUpdate = false;
@@ -153,7 +153,7 @@ public class BioViz implements ApplicationListener {
 		mc.render();
 
 		batch.end();
-		
+
 		long waitUntil = currentTimestamp + (1000 / this.targetFramerate);
 		try {
 			Thread.sleep(Math.max(0, waitUntil - new Date().getTime()));
@@ -247,7 +247,7 @@ public class BioViz implements ApplicationListener {
 
 		return pixmap;
 	}
-	
+
 	public void unloadFile(File f) {
 		try {
 			if (this.loadedCircuits.containsKey(f.getCanonicalPath())) {
@@ -371,11 +371,11 @@ public class BioViz implements ApplicationListener {
 			listener.bioVizEvent();
 		}
 	}
-	
+
 	public void addCloseFileListener(BioVizEvent listener) {
 		closeFileListeners.add(listener);
 	}
-	
+
 	void callCloseFileListeners() {
 		logger.trace("Calling " + this.closeFileListeners.size() + " listeners for close");
 		for (BioVizEvent listener : this.closeFileListeners) {
@@ -395,6 +395,11 @@ public class BioViz implements ApplicationListener {
 	}
 
 	static public ShaderProgram createDefaultShader() {
+
+		FileHandle vertexShaderHandle = new FileHandle("vertexShader.shd");
+		FileHandle fragmentShaderHandle = new FileHandle("fragmentShader.shd");
+
+/*
 		String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
 				+ "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
 				+ "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
@@ -425,10 +430,13 @@ public class BioViz implements ApplicationListener {
 				+ "  gl_FragColor = v_color * fctr + texture2D(u_texture, v_texCoords) * (1.0 - fctr);\n" //
 				+ "  gl_FragColor.a = texture2D(u_texture, v_texCoords).a * v_color.a;"//
 				+ "}";
+*/
 
-		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
-		if (shader.isCompiled() == false)
-			throw new IllegalArgumentException("Error compiling shader: " + shader.getLog());
+		ShaderProgram shader = new ShaderProgram(vertexShaderHandle, fragmentShaderHandle);
+		if (shader.isCompiled() == false) {
+			throw new IllegalArgumentException(
+					"Error compiling shader: " + shader.getLog());
+		}
 		return shader;
 	}
 
