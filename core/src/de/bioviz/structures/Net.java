@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Net {
 	public final Point target;
-	public final ArrayList<Source> sources=new ArrayList<Source>();
+	public final ArrayList<Source> sources = new ArrayList<Source>();
 
 	public Net(ArrayList<Source> sources, Point target) {
 		this.target = target;
@@ -15,12 +15,7 @@ public class Net {
 	}
 
 	public boolean containsDroplet(Droplet d) {
-		for (Source s:sources) {
-			if (s.dropletID == d.getID()) {
-				return true;
-			}
-		}
-		return false;
+		return sources.stream().anyMatch(o -> o.dropletID == d.getID());
 	}
 
 }
