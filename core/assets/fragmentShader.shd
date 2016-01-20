@@ -13,4 +13,4 @@ void main()
   fctr = abs(fctr - 0.5) * -2.0 + 1.0;
   gl_FragColor = v_color * fctr + texture2D(u_texture, v_texCoords) * (1.0 - fctr);
   gl_FragColor.a = texture2D(u_texture, v_texCoords).a * v_color.a;
-};
+}
