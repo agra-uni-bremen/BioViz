@@ -552,6 +552,9 @@ public class DesktopLauncher extends JFrame {
 			java.util.prefs.Preferences.userNodeForPackage(DesktopLauncher.class);
 		path = new File(prefs.get("lastFilePath", "."));
 
+
+		logger.debug("Open file choose with path {}",path);
+
 		JFileChooser fileDialog = new JFileChooser(path);
 		int choice = fileDialog.showOpenDialog(null);
 		if (choice == JFileChooser.APPROVE_OPTION) {
