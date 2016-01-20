@@ -157,7 +157,7 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	public boolean isHovered() {
-		if (isVisible) {
+		if (isVisible && this.currentColor.a > 0) {
 			int mouseX = Gdx.input.getX();
 			int mouseY = Gdx.input.getY();
 			int resX = Gdx.graphics.getWidth();
