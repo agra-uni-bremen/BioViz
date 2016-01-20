@@ -6,8 +6,12 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DrawableDroplet extends DrawableSprite {
+
+	static Logger logger = LoggerFactory.getLogger(DrawableDroplet.class);
 
 	public Droplet droplet;
 
@@ -72,19 +76,26 @@ public class DrawableDroplet extends DrawableSprite {
 	}
 
 	public String getMsg() {
-		String msg = null;
+		String msg = "";
 
 		if (parentCircuit.displayOptions.getOption(
 				BDisplayOptions.DropletIDs)) {
-			msg = Integer.toString(droplet.getID()) + " ";
+			msg = Integer.toString(droplet.getID())+ " ";
+
 		}
+		logger.trace("droplet msg after dropletIDs option: {}",msg);
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
 			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
 			if (fluidID != null) {
-				msg = fluidID.toString() + " ";
+				if (!msg.isEmpty()) {
+					msg += "-";
+				}
+				msg += " " + fluidID.toString() + " ";
 			}
+
 		}
+		logger.trace("droplet msg after fluidIDs option: {}",msg);
 		if (parentCircuit.displayOptions
 				.getOption(BDisplayOptions.FluidNames)) {
 			String fname = this.parentCircuit.data
@@ -92,9 +103,14 @@ public class DrawableDroplet extends DrawableSprite {
 			//System.out.println("fname: " + fname);
 			//System.out.println(this.parentCircuit.data.fluidTypes);
 			if (fname != null) {
-				msg += fname + " ";
+				if (!msg.isEmpty()) {
+					msg += "-";
+				}
+				msg += " " + fname;
 			}
+
 		}
+		logger.trace("droplet msg after fluidNames option: {}",msg);
 		return msg;
 	}
 
