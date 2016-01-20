@@ -71,13 +71,21 @@ public class DrawableDroplet extends DrawableSprite {
 		String msg = null;
 
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.DropletIDs)) {
-			msg = Integer.toString(droplet.getID());
+			msg = Integer.toString(droplet.getID()) + " ";
 		}
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
 			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
 			if (fluidID != null) {
-				msg = fluidID.toString();
+				msg = fluidID.toString() + " ";
+			}
+		}
+		if (parentCircuit.displayOptions
+				.getOption(BDisplayOptions.FluidNames)) {
+			String fname = this.parentCircuit.data
+					.fluidType(this.droplet.getID());
+			if (fname != null) {
+				msg += fname + " ";
 			}
 		}
 		return msg;

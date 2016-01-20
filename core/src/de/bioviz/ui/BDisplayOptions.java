@@ -6,5 +6,5 @@ package de.bioviz.ui;
 public enum BDisplayOptions {
 	CellUsage, Adjacency, DropletIDs, FluidIDs, Pins, Droplets, Actuations,
 	SourceTargetIcons, SourceTargetIDs, Coordinates, ColorfulRoutes,
-	DispenserID, DispenserIcon, SinkIcon, DetectorIcon
+	DispenserID, DispenserIcon, SinkIcon, DetectorIcon, FluidNames
 }
