@@ -556,7 +556,11 @@ public class DesktopLauncher extends JFrame {
 		JFileChooser fileDialog = new JFileChooser(path);
 		int choice = fileDialog.showOpenDialog(null);
 		if (choice == JFileChooser.APPROVE_OPTION) {
-			return fileDialog.getSelectedFile();
+			path = fileDialog.getSelectedFile();
+
+			prefs.put("lastFilePath",path.getAbsolutePath());
+
+			return path;
 
 		}
 
