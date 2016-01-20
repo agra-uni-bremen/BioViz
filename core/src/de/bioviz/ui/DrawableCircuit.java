@@ -67,6 +67,10 @@ public class DrawableCircuit implements Drawable {
 		autoAdvance=false;
 		setCurrentTime(currentTime+1);
 	}
+	
+	public void toggleAutoAdvance() {
+		this.autoAdvance = !(this.autoAdvance);
+	}
 
 	public void setCurrentTime(int timeStep) {
 		if (parent != null) {
