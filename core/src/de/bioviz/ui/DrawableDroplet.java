@@ -64,6 +64,8 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 		}
 
+
+
 		return color;
 	}
 
