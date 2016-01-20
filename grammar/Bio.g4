@@ -63,7 +63,7 @@ endTiming: Integer | Asterisk;
 // Here you define what type of fluid (e.g. blood, serum) a certain
 // fluid ID is
 fluids: Fluids  Newlines (fluiddef Newlines)+ END;
-fluiddef: Integer Identifier;
+fluiddef: fluidID Identifier;
 
 
 // Pin assignment
