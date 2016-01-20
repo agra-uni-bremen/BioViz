@@ -14,12 +14,17 @@ public class DrawableRoute extends DrawableSprite {
 
 	private DrawableDroplet droplet;
 
-	public Color baseColor = Color.BLACK;
+	public Color baseColor = Color.BLACK.cpy();
+
 
 	public DrawableRoute(DrawableDroplet droplet) {
-		super("StepMarker.png", droplet.viz);
+		super(TextureE.StepMarker, droplet.viz);
 		this.droplet = droplet;
-		super.addLOD(DEFAULT_LOD_THRESHOLD, "BlackPixel.png");
+		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
+	}
+	
+	public static void setTimesteps(final int value) {
+		timesteps = value;
 	}
 
 	@Override
@@ -68,6 +73,7 @@ public class DrawableRoute extends DrawableSprite {
 
 
 		// TODO drawing of routes is now broken :(
+		// I totally do not get this if condition an what is supposed to be broken? (Oliver)
 		if (true) {
 
 			hoverTimesteps = 2 * timesteps + 8;
@@ -79,12 +85,19 @@ public class DrawableRoute extends DrawableSprite {
 
 			for (int i = -stepsToUse; i < stepsToUse; i++) {
 
-				this.setColor(this.baseColor.cpy());
-				if (i >= 0) {
-					this.getColor().a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
-				} else {
-					this.getColor().a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+				Color c = this.baseColor.cpy();
+				if (droplet.parentCircuit.displayOptions.getOption(
+						BDisplayOptions.ColorfulRoutes)) {
+					c = this.droplet.getColor().cpy();
 				}
+				
+				if (i >= 0) {
+					c.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
+				} else {
+					c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+				}
+				this.setColorImmediately(c);
+				
 
 				displayAt = currentTime + i;
 				Point p1 = droplet.droplet.getSafePositionAt(displayAt);

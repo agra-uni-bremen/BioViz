@@ -46,18 +46,11 @@ public class DrawableCircuit implements Drawable {
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 
-	private boolean showUsage = false;
-	private boolean highlightAdjacency = false;
-	private boolean displayDropletIDs = false;
-	private boolean displayFluidIDs = false;
-	private boolean showPins = false;
-	private boolean showDroplets = true;
-	private boolean showActuations = false;
-	private boolean showSourceTargetIcons = true;
-	private boolean showSourceTargetIDs = true;
 
 	private Vector<DrawableField> fields = new Vector<>();
 	private Vector<DrawableDroplet> droplets = new Vector<>();
+
+	public DisplayOptions displayOptions = new DisplayOptions();
 
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
@@ -66,13 +59,17 @@ public class DrawableCircuit implements Drawable {
 
 	public void prevStep() {
 		autoAdvance=false;
-		setCurrentTime(currentTime-1);
+		setCurrentTime(currentTime - 1);
 
 	}
 
 	public void nextStep() {
 		autoAdvance=false;
 		setCurrentTime(currentTime+1);
+	}
+	
+	public void toggleAutoAdvance() {
+		this.autoAdvance = !(this.autoAdvance);
 	}
 
 	public void setCurrentTime(int timeStep) {
@@ -84,177 +81,6 @@ public class DrawableCircuit implements Drawable {
 		} else {
 			throw new RuntimeException("circuit parent is null");
 		}
-	}
-	public boolean getShowSourceTargetIcons() {
-		return showSourceTargetIcons;
-	}
-
-	public void toggleShowSourceTargetIcons() {
-		this.setShowSourceTargetIcons(!this.showSourceTargetIcons);
-	}
-
-	public void setShowSourceTargetIcons(boolean showSourceTargetIcons) {
-		this.showSourceTargetIcons = showSourceTargetIcons;
-		if (this.showSourceTargetIcons) {
-			logger.info("Displaying Source/Target icons");
-		} else {
-			logger.info("Stop displaying Source/Target icons");
-		}
-	}
-
-	public boolean getShowSourceTargetIDs() {
-		return showSourceTargetIDs;
-	}
-
-	public void toggleShowSourceTargetIDs() {
-		this.setShowSourceTargetIDs(!this.showSourceTargetIDs);
-	}
-
-	public void setShowSourceTargetIDs(boolean showSourceTargetIDs) {
-		this.showSourceTargetIDs = showSourceTargetIDs;
-		if (this.showSourceTargetIDs) {
-			logger.info("Displaying Source/Target IDs");
-		} else {
-			logger.info("Stop displaying Source/Target IDs");
-		}
-	}
-
-	public boolean getShowDroplets() {
-		return showDroplets;
-	}
-
-	public void toggleShowDroplets() {
-		this.setShowDroplets(!this.showDroplets);
-	}
-
-	public void setShowDroplets(boolean showDroplets) {
-		this.showDroplets = showDroplets;
-		droplets.forEach(d -> {d.isVisible=showDroplets;});
-		if (this.showDroplets) {
-			logger.info("Displaying droplets");
-		} else {
-			logger.info("Stop displaying droplets");
-		}
-	}
-
-	public boolean getShowActuations() {
-		return showActuations;
-	}
-
-	public void toggleShowActuations() {
-		this.setShowActuations(!this.showActuations);
-	}
-
-	public void setShowActuations(boolean showActuations) {
-		this.showActuations = showActuations;
-		if (this.showActuations) {
-			logger.info("Displaying actuations");
-		} else {
-			logger.info("Stop displaying actuations");
-		}
-	}
-
-	public boolean getShowUsage() {
-		return showUsage;
-	}
-
-	public void toggleShowUsage() {
-		this.setShowUsage(!this.showUsage);
-	}
-
-	public void setShowUsage(boolean showUsage) {
-		this.showUsage = showUsage;
-		if (this.showUsage) {
-
-			// TODO I always recompute the usage, this might be a waste of computation time -> check this
-			data.computeCellUsage();
-			logger.info("Showing cell usage");
-		} else {
-			logger.info("Stop showing cell usage");
-		}
-	}
-
-	public void setDisplayFluidIDs(boolean displayFluids) {
-		this.displayFluidIDs = displayFluids;
-
-
-		if (this.displayFluidIDs) {
-			/*
-			Displaying the fluid id is mutually exclusive to displaying the droplet id, therefore we set the
-			value accordingly
-			 */
-			this.displayDropletIDs = false;
-			logger.info("Displaying fluid IDs");
-		} else {
-			logger.info("Stop displaying fluid IDs");
-		}
-	}
-
-	public boolean getDisplayFluidIDs() {
-		return displayFluidIDs;
-	}
-
-	public void toggleDisplayFluidIDs() {
-		this.setDisplayFluidIDs(!this.displayFluidIDs);
-	}
-
-
-	public void setDisplayDropletIDs(boolean displayDrops) {
-		this.displayDropletIDs = displayDrops;
-		if (this.displayDropletIDs) {
-			/*
-			Displaying the fluid id is mutually exclusive to displaying the droplet id, therefore we set the
-			value accordingly
-			 */
-			this.displayFluidIDs = false;
-			logger.info("Displaying droplet IDs");
-		} else {
-			logger.info("Stop displaying droplet IDs");
-		}
-	}
-
-	public boolean getDisplayDropletIDs() {
-		return displayDropletIDs;
-	}
-
-	public void toggleDisplayDropletIDs() {
-		this.setDisplayDropletIDs(!this.displayDropletIDs);
-	}
-
-
-	public void setHighlightAdjacency(boolean highlightAdjacency) {
-		this.highlightAdjacency = highlightAdjacency;
-		if (this.highlightAdjacency) {
-			logger.info("Highlighting fields with adjacent droplets");
-		} else {
-			logger.info("Stop highlighting fields with adjacent droplets");
-		}
-	}
-
-	public boolean getHighlightAdjacency() {
-		return highlightAdjacency;
-	}
-
-	public void toggleHighlightAdjacency() {
-		this.setHighlightAdjacency(!this.highlightAdjacency);
-	}
-
-
-	public void setShowPins(boolean showPins) {
-		this.showPins = showPins;
-		if (this.showPins) {
-			logger.info("Displaying pin assignment");
-		} else {
-			logger.info("Stop displaying pin assignmnet");
-		}
-	}
-
-	public boolean getShowPins() {
-		return showPins;
-	}
-
-	public void toggleShowPins() {
-		this.setShowPins(!this.showPins);
 	}
 
 	/**
@@ -306,6 +132,16 @@ public class DrawableCircuit implements Drawable {
 		smoothOffsetX += (offsetX - smoothOffsetX) / scalingDelay;
 		smoothOffsetY += (offsetY - smoothOffsetY) / scalingDelay;
 
+		if (displayOptions.getOption(BDisplayOptions.Coordinates)) {
+			displayCoordinates();
+		}
+		else {
+			removeDisplayedCoordinates();
+		}
+		if (displayOptions.getOption(BDisplayOptions.CellUsage)) {
+
+		}
+
 		drawGates();
 
 		drawOverlay();
@@ -336,9 +172,114 @@ public class DrawableCircuit implements Drawable {
 		for (DrawableField f : this.fields) {
 			f.draw();
 		}
-
+		
 		for (DrawableDroplet d : this.droplets) {
 			d.draw();
+		}
+	}
+
+	/**
+	 * Draws the coordinates of the grid on top of and to the left of the grid.
+	 * This in fact uses the message center to display the numbers, so the
+	 * actual drawing will be done after the rest has been drawn.
+	 * 
+	 * @author jannis
+	 */
+	private void displayCoordinates() {
+		// calculate current dimensions first so the coordinates can be either
+		// displayed at the edge of the viewport (if the grid boundaries are
+		// beyond the viewport boundaries) or at the edge of the grid (if they
+		// are within)
+		int minX = Integer.MAX_VALUE,
+			minY = Integer.MAX_VALUE,
+			maxX = Integer.MIN_VALUE,
+			maxY = Integer.MIN_VALUE;
+
+		for (DrawableField f : this.fields) {
+			if (minX > f.field.x()) {
+				minX = f.field.x();
+			}
+			if (minY > f.field.y()) {
+				minY = f.field.y();
+			}
+			if (maxX < f.field.x()) {
+				maxX = f.field.x();
+			}
+			if (maxY < f.field.y()) {
+				maxY = f.field.y();
+			}
+		}
+		
+		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
+		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
+			topYCoord = this.yCoordOnScreen(maxY + 1);
+		}
+		float leftXCoord = -Gdx.graphics.getWidth() / 2f + 32;
+		if (leftXCoord < this.xCoordOnScreen(minX - 1)) {
+			leftXCoord = this.xCoordOnScreen(minX - 1);
+		}
+		
+		// Defines when numbers should start fading and be completely hidden
+		float startFadingAtScale = 16f;
+		float endFadingAtScale = 12f;
+		
+		Color col = Color.WHITE.cpy();
+		if (this.smoothScaleX < startFadingAtScale) {
+			if (this.smoothScaleX > endFadingAtScale) {
+				float alpha = 1f - ((startFadingAtScale - smoothScaleX) / (startFadingAtScale - endFadingAtScale));
+				col.a = alpha;
+			} else {
+				// TODO: don't draw!
+				col.a = 0;
+			}
+		}
+		
+		// indeed draw, top first, then left
+		for (int i = minX; i < maxX + 1; i++) {
+			this.parent.mc.addHUDMessage(
+					this.hashCode() + i,	// unique ID for each message
+					Integer.toString(i),	// message
+					this.xCoordOnScreen(i),	// x
+					topYCoord, 				// y
+					col);					// message color, used for fading
+		}
+		
+		for (int i = minY; i < maxY + 1; i++) {
+			this.parent.mc.addHUDMessage(
+					this.hashCode() + maxX + Math.abs(minY) + 1 + i,
+				// unique ID for each message, starting after the previous ids
+
+					Integer.toString(i),	// message
+					leftXCoord,				// x
+					this.yCoordOnScreen(i), // y
+					col);					// message color, used for fading
+		}
+	}
+	
+	private void removeDisplayedCoordinates() {
+		int minX = Integer.MAX_VALUE,
+			minY = Integer.MAX_VALUE,
+			maxX = Integer.MIN_VALUE,
+			maxY = Integer.MIN_VALUE;
+
+		for (DrawableField f : this.fields) {
+			if (minX > f.field.x()) {
+				minX = f.field.x();
+			}
+			if (minY > f.field.y()) {
+				minY = f.field.y();
+			}
+			if (maxX < f.field.x()) {
+				maxX = f.field.x();
+			}
+			if (maxY < f.field.y()) {
+				maxY = f.field.y();
+			}
+		}
+		
+		// remove all HUD messages
+		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
+			this.parent.mc.removeHUDMessage(this.hashCode() + i);
 		}
 	}
 
@@ -437,6 +378,18 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
+
+	public void toggleShowUsage() {
+		boolean doIt = displayOptions.toggleOption(BDisplayOptions.CellUsage);
+		if (doIt) {
+			data.computeCellUsage();
+		}
+	}
+
+	public void toggleShowDroplets() {
+		boolean showDroplets = displayOptions.toggleOption(BDisplayOptions.Droplets);
+		droplets.forEach(d -> {d.isVisible=showDroplets;});
+	}
 
 	/**
 	 * retrieves the current x scaling factor

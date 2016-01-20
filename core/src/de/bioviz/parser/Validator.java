@@ -27,18 +27,20 @@ public class Validator {
 	 * actually a position of the chip
 	 *
 	 * @param drops
-	 * 		Droplets, whose positions should be valided
+	 * 		Droplets, whose positions should be validated
 	 * @param points
 	 * 		The possible positions of
 	 * @return List of errors
 	 */
-	static ArrayList<String> checkPathsForPositions(ArrayList<Droplet> drops, Set<Point> points) {
+	static ArrayList<String> checkPathsForPositions(ArrayList<Droplet> drops,
+													Set<Point> points) {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (Droplet drop : drops) {
 			Vector<Point> ps = drop.getPositions();
 			ps.forEach(p -> {
 				if (!points.contains(p)) {
-					errors.add("Droplet " + drop.getID() + ": position " + p + " of route not on grid!");
+					errors.add("Droplet " + drop.getID() + ": position " + p +
+							   " of route not on grid!");
 				}
 			});
 		}
@@ -46,8 +48,32 @@ public class Validator {
 		return errors;
 	}
 
+	static ArrayList<String> checkPathForBlockages(Biochip chip) {
+		Set<Droplet> droplets = chip.getDroplets();
+		ArrayList<String> errors = new ArrayList<String>();
+
+		for (Droplet drop : droplets) {
+			Vector<Point> positions = drop.getPositions();
+			for (int i = 0; i < positions.size(); i++) {
+				Point pos = positions.get(i);
+				if (chip.hasFieldAt(pos)) {
+					int timestep = i + drop.getSpawnTime();
+					BiochipField field = chip.getFieldAt(pos);
+					if (field.isBlocked(timestep)) {
+						errors.add("Droplet " + drop.getID() +
+								   " moves into blockage at " + pos +
+								   " in time step " + timestep);
+					}
+				}
+			}
+		}
+
+		return errors;
+	}
+
 	/**
-	 * This method checks whether droplets only move a single cell in horizontal
+	 * This method checks whether droplets only move a single cell in
+	 * horizontal
 	 * or vertical direction in one time step
 	 *
 	 * @param drops
@@ -58,19 +84,26 @@ public class Validator {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (Droplet drop : drops) {
 			Vector<Point> points = drop.getPositions();
-//			logger.debug("Evaluating router of length {} for droplet {}",points.size(),drop.getID());
+//			logger.debug("Evaluating router of length {} for droplet {}",
+// points.size(),drop.getID());
 
 			if (points.isEmpty()) {
-				errors.add("Droplet " + drop.getID() + " has no route attached to it!");
-			} else {
+				errors.add("Droplet " + drop.getID() +
+						   " has no route attached to it!");
+			}
+			else {
 				if (points.size() >= 2) {
 					Point prev = points.get(0);
 					for (int i = 1; i < points.size(); i++) {
 						Point curr = points.get(i);
 //						logger.debug("looking at points {} and {}",prev,curr);
-//						logger.debug("reachable: {}",Point.reachable(prev,curr));
+//						logger.debug("reachable: {}",Point.reachable(prev,
+// curr));
 						if (!Point.reachable(prev, curr)) {
-							errors.add("Droplet " + drop.getID() + ": Jump in route from " + prev + " to " + curr + "!");
+							errors.add("Droplet " + drop.getID() +
+									   ": Jump in route from " + prev + " to" +
+									   " " +
+									   curr + "!");
 						}
 						prev = curr;
 					}
@@ -94,7 +127,8 @@ public class Validator {
 	 * @note This method will generate error messages even if one cell gets
 	 * assigned the same pin multiple times.
 	 */
-	static ArrayList<String> checkMultiplePinAssignments(Collection<Pin> pins) {
+	static ArrayList<String> checkMultiplePinAssignments(Collection<Pin>
+																 pins) {
 		ArrayList<Point> points = new ArrayList<>();
 		ArrayList<String> errors = new ArrayList<String>();
 
@@ -102,12 +136,16 @@ public class Validator {
 			points.addAll(pin.cells);
 		}
 
-		Map<Point, Long> counts = points.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+		Map<Point, Long> counts = points.stream().collect(
+				Collectors.groupingBy(e -> e, Collectors.counting()));
 
 		for (Map.Entry<Point, Long> e : counts.entrySet()) {
 			long count = e.getValue();
 			if (count > 1) {
-				errors.add("Cell " + e.getKey() + " has multiple pins assigned: " + count);
+				errors.add(
+						"Cell " + e.getKey() + " has multiple pins assigned:" +
+						" " +
+						count);
 			}
 		}
 
@@ -124,7 +162,9 @@ public class Validator {
 	 * 		List of actuations given on the pin level (might be nulll)
 	 * @return List of errors
 	 */
-	static ArrayList<String> checkActuationVectorLengths(HashMap<Point, ActuationVector> cellActuations, HashMap<Integer, ActuationVector> pinActuations) {
+	static ArrayList<String> checkActuationVectorLengths(HashMap<Point,
+			ActuationVector> cellActuations, HashMap<Integer, ActuationVector>
+			pinActuations) {
 		ArrayList<String> errors = new ArrayList<String>();
 
 		Integer cellActs = null;
@@ -132,11 +172,13 @@ public class Validator {
 		boolean addedCellError = false;
 
 		if (cellActuations != null && !cellActuations.isEmpty()) {
-			for (Map.Entry<Point, ActuationVector> pair : cellActuations.entrySet()) {
+			for (Map.Entry<Point, ActuationVector> pair : cellActuations
+					.entrySet()) {
 				int len = pair.getValue().size();
 				if (cellActs == null) {
 					cellActs = len;
-				} else {
+				}
+				else {
 					if (len != cellActs && !addedCellError) {
 						errors.add("Different lengths in cell actuations");
 						addedCellError = true;
@@ -148,17 +190,22 @@ public class Validator {
 		boolean addedPinError = false;
 		boolean diffError = false;
 		if (pinActuations != null && !pinActuations.isEmpty()) {
-			for (Map.Entry<Integer, ActuationVector> pair : pinActuations.entrySet()) {
+			for (Map.Entry<Integer, ActuationVector> pair : pinActuations
+					.entrySet()) {
 				int len = pair.getValue().size();
 				if (pinActs == null) {
 					pinActs = len;
-				} else {
-					if (cellActs != null && len != cellActs && !addedPinError) {
+				}
+				else {
+					if (cellActs != null && len != cellActs &&
+						!addedPinError) {
 						errors.add("Different lengths in pin actuations");
 						addedPinError = true;
 					}
 					if (pinActs != -1 && pinActs != len && !diffError) {
-						errors.add("Different lengths between cell and pin actuations");
+						errors.add(
+								"Different lengths between cell and pin " +
+								"actuations");
 						diffError = true;
 					}
 				}
@@ -182,7 +229,8 @@ public class Validator {
 	 * 		detectors
 	 * @return List of errors
 	 */
-	public static ArrayList<String> checkForDetectorPositions(Biochip chip, ArrayList<Detector> detectors, boolean removeWrongDetectors) {
+	public static ArrayList<String> checkForDetectorPositions(Biochip chip,
+															  ArrayList<Detector> detectors, boolean removeWrongDetectors) {
 		ArrayList<String> errors = new ArrayList<String>();
 
 		if (detectors != null && !detectors.isEmpty()) {
@@ -192,7 +240,8 @@ public class Validator {
 				try {
 					chip.getFieldAt(pos);
 				} catch (RuntimeException e) {
-					String msg = "Can not place detectors at position " + pos + ". Position does not exist on chip.";
+					String msg = "Can not place detectors at position " + pos +
+								 ". Position does not exist on chip.";
 					if (removeWrongDetectors) {
 						removeList.add(det);
 						msg = msg + " Removed erroneous detector from list.";
@@ -205,7 +254,8 @@ public class Validator {
 		return errors;
 	}
 
-	public static String checkOutsidePosition(Biochip chip, String type, Pair<Point, Direction> dir) {
+	public static String checkOutsidePosition(Biochip chip, String type,
+											  Pair<Point, Direction> dir) {
 		String msg = "";
 		boolean targetExists = true;
 		boolean sourceExists = true;
@@ -227,20 +277,27 @@ public class Validator {
 
 
 		if (!targetExists) {
-			msg = msg + type + " target " + dir.fst + " does not exist! [" + dir + "] ";
+			msg = msg + type + " target " + dir.fst + " does not exist! [" +
+				  dir + "] ";
 		}
 		if (sourceExists) {
-			msg = msg + type + " source " + source + " is within the chip! [" + dir + "]";
+			msg = msg + type + " source " + source + " is within the chip! [" +
+				  dir + "]";
 		}
 
 		return msg;
 	}
 
-	public static ArrayList<String> checkSinkPositions(Biochip chip, ArrayList<Pair<Point, Direction>> sinks, boolean removeWrongDirs) {
+	public static ArrayList<String> checkSinkPositions(Biochip chip,
+													   ArrayList<Pair<Point,
+															   Direction>>
+															   sinks, boolean
+															   removeWrongDirs) {
 		ArrayList<String> errors = new ArrayList<String>();
 
 		if (sinks != null && !sinks.isEmpty()) {
-			ArrayList<Pair<Point, Direction>> removeList = new ArrayList<Pair<Point, Direction>>();
+			ArrayList<Pair<Point, Direction>> removeList =
+					new ArrayList<Pair<Point, Direction>>();
 			for (Pair<Point, Direction> sink : sinks) {
 				String msg = checkOutsidePosition(chip, "Sink", sink);
 				if (!msg.isEmpty()) {
@@ -295,15 +352,19 @@ public class Validator {
 		if (v1 != null && v1.size() == v2.size()) {
 			logger.debug("Comparing actuation vectors {} <-> {}", v1, v2);
 			for (int i = 0; i < v1.size(); i++) {
-				ActuationVector.Actuation a = v1.get(i);
-				ActuationVector.Actuation b = v2.get(i);
+				Actuation a = v1.get(i);
+				Actuation b = v2.get(i);
 				if (a != b) {
 					if (strong) {
-						errors.add("Cell and pin actuations for " + what + " are not strongly compatible.");
+						errors.add("Cell and pin actuations for " + what +
+								   " are not strongly compatible.");
 						break;
-					} else {
-						if (a != ActuationVector.Actuation.DONTCARE && b != ActuationVector.Actuation.DONTCARE) {
-							errors.add("Cell and pin actuations for " + what + " are not weakly compatible.");
+					}
+					else {
+						if (a != Actuation.DONTCARE &&
+							b != Actuation.DONTCARE) {
+							errors.add("Cell and pin actuations for " + what +
+									   " are not weakly compatible.");
 							break;
 						}
 					}
@@ -325,7 +386,8 @@ public class Validator {
 		attached to the cell. Note that not necessarily both  (in this case the
 		pin actuation) actuations need to be specified
 		 */
-		//logger.debug("cellActuations.entrySet()={}", cellActuations.entrySet());
+		//logger.debug("cellActuations.entrySet()={}", cellActuations.entrySet
+		// ());
 		for (Map.Entry<Point, ActuationVector> e : cellActuations.entrySet()) {
 			Point p = e.getKey();
 			ActuationVector cellActVec = e.getValue();
@@ -336,20 +398,24 @@ public class Validator {
 			if (pin != null) {
 				ActuationVector pinActVec = chip.pinActuations.get(pin.pinID);
 				//logger.debug("pin={} pinActVec={}", pin, pinActVec);
-				compatibility(pinActVec, cellActVec, errors, strongCompatibility, "field at " + p + " and pin " + pin.pinID);
+				compatibility(pinActVec, cellActVec, errors,
+							  strongCompatibility,
+							  "field at " + p + " and pin " + pin.pinID);
 			}
 		}
 
 
 		/*
-		Check that every pin actuation matches with the cell actuations associated
+		Check that every pin actuation matches with the cell actuations
+		associated
 		with this pin. Note that not necessarily both  (in this case the
 		cell actuations) actuations need to be specified. It is necessary to
 		check the compatibility in both directions (cell -> pin & pin -> cells)
 		as it is possible that both inputs in the file specify different sets
 		 */
 
-		//logger.debug("pinActuations.entrySet().size()={}",pinActuations.entrySet().size());
+		//logger.debug("pinActuations.entrySet().size()={}",pinActuations
+		// .entrySet().size());
 		for (
 				Map.Entry<Integer, ActuationVector> e
 				: pinActuations.entrySet())
@@ -360,7 +426,8 @@ public class Validator {
 			List<BiochipField> fields = chip.getFieldsForPin(pinID);
 
 			//logger.debug("Entry: {}",e);
-			//logger.debug("Working on pin actuation vector for pin {}:{}",pinID,pinActVec);
+			//logger.debug("Working on pin actuation vector for pin {}:{}",
+			// pinID,pinActVec);
 
 			final int n = pinActVec.size();
 
@@ -369,7 +436,9 @@ public class Validator {
 					ActuationVector cellActVec = f.actVec;
 					//logger.debug("pin -> cell: comparing {} and {}",pinActVec,cellActVec);
 					compatibility(cellActVec, pinActVec, errors,
-							strongCompatibility, "pin with ID " + pinID + " and cell at " + f.pos);
+								  strongCompatibility,
+								  "pin with ID " + pinID + " and cell at " +
+								  f.pos);
 				}
 
 			}

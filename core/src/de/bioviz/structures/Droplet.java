@@ -26,6 +26,14 @@ public class Droplet {
 		return positions;
 	}
 
+	/**
+	 *
+	 * @return Length of the route of this droplet.
+	 */
+	public int getRouteLength() {
+		return positions.size();
+	}
+
 	public float smoothX, smoothY;
 
 	private float targetX;
