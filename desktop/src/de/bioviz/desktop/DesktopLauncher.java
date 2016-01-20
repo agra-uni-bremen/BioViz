@@ -1058,6 +1058,7 @@ public class DesktopLauncher extends JFrame {
 							prefs.put("saveFolder",
 											fileDialog.getSelectedFile()
 													.getAbsolutePath());
+
 							currentViz.saveSVG(
 									fileDialog.getSelectedFile()
 											.getAbsolutePath());
