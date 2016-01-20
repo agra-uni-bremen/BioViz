@@ -340,14 +340,14 @@ public class DesktopLauncher extends JFrame {
 				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.Pins));
 
-		JButton stIconButton = new JButton("Source/Target icons");
+		JButton stIconButton = new JButton("Net Icons");
 		stIconButton.setPreferredSize(new Dimension(buttonWidth,
 									stIconButton.getPreferredSize().height));
 		stIconButton.addActionListener(
 				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.SourceTargetIcons));
 
-		JButton stIDButton = new JButton("Source/Target IDs");
+		JButton stIDButton = new JButton("Net IDs");
 		stIDButton.setPreferredSize(new Dimension(buttonWidth,
 								  	stIDButton.getPreferredSize().height));
 		stIDButton.addActionListener(
@@ -525,7 +525,12 @@ public class DesktopLauncher extends JFrame {
 					+ e.getStackTrace());
 		}
 
-		File file = askForFile();
+		File file;
+		if (args.length <= 0) {
+			file = askForFile();
+		} else {
+			file = new File(args[0]);
+		}
 		JFrame frame = new DesktopLauncher(file);
 
 
@@ -1050,7 +1055,7 @@ public class DesktopLauncher extends JFrame {
 						int fcresult = fileDialog.showSaveDialog(null);
 
 						if (fcresult == JFileChooser.APPROVE_OPTION) {
-							prefs.putString("saveFolder",
+							prefs.put("saveFolder",
 											fileDialog.getSelectedFile()
 													.getAbsolutePath());
 							currentViz.saveSVG(

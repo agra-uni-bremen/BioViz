@@ -167,9 +167,9 @@ public class DrawableField extends DrawableSprite {
 														   .CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
-			float scalingFactor = 4f;
+			float scalingFactor = 2f;
 
-			result.add(new Color(0, this.field.usage / scalingFactor, 0, 0));
+			result.add(new Color(this.field.usage / scalingFactor, this.field.usage / scalingFactor, this.field.usage / scalingFactor, 0));
 			++colorOverlayCount;
 		}
 
@@ -230,7 +230,7 @@ public class DrawableField extends DrawableSprite {
 
 		DisplayValues vals = getDisplayValues();
 
-		displayText(vals.msg);
+		//displayText(vals.msg);
 		this.addLOD(Float.MAX_VALUE, vals.texture);
 
 
