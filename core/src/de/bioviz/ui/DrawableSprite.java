@@ -5,8 +5,6 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -14,14 +12,12 @@ import de.bioviz.messages.MessageCenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * This is a wrapper for the 2d drawing methods.
  *
  * @author Jannis Stoppe
  */
 public abstract class DrawableSprite implements Drawable {
-
 
 	protected Sprite sprite;
 	private static TextureManager textures;
@@ -53,16 +49,17 @@ public abstract class DrawableSprite implements Drawable {
 	 * @param texture
 	 * 		the texture to use
 	 */
-	public DrawableSprite(TextureE texture, float sizeX, float sizeY,
-		  BioViz parent) {
+	public DrawableSprite(TextureE texture, float sizeX, float sizeY, BioViz
+			parent) {
 		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
 		}
 
 
 		if (textures == null) {
-			textures = parent.textures;
+			textures = new TextureManager();
 		}
+
 
 		currentTexture = texture;
 		this.addLOD(Float.MAX_VALUE, texture);
@@ -71,8 +68,7 @@ public abstract class DrawableSprite implements Drawable {
 		this.viz = parent;
 	}
 
-	private void initializeSprite(float sizeX, float sizeY, TextureRegion
-			region) {
+	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
 		sprite = new Sprite(region);
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
@@ -89,7 +85,7 @@ public abstract class DrawableSprite implements Drawable {
 	 * @brief Displays a text above the sprite
 	 */
 	public void displayText(String msg) {
-		MessageCenter mc = viz.mc;
+		MessageCenter mc = viz.messageCenter;
 		if (msg != null) {
 			mc.addHUDMessage(this.hashCode(), msg, this.x, this.y);
 		}
@@ -100,16 +96,12 @@ public abstract class DrawableSprite implements Drawable {
 
 	public void draw() {
 
-
-
 		if (isVisible) {
 
 			if (sprite == null) {
 				TextureRegion region = textures.getTexture(currentTexture);
 				initializeSprite(1, 1, region);
 			}
-
-
 
 			// if LOD is set, enable LOD calculation and set
 			// sprite accordingly
@@ -126,7 +118,6 @@ public abstract class DrawableSprite implements Drawable {
 					currentTexture =
 							levelOfDetailTextures.get(bestLODFactor);
 				}
-
 
 				this.setTexture();
 			}
@@ -146,6 +137,8 @@ public abstract class DrawableSprite implements Drawable {
 		this.scaleX = dimX / this.sprite.getWidth();
 		this.scaleY = dimY / this.sprite.getHeight();
 	}
+
+
 
 	// TODO what is the rationale of this method?
 	private void setTexture() {
@@ -216,8 +209,7 @@ public abstract class DrawableSprite implements Drawable {
 			this.targetColor = color;
 			Date d = new Date();
 			this.colorTransitionStartTime = d.getTime();
-			this.colorTransitionEndTime = d.getTime() +
-										  colorTransitionDuration;
+			this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
 		}
 	}
 	

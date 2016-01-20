@@ -61,8 +61,8 @@ public class Validator {
 					BiochipField field = chip.getFieldAt(pos);
 					if (field.isBlocked(timestep)) {
 						errors.add("Droplet " + drop.getID() +
-								   " moves into blockage at " + pos +
-								   " in time step " + timestep);
+								" moves into blockage at " + pos +
+								" in time step " + timestep);
 					}
 				}
 			}
