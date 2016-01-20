@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="256" height="256">
+  <title>das defs-Element und das use-Element</title>
+  <desc>Referenzen mit use</desc>
+
+  <defs>
+  </defs>
+
+  <g
+     id="StepMarker"
+     transform="translate(0,-796.36218)">
+    <path
+       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:16;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 193.19141,108.63867 c 2.5119,3.49984 4.256,7.36307 5.25781,11.36133 L 32,120 c -4.462527,-0.0631 -8.113936,3.53703 -8.113936,8 0,4.46297 3.651409,8.06311 8.113936,8 l 166.4668,0 c -0.99853,3.96731 -2.75162,7.77928 -5.27539,11.20898 l 52.44336,-19.28515 z"
+       transform="translate(0,796.36218)"
+       id="path4296"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccsccccc" />
+  </g>
+
+  <use xlink:href="#StepMarker" />
+</svg>
+      

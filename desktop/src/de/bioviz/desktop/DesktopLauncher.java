@@ -304,12 +304,13 @@ public class DesktopLauncher extends JFrame {
 
 		displayRouteLengthSlider =
 				new JSlider(JSlider.HORIZONTAL, 0, routeLengthMax,
-						DrawableRoute.timesteps);
+						DrawableRoute.routeDisplayLength);
 		displayRouteLengthSlider.setPreferredSize(
 				new Dimension(sliderWidth, sliderHeight));
 		displayRouteLengthSlider.addChangeListener(
-				ce -> DrawableRoute.setTimesteps(
-					((JSlider) ce.getSource()).getValue()));
+				ce -> DrawableRoute.routeDisplayLength =
+						((JSlider) ce.getSource()).getValue());
+
 
 		JButton adjacencyButton = new JButton("Adjacency");
 		adjacencyButton.setPreferredSize(new Dimension(buttonWidth,
@@ -1003,7 +1004,6 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
-
 			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
