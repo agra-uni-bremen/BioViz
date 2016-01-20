@@ -293,7 +293,13 @@ public class DesktopLauncher extends JFrame {
 				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.Actuations));
 
-
+		JButton interferenceButton = new JButton("Interference");
+		interferenceButton.setPreferredSize(new Dimension(buttonWidth,
+									actuationButton.getPreferredSize().height));
+		interferenceButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.InterferenceRegion));
+		
 		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, 1, 1);
 		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		timeSlider.addChangeListener(
@@ -399,6 +405,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(usageButton);
 		panel.add(stIconButton);
 		panel.add(stIDButton);
+		panel.add(interferenceButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);
