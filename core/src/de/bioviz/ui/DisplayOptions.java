@@ -17,6 +17,7 @@ public class DisplayOptions {
 		for (BDisplayOptions o :BDisplayOptions.values()) {
 			setOption(o,false);
 		}
+		setOption(BDisplayOptions.SinkIcon,true);
 		setOption(BDisplayOptions.SourceTargetIcons,true);
 		setOption(BDisplayOptions.SourceTargetIDs,true);
 		setOption(BDisplayOptions.Droplets,true);
