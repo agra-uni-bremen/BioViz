@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
+import de.bioviz.structures.Droplet;
 import de.bioviz.parser.BioParser;
 
 import org.slf4j.Logger;
@@ -34,6 +35,14 @@ import java.util.Vector;
 public class BioViz implements ApplicationListener {
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
+	
+	/**
+	 * Sets the duration of intermediate animations in ms.
+	 */
+	public static void setAnimationDuration(int value) {
+		Droplet.movementTransitionDuration = value;
+		DrawableSprite.colorTransitionDuration = value;
+	}
 
 
 	public DrawableCircuit currentCircuit;

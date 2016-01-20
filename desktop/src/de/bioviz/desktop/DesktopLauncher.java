@@ -260,6 +260,11 @@ public class DesktopLauncher extends JFrame {
 								  	openButton.getPreferredSize().height));
 		loadCB = new LoadFileCallback();
 		openButton.addActionListener(e -> loadCB.bioVizEvent());
+		
+		JButton preferencesButton = new JButton("Preferences");
+		preferencesButton.setPreferredSize(new Dimension(buttonWidth,
+								  	openButton.getPreferredSize().height));
+		preferencesButton.addActionListener(e -> {showSettings();});
 
 		JButton saveButton = new JButton("Save SVG");
 		saveButton.setPreferredSize(new Dimension(buttonWidth,
@@ -378,6 +383,8 @@ public class DesktopLauncher extends JFrame {
 				new Dimension(buttonWidth, preferredButtonHeight));
 		JSeparator invisiSep = new JSeparator(SwingConstants.HORIZONTAL);
 		invisiSep.setPreferredSize(new Dimension(buttonWidth, 0));
+		JSeparator prefsSep = new JSeparator(SwingConstants.HORIZONTAL);
+		prefsSep.setPreferredSize(new Dimension(buttonWidth, preferredButtonHeight));
 
 
 		panel.add(new JLabel("Files"));
@@ -408,6 +415,8 @@ public class DesktopLauncher extends JFrame {
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
 		panel.add(timeSlider);
+		panel.add(prefsSep);
+		panel.add(preferencesButton);
 		return panel;
 	}
 
@@ -587,6 +596,13 @@ public class DesktopLauncher extends JFrame {
 				+ je.getStackTrace());
 		}
 
+	}
+	
+	private static void showSettings() {
+		logger.debug("Opening preferences window...");
+		PreferencesWindow pw = new PreferencesWindow();
+		pw.setVisible(true);
+		logger.debug("Done opening preferences window.");
 	}
 
 	/**

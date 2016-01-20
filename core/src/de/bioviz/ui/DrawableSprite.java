@@ -30,7 +30,7 @@ public abstract class DrawableSprite implements Drawable {
 	private Color originColor = Color.WHITE.cpy();
 	private long colorTransitionStartTime = 0;
 	private long colorTransitionEndTime = 0;
-	private final long colorTransitionDuration = 500;
+	public static int colorTransitionDuration = 500;
 	private HashMap<Float, TextureE> levelOfDetailTextures = new HashMap<>();
 	private TextureE currentTexture;
 	protected boolean isVisible = true;
