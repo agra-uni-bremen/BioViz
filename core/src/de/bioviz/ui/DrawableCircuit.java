@@ -47,8 +47,8 @@ public class DrawableCircuit implements Drawable {
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 
 
-	private Vector<DrawableField> fields = new Vector<>();
-	private Vector<DrawableDroplet> droplets = new Vector<>();
+	public Vector<DrawableField> fields = new Vector<>();
+	public Vector<DrawableDroplet> droplets = new Vector<>();
 
 	public DisplayOptions displayOptions = new DisplayOptions();
 
@@ -82,6 +82,7 @@ public class DrawableCircuit implements Drawable {
 			throw new RuntimeException("circuit parent is null");
 		}
 	}
+
 
 	/**
 	 * Creates a drawable entity based on the data given.
@@ -176,6 +177,7 @@ public class DrawableCircuit implements Drawable {
 		for (DrawableDroplet d : this.droplets) {
 			d.draw();
 		}
+	
 	}
 
 	/**
@@ -236,7 +238,7 @@ public class DrawableCircuit implements Drawable {
 		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
-			this.parent.mc.addHUDMessage(
+			this.parent.messageCenter.addHUDMessage(
 					this.hashCode() + i,	// unique ID for each message
 					Integer.toString(i),	// message
 					this.xCoordOnScreen(i),	// x
@@ -245,7 +247,7 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		for (int i = minY; i < maxY + 1; i++) {
-			this.parent.mc.addHUDMessage(
+			this.parent.messageCenter.addHUDMessage(
 					this.hashCode() + maxX + Math.abs(minY) + 1 + i,
 				// unique ID for each message, starting after the previous ids
 
@@ -279,7 +281,7 @@ public class DrawableCircuit implements Drawable {
 		
 		// remove all HUD messages
 		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
-			this.parent.mc.removeHUDMessage(this.hashCode() + i);
+			this.parent.messageCenter.removeHUDMessage(this.hashCode() + i);
 		}
 	}
 
@@ -531,25 +533,4 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	@Override
-	public String generateSVG() {
-		String result = "";
-		result +=
-				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-						this.data.getMinCoord().fst + " " +
-						(this.data.getMinCoord().snd - 1) + " " +
-						(this.data.getMaxCoord().fst + 1) + " " +
-						(this.data.getMaxCoord().snd + 1) +
-						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
-
-		for (Drawable d : this.fields) {
-			result += d.generateSVG();
-		}
-		for (Drawable d : this.droplets) {
-			result += d.generateSVG();
-		}
-
-		result += "</svg>";
-		return result;
-	}
 }

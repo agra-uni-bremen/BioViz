@@ -15,11 +15,11 @@ public class DrawableDroplet extends DrawableSprite {
 
 	public Droplet droplet;
 
-	private DrawableRoute route;
+	public DrawableRoute route;
 
 	private static Random randnum = null;
 
-	DrawableCircuit parentCircuit;
+	public DrawableCircuit parentCircuit;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
 		super(TextureE.Droplet, parent.parent);
@@ -36,18 +36,6 @@ public class DrawableDroplet extends DrawableSprite {
 		super.setColor(c);
 		route = new DrawableRoute(this);
 	}
-
-	@Override
-	public String generateSVG() {
-		return
-				"<image x=\"" + this.droplet.smoothX + "\" " +
-				"y=\"" +
-				(-this.droplet.smoothY + parentCircuit.data.getMaxCoord().snd -
-				 1) + "\" " +
-				"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
-				this.route.generateSVG();
-	}
-
 
 	public Color getDisplayColor() {
 
@@ -113,7 +101,6 @@ public class DrawableDroplet extends DrawableSprite {
 		logger.trace("droplet msg after fluidNames option: {}",msg);
 		return msg;
 	}
-
 	@Override
 	public void draw() {
 
@@ -126,12 +113,10 @@ public class DrawableDroplet extends DrawableSprite {
 
 			if (circ.currentTime < droplet.getSpawnTime()) {
 				p = droplet.getFirstPosition();
-			}
-			else if (circ.currentTime > droplet.getMaxTime()) {
+			} else if (circ.currentTime > droplet.getMaxTime()) {
 				p = droplet.getLastPosition();
-			}
-		}
-		else {
+						}
+		} else {
 			withinTimeRange = true;
 		}
 
@@ -151,7 +136,6 @@ public class DrawableDroplet extends DrawableSprite {
 				this.y = yCoord;
 				this.scaleX = circ.smoothScaleX;
 				this.scaleY = circ.smoothScaleY;
-
 
 				String msg = getMsg();
 
