@@ -965,8 +965,8 @@ public class DesktopLauncher extends JFrame {
 					JColorChooser.showDialog(null, "Choose a Color", Color.red);
 			currentViz.selectedDroplet.setColor(
 					new com.badlogic.gdx.graphics.Color(
-							c.getRed(), c.getGreen(),
-							c.getBlue(), c.getAlpha()));
+							c.getRed() / 255f, c.getGreen() / 255f,
+							c.getBlue() / 255f, 1f));
 					}
 				});
 			} catch(Exception e) {
