@@ -13,6 +13,8 @@ public class Droplet {
 	
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 	
+	public static int movementTransitionDuration = 500;
+	
 	private Vector<Point> positions = new Vector<>();
 
 	private int id=0;
@@ -20,7 +22,7 @@ public class Droplet {
 	
 	private float movementDelay = 4f;
 	
-	private long movementTransitionStartTime = 0, movementTransitionEndTime = 0, movementTransitionDuration = 500;
+	private long movementTransitionStartTime = 0, movementTransitionEndTime = 0;
 
 	public Vector<Point> getPositions() {
 		return positions;
@@ -127,8 +129,11 @@ public class Droplet {
 			firstUpdate = false;
 		}
 		
-		float transitionProgress = Math.max(0, Math.min(1, (float)(new Date().getTime() - movementTransitionStartTime) / (float)(movementTransitionEndTime - movementTransitionStartTime)));
-		float totalProgress = (float)(-(Math.pow((transitionProgress - 1), 4)) + 1);
+		float totalProgress = 1;
+		if (movementTransitionStartTime != movementTransitionEndTime) {
+			float transitionProgress = Math.max(0, Math.min(1, (float)(new Date().getTime() - movementTransitionStartTime) / (float)(movementTransitionEndTime - movementTransitionStartTime)));
+			totalProgress = (float)(-(Math.pow((transitionProgress - 1), 4)) + 1);
+		}
 		
 		smoothX = this.originX * (1 - totalProgress) + this.targetX * totalProgress;
 		smoothY = this.originY * (1 - totalProgress) + this.targetY * totalProgress;
