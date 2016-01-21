@@ -26,7 +26,7 @@ public abstract class DrawableSprite implements Drawable {
 	private Color originColor = Color.WHITE.cpy();
 	private long colorTransitionStartTime = 0;
 	private long colorTransitionEndTime = 0;
-	private final long colorTransitionDuration = 500;
+	public static int colorTransitionDuration = 500;
 	private HashMap<Float, TextureE> levelOfDetailTextures = new HashMap<>();
 	private TextureE currentTexture;
 	protected boolean isVisible = true;
@@ -157,7 +157,7 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	public boolean isHovered() {
-		if (isVisible) {
+		if (isVisible && this.currentColor.a > 0) {
 			int mouseX = Gdx.input.getX();
 			int mouseY = Gdx.input.getY();
 			int resX = Gdx.graphics.getWidth();
@@ -204,7 +204,7 @@ public abstract class DrawableSprite implements Drawable {
 
 	public void setColor(Color color) {
 		if (!this.targetColor.equals(color)) {
-			//this.color = color;
+			logger.debug("setting colour to " + color);
 			originColor = this.currentColor;
 			this.targetColor = color;
 			Date d = new Date();

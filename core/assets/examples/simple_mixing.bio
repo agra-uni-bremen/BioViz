@@ -9,6 +9,19 @@ routes
 3 [11] (3,3) (4,3) (5,3)
 end
 
+fluids
+1 blood
+2 saliva
+3 acid
+end
+
+droplets
+1 1
+2 2
+3 3
+end
+
+
 mixers
 1 [5-10] (2,2) (3,3)
 end

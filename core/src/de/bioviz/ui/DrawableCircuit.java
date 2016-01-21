@@ -49,6 +49,7 @@ public class DrawableCircuit implements Drawable {
 
 	public Vector<DrawableField> fields = new Vector<>();
 	public Vector<DrawableDroplet> droplets = new Vector<>();
+	public Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
 
 	public DisplayOptions displayOptions = new DisplayOptions();
 

@@ -33,7 +33,7 @@ public class Biochip {
 	public final ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 
-	private HashMap<Integer, String> fluidTypes =
+	public HashMap<Integer, String> fluidTypes =
 			new HashMap<Integer, String>();
 
 	public void addFluidType(int fluidID, String fluidDescription) {
