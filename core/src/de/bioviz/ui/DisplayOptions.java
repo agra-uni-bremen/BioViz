@@ -25,6 +25,7 @@ public class DisplayOptions {
 		setOption(BDisplayOptions.DispenserIcon,true);
 		setOption(BDisplayOptions.DispenserID,true);
 		setOption(BDisplayOptions.DetectorIcon,true);
+		setOption(BDisplayOptions.FluidNames,true);
 	}
 
 	public boolean getOption(BDisplayOptions opt) {

@@ -333,6 +333,13 @@ public class DesktopLauncher extends JFrame {
 		displayFluidIDsButton.addActionListener(
 				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.FluidIDs));
+		
+		JButton displayFluidTypesButton = new JButton("Fluid Types");
+		displayFluidTypesButton.setPreferredSize(new Dimension(buttonWidth,
+						 	displayFluidIDsButton.getPreferredSize().height));
+		displayFluidTypesButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.FluidNames));
 
 		JButton pinButton = new JButton("Pins");
 		pinButton.setPreferredSize(new Dimension(buttonWidth,
@@ -394,6 +401,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(dropletButton);
 		panel.add(displayDropletIDsButton);
 		panel.add(displayFluidIDsButton);
+		panel.add(displayFluidTypesButton);
 		panel.add(pinButton);
 		panel.add(actuationButton);
 		panel.add(adjacencyButton);
@@ -552,6 +560,9 @@ public class DesktopLauncher extends JFrame {
 		java.util.prefs.Preferences prefs =
 			java.util.prefs.Preferences.userNodeForPackage(DesktopLauncher.class);
 		path = new File(prefs.get("lastFilePath", "."));
+
+
+		logger.debug("Open file choose with path {}",path);
 
 		JFileChooser fileDialog = new JFileChooser(path);
 		int choice = fileDialog.showOpenDialog(null);
