@@ -6,8 +6,12 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DrawableDroplet extends DrawableSprite {
+
+	static Logger logger = LoggerFactory.getLogger(DrawableDroplet.class);
 
 	public Droplet droplet;
 
@@ -47,10 +51,12 @@ public class DrawableDroplet extends DrawableSprite {
 
 			if (circ.currentTime < droplet.getSpawnTime()) {
 				p = droplet.getFirstPosition();
-			} else if (circ.currentTime > droplet.getMaxTime()) {
+			}
+			else if (circ.currentTime > droplet.getMaxTime()) {
 				p = droplet.getLastPosition();
 			}
-		} else {
+		}
+		else {
 			color = color.add(0, 0, 0, 1).clamp();
 		}
 
@@ -58,18 +64,41 @@ public class DrawableDroplet extends DrawableSprite {
 	}
 
 	public String getMsg() {
-		String msg = null;
+		String msg = "";
 
-		if (parentCircuit.displayOptions.getOption(BDisplayOptions.DropletIDs)) {
-			msg = Integer.toString(droplet.getID());
+		if (parentCircuit.displayOptions.getOption(
+				BDisplayOptions.DropletIDs)) {
+			msg = Integer.toString(droplet.getID())+ " ";
+
 		}
+		logger.trace("droplet msg after dropletIDs option: {}",msg);
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
 			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
 			if (fluidID != null) {
-				msg = fluidID.toString();
+				if (!msg.isEmpty()) {
+					msg += "-";
+				}
+				msg += " " + fluidID.toString() + " ";
 			}
+
 		}
+		logger.trace("droplet msg after fluidIDs option: {}",msg);
+		if (parentCircuit.displayOptions
+				.getOption(BDisplayOptions.FluidNames)) {
+			String fname = this.parentCircuit.data
+					.fluidType(this.droplet.getID());
+			//System.out.println("fname: " + fname);
+			//System.out.println(this.parentCircuit.data.fluidTypes);
+			if (fname != null) {
+				if (!msg.isEmpty()) {
+					msg += "-";
+				}
+				msg += " " + fname;
+			}
+
+		}
+		logger.trace("droplet msg after fluidNames option: {}",msg);
 		return msg;
 	}
 	@Override
@@ -84,7 +113,6 @@ public class DrawableDroplet extends DrawableSprite {
 
 			if (circ.currentTime < droplet.getSpawnTime()) {
 				p = droplet.getFirstPosition();
-			
 			} else if (circ.currentTime > droplet.getMaxTime()) {
 				p = droplet.getLastPosition();
 						}
@@ -109,8 +137,7 @@ public class DrawableDroplet extends DrawableSprite {
 				this.scaleX = circ.smoothScaleX;
 				this.scaleY = circ.smoothScaleY;
 
-
-				String msg= getMsg();
+				String msg = getMsg();
 
 				displayText(msg);
 
@@ -118,7 +145,8 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 		}
 		if (!withinTimeRange) {
-			// make sure that previous numbers are removed when the droplet is removed.
+			// make sure that previous numbers are removed when the droplet is
+			// removed.
 			displayText(null);
 		}
 	}
