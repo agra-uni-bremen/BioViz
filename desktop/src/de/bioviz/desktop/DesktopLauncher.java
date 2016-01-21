@@ -377,6 +377,13 @@ public class DesktopLauncher extends JFrame {
 				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.SourceTargetIDs));
 
+		JButton detectorsButton = new JButton("Detectors");
+		detectorsButton.setPreferredSize(new Dimension(buttonWidth,
+												  detectorsButton.getPreferredSize().height));
+		detectorsButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.DetectorIcon));
+
 
 		JButton nextStepButton = new JButton("->");
 		nextStepButton.addActionListener(
@@ -425,6 +432,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(usageButton);
 		panel.add(stIconButton);
 		panel.add(stIDButton);
+		panel.add(detectorsButton);
 		panel.add(interferenceButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
