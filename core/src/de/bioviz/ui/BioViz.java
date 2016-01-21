@@ -54,6 +54,7 @@ public class BioViz implements ApplicationListener {
 	private File bioFile;
 	private BioVizInputProcessor inputProcessor;
 	private SVGManager svgManager;
+	public DrawableDroplet selectedDroplet;
 
 	/**
 	 * This stores the last time a frame was rendered. Used to limit the
@@ -102,6 +103,7 @@ public class BioViz implements ApplicationListener {
 			Vector<BioVizEvent>();
 	private Vector<BioVizEvent> saveFileListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> closeFileListeners = new Vector<BioVizEvent>();
+	private Vector<BioVizEvent> pickColorListeners = new Vector<BioVizEvent>();
 	static Logger logger = LoggerFactory.getLogger(BioViz.class);
 
 	private boolean loadFileOnUpdate = true;
@@ -429,6 +431,18 @@ public class BioViz implements ApplicationListener {
 		logger.trace("Calling " + this.closeFileListeners.size() +
 					 " listeners for close");
 		for (BioVizEvent listener : this.closeFileListeners) {
+			listener.bioVizEvent();
+		}
+	}
+	
+	public void addPickColourListener(BioVizEvent listener) {
+		pickColorListeners.add(listener);
+	}
+
+	void callPickColourListeners() {
+		logger.trace("Calling " + this.closeFileListeners.size() +
+				" listeners for picking a colour");
+		for (BioVizEvent listener : this.pickColorListeners) {
 			listener.bioVizEvent();
 		}
 	}

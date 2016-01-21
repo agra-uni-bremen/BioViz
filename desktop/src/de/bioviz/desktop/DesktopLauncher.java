@@ -1,6 +1,7 @@
 package de.bioviz.desktop;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -17,6 +18,7 @@ import java.util.prefs.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -215,6 +217,8 @@ public class DesktopLauncher extends JFrame {
 
 		saveCB = new SaveFileCallback();
 		currentViz.addSaveFileListener(saveCB);
+		
+		currentViz.addPickColourListener(new colourPickCallback());
 
 		try {
 			this.setIconImage(
@@ -948,6 +952,30 @@ public class DesktopLauncher extends JFrame {
 					Integer.toString(currentViz.currentCircuit.currentTime));
 
 		}
+	}
+	
+	private class colourPickCallback implements BioVizEvent {
+
+		@Override
+		public void bioVizEvent() {
+			try {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+			Color c =
+					JColorChooser.showDialog(null, "Choose a Color", Color.red);
+			currentViz.selectedDroplet.setColor(
+					new com.badlogic.gdx.graphics.Color(
+							c.getRed(), c.getGreen(),
+							c.getBlue(), c.getAlpha()));
+					}
+				});
+			} catch(Exception e) {
+				logger.error("Could not start colour picker:\n"
+						+ e.getStackTrace());
+			}
+			
+		}
+		
 	}
 
 	/**
