@@ -4,6 +4,8 @@ package de.bioviz.parser;
 import de.bioviz.parser.generated.Bio;
 import de.bioviz.parser.generated.BioLexerGrammar;
 import de.bioviz.structures.Biochip;
+import de.bioviz.ui.BioViz;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -17,14 +19,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Created by keszocze on 21.07.15.
+ * @author Oliver Keszöcze
  */
 public class BioParser  {
 
     static private Logger logger = LoggerFactory.getLogger(BioParser.class);
 
 
-    public static Biochip parseFile(final File file) {
+    public static Biochip parseFile(final File file, BioViz viz) {
         String content = null;
         try {
             content = new String(Files.readAllBytes(Paths.get(file.toURI())));
@@ -32,10 +34,10 @@ public class BioParser  {
             logger.error("Failed to parse file \"{}\".", file);
             return null;
         }
-        return parse(content);
+        return parse(content, viz);
     }
 
-    public static Biochip parse(final String inputString) {
+    public static Biochip parse(final String inputString, BioViz viz) {
 
         logger.trace("Parsing file of length {}",inputString.length());
 
@@ -44,14 +46,24 @@ public class BioParser  {
             BioLexerGrammar lexer = new BioLexerGrammar(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             Bio parser = new Bio(tokens);
+            parser.removeErrorListeners();
+            BioErrorListener errorListener = new BioErrorListener();
+            parser.addErrorListener(errorListener);
             ParseTree tree = parser.bio(); // parse everything
 
-            ParseTreeWalker walker = new ParseTreeWalker();
-            // Walk the tree created during the parse, trigger callbacks
-            BioParserListener listener = new BioParserListener();
-            walker.walk(listener, tree);
-            return listener.getBiochip();
-
+            if (errorListener.hasErrors()) {
+                for (String msg : errorListener.getErrors()) {
+                    logger.error(msg);
+                }
+                return null;
+            }
+            else {
+                ParseTreeWalker walker = new ParseTreeWalker();
+                // Walk the tree created during the parse, trigger callbacks
+                BioParserListener listener = new BioParserListener(viz);
+                walker.walk(listener, tree);
+                return listener.getBiochip();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             // TODO do something with this exception

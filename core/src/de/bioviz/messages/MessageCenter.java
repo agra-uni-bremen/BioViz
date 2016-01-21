@@ -25,6 +25,13 @@ public class MessageCenter  {
 	public boolean hidden = false;
 
 	public static final int MAX_MESSAGES_IN_UI	= 5;
+	
+	BioViz parent;
+	
+	public MessageCenter(BioViz parent) {
+		this.parent = parent;
+		messages = new Vector<Message>();
+	}
 
 	public BitmapFont getFont() {
 		if (font == null)
@@ -46,10 +53,6 @@ public class MessageCenter  {
 		}
 	}
 	private HashMap<Integer, HUDMessage> HUDMessages = new HashMap<Integer, HUDMessage>();
-
-	public MessageCenter() {
-		messages = new Vector<Message>();
-	}
 
 	public boolean isHidden() {
 		return hidden;
@@ -90,7 +93,7 @@ public class MessageCenter  {
 			}
 
 			Matrix4 normalProjection = new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
-			BioViz.singleton.batch.setProjectionMatrix(normalProjection);
+			parent.batch.setProjectionMatrix(normalProjection);
 
 			int spacing = 18;
 			int yCoord = Gdx.graphics.getHeight() - spacing;
@@ -101,7 +104,7 @@ public class MessageCenter  {
 					font.setColor(Color.WHITE);
 				int start_x = spacing;
 				int start_y = yCoord;
-				font.draw(BioViz.singleton.batch, m.message, start_x, start_y); // TODO name of closestHit
+				font.draw(parent.batch, m.message, start_x, start_y); // TODO name of closestHit
 
 
 
@@ -113,7 +116,7 @@ public class MessageCenter  {
 				TextBounds tb = font.getBounds(s.message);
 				int x = (int) ((s.x - tb.width / 2f) + Gdx.graphics.getWidth() / 2);
 				int y = (int) ((s.y + tb.height / 2f) + Gdx.graphics.getHeight() / 2);
-				font.draw(BioViz.singleton.batch, s.message, x, y);
+				font.draw(parent.batch, s.message, x, y);
 			}
 
 			long curTime = System.currentTimeMillis();

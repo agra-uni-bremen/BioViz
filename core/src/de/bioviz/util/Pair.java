@@ -1,24 +1,66 @@
+
 package de.bioviz.util;
 
 /**
- * Created by keszocze on 27.07.15.
+ * A very simple tuple class.
+ *
+ * This class is necessary as, for no good reasons at all, Java does not come
+ * with any means of creating tuples.
+ *
+ * @param <K>
+ * 		Type for the first entry of the tuple
+ * @param <V>
+ * 		Type for the snd entry of the tuple
+ *
+ * @author Oliver Keszöcze
  */
 public class Pair<K, V> {
 
-	public final K first;
-	public final V second;
+	/**
+	 * The first entry of the tuple.
+	 */
+	public final K fst;
 
-	public static <K, V> Pair<K, V> mkPair(K first, V second) {
-		return new Pair<K, V>(first, second);
+	/**
+	 * The second entry of the tuple.
+	 */
+	public final V snd;
+
+
+	/**
+	 *
+	 * @param fst Value of the first entry of the pair
+	 * @param snd Value of the second entry of the pair
+	 * @param <K> Type of the first entry of the pair
+	 * @param <V> Type of the second entry of the pair
+	 * @return Pair of type (K,V) with values (fst,snd)
+	 */
+	public static <K, V> Pair<K, V> mkPair(final K fst, final V snd) {
+		return new Pair<K, V>(fst, snd);
 	}
 
-	public Pair(K first, V second) {
-		this.first = first;
-		this.second = second;
+	/**
+	 * @brief Creates a new pair containing the values provided as parameters.
+	 * @param fst Value of the first entry of the pair
+	 * @param snd Value of the second entry of the pair
+	 */
+	public Pair(final K fst, final V snd) {
+		this.fst = fst;
+		this.snd = snd;
 	}
 
+
+	/**
+	 * @param o
+	 * 		The object to compare against
+	 * @return True iff o is logically equivalent to the object
+	 * @brief Checks equality of the pair with another object.
+	 * <p>
+	 * An object is treated as equals if it also is a pair and the values in the
+	 * first and snd position are equal as determined by their equals() method.
+	 */
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 
 		if (this == o) {
 			return true;
@@ -28,11 +70,23 @@ public class Pair<K, V> {
 			return false;
 		}
 
-		return first.equals(((Pair)o).first) && second.equals(((Pair)o).second);
+		return fst.equals(((Pair) o).fst) && snd.equals(((Pair) o).snd);
 	}
 
+	@Override
+	/**
+	 * @return The sum of the hashcodes, i.e. fst.hashCode()+snd.hashCode()
+	 */
+	public int hashCode() {
+		return fst.hashCode() + snd.hashCode();
+	}
+
+	/**
+	 * @return String representing the Pair of the form '(' + first + ',' + snd
+	 * + ')'
+	 */
 	public String toString() {
-		return "(" + first + "," + second + ")";
+		return "(" + fst + "," + snd + ")";
 	}
 
 }

@@ -12,6 +12,7 @@ import de.bioviz.structures.Point;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -45,24 +46,20 @@ public class DrawableCircuit implements Drawable {
 
 	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
 
-	private boolean showUsage = false;
-	private boolean highlightAdjacency = false;
-	private boolean displayDropletIDs = false;
-	private boolean displayFluidIDs = false;
-	private boolean showPins = false;
-	private boolean showDroplets = true;
-	private boolean showActuations = false;
 
-	private Vector<DrawableField> fields = new Vector<>();
-	private Vector<DrawableDroplet> droplets = new Vector<>();
+	public Vector<DrawableField> fields = new Vector<>();
+	public Vector<DrawableDroplet> droplets = new Vector<>();
+
+	public DisplayOptions displayOptions = new DisplayOptions();
 
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
-
+	
+	public BioViz parent;
 
 	public void prevStep() {
 		autoAdvance=false;
-		setCurrentTime(currentTime-1);
+		setCurrentTime(currentTime - 1);
 
 	}
 
@@ -70,158 +67,32 @@ public class DrawableCircuit implements Drawable {
 		autoAdvance=false;
 		setCurrentTime(currentTime+1);
 	}
+	
+	public void toggleAutoAdvance() {
+		this.autoAdvance = !(this.autoAdvance);
+	}
 
 	public void setCurrentTime(int timeStep) {
-		if (timeStep >= 1 && timeStep <= data.getMaxT()) {
-			currentTime = timeStep;
-			BioViz.singleton.callTimeChangedListeners();
-		}
-	}
-	public boolean getShowDroplets() {
-		return showDroplets;
-	}
-
-	public void toggleShowDroplets() {
-		this.setShowDroplets(!this.showDroplets);
-	}
-
-	public void setShowDroplets(boolean showDroplets) {
-		this.showDroplets = showDroplets;
-		if (this.showDroplets) {
-			logger.info("Displaying droplets");
+		if (parent != null) {
+			if (timeStep >= 1 && timeStep <= data.getMaxT()) {
+				currentTime = timeStep;
+				parent.callTimeChangedListeners();
+			}
 		} else {
-			logger.info("Stop displaying droplets");
+			throw new RuntimeException("circuit parent is null");
 		}
 	}
 
-	public boolean getShowActuations() {
-		return showActuations;
-	}
-
-	public void toggleShowActuations() {
-		this.setShowActuations(!this.showActuations);
-	}
-
-	public void setShowActuations(boolean showActuations) {
-		this.showActuations = showActuations;
-		if (this.showActuations) {
-			logger.info("Displaying actuations");
-		} else {
-			logger.info("Stop displaying actuations");
-		}
-	}
-
-	public boolean getShowUsage() {
-		return showUsage;
-	}
-
-	public void toggleShowUsage() {
-		this.setShowUsage(!this.showUsage);
-	}
-
-	public void setShowUsage(boolean showUsage) {
-		this.showUsage = showUsage;
-		if (this.showUsage) {
-
-			// TODO I always recompute the usage, this might be a waste of computation time -> check this
-			data.computeCellUsage();
-			logger.info("Showing cell usage");
-		} else {
-			logger.info("Stop showing cell usage");
-		}
-	}
-
-	public void setDisplayFluidIDs(boolean displayFluids) {
-		this.displayFluidIDs = displayFluids;
-
-
-		if (this.displayFluidIDs) {
-			/*
-			Displaying the fluid id is mutually exclusive to displaying the droplet id, therefore we set the
-			value accordingly
-			 */
-			this.displayDropletIDs = false;
-			logger.info("Displaying fluid IDs");
-		} else {
-			logger.info("Stop displaying fluid IDs");
-		}
-	}
-
-	public boolean getDisplayFluidIDs() {
-		return displayFluidIDs;
-	}
-
-	public void toggleDisplayFluidIDs() {
-		this.setDisplayFluidIDs(!this.displayFluidIDs);
-	}
-
-
-	public void setDisplayDropletIDs(boolean displayDrops) {
-		this.displayDropletIDs = displayDrops;
-		if (this.displayDropletIDs) {
-			/*
-			Displaying the fluid id is mutually exclusive to displaying the droplet id, therefore we set the
-			value accordingly
-			 */
-			this.displayFluidIDs = false;
-			logger.info("Displaying droplet IDs");
-		} else {
-			logger.info("Stop displaying droplet IDs");
-		}
-	}
-
-	public boolean getDisplayDropletIDs() {
-		return displayDropletIDs;
-	}
-
-	public void toggleDisplayDropletIDs() {
-		this.setDisplayDropletIDs(!this.displayDropletIDs);
-	}
-
-
-	public void setHighlightAdjacency(boolean highlightAdjacency) {
-		this.highlightAdjacency = highlightAdjacency;
-		if (this.highlightAdjacency) {
-			logger.info("Highlighting fields with adjacent droplets");
-		} else {
-			logger.info("Stop highlighting fields with adjacent droplets");
-		}
-	}
-
-	public boolean getHighlightAdjacency() {
-		return highlightAdjacency;
-	}
-
-	public void toggleHighlightAdjacency() {
-		this.setHighlightAdjacency(!this.highlightAdjacency);
-	}
-
-
-	public void setShowPins(boolean showPins) {
-		this.showPins = showPins;
-		if (this.showPins) {
-			logger.info("Displaying pin assignment");
-		} else {
-			logger.info("Stop displaying pin assignmnet");
-		}
-	}
-
-	public boolean getShowPins() {
-		return showPins;
-	}
-
-	public void toggleShowPins() {
-		this.setShowPins(!this.showPins);
-	}
 
 	/**
 	 * Creates a drawable entity based on the data given.
 	 *
 	 * @param toDraw the data to draw
 	 */
-	public DrawableCircuit(Biochip toDraw) {
+	public DrawableCircuit(Biochip toDraw, BioViz parent) {
 		logger.debug("Creating new drawable chip based on " + toDraw);
 		this.data = toDraw;
+		this.parent = parent;
 		this.initializeDrawables();
 		logger.debug("New DrawableCircuit created successfully.");
 	}
@@ -238,7 +109,7 @@ public class DrawableCircuit implements Drawable {
 
 		//setup fields
 		data.getAllFields().forEach(fld -> {
-			DrawableField f = new DrawableField(fld);
+			DrawableField f = new DrawableField(fld, this);
 			this.fields.add(f);
 		});
 
@@ -246,7 +117,7 @@ public class DrawableCircuit implements Drawable {
 
 		//setup droplets
 		for (Droplet d : data.getDroplets()) {
-			DrawableDroplet dd = new DrawableDroplet(d);
+			DrawableDroplet dd = new DrawableDroplet(d, this);
 			this.droplets.add(dd);
 		}
 
@@ -261,6 +132,16 @@ public class DrawableCircuit implements Drawable {
 		smoothScaleY += (getScaleY() - smoothScaleY) / scalingDelay;
 		smoothOffsetX += (offsetX - smoothOffsetX) / scalingDelay;
 		smoothOffsetY += (offsetY - smoothOffsetY) / scalingDelay;
+
+		if (displayOptions.getOption(BDisplayOptions.Coordinates)) {
+			displayCoordinates();
+		}
+		else {
+			removeDisplayedCoordinates();
+		}
+		if (displayOptions.getOption(BDisplayOptions.CellUsage)) {
+
+		}
 
 		drawGates();
 
@@ -292,9 +173,115 @@ public class DrawableCircuit implements Drawable {
 		for (DrawableField f : this.fields) {
 			f.draw();
 		}
-
+		
 		for (DrawableDroplet d : this.droplets) {
 			d.draw();
+		}
+	
+	}
+
+	/**
+	 * Draws the coordinates of the grid on top of and to the left of the grid.
+	 * This in fact uses the message center to display the numbers, so the
+	 * actual drawing will be done after the rest has been drawn.
+	 * 
+	 * @author jannis
+	 */
+	private void displayCoordinates() {
+		// calculate current dimensions first so the coordinates can be either
+		// displayed at the edge of the viewport (if the grid boundaries are
+		// beyond the viewport boundaries) or at the edge of the grid (if they
+		// are within)
+		int minX = Integer.MAX_VALUE,
+			minY = Integer.MAX_VALUE,
+			maxX = Integer.MIN_VALUE,
+			maxY = Integer.MIN_VALUE;
+
+		for (DrawableField f : this.fields) {
+			if (minX > f.field.x()) {
+				minX = f.field.x();
+			}
+			if (minY > f.field.y()) {
+				minY = f.field.y();
+			}
+			if (maxX < f.field.x()) {
+				maxX = f.field.x();
+			}
+			if (maxY < f.field.y()) {
+				maxY = f.field.y();
+			}
+		}
+		
+		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
+		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
+			topYCoord = this.yCoordOnScreen(maxY + 1);
+		}
+		float leftXCoord = -Gdx.graphics.getWidth() / 2f + 32;
+		if (leftXCoord < this.xCoordOnScreen(minX - 1)) {
+			leftXCoord = this.xCoordOnScreen(minX - 1);
+		}
+		
+		// Defines when numbers should start fading and be completely hidden
+		float startFadingAtScale = 16f;
+		float endFadingAtScale = 12f;
+		
+		Color col = Color.WHITE.cpy();
+		if (this.smoothScaleX < startFadingAtScale) {
+			if (this.smoothScaleX > endFadingAtScale) {
+				float alpha = 1f - ((startFadingAtScale - smoothScaleX) / (startFadingAtScale - endFadingAtScale));
+				col.a = alpha;
+			} else {
+				// TODO: don't draw!
+				col.a = 0;
+			}
+		}
+		
+		// indeed draw, top first, then left
+		for (int i = minX; i < maxX + 1; i++) {
+			this.parent.messageCenter.addHUDMessage(
+					this.hashCode() + i,	// unique ID for each message
+					Integer.toString(i),	// message
+					this.xCoordOnScreen(i),	// x
+					topYCoord, 				// y
+					col);					// message color, used for fading
+		}
+		
+		for (int i = minY; i < maxY + 1; i++) {
+			this.parent.messageCenter.addHUDMessage(
+					this.hashCode() + maxX + Math.abs(minY) + 1 + i,
+				// unique ID for each message, starting after the previous ids
+
+					Integer.toString(i),	// message
+					leftXCoord,				// x
+					this.yCoordOnScreen(i), // y
+					col);					// message color, used for fading
+		}
+	}
+	
+	private void removeDisplayedCoordinates() {
+		int minX = Integer.MAX_VALUE,
+			minY = Integer.MAX_VALUE,
+			maxX = Integer.MIN_VALUE,
+			maxY = Integer.MIN_VALUE;
+
+		for (DrawableField f : this.fields) {
+			if (minX > f.field.x()) {
+				minX = f.field.x();
+			}
+			if (minY > f.field.y()) {
+				minY = f.field.y();
+			}
+			if (maxX < f.field.x()) {
+				maxX = f.field.x();
+			}
+			if (maxY < f.field.y()) {
+				maxY = f.field.y();
+			}
+		}
+		
+		// remove all HUD messages
+		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
+			this.parent.messageCenter.removeHUDMessage(this.hashCode() + i);
 		}
 	}
 
@@ -361,7 +348,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
-	private static Color hsvToRgb(float hue, float saturation, float value) {
+	private static Color hsvToRgb(float hue, final float saturation, final float value) {
 
 		while (hue >= 1) {
 			hue -= 1;
@@ -393,6 +380,18 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
+
+	public void toggleShowUsage() {
+		boolean doIt = displayOptions.toggleOption(BDisplayOptions.CellUsage);
+		if (doIt) {
+			data.computeCellUsage();
+		}
+	}
+
+	public void toggleShowDroplets() {
+		boolean showDroplets = displayOptions.toggleOption(BDisplayOptions.Droplets);
+		droplets.forEach(d -> {d.isVisible=showDroplets;});
+	}
 
 	/**
 	 * retrieves the current x scaling factor
@@ -426,7 +425,7 @@ public class DrawableCircuit implements Drawable {
 	 * smooth camera movement. Use setScaleImmediately if the viewport
 	 * is supposed to skip those inbetween steps.
 	 */
-	public void setScaleY(float scaleY) {
+	public void setScaleY(final float scaleY) {
 		this.scaleY = scaleY;
 	}
 
@@ -451,7 +450,7 @@ public class DrawableCircuit implements Drawable {
 	 *
 	 * @param bounds the area the viewport is supposed to show.
 	 */
-	public void setViewBounds(Rectangle bounds) {
+	public void setViewBounds(final Rectangle bounds) {
 		float targetHeight = Gdx.graphics.getHeight() / bounds.height;
 		float targetWidth = Gdx.graphics.getWidth() / bounds.width;
 		float targetOffsetX = (bounds.x + (bounds.width / 2f));
@@ -482,20 +481,20 @@ public class DrawableCircuit implements Drawable {
 		// FIXME Does not properly handle non-0 minimum coordinates yet
 		Point max = this.data.getMaxCoord();
 		Point min = this.data.getMinCoord();
-		logger.trace("Auto zoom around " + min + " <--/--> " + max);
+		logger.debug("Auto zoom around " + min + " <--/--> " + max);
 
-		float x = 1f / (max.first + 3);
-		float y = 1f / (max.second + 3);
+		float x = (1f / (max.fst - min.fst + 2));
+		float y = (1f / (max.snd - min.snd + 2));
 		float xFactor = Gdx.graphics.getWidth();
 		float yFactor = Gdx.graphics.getHeight();
 		float maxScale = Math.min(x * xFactor, y * yFactor);
 		this.scaleX = maxScale;
 		this.scaleY = maxScale;
-		this.offsetX = (max.first) / -2f;
-		this.offsetY = (max.second) / -2f;
+		this.offsetX = (max.fst) / -2f + min.fst / -2f;
+		this.offsetY = (max.snd) / -2f + min.snd / -2f;
 
 
-		logger.trace("Offset now at " + this.offsetX + "/" + this.offsetY);
+		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
 	}
 
 	/**
@@ -519,7 +518,7 @@ public class DrawableCircuit implements Drawable {
 		this.smoothScaleY = scaleY;
 	}
 
-	public void addTimeChangedListener(BioVizEvent listener) {
+	public void addTimeChangedListener(final BioVizEvent listener) {
 		timeChangedListeners.add(listener);
 	}
 
@@ -534,25 +533,4 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	@Override
-	public String generateSVG() {
-		String result = "";
-		result +=
-				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-						this.data.getMinCoord().first + " " +
-						(this.data.getMinCoord().second - 1) + " " +
-						(this.data.getMaxCoord().first + 1) + " " +
-						(this.data.getMaxCoord().second + 1) +
-						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
-
-		for (Drawable d : this.fields) {
-			result += d.generateSVG();
-		}
-		for (Drawable d : this.droplets) {
-			result += d.generateSVG();
-		}
-
-		result += "</svg>";
-		return result;
-	}
 }

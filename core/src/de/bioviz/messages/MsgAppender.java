@@ -12,7 +12,11 @@ import de.bioviz.ui.BioViz;
 public class MsgAppender extends AppenderBase<ILoggingEvent> {
 
     MessageCenter mc = null;
-
+    BioViz viz;
+    
+    public MsgAppender(BioViz viz) {
+		this.viz = viz;
+	}
 
     @Override
     /**
@@ -32,8 +36,8 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
      */
     public boolean isStarted() {
         if (mc == null) {
-            if (BioViz.singleton != null && BioViz.singleton.mc != null) {
-                mc = BioViz.singleton.mc;
+            if (viz != null && viz.messageCenter != null) {
+                mc = viz.messageCenter;
                 return true;
             } else {
                 return false;

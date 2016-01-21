@@ -1,7 +1,6 @@
 package de.bioviz.structures;
 
 import de.bioviz.ui.BioViz;
-import de.bioviz.ui.DrawableCircuit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +20,15 @@ public class BiochipField {
 	public ArrayList<Integer> target_ids = new ArrayList<Integer>();
 	public ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 	static private Logger logger = LoggerFactory.getLogger(BiochipField.class);
+	
+	BioViz parent;
 
 	public int x() {
-		return pos.first;
+		return pos.fst;
 	}
 
 	public int y() {
-		return pos.second;
+		return pos.snd;
 	}
 
 
@@ -64,8 +65,10 @@ public class BiochipField {
 
 	public boolean isActuated(int timeStep) {
 
-		Biochip circ = BioViz.singleton.currentCircuit.data;
-		ActuationVector.Actuation act = ActuationVector.Actuation.OFF;
+		Biochip circ = parent.currentCircuit.data;
+		Actuation act = Actuation.OFF;
+
+		// TODO document that pin actuations win over cell actuations
 
 		if (pin != null && !circ.pinActuations.isEmpty()) {
 			logger.trace("circ.pinActuations.isEmpty: {}", circ.pinActuations.isEmpty());
@@ -78,11 +81,11 @@ public class BiochipField {
 			act = actVec.get(timeStep - 1);
 		} else {
 			if (circ.dropletOnPosition(pos, timeStep)) {
-				act = ActuationVector.Actuation.ON;
+				act = Actuation.ON;
 			}
 		}
 
-		return act == ActuationVector.Actuation.ON;
+		return act == Actuation.ON;
 	}
 
 	public boolean isPotentiallyBlocked() {
@@ -103,25 +106,28 @@ public class BiochipField {
 		direction = dispenseFrom;
 	}
 
-	public BiochipField(Point pos, int fluidID, Direction dispenseFrom) {
+	public BiochipField(Point pos, int fluidID, Direction dispenseFrom, BioViz parent) {
 		this.pos = pos;
 		setDispenser(fluidID, dispenseFrom);
+		this.parent = parent;
 	}
 
-	public BiochipField(Point pos, Direction removeTo) {
+	public BiochipField(Point pos, Direction removeTo, BioViz parent) {
 		this.pos = pos;
 		setSink(removeTo);
-
+		this.parent = parent;
 	}
 
 	// end of TODO
 	// ############################################################################################################
-	public BiochipField(int x, int y) {
+	public BiochipField(int x, int y, BioViz parent) {
 		this.pos = new Point(x, y);
+		this.parent = parent;
 	}
 
-	public BiochipField(Point p) {
+	public BiochipField(Point p, BioViz parent) {
 		this.pos = p;
+		this.parent = parent;
 	}
 
 

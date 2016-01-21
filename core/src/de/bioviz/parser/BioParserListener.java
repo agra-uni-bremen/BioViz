@@ -19,10 +19,11 @@ import de.bioviz.parser.generated.Bio.RouteContext;
 import de.bioviz.parser.generated.Bio.BioContext;
 import de.bioviz.parser.generated.Bio.MixerIDContext;
 import de.bioviz.parser.generated.Bio.TimeRangeContext;
-
 import de.bioviz.parser.generated.BioBaseListener;
 import de.bioviz.structures.*;
+import de.bioviz.ui.BioViz;
 import de.bioviz.util.Pair;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Nullable;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -57,6 +58,10 @@ public class BioParserListener extends BioBaseListener {
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
+	BioViz viz;
+	public BioParserListener(BioViz viz) {
+		this.viz = viz;
+	}
 
 	public Biochip getBiochip() {
 		return chip;
@@ -67,8 +72,8 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	private Point getPosition(PositionContext ctx) {
-		Integer x = Integer.parseInt(ctx.xpos().getText()) - 1;
-		Integer y = Integer.parseInt(ctx.ypos().getText()) - 1;
+		Integer x = Integer.parseInt(ctx.xpos().getText());
+		Integer y = Integer.parseInt(ctx.ypos().getText());
 		return new Point(x, y);
 	}
 
@@ -119,7 +124,7 @@ public class BioParserListener extends BioBaseListener {
 
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
 		if (dispenser != null) {
-			updateMaxDimension(dispenser.first);
+			updateMaxDimension(dispenser.fst);
 			dispensers.add(new Pair<Integer, Pair<Point, Direction>>(fluidID, dispenser));
 		} else {
 			logger.error("Skipping definition of dispenser");
@@ -157,8 +162,8 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	private void updateMaxDimension(Point p) {
-		maxX = Math.max(p.first + 1, maxX);
-		maxY = Math.max(p.second + 1, maxY);
+		maxX = Math.max(p.fst + 1, maxX);
+		maxY = Math.max(p.snd + 1, maxY);
 	}
 
 	private void updateMaxDimension(Point p1, Point p2) {
@@ -175,7 +180,7 @@ public class BioParserListener extends BioBaseListener {
 	public void enterSink(@NotNull Bio.SinkContext ctx) {
 		Pair<Point, Direction> sinkDef = getIOPort(ctx.ioport());
 		if (sinkDef != null) {
-			updateMaxDimension(sinkDef.first);
+			updateMaxDimension(sinkDef.fst);
 			sinks.add(sinkDef);
 		} else {
 			logger.error("Skipping definition of sink");
@@ -316,6 +321,7 @@ public class BioParserListener extends BioBaseListener {
 			Point p = getPosition(pos);
 			drop.addPosition(p);
 		}
+
 		droplets.add(drop);
 
 	}
@@ -344,10 +350,11 @@ public class BioParserListener extends BioBaseListener {
 	public void exitBio(BioContext ctx) {
 
 		chip = new Biochip();
+		ArrayList<String> errors = new ArrayList<String>();
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {
-				chip.addField(cell, new BiochipField(cell));
+				chip.addField(cell, new BiochipField(cell, viz));
 			}
 		}
 
@@ -356,6 +363,9 @@ public class BioParserListener extends BioBaseListener {
 		}
 
 		droplets.forEach(chip::addDroplet);
+		errors.addAll(Validator.checkPathsForJumps(droplets));
+		errors.addAll(Validator.checkPathsForPositions(droplets, chip.getAllCoordinates()));
+
 		chip.addFluidTypes(fluidTypes);
 		chip.addNets(nets);
 
@@ -372,47 +382,54 @@ public class BioParserListener extends BioBaseListener {
 		dropletIDsToFluidTypes.forEach(chip::addDropToFluid);
 
 
-
+		errors.addAll(Validator.checkSinkPositions(chip, sinks, true));
 		sinks.forEach(sink -> {
-			Point p = sink.first;
-			Direction dir = sink.second;
+			Point p = sink.fst;
+			Direction dir = sink.snd;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point sinkPoint = p.add(dirPoint);
-			BiochipField sinkField = new BiochipField(sinkPoint,dir);
-			chip.addField(sinkPoint,sinkField);
+			BiochipField sinkField = new BiochipField(sinkPoint, dir, viz);
+			chip.addField(sinkPoint, sinkField);
 		});
 
-
+		errors.addAll(Validator.checkDispenserPositions(chip,
+				dispensers,
+				true));
 		dispensers.forEach(dispenser -> {
-			int fluidID = dispenser.first;
-			Point p = dispenser.second.first;
-			Direction dir = dispenser.second.second;
+			int fluidID = dispenser.fst;
+			Point p = dispenser.snd.fst;
+			Direction dir = dispenser.snd.snd;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point dispPoint = p.add(dirPoint);
-			BiochipField dispField = new BiochipField(dispPoint,fluidID,dir);
+			BiochipField dispField = new BiochipField(dispPoint, fluidID, dir, viz);
 			chip.addField(dispPoint, dispField);
 
 		});
 
 		for (Pair<Rectangle, Range> b : blockages) {
-			Rectangle rect = b.first;
-			Range rng = b.second;
+			Rectangle rect = b.fst;
+			Range rng = b.snd;
 			rect.positions().forEach(pos -> chip.getFieldAt(pos).attachBlockage(rng));
 		}
 
 		chip.blockages.addAll(blockages);
 
+		errors.addAll(Validator.checkPathForBlockages(chip));
+
+		errors.addAll(Validator.checkForDetectorPositions(chip,detectors,true));
+		// only valid detectors are left -> we can happily add them to the chip
 		detectors.forEach(det -> {
 			Point pos = det.position();
 			chip.getFieldAt(pos).setDetector(det);
 		});
 		chip.detectors.addAll(detectors);
 
+
 		pins.values().forEach(pin -> {
 			pin.cells.forEach(pos -> chip.getFieldAt(pos).pin = pin);
 		});
 		chip.pins.putAll(pins);
-
+		errors.addAll(Validator.checkMultiplePinAssignments(pins.values()));
 		chip.pinActuations.putAll(pinActuations);
 
 		cellActuations.forEach((pos, vec) -> {
@@ -420,14 +437,20 @@ public class BioParserListener extends BioBaseListener {
 		});
 		chip.cellActuations.putAll(cellActuations);
 
+		errors.addAll(Validator.checkActuationVectorLengths(cellActuations, pinActuations));
+		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,cellActuations, pinActuations,true));
+		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,cellActuations, pinActuations,false));
 
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(m -> {
 			m.positions.positions().forEach(pos -> {
-				logger.trace("Adding mixer {} to field {}",m,pos);
+				logger.trace("Adding mixer {} to field {}", m, pos);
 				chip.getFieldAt(pos).mixers.add(m);
 			});
 		});
+
+
+		errors.forEach(s -> logger.error(s));
 
 	}
 }

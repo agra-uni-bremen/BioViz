@@ -11,17 +11,20 @@ public class DrawableDroplet extends DrawableSprite {
 
 	public Droplet droplet;
 
-	private DrawableRoute route;
+	public DrawableRoute route;
 
 	private static Random randnum = null;
 
-	public DrawableDroplet(Droplet droplet) {
-		super("Droplet.png");
+	public DrawableCircuit parentCircuit;
+
+	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
+		super(TextureE.Droplet, parent.parent);
+		this.parentCircuit = parent;
 		if (randnum == null) {
 			randnum = new Random();
 		}
 		this.droplet = droplet;
-		super.addLOD(defaultLODThreshold, "BlackPixel.png");
+		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 		randnum.setSeed(droplet.getID());
 		super.setColor(new Color(randnum.nextInt()));
 		Color c = super.getColor();
@@ -30,80 +33,93 @@ public class DrawableDroplet extends DrawableSprite {
 		route = new DrawableRoute(this);
 	}
 
-	@Override
-	public String generateSVG() {
-		return
-				"<image x=\"" + this.droplet.smoothX + "\" " +
-						"y=\"" + (-this.droplet.smoothY + BioViz.singleton.currentCircuit.data.getMaxCoord().second - 1) + "\" " +
-						"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
-						this.route.generateSVG();
+	public Color getDisplayColor() {
+
+		DrawableCircuit circ = parentCircuit;
+
+		Color color = this.getColor().cpy();
+
+		Point p = droplet.getPositionAt(circ.currentTime);
+		boolean withinTimeRange = false;
+
+		if (p == null) {
+			color = color.sub(0, 0, 0, 1).clamp();
+
+			if (circ.currentTime < droplet.getSpawnTime()) {
+				p = droplet.getFirstPosition();
+			} else if (circ.currentTime > droplet.getMaxTime()) {
+				p = droplet.getLastPosition();
+			}
+		} else {
+			color = color.add(0, 0, 0, 1).clamp();
+		}
+
+		return color;
 	}
 
+	public String getMsg() {
+		String msg = null;
+
+		if (parentCircuit.displayOptions.getOption(BDisplayOptions.DropletIDs)) {
+			msg = Integer.toString(droplet.getID());
+		}
+		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
+			// note: fluidID may be null!
+			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
+			if (fluidID != null) {
+				msg = fluidID.toString();
+			}
+		}
+		return msg;
+	}
 	@Override
 	public void draw() {
 
-		DrawableCircuit circ = BioViz.singleton.currentCircuit;
+		DrawableCircuit circ = parentCircuit;
 
 		Point p = droplet.getPositionAt(circ.currentTime);
-		boolean visible = false;
+		boolean withinTimeRange = false;
 
 		if (p == null) {
 
 			if (circ.currentTime < droplet.getSpawnTime()) {
 				p = droplet.getFirstPosition();
-				this.setColor(this.getColor().cpy().sub(0, 0, 0, 1).clamp());
+			
 			} else if (circ.currentTime > droplet.getMaxTime()) {
 				p = droplet.getLastPosition();
-				this.setColor(this.getColor().cpy().sub(0, 0, 0, 1).clamp());
-			}
+						}
 		} else {
-			this.setColor(this.getColor().cpy().add(0, 0, 0, 1).clamp());
-			visible = true;
+			withinTimeRange = true;
 		}
 
-		if (p!= null && BioViz.singleton.currentCircuit.getShowDroplets()) {
+		this.setColor(getDisplayColor());
 
-
-			droplet.setTargetPosition(p.first, p.second);
-
+		if (p != null) {
+			droplet.setTargetPosition(p.fst, p.snd);
 			droplet.update();
-
-
-			float xCoord = circ.xCoordOnScreen(droplet.smoothX);
-			float yCoord = circ.yCoordOnScreen(droplet.smoothY);
-
-			this.x = xCoord;
-			this.y = yCoord;
-			this.scaleX = circ.smoothScaleX;
-			this.scaleY = circ.smoothScaleY;
-
-
 			route.draw();
 
-			String msg = null;
+			if (isVisible) {
 
-			if (circ.getDisplayDropletIDs()) {
-				msg = Integer.toString(droplet.getID());
-			}
-			if (circ.getDisplayFluidIDs()) {
-				// note: fluidID may be null!
-				Integer fluidID = circ.data.fluidID(droplet.getID());
-				if (fluidID != null) {
-					msg = fluidID.toString();
-				}
-			}
+				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
+				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
 
-			if (msg != null) {
-				BioViz.singleton.mc.addHUDMessage(this.hashCode(), msg, xCoord, yCoord);
-			} else {
-				BioViz.singleton.mc.removeHUDMessage(this.hashCode());
-			}
+				this.x = xCoord;
+				this.y = yCoord;
+				this.scaleX = circ.smoothScaleX;
+				this.scaleY = circ.smoothScaleY;
 
-			super.draw();
+
+				String msg= getMsg();
+
+				displayText(msg);
+
+				super.draw();
+			}
 		}
-		if (!visible) {
+		if (!withinTimeRange) {
 			// make sure that previous numbers are removed when the droplet is removed.
-			BioViz.singleton.mc.removeHUDMessage(this.hashCode());
+			displayText(null);
 		}
 	}
 }

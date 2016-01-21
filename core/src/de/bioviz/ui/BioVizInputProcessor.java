@@ -1,11 +1,8 @@
 package de.bioviz.ui;
 
-import java.util.Date;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Rectangle;
 
 import org.slf4j.Logger;
@@ -19,6 +16,12 @@ public class BioVizInputProcessor implements InputProcessor {
 	private boolean ctrl, shift, alt;
 
 	static Logger logger = LoggerFactory.getLogger((BioVizInputProcessor.class));
+	
+	BioViz parentViz;
+	
+	public BioVizInputProcessor(BioViz parentVisualization) {
+		this.parentViz = parentVisualization;
+	}
 	
 	@Override
 	public boolean keyDown (int keycode) {
@@ -42,20 +45,58 @@ public class BioVizInputProcessor implements InputProcessor {
 			shift = false;
 		} else if (keycode == Keys.O) {
 			if (ctrl) {
-				BioViz.singleton.callLoadFileListeners();
+				parentViz.callLoadFileListeners();
 			}
 		} else if (keycode == Keys.S) {
 			if (ctrl) {
-				BioViz.singleton.callSaveFileListeners();
+				parentViz.callSaveFileListeners();
 			}
-		} else if (keycode == Keys.A) {
-			BioViz.singleton.currentCircuit.toggleHighlightAdjacency();
+			if (shift) {
+				parentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.SinkIcon);
+			}
 		}
+		else if (keycode == Keys.A) {
+			if (ctrl) {
+				parentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Adjacency);
+			}
+			if (shift) {
+				parentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.DetectorIcon);
+			}
+
+		}
+		else if (keycode == Keys.D) {
+			if (ctrl) {
+				parentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.DispenserID);
+			}
+			if (shift) {
+				parentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.DispenserIcon);
+			}
+		}
+
 		else if (keycode == Keys.RIGHT || keycode == Keys.UP) {
-			BioViz.singleton.currentCircuit.nextStep();
+			parentViz.currentCircuit.nextStep();
 		}
 		else if (keycode == Keys.LEFT || keycode == Keys.DOWN) {
-			BioViz.singleton.currentCircuit.prevStep();
+			parentViz.currentCircuit.prevStep();
+		}
+		else if (keycode == Keys.W) {
+			if (ctrl) {
+				parentViz.callCloseFileListeners();
+			}
+		}
+		else if (keycode == Keys.R) {
+			parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.ColorfulRoutes);
+		}
+		else if (keycode == Keys.C){
+			if (ctrl) {
+				parentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Coordinates);
+			}
 		}
 		
 		return false;
@@ -66,13 +107,13 @@ public class BioVizInputProcessor implements InputProcessor {
 		DrawableCircuit dc; 
 		switch (character) {
 		case 's':
-			BioViz.singleton.currentCircuit.shrinkToSquareAlignment();
+			parentViz.currentCircuit.shrinkToSquareAlignment();
 			break;
 		case 'z':
-			BioViz.singleton.currentCircuit.zoomTo1Px();
+			parentViz.currentCircuit.zoomTo1Px();
 			break;
 		case 'Z':
-			BioViz.singleton.currentCircuit.zoomExtents();
+			parentViz.currentCircuit.zoomExtents();
 			break;
 		default:
 			break;
@@ -112,8 +153,8 @@ public class BioVizInputProcessor implements InputProcessor {
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
 		if (isMoving) {
-			BioViz.singleton.currentCircuit.offsetX += (x - oldX) / BioViz.singleton.currentCircuit.getScaleX();
-			BioViz.singleton.currentCircuit.offsetY -= (y - oldY) / BioViz.singleton.currentCircuit.getScaleY();
+			parentViz.currentCircuit.offsetX += (x - oldX) / parentViz.currentCircuit.getScaleX();
+			parentViz.currentCircuit.offsetY -= (y - oldY) / parentViz.currentCircuit.getScaleY();
 			oldX = x;
 			oldY = y;
 		} else if (multiTouchZoom) {
@@ -133,12 +174,12 @@ public class BioVizInputProcessor implements InputProcessor {
 				
 				if (oldX - oldX2 != 0) {
 					float zoomFactorX = (float)zoomX / Math.abs(oldX - oldX2);
-					BioViz.singleton.currentCircuit.setScaleX(BioViz.singleton.currentCircuit.getScaleX()
+					parentViz.currentCircuit.setScaleX(parentViz.currentCircuit.getScaleX()
 							* Math.max(1 - (zoomFactorX), 0.01f));
 				}
 				if (oldY - oldY2 != 0) {
 					float zoomFactorY = (float)zoomY / Math.abs(oldY - oldY2);
-					BioViz.singleton.currentCircuit.setScaleY(BioViz.singleton.currentCircuit.getScaleY()
+					parentViz.currentCircuit.setScaleY(parentViz.currentCircuit.getScaleY()
 							* Math.max(1 - (zoomFactorY), 0.01f));
 				}
 			}
@@ -151,7 +192,7 @@ public class BioVizInputProcessor implements InputProcessor {
 		float mouseAtWidth = (float)oldX / Gdx.graphics.getWidth();
 		float mouseAtHeight = (float)oldY / Gdx.graphics.getHeight();
 		
-		Rectangle current = BioViz.singleton.currentCircuit.getViewBounds();
+		Rectangle current = parentViz.currentCircuit.getViewBounds();
 		
 		float mouseToLeftOriginal = current.width * mouseAtWidth;
 		float mouseToBottomOriginal = current.height * mouseAtHeight;
@@ -168,7 +209,7 @@ public class BioVizInputProcessor implements InputProcessor {
 		float mouseDiffY = mouseToBottomOriginal - expectedMouseToBottom;
 		current.y += mouseDiffY;
 		
-		BioViz.singleton.currentCircuit.setViewBounds(current);
+		parentViz.currentCircuit.setViewBounds(current);
 		return false;
 	}
 
