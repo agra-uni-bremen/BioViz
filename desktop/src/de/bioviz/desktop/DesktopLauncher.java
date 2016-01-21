@@ -260,6 +260,11 @@ public class DesktopLauncher extends JFrame {
 								  	openButton.getPreferredSize().height));
 		loadCB = new LoadFileCallback();
 		openButton.addActionListener(e -> loadCB.bioVizEvent());
+		
+		JButton preferencesButton = new JButton("Preferences");
+		preferencesButton.setPreferredSize(new Dimension(buttonWidth,
+								  	openButton.getPreferredSize().height));
+		preferencesButton.addActionListener(e -> {showSettings();});
 
 		JButton saveButton = new JButton("Save SVG");
 		saveButton.setPreferredSize(new Dimension(buttonWidth,
@@ -293,7 +298,13 @@ public class DesktopLauncher extends JFrame {
 				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.Actuations));
 
-
+		JButton interferenceButton = new JButton("Interference");
+		interferenceButton.setPreferredSize(new Dimension(buttonWidth,
+									actuationButton.getPreferredSize().height));
+		interferenceButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.InterferenceRegion));
+		
 		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, 1, 1);
 		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		timeSlider.addChangeListener(
@@ -333,6 +344,13 @@ public class DesktopLauncher extends JFrame {
 		displayFluidIDsButton.addActionListener(
 				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.FluidIDs));
+		
+		JButton displayFluidTypesButton = new JButton("Fluid Types");
+		displayFluidTypesButton.setPreferredSize(new Dimension(buttonWidth,
+						 	displayFluidIDsButton.getPreferredSize().height));
+		displayFluidTypesButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.FluidNames));
 
 		JButton pinButton = new JButton("Pins");
 		pinButton.setPreferredSize(new Dimension(buttonWidth,
@@ -379,6 +397,8 @@ public class DesktopLauncher extends JFrame {
 				new Dimension(buttonWidth, preferredButtonHeight));
 		JSeparator invisiSep = new JSeparator(SwingConstants.HORIZONTAL);
 		invisiSep.setPreferredSize(new Dimension(buttonWidth, 0));
+		JSeparator prefsSep = new JSeparator(SwingConstants.HORIZONTAL);
+		prefsSep.setPreferredSize(new Dimension(buttonWidth, preferredButtonHeight));
 
 
 		panel.add(new JLabel("Files"));
@@ -394,12 +414,14 @@ public class DesktopLauncher extends JFrame {
 		panel.add(dropletButton);
 		panel.add(displayDropletIDsButton);
 		panel.add(displayFluidIDsButton);
+		panel.add(displayFluidTypesButton);
 		panel.add(pinButton);
 		panel.add(actuationButton);
 		panel.add(adjacencyButton);
 		panel.add(usageButton);
 		panel.add(stIconButton);
 		panel.add(stIDButton);
+		panel.add(interferenceButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);
@@ -409,6 +431,8 @@ public class DesktopLauncher extends JFrame {
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
 		panel.add(timeSlider);
+		panel.add(prefsSep);
+		panel.add(preferencesButton);
 		return panel;
 	}
 
@@ -553,6 +577,9 @@ public class DesktopLauncher extends JFrame {
 			java.util.prefs.Preferences.userNodeForPackage(DesktopLauncher.class);
 		path = new File(prefs.get("lastFilePath", "."));
 
+
+		logger.debug("Open file choose with path {}",path);
+
 		JFileChooser fileDialog = new JFileChooser(path);
 		int choice = fileDialog.showOpenDialog(null);
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -592,6 +619,13 @@ public class DesktopLauncher extends JFrame {
 				+ je.getStackTrace());
 		}
 
+	}
+	
+	private static void showSettings() {
+		logger.debug("Opening preferences window...");
+		PreferencesWindow pw = new PreferencesWindow();
+		pw.setVisible(true);
+		logger.debug("Done opening preferences window.");
 	}
 
 	/**
