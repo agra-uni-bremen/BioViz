@@ -1,6 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
@@ -147,7 +148,12 @@ public class BioVizInputProcessor implements InputProcessor {
 		
 		for(DrawableDroplet d: parentViz.currentCircuit.droplets) {
 			if (d.isHovered()) {
-				d.toggleGridVisibility();
+				if (button == Buttons.LEFT) {
+					d.toggleGridVisibility();
+				} else if (button == Buttons.RIGHT) {
+					parentViz.selectedDroplet = d;
+					parentViz.callPickColourListeners();
+				}
 			}
 		}
 		
