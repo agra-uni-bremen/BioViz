@@ -4,5 +4,5 @@ desktop:
 
 checkstyle:
   script:
-    - executeCheckstyleTest.sh
+    - ./executeCheckstyleTest.sh
 
