@@ -606,7 +606,7 @@ public class DesktopLauncher extends JFrame {
 
 		File file;
 		if (args.length <= 0) {
-			file = askForFile();
+			file = askForFile("lastFilePath", true);
 		}
 		else {
 			file = new File(args[0]);
@@ -621,6 +621,14 @@ public class DesktopLauncher extends JFrame {
 		});
 	}
 
+	/**
+	 * @param pathPrefName The name of of value stored in the Preferences object.
+	 * @param load
+	 * 		if true, opens a 'file open dialog', if false opens a 'file store
+	 * 		dialog'
+	 * @return File object pointing to the selected file or null
+	 * @author keszocze
+	 */
 	private static File askForFile(String pathPrefName, boolean load) {
 		allowHotkeys = false;
 
@@ -652,36 +660,6 @@ public class DesktopLauncher extends JFrame {
 		return selectedPath;
 	}
 
-	/**
-	 * Asks the user for a file to be opened.
-	 *
-	 * @return the file to be opened
-	 */
-	private static File askForFile() {
-		File path = null;
-
-		java.util.prefs.Preferences prefs =
-				java.util.prefs.Preferences.userNodeForPackage(DesktopLauncher
-																	   .class);
-		path = new File(prefs.get("lastFilePath", "."));
-
-		File selectedPath = null;
-
-		allowHotkeys = false;
-
-		logger.debug("Open file chooser with path {}", path);
-
-		JFileChooser fileDialog = new JFileChooser(path);
-		int choice = fileDialog.showOpenDialog(null);
-		if (choice == JFileChooser.APPROVE_OPTION) {
-			selectedPath = fileDialog.getSelectedFile();
-
-			prefs.put("lastFilePath", selectedPath.getAbsolutePath());
-
-		}
-		allowHotkeys = true;
-		return selectedPath;
-	}
 
 	/**
 	 * Initializes the logger.
