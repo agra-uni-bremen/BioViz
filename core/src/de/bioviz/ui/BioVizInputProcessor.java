@@ -1,6 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
@@ -143,6 +144,17 @@ public class BioVizInputProcessor implements InputProcessor {
 		} else if (pointer == 1) {
 			isMoving = true;
 			multiTouchZoom = false;
+		}
+		
+		for(DrawableDroplet d: parentViz.currentCircuit.droplets) {
+			if (d.isHovered()) {
+				if (button == Buttons.LEFT) {
+					d.toggleGridVisibility();
+				} else if (button == Buttons.RIGHT) {
+					parentViz.selectedDroplet = d;
+					parentViz.callPickColourListeners();
+				}
+			}
 		}
 		
 		logger.trace("TouchUp at " + x + "/" + y + " with " + pointer + "/" + button);

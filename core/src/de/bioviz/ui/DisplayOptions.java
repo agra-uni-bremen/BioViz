@@ -17,6 +17,7 @@ public class DisplayOptions {
 		for (BDisplayOptions o :BDisplayOptions.values()) {
 			setOption(o,false);
 		}
+		setOption(BDisplayOptions.SinkIcon,true);
 		setOption(BDisplayOptions.SourceTargetIcons,true);
 		setOption(BDisplayOptions.SourceTargetIDs,true);
 		setOption(BDisplayOptions.Droplets,true);
@@ -24,6 +25,8 @@ public class DisplayOptions {
 		setOption(BDisplayOptions.DispenserIcon,true);
 		setOption(BDisplayOptions.DispenserID,true);
 		setOption(BDisplayOptions.DetectorIcon,true);
+		setOption(BDisplayOptions.FluidNames,true);
+		setOption(BDisplayOptions.InterferenceRegion,true);
 	}
 
 	public boolean getOption(BDisplayOptions opt) {

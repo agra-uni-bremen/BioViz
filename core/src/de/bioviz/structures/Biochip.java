@@ -33,7 +33,7 @@ public class Biochip {
 	public final ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 
-	private HashMap<Integer, String> fluidTypes =
+	public HashMap<Integer, String> fluidTypes =
 			new HashMap<Integer, String>();
 
 	public void addFluidType(int fluidID, String fluidDescription) {
@@ -289,14 +289,14 @@ public class Biochip {
 
 
 	/**
-	 * @author Oliver Keszöcze
 	 * @return Length of the longest route
+	 * @author Oliver Keszöcze
 	 */
 	public int getMaxRouteLength() {
 		if (maxRouteLength == -1) {
 
 			for (Droplet d : droplets) {
-				maxRouteLength = Math.max(maxRouteLength,d.getRouteLength());
+				maxRouteLength = Math.max(maxRouteLength, d.getRouteLength());
 			}
 		}
 		return maxRouteLength;
@@ -313,13 +313,25 @@ public class Biochip {
 	 * 		if there is no field at given coordinates
 	 */
 	public BiochipField getFieldAt(Point coords) {
-		if (this.field.containsKey(coords)) {
+		if (hasFieldAt(coords)) {
 			return this.field.get(coords);
 		}
 		else {
 			throw new RuntimeException("Could not retrieve field at " +
 									   coords);
 		}
+	}
+
+
+	/**
+	 * @param coords
+	 * 		The coordinates to check for a field
+	 * @return true if there is a field at the specified positions, false
+	 * otherwise
+	 * @brief Checks whether there is a field ad the given position.
+	 */
+	public boolean hasFieldAt(Point coords) {
+		return this.field.containsKey(coords);
 	}
 
 	/**

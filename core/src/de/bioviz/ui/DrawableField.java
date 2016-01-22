@@ -1,9 +1,13 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+
 import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Mixer;
+import de.bioviz.structures.Point;
 import de.bioviz.util.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,10 +154,22 @@ public class DrawableField extends DrawableSprite {
 														   .CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
-			float scalingFactor = 4f;
+			float scalingFactor = 2f;
 
-			result.add(new Color(0, this.field.usage / scalingFactor, 0, 0));
+			result.add(new Color(this.field.usage / scalingFactor, this.field.usage / scalingFactor, this.field.usage / scalingFactor, 0));
 			++colorOverlayCount;
+		}
+		
+		/** Colours the interference region **/
+		if (parentCircuit.displayOptions.getOption(
+				BDisplayOptions.InterferenceRegion)) {
+			boolean hasNeighbouringDroplet = false;
+			for (Droplet d: parentCircuit.data.getDroplets()) {
+				Point p = d.getPositionAt(parentCircuit.currentTime);
+				if (p != null && p.adjacent(this.field.pos)) {
+					result.add(Colors.interferenceRegionColor);
+				}
+			}
 		}
 
 

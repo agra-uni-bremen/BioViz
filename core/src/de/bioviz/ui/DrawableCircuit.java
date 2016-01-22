@@ -49,6 +49,7 @@ public class DrawableCircuit implements Drawable {
 
 	public Vector<DrawableField> fields = new Vector<>();
 	public Vector<DrawableDroplet> droplets = new Vector<>();
+	public Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
 
 	public DisplayOptions displayOptions = new DisplayOptions();
 
@@ -66,6 +67,10 @@ public class DrawableCircuit implements Drawable {
 	public void nextStep() {
 		autoAdvance=false;
 		setCurrentTime(currentTime+1);
+	}
+	
+	public void toggleAutoAdvance() {
+		this.autoAdvance = !(this.autoAdvance);
 	}
 
 	public void setCurrentTime(int timeStep) {
