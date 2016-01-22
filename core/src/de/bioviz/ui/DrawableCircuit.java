@@ -271,9 +271,9 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the x coordinate of a given gate
+	 * Calculates the x coordinate of a given cell
 	 *
-	 * @param i the gate index
+	 * @param i the cell index
 	 * @return the x coordinate on screen
 	 */
 	protected float xCoordOnScreen(int i) {
@@ -281,10 +281,9 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * TODO remove the "gate-space" reference
 	 * Calculates the x coordinate of a given value. Keep in mind that
-	 * this is still in gate-space, so a value of 0 would be at the center
-	 * of the circuit's first gate.
+	 * this is still in cell-space, so a value of 0 would be at the center
+	 * of the chip's first cell.
 	 *
 	 * @param i the value to translate
 	 * @return the x coordinate on screen
@@ -307,16 +306,14 @@ public class DrawableCircuit implements Drawable {
 		return yCoord;
 	}
 
-	// TODO rename method
-	protected float yCoordInGates(float i) {
+	protected float yCoordInCells(float i) {
 		float yCoord = i;
 		yCoord /= smoothScaleY;
 		yCoord -= smoothOffsetY;
 		return yCoord;
 	}
 
-	// TODO rename method
-	protected float xCoordInGates(float i) {
+	protected float xCoordInCells(float i) {
 		float xCoord = i;
 		xCoord /= smoothScaleX;
 		xCoord -= smoothOffsetX;
@@ -463,7 +460,7 @@ public class DrawableCircuit implements Drawable {
 
 
 	/**
-	 * Resets the zoom so that the whole circuit is shown.
+	 * Resets the zoom so that the whole chip is shown.
 	 */
 	public void zoomExtents() {
 		// FIXME Does not properly handle non-0 minimum coordinates yet
