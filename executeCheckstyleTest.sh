@@ -1,4 +1,4 @@
-maxCheckstyleErrors=510
+maxCheckstyleErrors=5110
 
 ./gradlew core:checkstyleMain > checkstyleOutput 2>&1
 wc -l checkstyleOutput > wcResult
