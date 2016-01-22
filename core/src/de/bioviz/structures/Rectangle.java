@@ -3,7 +3,7 @@ package de.bioviz.structures;
 import java.util.ArrayList;
 
 /**
- * @brief 
+ * @brief
  *
  * Created by keszocze on 22.07.15.
  *

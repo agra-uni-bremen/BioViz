@@ -92,6 +92,12 @@ public class BiochipField {
 			}
 		}
 
+		for (Mixer m: mixers) {
+			if (m.positions.contains(pos) && m.timing.inRange(timeStep)) {
+				act = Actuation.ON;
+			}
+		}
+
 		return act == Actuation.ON;
 	}
 
