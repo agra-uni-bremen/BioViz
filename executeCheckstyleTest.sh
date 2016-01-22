@@ -9,7 +9,9 @@ rm ./checkstyleOutput
 if [ "$errors" -gt "$maxCheckstyleErrors" ]
 then
 	echo "Checkstyle FAILED"
+	exit 1
 else
 	echo "Checkstyle SUCCEEDED"
+	exit 0
 fi
 
