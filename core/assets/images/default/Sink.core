@@ -1,0 +1,39 @@
+  <g
+     id="Sink"
+     transform="translate(0,-796.36218)">
+    <rect
+       style="fill:#808080;stroke:#4d4d4d;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;fill-opacity:1"
+       id="rect2987"
+       width="224"
+       height="224"
+       x="16"
+       y="16"
+       transform="translate(0,796.36218)"
+       rx="32"
+       ry="32" />
+    <ellipse
+       style="opacity:1;fill:url(#radialGradient8540);fill-opacity:1;stroke:none;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path8532"
+       cx="128"
+       cy="972.36218"
+       rx="96"
+       ry="48" />
+    <path
+       style="fill:#e6e6e6;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 128 32 C 104 80 80 104 80 128 C 80 152 104 176 128 176 C 152 176 176 152 176 128 C 176 104 152 80 128 32 z M 96 120 L 160 120 A 8.0008 8.0008 0 1 1 160 136 L 96 136 A 8.0008 8.0008 0 1 1 96 120 z "
+       transform="translate(0,796.36218)"
+       id="path4171-5" />
+    <path
+       style="fill:#ffffff;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 96,936.36218 c -20,0 2.687047,21.34965 6,24.00001 10,7.99999 25.24263,7.24265 21,3 -3,-3.00001 -12.92857,-5.10715 -18.92857,-11.10715 C 95.071429,943.25504 136,936.36218 96,936.36218 Z"
+       id="path7692"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csssc" />
+    <path
+       sodipodi:nodetypes="csssc"
+       inkscape:connector-curvature="0"
+       id="path7694"
+       d="m 160,908.36218 c 8,0 7.78571,-6.60714 1.78571,-15.60714 -2.3534,-3.5301 -29.47813,-32.4958 -27.71428,-26.71429 1.92857,6.32143 8.57574,16.10635 14.42857,22.25 11.5,12.07143 -16.5,20.07143 11.5,20.07143 z"
+       style="fill:#ffffff;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+

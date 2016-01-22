@@ -36,8 +36,8 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
      */
     public boolean isStarted() {
         if (mc == null) {
-            if (viz != null && viz.mc != null) {
-                mc = viz.mc;
+            if (viz != null && viz.messageCenter != null) {
+                mc = viz.messageCenter;
                 return true;
             } else {
                 return false;

@@ -216,10 +216,14 @@ public class BioParserListener extends BioBaseListener {
 		detectors.add(new Detector(pos, duration, fluidType));
 	}
 
+
+
+
 	@Override
 	public void enterDropToFluid(@NotNull Bio.DropToFluidContext ctx) {
 		int dropID = getDropletID(ctx.dropletID());
 		int fluidID = getFluidID(ctx.fluidID());
+		logger.debug("Adding droplet ID to fluid ID mapping: {} -> {}",dropID, fluidID);
 		dropletIDsToFluidTypes.put(dropID, fluidID);
 	}
 
@@ -285,8 +289,9 @@ public class BioParserListener extends BioBaseListener {
 
 	@Override
 	public void enterFluiddef(@NotNull FluiddefContext ctx) {
-		int fluidID = Integer.parseInt(ctx.Integer().getText());
+		int fluidID = Integer.parseInt(ctx.fluidID().getText());
 		String fluid = ctx.Identifier().getText();
+		logger.debug("Adding fluid identifier: {} -> {}",fluidID,fluid);
 		fluidTypes.put(fluidID, fluid);
 	}
 
@@ -329,7 +334,7 @@ public class BioParserListener extends BioBaseListener {
 	Range getTimeRange(TimeRangeContext ctx) {
 		Integer fst = Integer.parseInt(ctx.Integer(0).getText());
 		Integer snd = Integer.parseInt(ctx.Integer(1).getText());
-		logger.debug("Time range from {} and {}",ctx.Integer(0), ctx.Integer(1));
+		logger.debug("Time range from {} to {}",ctx.Integer(0), ctx.Integer(1));
 
 		return new Range(fst,snd);
 	}
@@ -413,6 +418,8 @@ public class BioParserListener extends BioBaseListener {
 		}
 
 		chip.blockages.addAll(blockages);
+
+		errors.addAll(Validator.checkPathForBlockages(chip));
 
 		errors.addAll(Validator.checkForDetectorPositions(chip,detectors,true));
 		// only valid detectors are left -> we can happily add them to the chip
