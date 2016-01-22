@@ -1,9 +1,13 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+
 import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Mixer;
+import de.bioviz.structures.Point;
 import de.bioviz.util.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +16,7 @@ import java.util.ArrayList;
 
 public class DrawableField extends DrawableSprite {
 
-	private static Logger logger = LoggerFactory.getLogger(DrawableField
-																   .class);
+	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 
 	public BiochipField field;
 
@@ -23,9 +26,10 @@ public class DrawableField extends DrawableSprite {
 	static final Color mixerDefaultColor = Colors.mixerColor;
 	static final Color blockedColor = Colors.blockedColor;
 
+
 	//private DrawableSprite adjacencyOverlay;
 
-	DrawableCircuit parentCircuit;
+	public DrawableCircuit parentCircuit;
 
 	public DrawableField(BiochipField field, DrawableCircuit parent) {
 		super(TextureE.GridMarker, parent.parent);
@@ -33,22 +37,6 @@ public class DrawableField extends DrawableSprite {
 		this.field = field;
 		super.addLOD(8, TextureE.BlackPixel);
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
-	}
-
-	@Override
-	public String generateSVG() {
-		// FIXME why would we need to acces " (-this.field.y + BioViz
-		// .singleton.currentCircuit.data.field[0].length - 1)"?
-		// @jannis please check and fix
-		// @keszocze Because the coordinate system in SVG is inverted on its
-		//		y-axis. I need to first put it upside down (-this.field.y) and
-		//		then add the total height of the circuit to have the element
-		// put
-		//		back into the positive coordinate range in order to be placed
-		//		on the canvas.
-		return "<image x=\"" + this.field.x() + "\" y=\"" +
-			   (-this.field.y() + parentCircuit.data.getMaxCoord().snd - 1) +
-			   "\" width=\"1\" height=\"1\" xlink:href=\"field.svg\" />";
 	}
 
 
@@ -63,14 +51,13 @@ public class DrawableField extends DrawableSprite {
 	}
 
 	public Pair<String, TextureE> getMsgTexture() {
+
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = parentCircuit;
-
-		TextureE texture = TextureE.GridMarker;
-
+		int t = circ.currentTime;
 		float xCoord = circ.xCoordOnScreen(field.x());
 		float yCoord = circ.yCoordOnScreen(field.y());
-
+		TextureE texture = TextureE.GridMarker;
 		this.x = xCoord;
 		this.y = yCoord;
 		this.scaleX = circ.smoothScaleX;
@@ -167,10 +154,22 @@ public class DrawableField extends DrawableSprite {
 														   .CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
-			float scalingFactor = 4f;
+			float scalingFactor = 2f;
 
-			result.add(new Color(0, this.field.usage / scalingFactor, 0, 0));
+			result.add(new Color(this.field.usage / scalingFactor, this.field.usage / scalingFactor, this.field.usage / scalingFactor, 0));
 			++colorOverlayCount;
+		}
+		
+		/** Colours the interference region **/
+		if (parentCircuit.displayOptions.getOption(
+				BDisplayOptions.InterferenceRegion)) {
+			boolean hasNeighbouringDroplet = false;
+			for (Droplet d: parentCircuit.data.getDroplets()) {
+				Point p = d.getPositionAt(parentCircuit.currentTime);
+				if (p != null && p.adjacent(this.field.pos)) {
+					result.add(Colors.interferenceRegionColor);
+				}
+			}
 		}
 
 

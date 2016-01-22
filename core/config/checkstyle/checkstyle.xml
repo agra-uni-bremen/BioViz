@@ -174,7 +174,7 @@
         </module>
         <module name="RightCurly">
             <!-- TODO allow the option 'alone_or_singleline' after updating to newer checkstyle version -->
-            <property name="option" value="alone"/>
+            <property name="option" value="same"/>
         </module>
 
 

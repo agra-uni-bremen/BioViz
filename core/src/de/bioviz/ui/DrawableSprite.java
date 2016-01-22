@@ -5,8 +5,6 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -21,15 +19,14 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DrawableSprite implements Drawable {
 
-
 	protected Sprite sprite;
-	static TextureManager textures;
+	private static TextureManager textures;
 	private Color targetColor = Color.WHITE.cpy();
 	private Color currentColor = Color.WHITE.cpy();
 	private Color originColor = Color.WHITE.cpy();
 	private long colorTransitionStartTime = 0;
 	private long colorTransitionEndTime = 0;
-	private final long colorTransitionDuration = 500;
+	public static int colorTransitionDuration = 500;
 	private HashMap<Float, TextureE> levelOfDetailTextures = new HashMap<>();
 	private TextureE currentTexture;
 	protected boolean isVisible = true;
@@ -52,24 +49,26 @@ public abstract class DrawableSprite implements Drawable {
 	 * @param texture
 	 * 		the texture to use
 	 */
-	public DrawableSprite(TextureE texture, float sizeX, float sizeY,
-						  BioViz parent) {
+	public DrawableSprite(TextureE texture, float sizeX, float sizeY, BioViz
+			parent) {
 		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
 		}
-		this.viz = parent;
 
-		currentTexture = texture;
+
 		if (textures == null) {
 			textures = new TextureManager();
 		}
+
+
+		currentTexture = texture;
 		this.addLOD(Float.MAX_VALUE, texture);
 		this.targetColor.a = ALPHA_FULL;
 		this.currentColor.a = ALPHA_FULL;
+		this.viz = parent;
 	}
 
-	private void initializeSprite(float sizeX, float sizeY, TextureRegion
-			region) {
+	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
 		sprite = new Sprite(region);
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
@@ -86,7 +85,7 @@ public abstract class DrawableSprite implements Drawable {
 	 * @brief Displays a text above the sprite
 	 */
 	public void displayText(String msg) {
-		MessageCenter mc = viz.mc;
+		MessageCenter mc = viz.messageCenter;
 		if (msg != null) {
 			mc.addHUDMessage(this.hashCode(), msg, this.x, this.y);
 		}
@@ -97,16 +96,12 @@ public abstract class DrawableSprite implements Drawable {
 
 	public void draw() {
 
-
-
 		if (isVisible) {
 
 			if (sprite == null) {
 				TextureRegion region = textures.getTexture(currentTexture);
 				initializeSprite(1, 1, region);
 			}
-
-
 
 			// if LOD is set, enable LOD calculation and set
 			// sprite accordingly
@@ -123,7 +118,6 @@ public abstract class DrawableSprite implements Drawable {
 					currentTexture =
 							levelOfDetailTextures.get(bestLODFactor);
 				}
-
 
 				this.setTexture();
 			}
@@ -145,9 +139,9 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 
+
 	// TODO what is the rationale of this method?
 	private void setTexture() {
-
 		if (this.sprite != null) {
 			this.sprite.setRegion(this.textures.getTexture(currentTexture));
 		}
@@ -163,7 +157,7 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	public boolean isHovered() {
-		if (isVisible) {
+		if (isVisible && this.currentColor.a > 0) {
 			int mouseX = Gdx.input.getX();
 			int mouseY = Gdx.input.getY();
 			int resX = Gdx.graphics.getWidth();
@@ -210,13 +204,24 @@ public abstract class DrawableSprite implements Drawable {
 
 	public void setColor(Color color) {
 		if (!this.targetColor.equals(color)) {
-			//this.color = color;
+			logger.debug("setting colour to " + color);
 			originColor = this.currentColor;
 			this.targetColor = color;
 			Date d = new Date();
 			this.colorTransitionStartTime = d.getTime();
-			this.colorTransitionEndTime = d.getTime() +
-										  colorTransitionDuration;
+			this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
 		}
+	}
+	
+	/**
+	 * Sets the color of this sprite without fading towards it
+	 * @param color the color this sprite should assume immediately
+	 */
+	public void setColorImmediately(Color color) {
+		this.originColor = color;
+		this.targetColor = color;
+		Date d = new Date();
+		this.colorTransitionStartTime = d.getTime();
+		this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
 	}
 }

@@ -1,6 +1,7 @@
 package de.bioviz.desktop;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -13,9 +14,22 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.HashMap;
+import java.util.prefs.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JSlider;
+import javax.swing.JLabel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -24,7 +38,6 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
@@ -36,87 +49,137 @@ import de.bioviz.ui.DrawableRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * This class is the single desktop starter class.
+ * It starts the cross-platform core application and
+ * provides a basic java desktop UI to control it.
+ *
+ * @author Jannis Stoppe
+ *
+ */
 public class DesktopLauncher extends JFrame {
 
-	public JSlider time;
+	/**
+	 * The one single instance of the desktop launcher.
+	 * There shouldn't be a second visualization window in the same process, so
+	 * a singleton is pretty much a valid approach to manage access to the
+	 * instance.
+	 * This is currently set to private as it is only used in private
+	 * subclasses. Feel free to elevate this to public as needed.
+	 */
+	private static DesktopLauncher singleton;
 
-	JLabel timeInfo = new JLabel("1");
-
-	timerCallback tc;
-	loadFileCallback load_cb;
-	loadedFileCallback loaded_cb;
-	saveFileCallback save_cb;
-	public static DesktopLauncher singleton;
-	private BioViz bioViz;
-	LwjglAWTCanvas canvas;
-	LwjglAWTInput input;
-
-	public final String programName = "BioViz";
-
-	private static JFileChooser fileDialog = null;
-
+	/**
+	 * Used to handle feedback for the user about the program behaviour (and of
+	 * course the developer, too). Anything logged using this instance will
+	 * report as originating from the DesktopLauncher class.
+	 */
 	private static Logger logger =
 			LoggerFactory.getLogger(DesktopLauncher.class);
 
-	private JTabbedPane visualizationTabs;
-
-	BioViz currentViz;
-
-	private HashMap<Object, File> tabsToFilenames;
-
+	/**
+	 * The label to display the current simulation time.
+	 */
+	JLabel timeInfo = new JLabel("1");
 
 	/**
-	 * Needed to fetch *all* pressed keys that are caught somewhere in this
-	 * frame in order to pipe them through to the libgdx program within.
-	 *
-	 * @author Jannis Stoppe
+	 * Callback to be used upon time changes.
 	 */
-	private class MyDispatcher implements KeyEventDispatcher {
-		@Override
-		public boolean dispatchKeyEvent(KeyEvent e) {
-			if (input.getInputProcessor() == null) {
-				input.setInputProcessor(bioViz.getInputProcessor());
-			}
-			//Additional check to avoid having events fire twice (once from
-			// here and once from libgdx)
-			if (DesktopLauncher.singleton.getFocusOwner() !=
-				DesktopLauncher.singleton.canvas.getCanvas()) {
-				if (e.getID() == KeyEvent.KEY_PRESSED) {
-					bioViz.getInputProcessor().keyDown(
-							translateKeyCode(e.getKeyCode()));
-				}
-				else if (e.getID() == KeyEvent.KEY_RELEASED) {
-					bioViz.getInputProcessor().keyUp(
-							translateKeyCode(e.getKeyCode()));
-				}
-				else if (e.getID() == KeyEvent.KEY_TYPED) {
-					bioViz.getInputProcessor().keyTyped(e.getKeyChar());
-				}
-			}
-			return false;
-		}
+	TimerCallback tc;
+
+	/**
+	 * Callback to be used when a new file is supposed to be loaded.
+	 */
+	LoadFileCallback loadCB;
+
+	/**
+	 * Callback to be used when loading a new file is done.
+	 */
+	LoadedFileCallback loadedCB;
+
+	/**
+	 * Callback to be used when the file is supposed to be saved.
+	 */
+	SaveFileCallback saveCB;
+
+	/**
+	 * The element that is used to draw the libgdx core stuff on.
+	 */
+	LwjglAWTCanvas canvas;
+
+	/**
+	 * Needed for input handling.
+	 */
+	LwjglAWTInput input;
+
+	/**
+	 * The visualization that is used to actually display the DMFBs.
+	 */
+	BioViz currentViz;
+
+	/**
+	 * This maps the tabs that are open in the visualizationTabs field to the
+	 * filenames being open there. As each tab corresponds to a certain file,
+	 * clicking a particular tab needs to tell the visualization to display the
+	 * according file, hence the required map.
+	 */
+	private HashMap<Object, File> tabsToFilenames;
+
+	/**
+	 * The slider to control the simulation time from the desktop UI.
+	 */
+	private JSlider timeSlider;
+
+	/**
+	 * The slider to control the length of the displayed droplet routes.
+	 */
+	private JSlider displayRouteLengthSlider;
+
+	/**
+	 * The name that is displayed as the program name in the OS's UI.
+	 */
+	private final String programName = "BioViz";
+
+	/**
+	 * Used to display the tabs for open files.
+	 */
+	private JTabbedPane visualizationTabs;
+
+	/**
+	 * The visualization instance.
+	 * From the DesktopLauncher, this field is usd to get access to any
+	 * properties of the currently running visualization.
+	 * Notice that despite the application seemingly opening several files at
+	 * once in tabs, there is still only one visualization which then displays
+	 * several different circuits.
+	 */
+	private BioViz bioViz;
+
+	/**
+	 * Creates a desktop launcher.
+	 */
+	public DesktopLauncher() {
+		this(null);
 	}
 
-	public DesktopLauncher(int timeMax) {
-		this(timeMax, null);
-	}
-
-	public DesktopLauncher(int timeMax, File file) {
+	/**
+	 * Creates a desktop launcher.
+	 * @param file the file to be opened by default
+	 */
+	public DesktopLauncher(final File file) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		tabsToFilenames = new HashMap<Object, File>();
 
 		if (file == null) {
 			bioViz = new BioViz();
-		}
-		else {
+		} else {
 			bioViz = new BioViz(file);
 		}
 		currentViz = bioViz;
 		canvas = new LwjglAWTCanvas(bioViz);
 
-		currentViz.addCloseFileListener(new closeFileCallback());
+		currentViz.addCloseFileListener(new CloseFileCallback());
 
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
@@ -126,51 +189,7 @@ public class DesktopLauncher extends JFrame {
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
 
 
-		visualizationTabs = new JTabbedPane();
-		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
-		visualizationTabs.addChangeListener(
-				l -> bioViz.loadNewFile(
-						tabsToFilenames.get(
-								((JTabbedPane) l.getSource())
-										.getSelectedComponent())));
-
-		visualizationTabs.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				logger.debug("got button " + e.getButton() + " in tabs");
-				if (e.getButton() == MouseEvent.BUTTON2) {
-					closeTab(visualizationTabs.getSelectedIndex());
-				}
-			}
-		});
-
-		addNewTab(file);
+		initializeTabs(file);
 
 		/**
 		 * Needed to pipe through the keyboard events to the libgdx application
@@ -179,195 +198,7 @@ public class DesktopLauncher extends JFrame {
 				KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new MyDispatcher());
 
-		final int panelWidth = 128;
-		final int panelHeight = 600;
-
-		JPanel panel = new JPanel();
-		panel.setLayout(new FlowLayout());
-		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
-
-
-		// This text was completely useless. I leave the code here as a
-		// reference on how to add labels with some kind
-		// of formatting.
-//		JLabel label = new JLabel("<html><body>Totally classic<br/>UI
-// elements<br/></body></html>");
-
-
-		final int buttonWidth = 112;
-		final int sliderWidth = buttonWidth;
-		final int sliderHeight = new JSlider().getPreferredSize().height;
-
-		JButton autoplaytButton = new JButton("Autoplay");
-		autoplaytButton.setPreferredSize(new Dimension(buttonWidth,
-													   autoplaytButton
-															   .getPreferredSize().height));
-		autoplaytButton.addActionListener(
-				e -> currentViz.currentCircuit.autoAdvance =
-						!currentViz.currentCircuit.autoAdvance);
-
-		JButton openButton = new JButton("Open File");
-		openButton.setPreferredSize(new Dimension(buttonWidth,
-												  openButton.getPreferredSize
-														  ().height));
-		load_cb = new loadFileCallback();
-		openButton.addActionListener(e -> load_cb.bioVizEvent());
-
-		JButton saveButton = new JButton("Save SVG");
-		saveButton.setPreferredSize(new Dimension(buttonWidth,
-												  saveButton.getPreferredSize
-														  ().height));
-		save_cb = new saveFileCallback();
-		saveButton.addActionListener(e -> save_cb.bioVizEvent());
-
-		JButton zoomButton = new JButton("Center");
-		zoomButton.setPreferredSize(new Dimension(buttonWidth,
-												  zoomButton.getPreferredSize
-														  ().height));
-		zoomButton.addActionListener(
-				e -> currentViz.currentCircuit.zoomExtents());
-
-		JButton dropletButton = new JButton("Droplets");
-		dropletButton.setPreferredSize(new Dimension(buttonWidth,
-													 dropletButton
-															 .getPreferredSize
-																	 ()
-															 .height));
-		dropletButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowDroplets());
-
-		JButton usageButton = new JButton("Cell Usage");
-		usageButton.setPreferredSize(new Dimension(buttonWidth,
-												   usageButton
-														   .getPreferredSize()
-														   .height));
-		usageButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowUsage());
-
-		JButton actuationButton = new JButton("Actuations");
-		actuationButton.setPreferredSize(new Dimension(buttonWidth,
-													   actuationButton
-															   .getPreferredSize().height));
-		actuationButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Actuations));
-
-
-		time = new JSlider(JSlider.HORIZONTAL, 1, timeMax, 1);
-		time.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		time.addChangeListener(ce -> currentViz.currentCircuit.setCurrentTime(
-				((JSlider) ce.getSource()).getValue()));
-		tc = new timerCallback(time, timeInfo);
-
-
-		JSlider routes =
-				new JSlider(JSlider.HORIZONTAL, 0, 32, DrawableRoute
-						.timesteps);
-		routes.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
-		routes.addChangeListener(ce -> DrawableRoute.timesteps =
-				((JSlider) ce.getSource()).getValue());
-		//tc = new timerCallback(time);
-
-		JButton adjacencyButton = new JButton("Adjacency");
-		adjacencyButton.setPreferredSize(new Dimension(buttonWidth,
-													   adjacencyButton
-															   .getPreferredSize().height));
-		adjacencyButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Adjacency));
-
-
-		JButton displayDropletIDsButton = new JButton("Drop IDs");
-		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth,
-															   displayDropletIDsButton.getPreferredSize().height));
-		displayDropletIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.DropletIDs));
-
-		JButton displayFluidIDsButton = new JButton("Fluid IDs");
-		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth,
-															 displayFluidIDsButton.getPreferredSize().height));
-		displayFluidIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.FluidIDs));
-
-		JButton pinButton = new JButton("Pins");
-		pinButton.setPreferredSize(new Dimension(buttonWidth,
-												 pinButton.getPreferredSize()
-														 .height));
-		pinButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Pins));
-
-		JButton stIconButton = new JButton("Source/Target icons");
-		stIconButton.setPreferredSize(new Dimension(buttonWidth,
-													stIconButton
-															.getPreferredSize
-																	()
-															.height));
-		stIconButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.SourceTargetIcons));
-
-		JButton stIDButton = new JButton("Source/Target IDs");
-		stIDButton.setPreferredSize(new Dimension(buttonWidth,
-												  stIDButton.getPreferredSize
-														  ().height));
-		stIDButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.SourceTargetIDs));
-
-
-		JButton nextStepButton = new JButton("->");
-		nextStepButton.addActionListener(
-				e -> currentViz.currentCircuit.nextStep());
-		JButton prevStepButton = new JButton("<-");
-		prevStepButton.addActionListener(
-				e -> currentViz.currentCircuit.prevStep());
-
-		/*
-		For some reason, adding a speparator more then once prevents it from
-		being displayed more
-		than once O_0
-		 */
-		JSeparator timeSep = new JSeparator(SwingConstants.HORIZONTAL);
-		timeSep.setPreferredSize(new Dimension(buttonWidth, 5));
-		JSeparator fileSep = new JSeparator(SwingConstants.HORIZONTAL);
-		fileSep.setPreferredSize(new Dimension(buttonWidth, 5));
-		JSeparator optionsSep = new JSeparator(SwingConstants.HORIZONTAL);
-		optionsSep.setPreferredSize(new Dimension(buttonWidth, 5));
-		JSeparator invisiSep = new JSeparator(SwingConstants.HORIZONTAL);
-		invisiSep.setPreferredSize(new Dimension(buttonWidth, 0));
-
-
-		panel.add(new JLabel("Files"));
-		panel.add(fileSep);
-		panel.add(openButton);
-		panel.add(saveButton);
-		panel.add(invisiSep);
-		panel.add(new JLabel("Options"));
-		panel.add(optionsSep);
-		panel.add(new JLabel("Route length"));
-		panel.add(routes);
-		panel.add(zoomButton);
-		panel.add(dropletButton);
-		panel.add(displayDropletIDsButton);
-		panel.add(displayFluidIDsButton);
-		panel.add(pinButton);
-		panel.add(actuationButton);
-		panel.add(adjacencyButton);
-		panel.add(usageButton);
-		panel.add(stIconButton);
-		panel.add(stIDButton);
-		panel.add(invisiSep);
-		panel.add(new JLabel("Time"));
-		panel.add(timeSep);
-		panel.add(new JLabel("Step: "));
-		panel.add(timeInfo);
-		panel.add(autoplaytButton);
-		panel.add(prevStepButton);
-		panel.add(nextStepButton);
-		panel.add(time);
+		JPanel panel = initializePanel();
 
 
 		input = new LwjglAWTInput(canvas.getCanvas());
@@ -381,25 +212,301 @@ public class DesktopLauncher extends JFrame {
 		tabContainer.add(visualizationTabs, BorderLayout.NORTH);
 		tabContainer.add(canvas.getCanvas(), BorderLayout.CENTER);
 
-		loaded_cb = new loadedFileCallback();
-		currentViz.addLoadedFileListener(loaded_cb);
+		loadedCB = new LoadedFileCallback();
+		currentViz.addLoadedFileListener(loadedCB);
 
-		save_cb = new saveFileCallback();
-		currentViz.addSaveFileListener(save_cb);
+		saveCB = new SaveFileCallback();
+		currentViz.addSaveFileListener(saveCB);
+		
+		currentViz.addPickColourListener(new colourPickCallback());
 
 		try {
 			this.setIconImage(
 					ImageIO.read(currentViz.getApplicationIcon().file()));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage());
 		}
 
 		pack();
 		setVisible(true);
-		setSize(800, 600);
+		setSize(
+				Gdx.graphics.getDesktopDisplayMode().width / 2,
+				Gdx.graphics.getDesktopDisplayMode().height / 2
+				);
 	}
 
-	private void addNewTab(File file) {
+	/**
+	 * Initializes the left-hand panel with all UI elements.
+	 * @return the initialized panel to be added to the according UI element
+	 */
+	private JPanel initializePanel() {
+		final int panelWidth = 128;
+		final int panelHeight = 600;
+		final int routeLengthMax = 32;
+		final int preferredButtonHeight = 5;
+
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout());
+		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+
+		final int buttonWidth = 112;
+		final int sliderWidth = buttonWidth;
+		final int sliderHeight = new JSlider().getPreferredSize().height;
+
+		JButton autoplaytButton = new JButton("Autoplay");
+		autoplaytButton.setPreferredSize(new Dimension(buttonWidth,
+					   				autoplaytButton.getPreferredSize().height));
+		autoplaytButton.addActionListener(
+				e -> currentViz.currentCircuit.toggleAutoAdvance());
+
+		JButton openButton = new JButton("Open File");
+		openButton.setPreferredSize(new Dimension(buttonWidth,
+								  	openButton.getPreferredSize().height));
+		loadCB = new LoadFileCallback();
+		openButton.addActionListener(e -> loadCB.bioVizEvent());
+		
+		JButton preferencesButton = new JButton("Preferences");
+		preferencesButton.setPreferredSize(new Dimension(buttonWidth,
+								  	openButton.getPreferredSize().height));
+		preferencesButton.addActionListener(e -> {showSettings();});
+
+		JButton saveButton = new JButton("Save SVG");
+		saveButton.setPreferredSize(new Dimension(buttonWidth,
+								  	saveButton.getPreferredSize().height));
+		saveCB = new SaveFileCallback();
+		saveButton.addActionListener(e -> saveCB.bioVizEvent());
+
+		JButton zoomButton = new JButton("Center");
+		zoomButton.setPreferredSize(new Dimension(buttonWidth,
+									zoomButton.getPreferredSize().height));
+		zoomButton.addActionListener(
+				e -> currentViz.currentCircuit.zoomExtents());
+
+		JButton dropletButton = new JButton("Droplets");
+		dropletButton.setPreferredSize(new Dimension(buttonWidth,
+								 	dropletButton.getPreferredSize().height));
+
+		dropletButton.addActionListener(
+				e -> currentViz.currentCircuit.toggleShowDroplets());
+
+		JButton usageButton = new JButton("Cell Usage");
+		usageButton.setPreferredSize(new Dimension(buttonWidth,
+								   	usageButton.getPreferredSize().height));
+		usageButton.addActionListener(
+				e -> currentViz.currentCircuit.toggleShowUsage());
+
+		JButton actuationButton = new JButton("Actuations");
+		actuationButton.setPreferredSize(new Dimension(buttonWidth,
+									actuationButton.getPreferredSize().height));
+		actuationButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Actuations));
+
+		JButton interferenceButton = new JButton("Interference");
+		interferenceButton.setPreferredSize(new Dimension(buttonWidth,
+									actuationButton.getPreferredSize().height));
+		interferenceButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.InterferenceRegion));
+		
+		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, 1, 1);
+		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
+		timeSlider.addChangeListener(
+				ce -> currentViz.currentCircuit.setCurrentTime(
+						((JSlider) ce.getSource()).getValue()));
+		tc = new TimerCallback(timeSlider, timeInfo);
+
+
+		displayRouteLengthSlider =
+				new JSlider(JSlider.HORIZONTAL, 0, routeLengthMax,
+						DrawableRoute.routeDisplayLength);
+		displayRouteLengthSlider.setPreferredSize(
+				new Dimension(sliderWidth, sliderHeight));
+		displayRouteLengthSlider.addChangeListener(
+				ce -> DrawableRoute.routeDisplayLength =
+						((JSlider) ce.getSource()).getValue());
+
+
+		JButton adjacencyButton = new JButton("Adjacency");
+		adjacencyButton.setPreferredSize(new Dimension(buttonWidth,
+								   adjacencyButton.getPreferredSize().height));
+		adjacencyButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Adjacency));
+
+
+		JButton displayDropletIDsButton = new JButton("Drop IDs");
+		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth,
+						   displayDropletIDsButton.getPreferredSize().height));
+		displayDropletIDsButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.DropletIDs));
+
+		JButton displayFluidIDsButton = new JButton("Fluid IDs");
+		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth,
+						 	displayFluidIDsButton.getPreferredSize().height));
+		displayFluidIDsButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.FluidIDs));
+		
+		JButton displayFluidTypesButton = new JButton("Fluid Types");
+		displayFluidTypesButton.setPreferredSize(new Dimension(buttonWidth,
+						 	displayFluidIDsButton.getPreferredSize().height));
+		displayFluidTypesButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.FluidNames));
+
+		JButton pinButton = new JButton("Pins");
+		pinButton.setPreferredSize(new Dimension(buttonWidth,
+									pinButton.getPreferredSize().height));
+		pinButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.Pins));
+
+		JButton stIconButton = new JButton("Net Icons");
+		stIconButton.setPreferredSize(new Dimension(buttonWidth,
+									stIconButton.getPreferredSize().height));
+		stIconButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.SourceTargetIcons));
+
+		JButton stIDButton = new JButton("Net IDs");
+		stIDButton.setPreferredSize(new Dimension(buttonWidth,
+								  	stIDButton.getPreferredSize().height));
+		stIDButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.SourceTargetIDs));
+
+		JButton detectorsButton = new JButton("Detectors");
+		detectorsButton.setPreferredSize(new Dimension(buttonWidth,
+												  detectorsButton.getPreferredSize().height));
+		detectorsButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.DetectorIcon));
+
+
+		JButton nextStepButton = new JButton("->");
+		nextStepButton.addActionListener(
+				e -> currentViz.currentCircuit.nextStep());
+		JButton prevStepButton = new JButton("<-");
+		prevStepButton.addActionListener(
+				e -> currentViz.currentCircuit.prevStep());
+
+		/*
+		For some reason, adding a separator more then once prevents it from
+		being displayed more
+		than once O_0
+		 */
+		JSeparator timeSep = new JSeparator(SwingConstants.HORIZONTAL);
+		timeSep.setPreferredSize(
+				new Dimension(buttonWidth, preferredButtonHeight));
+		JSeparator fileSep = new JSeparator(SwingConstants.HORIZONTAL);
+		fileSep.setPreferredSize(
+				new Dimension(buttonWidth, preferredButtonHeight));
+		JSeparator optionsSep = new JSeparator(SwingConstants.HORIZONTAL);
+		optionsSep.setPreferredSize(
+				new Dimension(buttonWidth, preferredButtonHeight));
+		JSeparator invisiSep = new JSeparator(SwingConstants.HORIZONTAL);
+		invisiSep.setPreferredSize(new Dimension(buttonWidth, 0));
+		JSeparator prefsSep = new JSeparator(SwingConstants.HORIZONTAL);
+		prefsSep.setPreferredSize(new Dimension(buttonWidth, preferredButtonHeight));
+
+
+		panel.add(new JLabel("Files"));
+		panel.add(fileSep);
+		panel.add(openButton);
+		panel.add(saveButton);
+		panel.add(invisiSep);
+		panel.add(new JLabel("Options"));
+		panel.add(optionsSep);
+		panel.add(new JLabel("Route length"));
+		panel.add(displayRouteLengthSlider);
+		panel.add(zoomButton);
+		panel.add(dropletButton);
+		panel.add(displayDropletIDsButton);
+		panel.add(displayFluidIDsButton);
+		panel.add(displayFluidTypesButton);
+		panel.add(pinButton);
+		panel.add(actuationButton);
+		panel.add(adjacencyButton);
+		panel.add(usageButton);
+		panel.add(stIconButton);
+		panel.add(stIDButton);
+		panel.add(detectorsButton);
+		panel.add(interferenceButton);
+		panel.add(invisiSep);
+		panel.add(new JLabel("Time"));
+		panel.add(timeSep);
+		panel.add(new JLabel("Step: "));
+		panel.add(timeInfo);
+		panel.add(autoplaytButton);
+		panel.add(prevStepButton);
+		panel.add(nextStepButton);
+		panel.add(timeSlider);
+		panel.add(prefsSep);
+		panel.add(preferencesButton);
+		return panel;
+	}
+
+	/**
+	 * Initializes the tab UI elements.
+	 * @param file the first file to be open
+	 */
+	private void initializeTabs(final File file) {
+		visualizationTabs = new JTabbedPane();
+		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+
+		visualizationTabs.addChangeListener(
+				l -> bioViz.loadNewFile(
+						tabsToFilenames.get(
+								((JTabbedPane) l.getSource())
+										.getSelectedComponent())));
+
+		visualizationTabs.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				// Nothing yet
+			}
+
+			@Override
+			public void mousePressed(final MouseEvent e) {
+				// Nothing yet
+
+			}
+
+			@Override
+			public void mouseExited(final MouseEvent e) {
+				// Nothing yet
+
+			}
+
+			@Override
+			public void mouseEntered(final MouseEvent e) {
+				// Nothing yet
+
+			}
+
+			@Override
+			public void mouseClicked(final MouseEvent e) {
+				logger.debug("got button " + e.getButton() + " in tabs");
+				if (e.getButton() == MouseEvent.BUTTON2) {
+					closeTab(visualizationTabs.getSelectedIndex());
+				}
+			}
+		});
+
+		addNewTab(file);
+	}
+
+	/**
+	 * Adds a new tab that contains a certain file.
+	 * This calls the loadNewFile(file) method for this DesktopLauncher's
+	 * bioViz field to open the given file.
+	 * @param fileForTab the file to be opened
+	 */
+	private void addNewTab(final File fileForTab) {
+		File file = fileForTab;
 		if (file == null) {
 			file = Gdx.files.getFileHandle("examples/default_grid.bio",
 										   Files.FileType.Internal).file();
@@ -408,13 +515,18 @@ public class DesktopLauncher extends JFrame {
 		JPanel dummyPanel = new JPanel();
 		dummyPanel.setPreferredSize(new Dimension());
 		visualizationTabs.addTab(file.getName(), dummyPanel);
-		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() -
-										   1);
+		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() - 1);
 		tabsToFilenames.put(dummyPanel, file);
 		this.bioViz.loadNewFile(file);
 	}
 
-	private void closeTab(int index) {
+	/**
+	 * Closes a tab at a given index. Notice that by closing tabs at given
+	 * indices, there is no definite map from a tab's index to its contents as
+	 * consecutive tabs have their indices altered when another tab is closed.
+	 * @param index the index to be closed
+	 */
+	private void closeTab(final int index) {
 		logger.info("Closing file (" + index + ")");
 		bioViz.unloadFile(
 				tabsToFilenames.get(visualizationTabs.getSelectedComponent()));
@@ -422,12 +534,19 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.removeTabAt(index);
 	}
 
+	/**
+	 * Closes the currently opened tab.
+	 */
 	private void closeTab() {
 		int index = visualizationTabs.getSelectedIndex();
 		closeTab(index);
 	}
 
-	public static void main(String[] args) {
+	/**
+	 * Starting point for the application.
+	 * @param args console arguments, currently unused
+	 */
+	public static void main(final String[] args) {
 
 		initializeLogback();
 
@@ -435,46 +554,61 @@ public class DesktopLauncher extends JFrame {
 			// Set System L&F
 			UIManager.setLookAndFeel(
 					UIManager.getSystemLookAndFeelClassName());
-		} catch (UnsupportedLookAndFeelException e) {
-			// handle exception
-		} catch (ClassNotFoundException e) {
-			// handle exception
-		} catch (InstantiationException e) {
-			// handle exception
-		} catch (IllegalAccessException e) {
-			// handle exception
+		} catch (final UnsupportedLookAndFeelException e) {
+			logger.error("System look and feel is unsupported: "
+					+ e.getMessage() + "\n" + e.getStackTrace());
+		} catch (final Exception e) {
+			logger.error("Cannot set look and feel: " + e.getMessage() + "\n"
+					+ e.getStackTrace());
 		}
 
-		File file = askForFile();
-		JFrame frame = new DesktopLauncher(10, file);
+		File file;
+		if (args.length <= 0) {
+			file = askForFile();
+		} else {
+			file = new File(args[0]);
+		}
+		JFrame frame = new DesktopLauncher(file);
 
 
 		singleton.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
+			public void windowClosing(final WindowEvent e) {
 				singleton.canvas.stop();
 			}
 		});
 	}
 
+	/**
+	 * Asks the user for a file to be opened.
+	 * @return the file to be opened
+	 */
 	private static File askForFile() {
-		// TODO Irgendwie den letzten Pfad merken
 		File path = null;
-		if (path == null) {
-			path = new File(System.getProperty("user.dir"));
-		}
+		
+		java.util.prefs.Preferences prefs =
+			java.util.prefs.Preferences.userNodeForPackage(DesktopLauncher.class);
+		path = new File(prefs.get("lastFilePath", "."));
 
-		if (fileDialog == null) {
-			fileDialog = new JFileChooser(path);
-		}
+
+		logger.debug("Open file choose with path {}",path);
+
+		JFileChooser fileDialog = new JFileChooser(path);
 		int choice = fileDialog.showOpenDialog(null);
 		if (choice == JFileChooser.APPROVE_OPTION) {
-			return fileDialog.getSelectedFile();
+			path = fileDialog.getSelectedFile();
+
+			prefs.put("lastFilePath",path.getAbsolutePath());
+
+			return path;
 
 		}
 
 		return null;
 	}
 
+	/**
+	 * Initializes the logger.
+	 */
 	private static void initializeLogback() {
 
 
@@ -491,14 +625,27 @@ public class DesktopLauncher extends JFrame {
 			// context.reset().
 			context.reset();
 			configurator.doConfigure("config/logback.xml");
-		} catch (JoranException je) {
+		} catch (final JoranException je) {
 			// StatusPrinter will handle this
+			System.out.println("Error setting up logger: "
+				+ je.getStackTrace());
 		}
-		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
 
 	}
+	
+	private static void showSettings() {
+		logger.debug("Opening preferences window...");
+		PreferencesWindow pw = new PreferencesWindow();
+		pw.setVisible(true);
+		logger.debug("Done opening preferences window.");
+	}
 
-	protected static int translateKeyCode(int keyCode) {
+	/**
+	 * Translates a java.awt keycode to a libgdx keycode.
+	 * @param keyCode the awt code
+	 * @return the libgdx code
+	 */
+	protected static int translateKeyCode(final int keyCode) {
 		if (keyCode == java.awt.event.KeyEvent.VK_ADD) {
 			return Input.Keys.PLUS;
 		}
@@ -769,16 +916,43 @@ public class DesktopLauncher extends JFrame {
 		return Input.Keys.UNKNOWN;
 	}
 
-	private class timerCallback implements BioVizEvent {
+	/**
+	 * Used for communicating time changes between visualization core and the
+	 * desktop UI.
+	 * @author jannis
+	 *
+	 */
+	private class TimerCallback implements BioVizEvent {
+		/**
+		 * The slider element that is used to adjust the simulation time in the
+		 * desktop UI.
+		 */
 		private JSlider time;
+
+		/**
+		 * The label that displays some information about the time.
+		 */
 		private JLabel timeInfo;
 
-		public timerCallback(JSlider slider, JLabel info) {
+		/**
+		 * Constructor. Slider and panel are set the the instance of the
+		 * callback is added to the visualization's time changed listeners, so
+		 * the bioVizEvent method is called when the visualization somehow
+		 * alters the current simulation time
+		 * @param slider the slider to display the current time
+		 * @param info the label that should give information about the time
+		 */
+		public TimerCallback(final JSlider slider, final JLabel info) {
 			this.time = slider;
 			this.timeInfo = info;
 			currentViz.addTimeChangedListener(this);
 		}
 
+		/**
+		 * Called when the event happens, in this case the changed time.
+		 * This method then sets slider and label to display the according
+		 * information
+		 */
 		@Override
 		public void bioVizEvent() {
 			this.time.setValue(currentViz.currentCircuit.currentTime);
@@ -787,11 +961,51 @@ public class DesktopLauncher extends JFrame {
 
 		}
 	}
+	
+	private class colourPickCallback implements BioVizEvent {
 
-	private class loadFileCallback implements BioVizEvent {
-		public loadFileCallback() {
+		@Override
+		public void bioVizEvent() {
+			try {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+			Color c =
+					JColorChooser.showDialog(null, "Choose a Color", Color.red);
+			currentViz.selectedDroplet.setColor(
+					new com.badlogic.gdx.graphics.Color(
+							c.getRed() / 255f, c.getGreen() / 255f,
+							c.getBlue() / 255f, 1f));
+					}
+				});
+			} catch(Exception e) {
+				logger.error("Could not start colour picker:\n"
+						+ e.getStackTrace());
+			}
+			
+		}
+		
+	}
+
+	/**
+	 * Used to communicate the desire to load a file from the visualization to
+	 * the surrounding UI. That means that if this class's bioVizEvent() method
+	 * is called, the UI should somehow ask for the file to be loaded (int this
+	 * case using the askForFile() method) and then send the according events
+	 * back (which is done in the addNewTab() method).
+	 * @author jannis
+	 *
+	 */
+	private class LoadFileCallback implements BioVizEvent {
+
+		/**
+		 * Default constructor, does nothing.
+		 */
+		public LoadFileCallback() {
 		}
 
+		/**
+		 * Asks the user which file to load and then adds a new tab.
+		 */
 		@Override
 		public void bioVizEvent() {
 			File f = askForFile();
@@ -801,20 +1015,51 @@ public class DesktopLauncher extends JFrame {
 		}
 	}
 
-	private class closeFileCallback implements BioVizEvent {
-		public closeFileCallback() {
+	/**
+	 * Used to retrieve any close-file actions from the visualization and closes
+	 * the currently opened tab.
+	 *
+	 * @author jannis
+	 *
+	 */
+	private class CloseFileCallback implements BioVizEvent {
+
+		/**
+		 * Default constructor, does nothing.
+		 */
+		public CloseFileCallback() {
 		}
 
+		/**
+		 * Called by the visualization, calls the closeTab() method.
+		 */
 		@Override
 		public void bioVizEvent() {
 			DesktopLauncher.singleton.closeTab();
 		}
 	}
 
-	private class loadedFileCallback implements BioVizEvent {
-		public loadedFileCallback() {
+	/**
+	 * Used by the visualization to notify the system-specific UI that a new
+	 * file has been loaded. This includes switching between tabs, so this is
+	 * where all the UI adjustments for switching between tabs goes.
+	 * @author jannis
+	 *
+	 */
+	private class LoadedFileCallback implements BioVizEvent {
+
+		/**
+		 * Default constructor, does nothing.
+		 */
+		public LoadedFileCallback() {
 		}
 
+		/**
+		 * Called when a new file is loaded.
+		 * This includes tabs, so the UI elements need to be adjusted
+		 * accordingly (to display the according info about the current
+		 * circuit).
+		 */
 		@Override
 		public void bioVizEvent() {
 			if (currentViz.currentCircuit != null) {
@@ -823,59 +1068,125 @@ public class DesktopLauncher extends JFrame {
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
-				d.time.setMaximum(currentViz.currentCircuit.data.getMaxT());
-				d.time.setMinimum(1);
-				d.time.setValue(0);
+				d.timeSlider.setMaximum(currentViz.currentCircuit.data.getMaxT());
+				d.timeSlider.setMinimum(1);
+				d.timeSlider.setValue(0);
+
+				d.displayRouteLengthSlider.setMaximum(
+						currentViz.currentCircuit.data.getMaxRouteLength());
+				d.displayRouteLengthSlider.setMinimum(0);
+				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
-			}
-			else {
+			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
-				d.time.setMaximum(1);
-				d.time.setMinimum(1);
-				d.time.setValue(1);
+				d.timeSlider.setMaximum(1);
+				d.timeSlider.setMinimum(1);
+				d.timeSlider.setValue(1);
+
+				d.displayRouteLengthSlider.setMaximum(0);
+				d.displayRouteLengthSlider.setMinimum(0);
+				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.programName);
 			}
 		}
 	}
 
-	private class saveFileCallback implements BioVizEvent {
-		public saveFileCallback() {
+	/**
+	 * Used to communicate the intent of saving the currently open file as a
+	 * printable file somewhere.
+	 * @author jannis
+	 *
+	 */
+	private class SaveFileCallback implements BioVizEvent {
+
+		/**
+		 * Empty constructor, does nothing.
+		 */
+		public SaveFileCallback() {
 		}
 
+		/**
+		 * Called when the file is supposed to be saved. Asks the user where to
+		 * save the file and then calls the visualization to generate the svg
+		 * and store it at the given location.
+		 */
 		@Override
 		public void bioVizEvent() {
 			try {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						Preferences prefs =
-								Gdx.app.getPreferences("BioVizPreferences");
+						java.util.prefs.Preferences prefs =
+							java.util.prefs.Preferences.userNodeForPackage(DesktopLauncher.class);
+						String name = prefs.get("saveFolder", ".");
 						logger.debug(
-								"Desktop received save event, opening " +
-								"dialog...");
+								"Desktop received save event, opening "
+								+ "dialog...");
 
-						String name = prefs.getString("saveFolder", ".");
-						if (fileDialog == null) {
-							fileDialog = new JFileChooser();
-						}
+						JFileChooser fileDialog = new JFileChooser();
 						int fcresult = fileDialog.showSaveDialog(null);
 
 						if (fcresult == JFileChooser.APPROVE_OPTION) {
-							prefs.putString("saveFolder",
+							prefs.put("saveFolder",
 											fileDialog.getSelectedFile()
 													.getAbsolutePath());
+
 							currentViz.saveSVG(
 									fileDialog.getSelectedFile()
 											.getAbsolutePath());
 						}
 					}
 				});
-			} catch (Exception e) {
-				logger.error("Could not save file: " + e.getMessage() + "\n" +
-							 e.getStackTrace());
+			} catch (final Exception e) {
+				logger.error("Could not save file: " + e.getMessage() + "\n"
+							 + e.getStackTrace());
 			}
+		}
+	}
+
+	/**
+	 * Needed to fetch *all* pressed keys that are caught somewhere in this
+	 * frame in order to pipe them through to the libgdx program within.
+	 *
+	 * @author Jannis Stoppe
+	 */
+	private class MyDispatcher implements KeyEventDispatcher {
+
+		/**
+		 * Constructor, does nothing.
+		 */
+		public MyDispatcher() {
+			// Does nothing
+		}
+
+		/**
+		 * Sends the received key event to the visualization if the
+		 * visualization itself wasn't the active UI element in the first place
+		 * just so that user interaction still happens even if e.g. some slider
+		 * was clicked beforehand.
+		 */
+		@Override
+		public boolean dispatchKeyEvent(final KeyEvent e) {
+			if (input.getInputProcessor() == null) {
+				input.setInputProcessor(bioViz.getInputProcessor());
+			}
+			//Additional check to avoid having events fire twice (once from
+			// here and once from libgdx)
+			if (DesktopLauncher.singleton.getFocusOwner()
+				!= DesktopLauncher.singleton.canvas.getCanvas()) {
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					bioViz.getInputProcessor().keyDown(
+							translateKeyCode(e.getKeyCode()));
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+					bioViz.getInputProcessor().keyUp(
+							translateKeyCode(e.getKeyCode()));
+				} else if (e.getID() == KeyEvent.KEY_TYPED) {
+					bioViz.getInputProcessor().keyTyped(e.getKeyChar());
+				}
+			}
+			return false;
 		}
 	}
 }

@@ -4,18 +4,24 @@ import de.bioviz.structures.Droplet;
 
 import java.util.Random;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+
 import de.bioviz.structures.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DrawableDroplet extends DrawableSprite {
 
+	static Logger logger = LoggerFactory.getLogger(DrawableDroplet.class);
+
 	public Droplet droplet;
 
-	private DrawableRoute route;
+	public DrawableRoute route;
 
 	private static Random randnum = null;
 
-	DrawableCircuit parentCircuit;
+	public DrawableCircuit parentCircuit;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
 		super(TextureE.Droplet, parent.parent);
@@ -24,7 +30,7 @@ public class DrawableDroplet extends DrawableSprite {
 			randnum = new Random();
 		}
 		this.droplet = droplet;
-		super.addLOD(DEFAULT_LOD_THRESHOLD,TextureE.BlackPixel);
+		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 		randnum.setSeed(droplet.getID());
 		super.setColor(new Color(randnum.nextInt()));
 		Color c = super.getColor();
@@ -33,16 +39,6 @@ public class DrawableDroplet extends DrawableSprite {
 		route = new DrawableRoute(this);
 	}
 
-	@Override
-	public String generateSVG() {
-		return
-				"<image x=\"" + this.droplet.smoothX + "\" " +
-						"y=\"" + (-this.droplet.smoothY + parentCircuit.data.getMaxCoord().snd - 1) + "\" " +
-						"width=\"1\" height=\"1\" xlink:href=\"droplet.svg\" />" +
-						this.route.generateSVG();
-	}
-
-
 	public Color getDisplayColor() {
 
 		DrawableCircuit circ = parentCircuit;
@@ -50,39 +46,65 @@ public class DrawableDroplet extends DrawableSprite {
 		Color color = this.getColor().cpy();
 
 		Point p = droplet.getPositionAt(circ.currentTime);
-		boolean withinTimeRange = false;
 
 		if (p == null) {
-			color = color.sub(0, 0, 0, 1).clamp();
+			color.sub(0, 0, 0, 1).clamp();
 
 			if (circ.currentTime < droplet.getSpawnTime()) {
 				p = droplet.getFirstPosition();
-			} else if (circ.currentTime > droplet.getMaxTime()) {
+			}
+			else if (circ.currentTime > droplet.getMaxTime()) {
 				p = droplet.getLastPosition();
 			}
 		} else {
-			color = color.add(0, 0, 0, 1).clamp();
+			if (parentCircuit.hiddenDroplets.contains(this)){
+				color.a = 0.25f;
+			} else {
+				color.add(0, 0, 0, 1).clamp();
+			}
 		}
 
 		return color;
 	}
 
 	public String getMsg() {
-		String msg = null;
+		String msg = "";
 
-		if (parentCircuit.displayOptions.getOption(BDisplayOptions.DropletIDs)) {
-			msg = Integer.toString(droplet.getID());
+		if (parentCircuit.displayOptions.getOption(
+				BDisplayOptions.DropletIDs)) {
+			msg = Integer.toString(droplet.getID())+ " ";
+
 		}
+		logger.trace("droplet msg after dropletIDs option: {}",msg);
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
 			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
 			if (fluidID != null) {
-				msg = fluidID.toString();
+				if (!msg.isEmpty()) {
+					msg += "-";
+				}
+				msg += " " + fluidID.toString() + " ";
 			}
+
 		}
+		logger.trace("droplet msg after fluidIDs option: {}",msg);
+		if (parentCircuit.displayOptions
+				.getOption(BDisplayOptions.FluidNames)) {
+			String fname = this.parentCircuit.data
+					.fluidType(this.droplet.getID());
+			//System.out.println("fname: " + fname);
+			//System.out.println(this.parentCircuit.data.fluidTypes);
+			if (fname != null) {
+				if (!msg.isEmpty()) {
+					msg += "-";
+				}
+				msg += " " + fname;
+			}
+
+		}
+		logger.trace("droplet msg after fluidNames option: {}",msg);
 		return msg;
 	}
-
 	@Override
 	public void draw() {
 
@@ -97,7 +119,7 @@ public class DrawableDroplet extends DrawableSprite {
 				p = droplet.getFirstPosition();
 			} else if (circ.currentTime > droplet.getMaxTime()) {
 				p = droplet.getLastPosition();
-			}
+						}
 		} else {
 			withinTimeRange = true;
 		}
@@ -110,18 +132,30 @@ public class DrawableDroplet extends DrawableSprite {
 			route.draw();
 
 			if (isVisible) {
-
+				
 				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
 				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
-
-				this.x = xCoord;
-				this.y = yCoord;
+				
 				this.scaleX = circ.smoothScaleX;
 				this.scaleY = circ.smoothScaleY;
+				
+				// if hidden, place below grid
+				int invisibleIndex = 
+						this.parentCircuit.hiddenDroplets.indexOf(this);
+				if (invisibleIndex >= 0) {
+					
+					this.scaleX = 32f;
+					this.scaleY = 32f;
+					
+					xCoord = Gdx.graphics.getWidth() / 2f
+							- this.scaleX *(invisibleIndex + 1);
+					yCoord = Gdx.graphics.getHeight() / 2f - this.scaleY;
+				}
+				
+				this.x = xCoord;
+				this.y = yCoord;
 
-
-
-				String msg= getMsg();
+				String msg = getMsg();
 
 				displayText(msg);
 
@@ -129,8 +163,17 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 		}
 		if (!withinTimeRange) {
-			// make sure that previous numbers are removed when the droplet is removed.
+			// make sure that previous numbers are removed when the droplet is
+			// removed.
 			displayText(null);
+		}
+	}
+	
+	public void toggleGridVisibility() {
+		if (parentCircuit.hiddenDroplets.contains(this)) {
+			parentCircuit.hiddenDroplets.remove(this);
+		} else {
+			parentCircuit.hiddenDroplets.add(this);
 		}
 	}
 }

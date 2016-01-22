@@ -1,0 +1,7 @@
+.idea/
+bioParser.iml
+gen/
+test/
+src/
+*.tokens
+

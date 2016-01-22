@@ -1,9 +1,9 @@
-package de.bioviz.ui;
+package de.bioviz.svg;
 
 /**
  * @author Oliver Keszöcze
  */
-public enum TextureE {
+public enum SVGE {
 	Droplet, Sink, Dispenser, Detector, Start, Target, AdjacencyMarker,
 	BlackPixel, Blockage, GridMarker, StepMarker
 }
