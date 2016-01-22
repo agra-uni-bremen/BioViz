@@ -1,2 +1,4 @@
 desktop:
-  script: "git submodule init && git submodule update && ./gradlew desktop:build"
+  script:
+      - ./gradlew core:checkstyleMain
+      - ./gradlew desktop:checkstyleMain
