@@ -12,14 +12,6 @@ public class Rectangle {
 	Point bottomLeft;
 	Point topRight;
 
-	public Point fstCorner() {
-		return new Point(x1, y1);
-	}
-
-	public Point sndCorner() {
-		return new Point(x2, y2);
-	}
-
 	public Rectangle(Point p1, Point p2) {
 		this(p1.fst, p1.snd, p2.fst, p2.snd);
 	}
