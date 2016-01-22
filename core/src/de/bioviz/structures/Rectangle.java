@@ -27,6 +27,19 @@ public class Rectangle {
         this.y2=y2;
     }
 
+    public boolean contains(Point p) {
+        return contains(p.fst, p.snd);
+    }
+
+    public boolean contains(int x, int y) {
+        int minX = Math.min(x1,x2);
+        int minY = Math.min(y1, y2);
+        int maxX = Math.max(x1,x2);
+        int maxY = Math.max(y1,y2);
+
+        return minX <= x && x <= maxX && minY <= y && y <= maxY;
+    }
+
     public ArrayList<Point> positions() {
         int minX = Math.min(x1,x2);
         int minY = Math.min(y1, y2);
