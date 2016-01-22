@@ -1,10 +1,11 @@
-maxCheckstyleErrors=5110
+maxCheckstyleErrors=4925
 
 ./gradlew core:checkstyleMain > checkstyleOutput 2>&1
-wc -l checkstyleOutput > wcResult
+grep -o "warning" checkstyleOutput | wc -w > wcResult
 read errors filename < wcResult
 rm wcResult
-echo "found $errors checkstyle errors"
+echo "found $errors checkstyle errors "
+echo "current max is $maxCheckstyleErrors "
 rm ./checkstyleOutput
 if [ "$errors" -gt "$maxCheckstyleErrors" ]
 then
