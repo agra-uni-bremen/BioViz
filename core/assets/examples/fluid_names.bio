@@ -1,0 +1,29 @@
+grid
+(1,1) (5,5)
+end
+
+
+routes
+1 (1,1) (2,1) (3,1) (3,2)
+2 (5,4) (4,4) (3,4) (3,4)
+3 [11] (3,3) (4,3) (5,3)
+end
+
+mixers
+1 [5-10] (2,2) (3,3)
+end
+
+sinks
+(5,3) E
+end
+
+fluids
+1 blood
+2 saliva
+3 acid
+end
+
+dispensers
+1 (5,4) E
+2 (1,1) S
+end
