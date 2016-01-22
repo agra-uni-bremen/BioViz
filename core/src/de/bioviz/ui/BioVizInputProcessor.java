@@ -229,7 +229,6 @@ public class BioVizInputProcessor implements InputProcessor {
 	public boolean mouseMoved(int screenX, int screenY) {
 		oldX = screenX;
 		oldY = screenY;
-		//RevVisGDX.singleton.menu.MouseCoords(screenX, screenY);
 		return false;
 	}
 }
