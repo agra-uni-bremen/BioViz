@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
@@ -94,17 +95,17 @@ public class BioVizInputProcessor implements InputProcessor {
 			}
 		}
 		else if (keycode == Keys.PLUS && ctrl) {
-			parentViz.mc.incScales();
+			parentViz.messageCenter.incScales();
 		}
 		else if (keycode == Keys.R) {
 			parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.ColorfulRoutes);
 		}
 		else if (keycode == Keys.MINUS && ctrl) {
-			parentViz.mc.decScales();
+			parentViz.messageCenter.decScales();
 		}
 		else if (keycode == Keys.C) {
 			if (ctrl) {
-				parentViz.currentCircuit.setShowCoordinates(!parentViz.currentCircuit.getShowCoordinates());
+				parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.Coordinates);
 			}
 		}
 		
@@ -156,9 +157,9 @@ public class BioVizInputProcessor implements InputProcessor {
 		
 		for(DrawableDroplet d: parentViz.currentCircuit.droplets) {
 			if (d.isHovered()) {
-				if (button == Input.Buttons.LEFT) {
+				if (button == Buttons.LEFT) {
 					d.toggleGridVisibility();
-				} else if (button == Input.Buttons.RIGHT) {
+				} else if (button == Buttons.RIGHT) {
 					parentViz.selectedDroplet = d;
 					parentViz.callPickColourListeners();
 				}

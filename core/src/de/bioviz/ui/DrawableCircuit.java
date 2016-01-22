@@ -538,5 +538,4 @@ public class DrawableCircuit implements Drawable {
 
 		}
 	}
-
 }
