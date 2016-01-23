@@ -40,7 +40,7 @@ public class SVGManager {
 	 */
 
 	private final double scaleFactor = 0.04;
-	private final int coordinateMultiplier = 224;
+	private final int coordinateMultiplier = 224 + 16 + 16;
 
 
 	public String getTransformation(String params) {
