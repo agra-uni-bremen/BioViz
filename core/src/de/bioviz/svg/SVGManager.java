@@ -39,7 +39,7 @@ public class SVGManager {
 	Warning: magic numbers ahead
 	 */
 
-	private final double scaleFactor = 0.04;
+	private final double scaleFactor = 1;
 	private final int coordinateMultiplier = 224 + 16 + 16;
 
 
@@ -127,17 +127,17 @@ public class SVGManager {
 		Point maxCoord = circ.data.getMaxCoord();
 
 
-//		sb.append(
-//				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-//				minCoord.fst + " " +
-//				(minCoord.snd - 1) + " " +
-//				(maxCoord.fst + 1) + " " +
-//				(maxCoord.snd + 1) +
-//				"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
-//				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
+		sb.append(
+				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
+						(minCoord.fst) * coordinateMultiplier + " " +
+						(minCoord.snd) * coordinateMultiplier + " " +
+						(maxCoord.fst) * coordinateMultiplier + " " +
+						(maxCoord.snd) * coordinateMultiplier +
+						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
+						"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
-		sb.append("<svg xmlns=\"http://www.w3.org/2000/svg\" " +
-				  "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
+//		sb.append("<svg xmlns=\"http://www.w3.org/2000/svg\" " +
+//				  "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
