@@ -40,7 +40,7 @@ public class SVGManager {
 	 */
 
 	private final double scaleFactor = 1;
-	private final int coordinateMultiplier = 224 + 16 + 16;
+	private final int coordinateMultiplier = 256;
 
 
 	public String getTransformation(String params) {
@@ -143,6 +143,8 @@ public class SVGManager {
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
 		logger.debug("svgs: {}",svgs);
+		// need to modify the svgcodes here to get the color into them
+		// the color code should be added to the name
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
 
@@ -180,7 +182,7 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 		logger.debug("Color: {}", vals.color);
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-			   getScaleTransformation() + " xlink:href=\"#" + vals.texture +
+			   getScaleTransformation() + " xlink:href=\"#" + vals.texture + // the colorcode should be added here with a preceding minus
 			   "\" />\n";
 	}
 
