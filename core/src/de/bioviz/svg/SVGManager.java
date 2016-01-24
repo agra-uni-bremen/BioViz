@@ -130,9 +130,9 @@ public class SVGManager {
 		sb.append(
 				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
 						(minCoord.fst) * coordinateMultiplier + " " +
-						(minCoord.snd) * coordinateMultiplier + " " +
-						(maxCoord.fst) * coordinateMultiplier + " " +
-						(maxCoord.snd) * coordinateMultiplier +
+						(minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1)) * coordinateMultiplier + " " +
+						(minCoord.fst == 0 ? (maxCoord.fst + 1) : maxCoord.fst) * coordinateMultiplier + " " +
+						(minCoord.snd == 0 ? (maxCoord.snd + 1) : maxCoord.snd) * coordinateMultiplier +
 						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
 						"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
