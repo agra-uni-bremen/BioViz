@@ -152,10 +152,11 @@ public class SVGManager {
 			sb.append(toSVG(field));
 		}
 		for (DrawableDroplet drop : circ.droplets) {
-			sb.append(toSVG(drop));
+			if(!circ.hiddenDroplets.contains(drop)) {
+				sb.append(toSVG(drop));
+			}
 		}
-
-
+		
 		sb.append("</g>\n");
 		sb.append("</svg>\n");
 
