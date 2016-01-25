@@ -54,6 +54,7 @@ public class MessageCenter {
 			parameter.color = Color.WHITE.cpy();
 			parameter.borderWidth = 4;
 			parameter.borderColor = Color.BLACK.cpy();
+			parameter.genMipMaps = true;
 			BitmapFont font12 = generator.generateFont(parameter); // font size 12 pixels
 			generator.dispose(); // don't forget to dispose to avoid memory leaks!
 			logger.debug("set up font");
@@ -69,7 +70,7 @@ public class MessageCenter {
 		public float y;
 		public Color color;
 		public float size;
-		public boolean hideWhenZoomedOut = false;
+		public boolean hideWhenZoomedOut = true;
 
 		public HUDMessage(String message, float x, float y) {
 			this.message = message;
@@ -148,15 +149,17 @@ public class MessageCenter {
 				
 				float hideAt = (1f / scaleHUD) * 4f;
 				float showAt = (1f / scaleHUD) * 8f;
-				// Hide when zoomed out
-				if (this.parent.currentCircuit.getScaleX() < hideAt) {
-					targetColor.a = 0;
-				} else if (this.parent.currentCircuit.getScaleX() < showAt) {
-					float val = this.parent.currentCircuit.getScaleX();
-					val = (val - hideAt) / (showAt - hideAt);
-					targetColor.a = val;
-				} else {
-					targetColor.a = 1;
+				if (s.hideWhenZoomedOut){ 
+					// Hide when zoomed out
+					if (this.parent.currentCircuit.getScaleX() < hideAt) {
+						targetColor.a = 0;
+					} else if (this.parent.currentCircuit.getScaleX() < showAt) {
+						float val = this.parent.currentCircuit.getScaleX();
+						val = (val - hideAt) / (showAt - hideAt);
+						targetColor.a = val;
+					} else {
+						targetColor.a = 1;
+					}
 				}
 				
 				font.setColor(targetColor);
