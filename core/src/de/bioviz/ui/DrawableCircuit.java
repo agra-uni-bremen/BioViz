@@ -144,23 +144,6 @@ public class DrawableCircuit implements Drawable {
 
 		}
 
-		drawGates();
-
-		drawOverlay();
-	}
-
-	/**
-	 * Draws additional overlaid information (currently only the moving rule overlay)
-	 */
-	private void drawOverlay() {
-
-	}
-
-	/**
-	 * Draws the gates
-	 */
-	private void drawGates() {
-
 		if (autoAdvance) {
 			long current = new Date().getTime();
 			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
@@ -174,12 +157,13 @@ public class DrawableCircuit implements Drawable {
 		for (DrawableField f : this.fields) {
 			f.draw();
 		}
-		
+
 		for (DrawableDroplet d : this.droplets) {
 			d.draw();
 		}
 	
 	}
+
 
 	/**
 	 * Draws the coordinates of the grid on top of and to the left of the grid.
@@ -287,9 +271,9 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the x coordinate of a given gate
+	 * Calculates the x coordinate of a given cell
 	 *
-	 * @param i the gate index
+	 * @param i the cell index
 	 * @return the x coordinate on screen
 	 */
 	protected float xCoordOnScreen(int i) {
@@ -298,8 +282,8 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Calculates the x coordinate of a given value. Keep in mind that
-	 * this is still in gate-space, so a value of 0 would be at the center
-	 * of the circuit's first gate.
+	 * this is still in cell-space, so a value of 0 would be at the center
+	 * of the chip's first cell.
 	 *
 	 * @param i the value to translate
 	 * @return the x coordinate on screen
@@ -322,14 +306,14 @@ public class DrawableCircuit implements Drawable {
 		return yCoord;
 	}
 
-	protected float yCoordInGates(float i) {
+	protected float yCoordInCells(float i) {
 		float yCoord = i;
 		yCoord /= smoothScaleY;
 		yCoord -= smoothOffsetY;
 		return yCoord;
 	}
 
-	protected float xCoordInGates(float i) {
+	protected float xCoordInCells(float i) {
 		float xCoord = i;
 		xCoord /= smoothScaleX;
 		xCoord -= smoothOffsetX;
@@ -431,7 +415,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the screen bounds in gate-space
+	 * Calculates the screen bounds
 	 *
 	 * @return the screen bounds
 	 */
@@ -447,7 +431,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Sets the screen bounds in gate-space
+	 * Sets the screen bounds
 	 *
 	 * @param bounds the area the viewport is supposed to show.
 	 */
@@ -476,7 +460,7 @@ public class DrawableCircuit implements Drawable {
 
 
 	/**
-	 * Resets the zoom so that the whole circuit is shown.
+	 * Resets the zoom so that the whole chip is shown.
 	 */
 	public void zoomExtents() {
 		// FIXME Does not properly handle non-0 minimum coordinates yet
