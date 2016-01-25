@@ -416,6 +416,14 @@ public class DrawableCircuit implements Drawable {
 	public void setScaleX(float scaleX) {
 		this.scaleX = scaleX;
 	}
+	
+	/**
+	 * Retrieves the current x scaling factor that is used for the smooth
+	 * animated camera.
+	 */
+	public float getSmoothScaleX() {
+		return smoothScaleX;
+	}
 
 	/**
 	 * retrieves the current y scaling factor

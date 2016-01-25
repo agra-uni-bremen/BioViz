@@ -172,7 +172,7 @@ public class MessageCenter {
 				if (s.size > 0) {
 					font.setScale(s.size / 100f);
 				} else {
-					font.setScale(scaleHUD);
+					font.setScale((parent.currentCircuit.getSmoothScaleX() * scaleHUD) / 32f);
 				}
 				font.draw(parent.batch, s.message, x, y);
 			}
