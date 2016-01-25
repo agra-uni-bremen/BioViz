@@ -69,6 +69,7 @@ public class MessageCenter {
 		public float y;
 		public Color color;
 		public float size;
+		public boolean hideWhenZoomedOut = false;
 
 		public HUDMessage(String message, float x, float y) {
 			this.message = message;
@@ -143,7 +144,23 @@ public class MessageCenter {
 			}
 
 			for (HUDMessage s : this.HUDMessages.values()) {
-				font.setColor(s.color);
+				Color targetColor = s.color.cpy();
+				
+				float hideAt = (1f / scaleHUD) * 4f;
+				float showAt = (1f / scaleHUD) * 8f;
+				// Hide when zoomed out
+				if (this.parent.currentCircuit.getScaleX() < hideAt) {
+					targetColor.a = 0;
+				} else if (this.parent.currentCircuit.getScaleX() < showAt) {
+					float val = this.parent.currentCircuit.getScaleX();
+					val = (val - hideAt) / (showAt - hideAt);
+					targetColor.a = val;
+				} else {
+					targetColor.a = 1;
+				}
+				
+				font.setColor(targetColor);
+				
 				TextBounds tb = font.getBounds(s.message);
 				int x = (int) ((s.x - tb.width / 2f) +
 							   Gdx.graphics.getWidth() / 2);
