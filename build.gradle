@@ -93,6 +93,7 @@ project(":core") {
              out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
     }
     checkstyleMain.finalizedBy checkstyleHtml
+    checkstyleMain.exclude '**/bioparser/**'
     checkstyle.ignoreFailures = false
     checkstyle.showViolations = true
     checkstyle {
