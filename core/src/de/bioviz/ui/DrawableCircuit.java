@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.Vector;
 
+import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
@@ -52,7 +53,6 @@ public class DrawableCircuit implements Drawable {
 	public Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
 
 	public DisplayOptions displayOptions = new DisplayOptions();
-
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 	
@@ -207,8 +207,8 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		// Defines when numbers should start fading and be completely hidden
-		float startFadingAtScale = 16f;
-		float endFadingAtScale = 12f;
+		float startFadingAtScale = 32f;
+		float endFadingAtScale = 24f;
 		
 		Color col = Color.WHITE.cpy();
 		if (this.smoothScaleX < startFadingAtScale) {
@@ -221,6 +221,9 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 		
+		// scale text
+		float scale = Math.min(MessageCenter.textRenderResolution, smoothScaleX / 2f);
+		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
 			this.parent.messageCenter.addHUDMessage(
@@ -228,7 +231,8 @@ public class DrawableCircuit implements Drawable {
 					Integer.toString(i),	// message
 					this.xCoordOnScreen(i),	// x
 					topYCoord, 				// y
-					col);					// message color, used for fading
+					col,					// message color, used for fading
+					scale);
 		}
 		
 		for (int i = minY; i < maxY + 1; i++) {
@@ -239,7 +243,8 @@ public class DrawableCircuit implements Drawable {
 					Integer.toString(i),	// message
 					leftXCoord,				// x
 					this.yCoordOnScreen(i), // y
-					col);					// message color, used for fading
+					col,					// message color, used for fading
+					scale);
 		}
 	}
 	
@@ -395,6 +400,14 @@ public class DrawableCircuit implements Drawable {
 	public void setScaleX(float scaleX) {
 		this.scaleX = scaleX;
 	}
+	
+	/**
+	 * Retrieves the current x scaling factor that is used for the smooth
+	 * animated camera.
+	 */
+	public float getSmoothScaleX() {
+		return smoothScaleX;
+	}
 
 	/**
 	 * retrieves the current y scaling factor
@@ -517,5 +530,4 @@ public class DrawableCircuit implements Drawable {
 
 		}
 	}
-
 }
