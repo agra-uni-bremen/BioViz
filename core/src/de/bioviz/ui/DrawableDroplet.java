@@ -50,12 +50,6 @@ public class DrawableDroplet extends DrawableSprite {
 		if (p == null) {
 			color.sub(0, 0, 0, 1).clamp();
 
-			if (circ.currentTime < droplet.getSpawnTime()) {
-				p = droplet.getFirstPosition();
-			}
-			else if (circ.currentTime > droplet.getMaxTime()) {
-				p = droplet.getLastPosition();
-			}
 		} else {
 			if (parentCircuit.hiddenDroplets.contains(this)){
 				color.a = 0.25f;
@@ -63,9 +57,6 @@ public class DrawableDroplet extends DrawableSprite {
 				color.add(0, 0, 0, 1).clamp();
 			}
 		}
-
-
-
 		return color;
 	}
 
