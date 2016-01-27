@@ -375,8 +375,8 @@ public class BioParserListener extends BioBaseListener {
 		chip.addNets(nets);
 
 		nets.forEach(net -> {
-			Point target = net.target;
-			net.sources.forEach(src -> {
+			Point target = net.getTarget();
+			net.getSources().forEach(src -> {
 				int drop = src.dropletID;
 				chip.getFieldAt(target).target_ids.add(drop);
 				chip.getFieldAt(src.startPosition).source_ids.add(drop);
