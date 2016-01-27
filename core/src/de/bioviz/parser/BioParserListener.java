@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 
 @SuppressWarnings("Convert2Diamond")
@@ -399,9 +400,20 @@ public class BioParserListener extends BioBaseListener {
 		nets.forEach(net -> {
 			Point target = net.target;
 			net.sources.forEach(src -> {
-				int drop = src.dropletID;
-				chip.getFieldAt(target).target_ids.add(drop);
-				chip.getFieldAt(src.startPosition).source_ids.add(drop);
+				int dropID = src.dropletID;
+
+				/*
+				kind of weird code to set the net of a droplet. But this happens
+				when the Java people think that they have a clever idea for
+				'stream' when normal people would simply directly operate on
+				lists, maps etc.
+				 */
+				Optional<Droplet> drop = droplets.stream().filter(
+						it -> it.getID() == dropID).findFirst();
+				drop.ifPresent(it -> it.setNet(net));
+
+				chip.getFieldAt(target).target_ids.add(dropID);
+				chip.getFieldAt(src.startPosition).source_ids.add(dropID);
 			});
 		});
 
