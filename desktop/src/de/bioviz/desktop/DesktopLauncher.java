@@ -377,6 +377,13 @@ public class DesktopLauncher extends JFrame {
 				e -> currentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.SourceTargetIDs));
 
+		JButton netColorsButton = new JButton("Net Colors");
+		netColorsButton.setPreferredSize(new Dimension(buttonWidth,
+													   netColorsButton.getPreferredSize().height));
+		netColorsButton.addActionListener(
+				e -> currentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.NetColors));
+
 		JButton detectorsButton = new JButton("Detectors");
 		detectorsButton.setPreferredSize(new Dimension(buttonWidth,
 												  detectorsButton.getPreferredSize().height));
@@ -432,6 +439,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(usageButton);
 		panel.add(stIconButton);
 		panel.add(stIDButton);
+		panel.add(netColorsButton);
 		panel.add(detectorsButton);
 		panel.add(interferenceButton);
 		panel.add(invisiSep);
