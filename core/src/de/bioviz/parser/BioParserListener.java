@@ -37,7 +37,8 @@ import java.util.List;
 
 @SuppressWarnings("Convert2Diamond")
 public class BioParserListener extends BioBaseListener {
-	private static Logger logger = LoggerFactory.getLogger(BioParserListener.class);
+	private static Logger logger =
+			LoggerFactory.getLogger(BioParserListener.class);
 
 	private ArrayList<Rectangle> rectangles = new ArrayList<>();
 	private ArrayList<Droplet> droplets = new ArrayList<>();
@@ -50,7 +51,8 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Net> nets = new ArrayList<>();
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 	private ArrayList<Pair<Point, Direction>> sinks = new ArrayList<>();
-	private ArrayList<Pair<Integer, Pair<Point, Direction>>> dispensers = new ArrayList<>();
+	private ArrayList<Pair<Integer, Pair<Point, Direction>>> dispensers =
+			new ArrayList<>();
 	private ArrayList<Pair<Rectangle, Range>> blockages = new ArrayList<>();
 	private ArrayList<Detector> detectors = new ArrayList<>();
 	private HashMap<Integer, Pin> pins = new HashMap<>();
@@ -59,6 +61,7 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 	BioViz viz;
+
 	public BioParserListener(BioViz viz) {
 		this.viz = viz;
 	}
@@ -86,7 +89,8 @@ public class BioParserListener extends BioBaseListener {
 	private int getFluidID(FluidIDContext ctx) {
 		if (ctx == null) {
 			return 0;
-		} else {
+		}
+		else {
 			return Integer.parseInt(ctx.Integer().getText());
 		}
 	}
@@ -94,7 +98,8 @@ public class BioParserListener extends BioBaseListener {
 	private int getPinID(PinIDContext ctx) {
 		if (ctx == null) {
 			return 0;
-		} else {
+		}
+		else {
 			return Integer.parseInt(ctx.Integer().getText());
 		}
 	}
@@ -102,7 +107,8 @@ public class BioParserListener extends BioBaseListener {
 	private int getMixerID(MixerIDContext ctx) {
 		if (ctx == null) {
 			return 0;
-		} else {
+		}
+		else {
 			return Integer.parseInt(ctx.Integer().getText());
 		}
 	}
@@ -111,8 +117,10 @@ public class BioParserListener extends BioBaseListener {
 		Point pos = getPosition(ctx.position());
 		int id = getDropletID(ctx.dropletID());
 		if (ctx.timeConstraint() != null) {
-			return new Source(id, pos, getTimeConstraint(ctx.timeConstraint()));
-		} else {
+			return new Source(id, pos, getTimeConstraint(ctx.timeConstraint
+					()));
+		}
+		else {
 			return new Source(id, pos);
 		}
 	}
@@ -125,8 +133,10 @@ public class BioParserListener extends BioBaseListener {
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
 		if (dispenser != null) {
 			updateMaxDimension(dispenser.fst);
-			dispensers.add(new Pair<Integer, Pair<Point, Direction>>(fluidID, dispenser));
-		} else {
+			dispensers.add(new Pair<Integer, Pair<Point, Direction>>(fluidID,
+																	 dispenser));
+		}
+		else {
 			logger.error("Skipping definition of dispenser");
 		}
 
@@ -182,7 +192,8 @@ public class BioParserListener extends BioBaseListener {
 		if (sinkDef != null) {
 			updateMaxDimension(sinkDef.fst);
 			sinks.add(sinkDef);
-		} else {
+		}
+		else {
 			logger.error("Skipping definition of sink");
 		}
 
@@ -195,7 +206,8 @@ public class BioParserListener extends BioBaseListener {
 
 		if (pins.containsKey(pinID)) {
 			pins.get(pinID).cells.add(pos);
-		} else {
+		}
+		else {
 			pins.put(pinID, new Pin(pinID, pos));
 		}
 	}
@@ -217,13 +229,12 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 
-
-
 	@Override
 	public void enterDropToFluid(@NotNull Bio.DropToFluidContext ctx) {
 		int dropID = getDropletID(ctx.dropletID());
 		int fluidID = getFluidID(ctx.fluidID());
-		logger.debug("Adding droplet ID to fluid ID mapping: {} -> {}",dropID, fluidID);
+		logger.debug("Adding droplet ID to fluid ID mapping: {} -> {}", dropID,
+					 fluidID);
 		dropletIDsToFluidTypes.put(dropID, fluidID);
 	}
 
@@ -233,7 +244,8 @@ public class BioParserListener extends BioBaseListener {
 
 		ArrayList<Source> sources = new ArrayList<Source>();
 
-		ctx.children.stream().filter(child -> child instanceof Bio.SourceContext).forEach(child -> {
+		ctx.children.stream().filter(
+				child -> child instanceof Bio.SourceContext).forEach(child -> {
 			sources.add(getSource((Bio.SourceContext) child));
 			logger.trace("Found source child {}", child);
 		});
@@ -257,7 +269,8 @@ public class BioParserListener extends BioBaseListener {
 	private Range getTiming(TimingContext ctx) {
 		if (ctx == null) {
 			return new Range(Range.DONTCARE, Range.DONTCARE);
-		} else {
+		}
+		else {
 			int begin = Range.DONTCARE;
 			int end = Range.DONTCARE;
 
@@ -291,7 +304,7 @@ public class BioParserListener extends BioBaseListener {
 	public void enterFluiddef(@NotNull FluiddefContext ctx) {
 		int fluidID = Integer.parseInt(ctx.fluidID().getText());
 		String fluid = ctx.Identifier().getText();
-		logger.debug("Adding fluid identifier: {} -> {}",fluidID,fluid);
+		logger.debug("Adding fluid identifier: {} -> {}", fluidID, fluid);
 		fluidTypes.put(fluidID, fluid);
 	}
 
@@ -299,7 +312,8 @@ public class BioParserListener extends BioBaseListener {
 	@Override
 	public void enterPinActuation(@NotNull PinActuationContext ctx) {
 		int pinID = getPinID(ctx.pinID());
-		ActuationVector actVec = new ActuationVector(ctx.ActuationVector().getText());
+		ActuationVector actVec =
+				new ActuationVector(ctx.ActuationVector().getText());
 		pinActuations.put(pinID, actVec);
 
 	}
@@ -307,7 +321,8 @@ public class BioParserListener extends BioBaseListener {
 	@Override
 	public void enterCellActuation(@NotNull CellActuationContext ctx) {
 		Point pos = getPosition(ctx.position());
-		ActuationVector actVec = new ActuationVector(ctx.ActuationVector().getText());
+		ActuationVector actVec =
+				new ActuationVector(ctx.ActuationVector().getText());
 		cellActuations.put(pos, actVec);
 	}
 
@@ -318,7 +333,7 @@ public class BioParserListener extends BioBaseListener {
 		if (ctx.timeConstraint() != null) {
 			spawnTime = getTimeConstraint(ctx.timeConstraint());
 		}
-		Droplet drop = new Droplet(dropletID,spawnTime);
+		Droplet drop = new Droplet(dropletID, spawnTime);
 		List<PositionContext> positions = ctx.position();
 
 		for (int i = 0; i < positions.size(); i++) {
@@ -334,20 +349,22 @@ public class BioParserListener extends BioBaseListener {
 	Range getTimeRange(TimeRangeContext ctx) {
 		Integer fst = Integer.parseInt(ctx.Integer(0).getText());
 		Integer snd = Integer.parseInt(ctx.Integer(1).getText());
-		logger.debug("Time range from {} to {}",ctx.Integer(0), ctx.Integer(1));
+		logger.debug("Time range from {} to {}", ctx.Integer(0),
+					 ctx.Integer(1));
 
-		return new Range(fst,snd);
+		return new Range(fst, snd);
 	}
 
 	@Override
 	public void enterMixer(@NotNull Bio.MixerContext ctx) {
 
 		int id = getMixerID(ctx.mixerID());
-		Rectangle rect = new Rectangle(getPosition(ctx.position(0)),getPosition(ctx.position(1)));
+		Rectangle rect = new Rectangle(getPosition(ctx.position(0)),
+									   getPosition(ctx.position(1)));
 		Range time = getTimeRange(ctx.timeRange());
 		logger.debug("Received TimeRange {}", time);
 
-		mixers.add(new Mixer(id,rect,time));
+		mixers.add(new Mixer(id, rect, time));
 
 	}
 
@@ -364,12 +381,17 @@ public class BioParserListener extends BioBaseListener {
 		}
 
 		if (nGrids > 1) {
-			logger.warn("There were {} grid definitions in the file. The cells were merged", nGrids);
+			logger.warn(
+					"There were {} grid definitions in the file. The cells " +
+					"were merged",
+					nGrids);
 		}
 
 		droplets.forEach(chip::addDroplet);
 		errors.addAll(Validator.checkPathsForJumps(droplets));
-		errors.addAll(Validator.checkPathsForPositions(droplets, chip.getAllCoordinates()));
+		errors.addAll(Validator.checkPathsForPositions(droplets,
+													   chip.getAllCoordinates
+															   ()));
 
 		chip.addFluidTypes(fluidTypes);
 		chip.addNets(nets);
@@ -398,15 +420,16 @@ public class BioParserListener extends BioBaseListener {
 		});
 
 		errors.addAll(Validator.checkDispenserPositions(chip,
-				dispensers,
-				true));
+														dispensers,
+														true));
 		dispensers.forEach(dispenser -> {
 			int fluidID = dispenser.fst;
 			Point p = dispenser.snd.fst;
 			Direction dir = dispenser.snd.snd;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point dispPoint = p.add(dirPoint);
-			BiochipField dispField = new BiochipField(dispPoint, fluidID, dir, viz);
+			BiochipField dispField =
+					new BiochipField(dispPoint, fluidID, dir, viz);
 			chip.addField(dispPoint, dispField);
 
 		});
@@ -414,14 +437,16 @@ public class BioParserListener extends BioBaseListener {
 		for (Pair<Rectangle, Range> b : blockages) {
 			Rectangle rect = b.fst;
 			Range rng = b.snd;
-			rect.positions().forEach(pos -> chip.getFieldAt(pos).attachBlockage(rng));
+			rect.positions().forEach(
+					pos -> chip.getFieldAt(pos).attachBlockage(rng));
 		}
 
 		chip.blockages.addAll(blockages);
 
 		errors.addAll(Validator.checkPathForBlockages(chip));
 
-		errors.addAll(Validator.checkForDetectorPositions(chip,detectors,true));
+		errors.addAll(
+				Validator.checkForDetectorPositions(chip, detectors, true));
 		// only valid detectors are left -> we can happily add them to the chip
 		detectors.forEach(det -> {
 			Point pos = det.position();
@@ -442,9 +467,16 @@ public class BioParserListener extends BioBaseListener {
 		});
 		chip.cellActuations.putAll(cellActuations);
 
-		errors.addAll(Validator.checkActuationVectorLengths(cellActuations, pinActuations));
-		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,cellActuations, pinActuations,true));
-		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,cellActuations, pinActuations,false));
+		errors.addAll(Validator.checkActuationVectorLengths(cellActuations,
+															pinActuations));
+		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,
+																   cellActuations,
+																   pinActuations,
+																   true));
+		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,
+																   cellActuations,
+																   pinActuations,
+																   false));
 
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(m -> {
