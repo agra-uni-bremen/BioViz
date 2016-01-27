@@ -2,7 +2,6 @@ package tests.structures;
 
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -19,7 +18,7 @@ public class RectangleTest {
 			// for this rectangle
 			{57, 1, 57, 51},
 			// this one also failed hard
-			{17,8,76,8}
+			{17, 8, 76, 8}
 	};
 
 
@@ -38,12 +37,18 @@ public class RectangleTest {
 	public void containsShouldHaveTheRightAmountOfElements() throws Exception {
 
 		for (int i = 0; i < rectangleDefinitions.length; i++) {
-			int distX = Math.abs(rectangleDefinitions[i][0] - rectangleDefinitions[i][2]) + 1;
-			int distY = Math.abs(rectangleDefinitions[i][1] - rectangleDefinitions[i][3]) + 1;
+			int distX = Math.abs(
+					rectangleDefinitions[i][0] - rectangleDefinitions[i][2]) +
+						1;
+			int distY = Math.abs(
+					rectangleDefinitions[i][1] - rectangleDefinitions[i][3]) +
+						1;
 			int nPositions = distX * distY;
 
-			Rectangle rect1 = createRectangleUsingCoordinates(rectangleDefinitions[i]);
-			Rectangle rect2 = createRectangleUsingPointClass(rectangleDefinitions[i]);
+			Rectangle rect1 =
+					createRectangleUsingCoordinates(rectangleDefinitions[i]);
+			Rectangle rect2 =
+					createRectangleUsingPointClass(rectangleDefinitions[i]);
 
 			assertEquals("#positions should be correct", nPositions,
 						 rect1.positions().size());
@@ -71,5 +76,4 @@ public class RectangleTest {
 					rect1.positions(), rect2.positions());
 		}
 	}
-
 }
