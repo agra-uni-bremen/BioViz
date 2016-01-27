@@ -3,11 +3,8 @@ package de.bioviz.structures;
 import java.util.ArrayList;
 
 /**
- * @brief
- *
- * Created by keszocze on 22.07.15.
- *
  * @author keszocze
+ * @brief Created by keszocze on 22.07.15.
  */
 public class Rectangle {
 
@@ -94,7 +91,6 @@ public class Rectangle {
 	}
 
 	/**
-	 *
 	 * @return ArrayList of the points of this rectangle.
 	 */
 	public ArrayList<Point> positions() {
@@ -102,7 +98,7 @@ public class Rectangle {
 		ArrayList<Point> result = new ArrayList<Point>();
 
 		for (int x = lowerLeft.fst; x <= upperRight.fst; x++) {
-			for (int y = lowerLeft.fst; y <= upperRight.snd; y++) {
+			for (int y = lowerLeft.snd; y <= upperRight.snd; y++) {
 				result.add(new Point(x, y));
 			}
 		}
@@ -112,8 +108,8 @@ public class Rectangle {
 
 
 	/**
-	 *
-	 * @return  String of the form "Rect[(lowerLeft.x,lowerLeft.y) (upperRight.x,upperRight.y)]"
+	 * @return String of the form "Rect[(lowerLeft.x,lowerLeft.y)
+	 * (upperRight.x,upperRight.y)]"
 	 */
 	public String toString() {
 		return "Rect[" + lowerLeft + " " + upperRight + "]";
