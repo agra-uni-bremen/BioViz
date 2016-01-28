@@ -590,35 +590,43 @@ public class DesktopLauncher extends JFrame {
 	 */
 	public static void main(final String[] args) {
 
-		initializeLogback();
-
 		try {
-			// Set System L&F
-			UIManager.setLookAndFeel(
-					UIManager.getSystemLookAndFeelClassName());
-		} catch (final UnsupportedLookAndFeelException e) {
-			logger.error("System look and feel is unsupported: "
-						 + e.getMessage() + "\n" + e.getStackTrace());
-		} catch (final Exception e) {
-			logger.error("Cannot set look and feel: " + e.getMessage() + "\n"
-						 + e.getStackTrace());
-		}
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					initializeLogback();
 
-		File file;
-		if (args.length <= 0) {
-			file = askForFile("lastFilePath", true);
-		}
-		else {
-			file = new File(args[0]);
-		}
-		JFrame frame = new DesktopLauncher(file);
+					try {
+						// Set System L&F
+						UIManager.setLookAndFeel(
+								UIManager.getSystemLookAndFeelClassName());
+					} catch (final UnsupportedLookAndFeelException e) {
+						logger.error("System look and feel is unsupported: "
+								+ e.getMessage() + "\n" + e.getStackTrace());
+					} catch (final Exception e) {
+						logger.error("Cannot set look and feel: " + e.getMessage() + "\n"
+								+ e.getStackTrace());
+					}
+
+					File file;
+					if (args.length <= 0) {
+						file = askForFile("lastFilePath", true);
+					}
+					else {
+						file = new File(args[0]);
+					}
+					JFrame frame = new DesktopLauncher(file);
 
 
-		singleton.addWindowListener(new WindowAdapter() {
-			public void windowClosing(final WindowEvent e) {
-				singleton.canvas.stop();
-			}
-		});
+					singleton.addWindowListener(new WindowAdapter() {
+						public void windowClosing(final WindowEvent e) {
+							singleton.canvas.stop();
+						}
+					});
+				}
+			});
+		} catch (Exception e) {
+			logger.error("Could not start the application: " + e.getStackTrace());
+		}
 	}
 
 	/**
@@ -1070,9 +1078,17 @@ public class DesktopLauncher extends JFrame {
 		 */
 		@Override
 		public void bioVizEvent() {
-			File f = askForFile("lastFilePath", true);
-			if (f != null) {
-				addNewTab(f);
+			try {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						File f = askForFile("lastFilePath", true);
+						if (f != null) {
+							addNewTab(f);
+						}
+					}
+				});
+			} catch (Exception e) {
+				logger.error("Could not load file: " + e.getStackTrace());
 			}
 		}
 	}
