@@ -12,11 +12,9 @@ import de.bioviz.ui.BioViz;
 public class MsgAppender extends AppenderBase<ILoggingEvent> {
 
     MessageCenter mc = null;
-    BioViz viz;
+    private static BioViz viz;
     
-    public MsgAppender(BioViz viz) {
-		this.viz = viz;
-	}
+    public MsgAppender() {	}
 
     @Override
     /**
@@ -45,6 +43,9 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
         } else {
             return true;
         }
-
+    }
+    
+    public static void setMessageViz(BioViz vis) {
+    	viz = vis;
     }
 }
