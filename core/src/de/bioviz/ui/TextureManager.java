@@ -8,28 +8,50 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author Oliver Keszöcze
- * @brief Texture cache class.
- * <p>
- * This class manages texture themes. One can specify a folder in which the png
- * files that are loaded as textures are stored. These images are thenn either
- * loaded on demand or returned from the cache.
+ *         <p>
+ *         This class manages texture themes. One can specify a folder in which
+ *         the png files that are loaded as textures are stored. These images
+ *         are thenn either loaded on demand or returned from the cache.
  */
 public class TextureManager {
+	/**
+	 * Static logger for the whole class.
+	 */
+	static Logger logger = LoggerFactory.getLogger(TextureManager.class);
 
+	/**
+	 * Maps the texture types (e.g. sink) to the corresponding textures
+	 */
 	private HashMap<TextureE, TextureRegion> textures = new HashMap<>();
 
+	/**
+	 * Maps the texture types (e.g. sink) the file names the corresponding
+	 * texture is stored in
+	 */
 	private HashMap<TextureE, String> textureFileNames = new HashMap<>();
 
+	/**
+	 * The folder that contains the texture files. This string is prepended to
+	 * the file names stored in the textureFileNames map. Changing this String
+	 * to something different switches the theme (also right now, only the
+	 * default theme is available).
+	 */
 	private String textureFolder;
 
+
+	/**
+	 * The folder that contains the folders with the textures. This string is
+	 * prepended to the String made by concatenating the textureFolder variable
+	 * with a name taken from the textureFileNames map.
+	 */
 	private final String baseFolder = "images";
 
-	static Logger logger = LoggerFactory.getLogger(TextureManager.class);
 
 	/**
 	 * @param folder
@@ -40,7 +62,7 @@ public class TextureManager {
 	 * The location is relative to the assets/images folder.
 	 * @warning The folder name must not begin or end with a slash!
 	 */
-	TextureManager(String folder) {
+	TextureManager(final String folder) {
 		setFolder(folder);
 	}
 
@@ -65,31 +87,31 @@ public class TextureManager {
 	 * specified in the TextureE enum
 	 * @warning The folder name must not begin or end with a slash!
 	 */
-	public void setFolder(String folder) {
+	public void setFolder(final String folder) {
 		textures.clear();
 
 		textureFolder = folder;
-		for (TextureE t : TextureE.values()) {
-			textureFileNames.put(t,baseFolder + "/" + textureFolder+"/"+t.toString()+".png");
+		for (final TextureE t : TextureE.values()) {
+			textureFileNames.put(t, baseFolder + "/" + textureFolder + "/" +
+									t.toString() + ".png");
 		}
 	}
 
 
 	/**
-<<<<<<< HEAD
-=======
-	 * @brief Returns a FileHandle for the specified texture
-	 * @param texture The texture whose file is to be retrieved
+	 * @param texture
+	 * 		The texture whose file is to be retrieved
 	 * @return FileHandle to the file storing the texture
+	 * @brief Returns a FileHandle for the specified texture
 	 */
-	public FileHandle getFileHandle(TextureE texture) {
-		logger.debug("retrieving file handle for " + texture + ": " + getFullTextureFilename(texture));
+	public FileHandle getFileHandle(final TextureE texture) {
+		logger.debug("retrieving file handle for " + texture + ": " +
+					 getFullTextureFilename(texture));
 		return Gdx.files.internal(getFullTextureFilename(texture));
 	}
 
 
 	/**
->>>>>>> master
 	 * @param texture
 	 * 		The name of the texture to receive
 	 * @return The Texture(Region) of the requested texture
@@ -97,7 +119,7 @@ public class TextureManager {
 	 * <p>
 	 * The texture is loaded if not already in memory.
 	 */
-	public TextureRegion getTexture(TextureE texture) {
+	public TextureRegion getTexture(final TextureE texture) {
 
 
 		if (textures.containsKey(texture)) {
@@ -120,11 +142,16 @@ public class TextureManager {
 			return region;
 		}
 	}
-	
-	private String getFullTextureFilename(TextureE texture) {
-		return baseFolder + "/" + textureFolder + "/" +
-				texture +
-				".png";
+
+	/**
+	 * Returns the path to the file the provided texture is stored in
+	 *
+	 * @param texture
+	 * 		The texture whose corresponding file is requested
+	 * @return full path to the texture file (a png file)
+	 */
+	private String getFullTextureFilename(final TextureE texture) {
+		return baseFolder + "/" + textureFolder + "/" + texture + ".png";
 	}
 
 }
