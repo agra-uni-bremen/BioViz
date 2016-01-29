@@ -152,7 +152,7 @@ public class SVGManager {
 			sb.append(toSVG(field));
 		}
 		for (DrawableDroplet drop : circ.droplets) {
-			if(!circ.hiddenDroplets.contains(drop)) {
+			if(drop.getDisplayColor().a > 0.1f && !circ.hiddenDroplets.contains(drop)) {
 				sb.append(toSVG(drop));
 			}
 		}
