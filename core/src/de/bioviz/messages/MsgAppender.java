@@ -14,9 +14,7 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
     MessageCenter mc = null;
     private static BioViz viz;
     
-    public MsgAppender() {
-		System.out.println("############################################# MA created");
-	}
+    public MsgAppender() {	}
 
     @Override
     /**
