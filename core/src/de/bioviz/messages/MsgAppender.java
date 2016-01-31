@@ -6,7 +6,7 @@ import ch.qos.logback.core.AppenderBase;
 import de.bioviz.ui.BioViz;
 
 /**
- * @author keszocze
+ * @author Oliver Keszöcze
  * @brief A wrapper that makes the MessageCenter a valid appender for the logback framework
  */
 public class MsgAppender extends AppenderBase<ILoggingEvent> {

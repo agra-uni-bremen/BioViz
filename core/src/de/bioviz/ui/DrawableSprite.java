@@ -172,8 +172,8 @@ public abstract class DrawableSprite implements Drawable {
 					-(((float) mouseY / (float) resY) * viewport.height +
 					  viewport.y);
 
-			float xCoord = viz.currentCircuit.xCoordInGates(this.x);
-			float yCoord = viz.currentCircuit.yCoordInGates(this.y);
+			float xCoord = viz.currentCircuit.xCoordInCells(this.x);
+			float yCoord = viz.currentCircuit.yCoordInCells(this.y);
 
 			boolean aboveX = viewMouseX > xCoord - COORDINATE_SHIFT;
 			boolean belowX = viewMouseX < xCoord + COORDINATE_SHIFT;
