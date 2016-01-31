@@ -42,6 +42,9 @@ public class SVGManager {
 	private final double scaleFactor = 1;
 	private final int coordinateMultiplier = 256;
 
+	// font options
+	String font = "Helvetica";
+	int size = 40;
 
 	public String getTransformation(String params) {
 		return " transform=\"" + params + "\" ";
@@ -181,10 +184,15 @@ public class SVGManager {
 		xCoord = xCoord * coordinateMultiplier;
 
 		DisplayValues vals = field.getDisplayValues();
+
+		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2) + "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
+				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"+ (vals.msg == null ? "" : vals.msg) + "</text>\n";
+
 		logger.debug("Color: {}", vals.color);
+		
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 			   getScaleTransformation() + " xlink:href=\"#" + vals.texture + // the colorcode should be added here with a preceding minus
-			   "\" />\n";
+			   "\" />\n" + msg;
 	}
 
 	private String toSVG(DrawableDroplet drawableDrop) {
@@ -196,12 +204,14 @@ public class SVGManager {
 		yCoord = ((int) yCoord) * coordinateMultiplier;
 		xCoord = ((int) xCoord) * coordinateMultiplier;
 
+		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2) + "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
+				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"+ (drawableDrop.getMsg() == null ? "" : drawableDrop.getMsg()) + "</text>\n";
 
 		String route = toSVG(drawableDrop.route);
 		return
 				"<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +
 				getScaleTransformation() + " xlink:href=\"#Droplet\" />\n" +
-				route;
+				route + msg;
 	}
 
 	private String toSVG(DrawableRoute drawableRoute) {
