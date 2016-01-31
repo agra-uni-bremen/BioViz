@@ -1,9 +1,13 @@
 package de.bioviz.ui;
 
+import java.util.Date;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Rectangle;
 
 import org.slf4j.Logger;
@@ -90,13 +94,18 @@ public class BioVizInputProcessor implements InputProcessor {
 				parentViz.callCloseFileListeners();
 			}
 		}
+		else if (keycode == Keys.PLUS && ctrl) {
+			parentViz.messageCenter.incScales();
+		}
 		else if (keycode == Keys.R) {
 			parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.ColorfulRoutes);
 		}
-		else if (keycode == Keys.C){
+		else if (keycode == Keys.MINUS && ctrl) {
+			parentViz.messageCenter.decScales();
+		}
+		else if (keycode == Keys.C) {
 			if (ctrl) {
-				parentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Coordinates);
+				parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.Coordinates);
 			}
 		}
 		
@@ -229,7 +238,6 @@ public class BioVizInputProcessor implements InputProcessor {
 	public boolean mouseMoved(int screenX, int screenY) {
 		oldX = screenX;
 		oldY = screenY;
-		//RevVisGDX.singleton.menu.MouseCoords(screenX, screenY);
 		return false;
 	}
 }

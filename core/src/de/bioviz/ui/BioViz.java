@@ -492,4 +492,6 @@ public class BioViz implements ApplicationListener {
 		logger.debug("Setting application icon to " + handle.name());
 		return handle;
 	}
+
+
 }

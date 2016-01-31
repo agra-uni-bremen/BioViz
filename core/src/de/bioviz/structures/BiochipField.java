@@ -20,7 +20,7 @@ public class BiochipField {
 	public ArrayList<Integer> target_ids = new ArrayList<Integer>();
 	public ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 	static private Logger logger = LoggerFactory.getLogger(BiochipField.class);
-	
+
 	BioViz parent;
 
 	public int x() {
@@ -43,11 +43,13 @@ public class BiochipField {
 
 	// ############################################################################################################
 	// TODO put Information about sink/dispenser in
-	// if the field is either a sink or a dispenser this field stores the information from which
+	// if the field is either a sink or a dispenser this field stores the
+	// information from which
 	// field the fluid is removed from or dispensed to
 	Direction direction = null;
 
-	// if the field is a dispenser, this variable stores the fluid type that is dispensed
+	// if the field is a dispenser, this variable stores the fluid type that
+	// is dispensed
 	public int fluidID = 0;
 
 
@@ -58,7 +60,8 @@ public class BiochipField {
 	public boolean isBlocked(int timeStep) {
 		if (blockage == null) {
 			return false;
-		} else {
+		}
+		else {
 			return blockage.inRange(timeStep);
 		}
 	}
@@ -71,16 +74,26 @@ public class BiochipField {
 		// TODO document that pin actuations win over cell actuations
 
 		if (pin != null && !circ.pinActuations.isEmpty()) {
-			logger.trace("circ.pinActuations.isEmpty: {}", circ.pinActuations.isEmpty());
-			logger.trace("timeStep: {} actuationVector {}", timeStep, circ.pinActuations.get(pin.pinID));
+			logger.trace("circ.pinActuations.isEmpty: {}",
+						 circ.pinActuations.isEmpty());
+			logger.trace("timeStep: {} actuationVector {}", timeStep,
+						 circ.pinActuations.get(pin.pinID));
 			ActuationVector vec = circ.pinActuations.get(pin.pinID);
 			if (vec != null) {
 				act = vec.get(timeStep - 1);
 			}
-		} else if (actVec != null && !actVec.isEmpty()) {
+		}
+		else if (actVec != null && !actVec.isEmpty()) {
 			act = actVec.get(timeStep - 1);
-		} else {
+		}
+		else {
 			if (circ.dropletOnPosition(pos, timeStep)) {
+				act = Actuation.ON;
+			}
+		}
+
+		for (Mixer m: mixers) {
+			if (m.positions.contains(pos) && m.timing.inRange(timeStep)) {
 				act = Actuation.ON;
 			}
 		}
@@ -106,7 +119,8 @@ public class BiochipField {
 		direction = dispenseFrom;
 	}
 
-	public BiochipField(Point pos, int fluidID, Direction dispenseFrom, BioViz parent) {
+	public BiochipField(Point pos, int fluidID, Direction dispenseFrom, BioViz
+			parent) {
 		this.pos = pos;
 		setDispenser(fluidID, dispenseFrom);
 		this.parent = parent;

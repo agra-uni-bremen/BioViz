@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.Vector;
 
+import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
@@ -52,7 +53,6 @@ public class DrawableCircuit implements Drawable {
 	public Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
 
 	public DisplayOptions displayOptions = new DisplayOptions();
-
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 	
@@ -144,23 +144,6 @@ public class DrawableCircuit implements Drawable {
 
 		}
 
-		drawGates();
-
-		drawOverlay();
-	}
-
-	/**
-	 * Draws additional overlaid information (currently only the moving rule overlay)
-	 */
-	private void drawOverlay() {
-
-	}
-
-	/**
-	 * Draws the gates
-	 */
-	private void drawGates() {
-
 		if (autoAdvance) {
 			long current = new Date().getTime();
 			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
@@ -174,12 +157,13 @@ public class DrawableCircuit implements Drawable {
 		for (DrawableField f : this.fields) {
 			f.draw();
 		}
-		
+
 		for (DrawableDroplet d : this.droplets) {
 			d.draw();
 		}
 	
 	}
+
 
 	/**
 	 * Draws the coordinates of the grid on top of and to the left of the grid.
@@ -223,8 +207,8 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		// Defines when numbers should start fading and be completely hidden
-		float startFadingAtScale = 16f;
-		float endFadingAtScale = 12f;
+		float startFadingAtScale = 32f;
+		float endFadingAtScale = 24f;
 		
 		Color col = Color.WHITE.cpy();
 		if (this.smoothScaleX < startFadingAtScale) {
@@ -237,6 +221,9 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 		
+		// scale text
+		float scale = Math.min(MessageCenter.textRenderResolution, smoothScaleX / 2f);
+		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
 			this.parent.messageCenter.addHUDMessage(
@@ -244,7 +231,8 @@ public class DrawableCircuit implements Drawable {
 					Integer.toString(i),	// message
 					this.xCoordOnScreen(i),	// x
 					topYCoord, 				// y
-					col);					// message color, used for fading
+					col,					// message color, used for fading
+					scale);
 		}
 		
 		for (int i = minY; i < maxY + 1; i++) {
@@ -255,7 +243,8 @@ public class DrawableCircuit implements Drawable {
 					Integer.toString(i),	// message
 					leftXCoord,				// x
 					this.yCoordOnScreen(i), // y
-					col);					// message color, used for fading
+					col,					// message color, used for fading
+					scale);
 		}
 	}
 	
@@ -287,9 +276,9 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the x coordinate of a given gate
+	 * Calculates the x coordinate of a given cell
 	 *
-	 * @param i the gate index
+	 * @param i the cell index
 	 * @return the x coordinate on screen
 	 */
 	protected float xCoordOnScreen(int i) {
@@ -298,8 +287,8 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Calculates the x coordinate of a given value. Keep in mind that
-	 * this is still in gate-space, so a value of 0 would be at the center
-	 * of the circuit's first gate.
+	 * this is still in cell-space, so a value of 0 would be at the center
+	 * of the chip's first cell.
 	 *
 	 * @param i the value to translate
 	 * @return the x coordinate on screen
@@ -322,14 +311,14 @@ public class DrawableCircuit implements Drawable {
 		return yCoord;
 	}
 
-	protected float yCoordInGates(float i) {
+	protected float yCoordInCells(float i) {
 		float yCoord = i;
 		yCoord /= smoothScaleY;
 		yCoord -= smoothOffsetY;
 		return yCoord;
 	}
 
-	protected float xCoordInGates(float i) {
+	protected float xCoordInCells(float i) {
 		float xCoord = i;
 		xCoord /= smoothScaleX;
 		xCoord -= smoothOffsetX;
@@ -411,6 +400,14 @@ public class DrawableCircuit implements Drawable {
 	public void setScaleX(float scaleX) {
 		this.scaleX = scaleX;
 	}
+	
+	/**
+	 * Retrieves the current x scaling factor that is used for the smooth
+	 * animated camera.
+	 */
+	public float getSmoothScaleX() {
+		return smoothScaleX;
+	}
 
 	/**
 	 * retrieves the current y scaling factor
@@ -431,7 +428,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the screen bounds in gate-space
+	 * Calculates the screen bounds
 	 *
 	 * @return the screen bounds
 	 */
@@ -447,7 +444,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Sets the screen bounds in gate-space
+	 * Sets the screen bounds
 	 *
 	 * @param bounds the area the viewport is supposed to show.
 	 */
@@ -476,7 +473,7 @@ public class DrawableCircuit implements Drawable {
 
 
 	/**
-	 * Resets the zoom so that the whole circuit is shown.
+	 * Resets the zoom so that the whole chip is shown.
 	 */
 	public void zoomExtents() {
 		// FIXME Does not properly handle non-0 minimum coordinates yet
@@ -533,5 +530,4 @@ public class DrawableCircuit implements Drawable {
 
 		}
 	}
-
 }
