@@ -11,7 +11,7 @@ import de.bioviz.ui.DrawableCircuit;
 
 public class Droplet {
 	
-	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
+	static Logger logger = LoggerFactory.getLogger(Droplet.class);
 	
 	public static int movementTransitionDuration = 500;
 	
