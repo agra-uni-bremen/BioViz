@@ -174,9 +174,9 @@ public class SVGManager {
 		xCoord = xCoord * coordinateMultiplier;
 
 		DisplayValues vals = field.getDisplayValues();
-		logger.debug("Color: {}", vals.color);
+		logger.debug("Color: {}", vals.getColor());
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-			   getScaleTransformation() + " xlink:href=\"#" + vals.texture +
+			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() +
 			   "\" />\n";
 	}
 

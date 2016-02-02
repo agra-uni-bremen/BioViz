@@ -6,45 +6,61 @@ import ch.qos.logback.core.AppenderBase;
 import de.bioviz.ui.BioViz;
 
 /**
- * @author Oliver Keszöcze
- * @brief A wrapper that makes the MessageCenter a valid appender for the logback framework
+ * A wrapper that makes the MessageCenter a valid appender for the logback
+ * framework.
+ * @author keszocze
  */
 public class MsgAppender extends AppenderBase<ILoggingEvent> {
+	/**
+	 * The "parent" MessageCenter.
+	 */
+	MessageCenter mc = null;
 
-    MessageCenter mc = null;
-    private static BioViz viz;
-    
-    public MsgAppender() {	}
+	/**
+	 * The "parent" visualization.
+	 */
+	private static BioViz viz;
 
-    @Override
-    /**
-     * @brief Forwards a log message to the MessageCenter that will display it on the HUD
-     */
-    protected void append(ILoggingEvent eventObject) {
-        if (isStarted() && eventObject.getLevel().isGreaterOrEqual(Level.INFO)) {
-            mc.addMessage(eventObject.getFormattedMessage());
-        }
-    }
+	/**
+	 * Creates a new MsgAppender for a given visualization.
+	 * @param viz the parent visualization
+	 */
+	public MsgAppender(final BioViz viz) {
+		this.viz = viz;
+	}
 
-    @Override
-    /**
-     * @brief Checks whether this appender is ready to append messages
-     *
-     * The idea is to check whether a GUI is present. If so, messages can be appended.
-     */
-    public boolean isStarted() {
-        if (mc == null) {
-            if (viz != null && viz.messageCenter != null) {
-                mc = viz.messageCenter;
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return true;
-        }
-    }
-    
+	@Override
+	/**
+	 * @brief Forwards a log message to the MessageCenter that will display it
+	 * on the HUD.
+	 */
+	protected void append(final ILoggingEvent eventObject) {
+		if (isStarted()
+				&& eventObject.getLevel().isGreaterOrEqual(Level.INFO)) {
+			mc.addMessage(eventObject.getFormattedMessage());
+		}
+	}
+
+	@Override
+	/**
+	 * Checks whether this appender is ready to append messages
+	 *
+	 * The idea is to check whether a GUI is present.
+	 * If so, messages can be appended.
+	 */
+	public boolean isStarted() {
+		if (mc == null) {
+			if (viz != null && viz.messageCenter != null) {
+				mc = viz.messageCenter;
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+
     public static void setMessageViz(BioViz vis) {
     	viz = vis;
     }
