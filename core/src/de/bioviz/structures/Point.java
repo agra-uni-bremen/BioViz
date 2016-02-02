@@ -6,10 +6,20 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Created by keszocze on 27.07.15.
+ *
  * @author Oliver Keszocze
  */
 public class Point extends Pair<Integer, Integer> {
+
+	public final static Point NORTH = new Point(0, 1);
+	public final static Point EAST = new Point(1, 0);
+	public final static Point SOUTH = new Point(0, -1);
+	public final static Point WEST = new Point(-1, 0);
+
+	public final static Point[] DIRECTIONS = {NORTH, EAST, SOUTH, WEST};
+
 	static final Logger logger = LoggerFactory.getLogger(Point.class);
+
 	public Point(int x, int y) {
 		super(x, y);
 	}
@@ -18,26 +28,19 @@ public class Point extends Pair<Integer, Integer> {
 		this(p.fst, p.snd);
 	}
 
-	public Point add(Point p) {
-		return new Point(fst + p.fst, snd + p.snd);
-	}
-
-	public final static Point NORTH = new Point(0,1);
-	public final static Point EAST = new Point(1,0);
-	public final static Point SOUTH = new Point(0,-1);
-	public final static Point WEST = new Point(-1,0);
-
-	public final static Point[] DIRECTIONS  = {NORTH, EAST, SOUTH, WEST};
 
 	/*
-	This hashCode method has been taken from http://stackoverflow.com/a/26981910
+	This hashCode method has been taken from http://stackoverflow
+	.com/a/26981910
 	 */
 	@Override
 	public int hashCode() {
 		return (fst << 16) + snd;
 	}
 
-
+	public Point add(Point p) {
+		return new Point(fst + p.fst, snd + p.snd);
+	}
 
 	// Bascially casts from enum to static points
 	public static Point pointFromDirection(Direction dir) {
@@ -73,12 +76,15 @@ public class Point extends Pair<Integer, Integer> {
 			return false;
 		}
 
-		return (Math.abs(p1.snd - p2.snd) <= 1) && (Math.abs(p1.fst - p2.fst) <= 1);
+		return (Math.abs(p1.snd - p2.snd) <= 1) &&
+			   (Math.abs(p1.fst - p2.fst) <= 1);
 	}
-	
+
 	/**
 	 * Non-static wrapper for static adjacency function
-	 * @param p2 the other point to check for adjacency
+	 *
+	 * @param p2
+	 * 		the other point to check for adjacency
 	 * @return whether or not the points are adjacent
 	 */
 	public boolean adjacent(Point p2) {

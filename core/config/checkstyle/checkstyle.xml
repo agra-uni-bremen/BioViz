@@ -41,8 +41,8 @@
     -->
 
     <property name="severity" value="warning"/>
-    <property name='localeCountry' value='' />
-    <property name='localeLanguage' value='' />
+    <property name='localeCountry' value=''/>
+    <property name='localeLanguage' value=''/>
 
     <!-- Checks that a package-info.java file exists for each package.     -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html#JavadocPackage -->
@@ -147,17 +147,25 @@
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
         <module name="EmptyForIteratorPad"/>
         <module name="EmptyLineSeparator">
-            <property name="tokens" value="PACKAGE_DEF, IMPORT, CLASS_DEF, ENUM_DEF, INTERFACE_DEF, CTOR_DEF, METHOD_DEF, STATIC_INIT, INSTANCE_INIT"/>
+            <property name="tokens"
+                      value="PACKAGE_DEF, IMPORT, CLASS_DEF, ENUM_DEF, INTERFACE_DEF, CTOR_DEF, METHOD_DEF, STATIC_INIT, INSTANCE_INIT"/>
         </module>
         <module name="GenericWhitespace"/>
         <module name="MethodParamPad"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
-        <module name="OperatorWrap"/>
+
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
+
+
+        <module name="OperatorWrap">
+            <property name="tokens"
+                      value="PLUS"/>
+            <property name="option" value="eol"/>
+        </module>
 
 
         <!-- Modifier Checks                                    -->

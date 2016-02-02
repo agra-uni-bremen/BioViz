@@ -19,28 +19,36 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DrawableSprite implements Drawable {
 
-	protected Sprite sprite;
+	public static int colorTransitionDuration = 500;
+	public static final float DEFAULT_LOD_THRESHOLD = 8f;
+
+	private static Logger logger =
+			LoggerFactory.getLogger(DrawableSprite.class);
+
+
+	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
+	protected boolean isVisible = true;
+	final float ALPHA_FULL = 0;
+	final float COORDINATE_SHIFT = 0.5f;
+
+	BioViz viz;
+	private Sprite sprite;
 	private static TextureManager textures;
 	private Color targetColor = Color.WHITE.cpy();
 	private Color currentColor = Color.WHITE.cpy();
 	private Color originColor = Color.WHITE.cpy();
 	private long colorTransitionStartTime = 0;
 	private long colorTransitionEndTime = 0;
-	public static int colorTransitionDuration = 500;
+
 	private HashMap<Float, TextureE> levelOfDetailTextures = new HashMap<>();
 	private TextureE currentTexture;
-	protected boolean isVisible = true;
 
-	public static final float DEFAULT_LOD_THRESHOLD = 8f;
 
-	private static Logger logger = LoggerFactory.getLogger(DrawableSprite.class);
 
-	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
 
-	float ALPHA_FULL = 0;
-	float COORDINATE_SHIFT = 0.5f;
 
-	BioViz viz;
+
+
 
 	/**
 	 * This constructor checks if the given texture has been loaded before and
@@ -68,7 +76,8 @@ public abstract class DrawableSprite implements Drawable {
 		this.viz = parent;
 	}
 
-	private void initializeSprite(float sizeX, float sizeY, TextureRegion region) {
+	private void initializeSprite(float sizeX, float sizeY, TextureRegion
+			region) {
 		sprite = new Sprite(region);
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
@@ -133,11 +142,10 @@ public abstract class DrawableSprite implements Drawable {
 		}
 	}
 
-	public void setDimensions(float dimX, float dimY) {
+	public void setDimensions(final float dimX, final float dimY) {
 		this.scaleX = dimX / this.sprite.getWidth();
 		this.scaleY = dimY / this.sprite.getHeight();
 	}
-
 
 
 	// TODO what is the rationale of this method?
@@ -148,11 +156,11 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	// TODO check whether this is still needed
-	public void addLOD(float scaleFactorMax, TextureE texture) {
+	public void addLOD(final float scaleFactorMax, final TextureE texture) {
 		this.levelOfDetailTextures.put(scaleFactorMax, texture);
 	}
 
-	public void removeLOD(float scaleFactorMax) {
+	public void removeLOD(final float scaleFactorMax) {
 		this.levelOfDetailTextures.remove(scaleFactorMax);
 	}
 
@@ -192,31 +200,44 @@ public abstract class DrawableSprite implements Drawable {
 				new Date().getTime() - colorTransitionStartTime) / (float) (
 				colorTransitionEndTime - colorTransitionStartTime)));
 		float totalProgress =
-				(float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
+				(float) -(Math.pow((transitionProgress - 1), 4)) + 1;
 
 		currentColor = this.originColor.cpy().mul(1 - totalProgress).add(
 				this.targetColor.cpy().mul(totalProgress));
 	}
 
+	/**
+	 * Returns a copy of the sprite's target color.
+	 * @return Copy of the targetColor variable.
+	 */
 	public Color getColor() {
 		return targetColor.cpy();
 	}
 
-	public void setColor(Color color) {
+	/**
+	 * Sets the sprite's color.
+	 *
+	 * @param color
+	 * 		The color this sprite is going to have
+	 */
+	public void setColor(final Color color) {
 		if (!this.targetColor.equals(color)) {
 			originColor = this.currentColor;
 			this.targetColor = color;
 			Date d = new Date();
 			this.colorTransitionStartTime = d.getTime();
-			this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
+			this.colorTransitionEndTime = d.getTime() +
+										  colorTransitionDuration;
 		}
 	}
-	
+
 	/**
-	 * Sets the color of this sprite without fading towards it
-	 * @param color the color this sprite should assume immediately
+	 * Sets the color of this sprite without fading towards it.
+	 *
+	 * @param color
+	 * 		the color this sprite should assume immediately
 	 */
-	public void setColorImmediately(Color color) {
+	public void setColorImmediately(final Color color) {
 		this.originColor = color;
 		this.targetColor = color;
 		Date d = new Date();
