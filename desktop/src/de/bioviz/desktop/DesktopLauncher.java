@@ -211,7 +211,7 @@ public class DesktopLauncher extends JFrame {
 		JPanel panel = initializePanel();
 
 
-		input = new LwjglAWTInput(canvas.getCanvas());
+		input = new LwjglAWTInput(canvas);
 
 		container.add(panel, BorderLayout.WEST);
 
@@ -239,10 +239,8 @@ public class DesktopLauncher extends JFrame {
 
 		pack();
 		setVisible(true);
-		setSize(
-				Gdx.graphics.getDesktopDisplayMode().width / 2,
-				Gdx.graphics.getDesktopDisplayMode().height / 2
-		);
+
+		setSize(800, 600);
 	}
 
 	/**
