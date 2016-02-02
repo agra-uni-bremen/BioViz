@@ -171,9 +171,9 @@ public class MessageCenter {
 				font.setColor(targetColor);
 				
 				TextBounds tb = font.getBounds(s.message);
-				int x = (int) ((s.x - tb.width / 2f) +
+				float x = ((s.x - tb.width / 2f) +
 							   Gdx.graphics.getWidth() / 2);
-				int y = (int) ((s.y + tb.height / 2f) +
+				float y = ((s.y + tb.height / 2f) +
 							   Gdx.graphics.getHeight() / 2);
 				if (s.size > 0) {
 					font.setScale(s.size / 100f);
