@@ -228,7 +228,7 @@ public class DrawableCircuit implements Drawable {
 		for (int i = minX; i < maxX + 1; i++) {
 			this.parent.messageCenter.addHUDMessage(
 					this.hashCode() + i,	// unique ID for each message
-					Integer.toString(i),	// message
+					Integer.toString(i).trim(),	// message
 					this.xCoordOnScreen(i),	// x
 					topYCoord, 				// y
 					col,					// message color, used for fading
@@ -240,7 +240,7 @@ public class DrawableCircuit implements Drawable {
 					this.hashCode() + maxX + Math.abs(minY) + 1 + i,
 				// unique ID for each message, starting after the previous ids
 
-					Integer.toString(i),	// message
+					Integer.toString(i).trim(),	// message
 					leftXCoord,				// x
 					this.yCoordOnScreen(i), // y
 					col,					// message color, used for fading
