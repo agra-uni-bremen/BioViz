@@ -11,7 +11,6 @@ import de.bioviz.ui.BioViz;
  * @author keszocze
  */
 public class MsgAppender extends AppenderBase<ILoggingEvent> {
-
 	/**
 	 * The "parent" MessageCenter.
 	 */
@@ -20,7 +19,7 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
 	/**
 	 * The "parent" visualization.
 	 */
-	BioViz viz;
+	private static BioViz viz;
 
 	/**
 	 * Creates a new MsgAppender for a given visualization.
@@ -61,4 +60,8 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
 			return true;
 		}
 	}
+
+    public static void setMessageViz(BioViz vis) {
+    	viz = vis;
+    }
 }
