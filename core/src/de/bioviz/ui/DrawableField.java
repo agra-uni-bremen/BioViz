@@ -229,11 +229,11 @@ public class DrawableField extends DrawableSprite {
 
 		DisplayValues vals = getDisplayValues();
 
-		displayText(vals.msg);
-		this.addLOD(Float.MAX_VALUE, vals.texture);
+		displayText(vals.getMsg());
+		this.addLOD(Float.MAX_VALUE, vals.getTexture());
 
 
-		setColor(vals.color);
+		setColor(vals.getColor());
 
 		super.draw();
 	}

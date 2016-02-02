@@ -6,4 +6,5 @@
 
 <suppressions>
     <suppress checks=".+" files=".*generated.*"/>
+    <suppress checks=".+" files=".*bioparser.*"/>
 </suppressions>
