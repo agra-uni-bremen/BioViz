@@ -50,6 +50,6 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
     }
     
     public static void setMessageViz(BioViz viz) {
-    	viz = viz;
+    	MsgAppender.viz = viz;
     }
 }
