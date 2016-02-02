@@ -20,5 +20,6 @@ public enum BDisplayOptions {
 	SinkIcon,
 	DetectorIcon,
 	FluidNames,
-	InterferenceRegion
+	InterferenceRegion,
+	NetColors
 }
