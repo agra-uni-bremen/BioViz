@@ -204,7 +204,6 @@ public abstract class DrawableSprite implements Drawable {
 
 	public void setColor(Color color) {
 		if (!this.targetColor.equals(color)) {
-			logger.debug("setting colour to " + color);
 			originColor = this.currentColor;
 			this.targetColor = color;
 			Date d = new Date();

@@ -23,6 +23,8 @@ public class DrawableDroplet extends DrawableSprite {
 	private static Random randnum = null;
 
 	public DrawableCircuit parentCircuit;
+	
+	private Color dropletColor; 
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
 		super(TextureE.Droplet, parent.parent);
@@ -37,6 +39,7 @@ public class DrawableDroplet extends DrawableSprite {
 		Color c = super.getColor();
 		c.a = 1f;
 		super.setColor(c);
+		this.dropletColor = c;
 		route = new DrawableRoute(this);
 	}
 
@@ -49,14 +52,12 @@ public class DrawableDroplet extends DrawableSprite {
 
 		DrawableCircuit circ = parentCircuit;
 
-
-		Color color = this.getColor().cpy();
+		Color color = this.dropletColor.cpy();
 
 		Net net = droplet.getNet();
 		if (net != null &&
 			parentCircuit.displayOptions.getOption(BDisplayOptions
 														   .NetColors)) {
-			logger.debug("Choosing net color for droplet {}",droplet);
 			color = new Color(net.color);
 		}
 
@@ -78,7 +79,6 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 		}
 
-		logger.debug("Chosen color: {}",color);
 		return color;
 	}
 
