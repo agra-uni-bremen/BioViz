@@ -63,13 +63,13 @@ public class Biochip {
 	 */
 	public Set<Net> getNetsOf(BiochipField field) {
 		HashSet<Net> result = new HashSet<Net>();
-		
+
 		for (Net net : nets) {
 			if (net.containsField(field)) {
 				result.add(net);
 			}
 		}
-		
+
 		return result;
 	}
 

@@ -60,29 +60,29 @@ public final class Net {
 			xMax = Integer.MIN_VALUE, yMax = Integer.MIN_VALUE;
 
 		for (Source source : sources) {
-			if (xMin < source.startPosition.fst) {
+			if (source.startPosition.fst < xMin) {
 				xMin = source.startPosition.fst;
 			}
-			if (yMin < source.startPosition.snd) {
+			if (source.startPosition.snd < yMin) {
 				yMin = source.startPosition.snd;
 			}
-			if (xMax > source.startPosition.fst) {
+			if (source.startPosition.fst > xMax) {
 				xMax = source.startPosition.fst;
 			}
-			if (yMax < source.startPosition.snd) {
+			if (source.startPosition.snd > yMax) {
 				yMax = source.startPosition.snd;
 			}
 		}
-		if (xMin < target.fst) {
+		if (target.fst < xMin) {
 			xMin = target.fst;
 		}
-		if (yMin < target.snd) {
+		if (target.snd < yMin) {
 			yMin = target.snd;
 		}
-		if (xMax > target.fst) {
+		if (target.fst > xMax) {
 			xMax = target.fst;
 		}
-		if (yMax < target.snd) {
+		if (target.snd > yMax) {
 			yMax = target.snd;
 		}
 		
