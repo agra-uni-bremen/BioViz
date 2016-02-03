@@ -188,8 +188,8 @@ public class SVGManager {
 		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2) + "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
 				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"+ (vals.getMsg() == null ? "" : vals.getMsg()) + "</text>\n";
 
+
 		logger.debug("Color: {}", vals.getColor());
-		
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + // the colorcode should be added here with a preceding minus
 			   "\" />\n" + msg;
@@ -243,6 +243,7 @@ public class SVGManager {
 
 			// TODO possible problem here due to casting
 			float alpha = 1 - (Math.abs((float) i) / ((float) displayLength));
+			//float alpha = 1;
 
 
 			displayAt = currentTime + i;
@@ -254,48 +255,46 @@ public class SVGManager {
 
 			logger.debug("p1 {}; p2 {}", p1, p2);
 
-			int x1 = p1.fst*coordinateMultiplier;
-			int x2 = p2.fst*coordinateMultiplier;
-			int y1 = p1.snd*coordinateMultiplier;
-			int y2 = p2.snd*coordinateMultiplier;
+			if(p1!=null && p2!=null) {
+				int x1 = p1.fst * coordinateMultiplier;
+				int x2 = p2.fst * coordinateMultiplier;
+				int y1 = (-p1.snd + circ.getMaxCoord().snd) * coordinateMultiplier;
+				int y2 = (-p2.snd + circ.getMaxCoord().snd) * coordinateMultiplier;
 
-			float targetX = x1 + (0.5f*coordinateMultiplier);
-			float targetY = -y1 + (circ.getMaxCoord().snd - 1)*coordinateMultiplier;
+				float targetX = x1 + (0.5f * coordinateMultiplier);
+				float targetY = y1;
 
-			String position = " x=\"" + targetX + "\" y=\"" + targetY + "\" ";
-			String widthHeight = " width=\"1\" height=\"1\" ";
-			String transFormParams = getScale();
-			String opacity = " opacity=\"" + alpha + "\" ";
-			boolean app = true;
+				String position = " x=\"" + targetX + "\" y=\"" + targetY + "\" ";
+				String widthHeight = " width=\"1\" height=\"1\" ";
+				String transFormParams = getScale();
+				String opacity = " opacity=\"" + alpha + "\" ";
+				boolean app = true;
 
-			if (y1 == y2 && x2 > x1) {
-				// intentionally do nothing here
-			}
-			else if (y1 == y2 && x2 < x1) {
-				transFormParams +=
-						" rotate(180 " + targetX + " " + (targetY + 0.5f) +
-						") ";
-			}
-			else if (x1 == x2 && y2 > y1) {
-				transFormParams +=
-						" rotate(270 " + targetX + " " + (targetY + 0.5f) +
-						") ";
-			}
-			else if (x1 == x2 && y2 < y1) {
-				transFormParams +=
-						"rotate(90 " + targetX + " " + (targetY + 0.5f) + ") ";
-			}
-			else {
-				app = false;
-			}
-			if (app) {
-				sb.append("<use");
-				sb.append(position);
-				sb.append(widthHeight);
-				sb.append(getTransformation(transFormParams));
-				sb.append(opacity);
-				sb.append("xlink:href=\"#StepMarker\"");
-				sb.append(" />\n");
+				if (y1 == y2 && x2 > x1) {
+					// intentionally do nothing here
+				} else if (y1 == y2 && x2 < x1) {
+					transFormParams +=
+							" rotate(180 " + targetX + " " + (targetY + 0.5f * coordinateMultiplier) +
+									") ";
+				} else if (x1 == x2 && y2 > y1) {
+					transFormParams +=
+							" rotate(90 " + targetX + " " + (targetY + 0.5f * coordinateMultiplier) +
+									") ";
+				} else if (x1 == x2 && y2 < y1) {
+					transFormParams +=
+							"rotate(270 " + (targetX) + " " + (targetY + 0.5f * coordinateMultiplier) + ") ";
+				} else {
+					app = false;
+				}
+				if (app) {
+					sb.append("<use");
+					sb.append(position);
+					sb.append(widthHeight);
+					sb.append(getTransformation(transFormParams));
+					sb.append(opacity);
+					sb.append("xlink:href=\"#StepMarker\"");
+					sb.append(" />\n");
+				}
 			}
 		}
 		return sb.toString();
