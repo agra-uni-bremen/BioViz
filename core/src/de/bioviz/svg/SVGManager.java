@@ -220,7 +220,7 @@ public class SVGManager {
 
 		DrawableDroplet droplet = drawableRoute.droplet;
 
-		int currentTime = droplet.parentCircuit.currentTime;
+		int currentTime = droplet.droplet.getSpawnTime();
 		int displayAt;
 
 		int displayLength = drawableRoute.routeDisplayLength;
