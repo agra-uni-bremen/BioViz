@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 
 /**
@@ -15,21 +16,49 @@ import java.util.Vector;
  */
 public class Droplet {
 
+
+	public static int movementTransitionDuration = 500;
+	static Logger logger = LoggerFactory.getLogger(Droplet.class);
+
 	public float smoothX;
 	public float smoothY;
 
 
 	private boolean firstUpdate = true;
 
-	public static int movementTransitionDuration = 500;
 
-	static Logger logger = LoggerFactory.getLogger(Droplet.class);
-
+	/**
+	 * The net the droplet belongs to. Note that not every droplet necessarily
+	 * is part of a net as for a plain routing solution this information is not
+	 * vital.
+	 */
 	private Net net = null;
 
+	/**
+	 * The positions the droplet occupies on the grid. The order within the
+	 * vector corresponds to consecutive time steps.
+	 * <p>
+	 * Note that a droplet may be spawn at some point in time. Therefore, this
+	 * vector has an offset which is stored in the {@link Droplet#spawnTime}
+	 * variable.
+	 * <p>
+	 * Combined with the length of the vector, this also implicitly defines
+	 * when
+	 * the droplet vanishes from the chip.
+	 */
 	private Vector<Point> positions = new Vector<>();
 
+	/**
+	 * The unique ID of the droplet
+	 */
 	private int id = 0;
+
+	/**
+	 * The time step the droplet appears on the chip.
+	 * <p>
+	 * This is an offset used with {@link Droplet#positions} to now when the
+	 * droplet is where.
+	 */
 	private int spawnTime = 1;
 
 	private float targetX;
@@ -37,11 +66,25 @@ public class Droplet {
 	private float originX;
 	private float originY;
 
+
+	// TODO remove?
 	private float movementDelay = 4f;
 
-	private long movementTransitionStartTime = 0, movementTransitionEndTime
-			= 0;
+	private long movementTransitionStartTime = 0;
+	private long movementTransitionEndTime = 0;
 
+
+	/**
+	 * Creates an 'empty' droplet.
+	 * <p>
+	 * Empty means that there is no additional information besides the ID
+	 * stored
+	 * in this particular droplet. This means that it has no associated net or
+	 * routes.
+	 *
+	 * @param id
+	 * 		The unique ID of the droplet
+	 */
 	public Droplet(final int id) {
 		this.id = id;
 	}
@@ -51,16 +94,34 @@ public class Droplet {
 		this.spawnTime = spawnTime;
 	}
 
-
+	/**
+	 * @return The net the droplet belongs to
+	 */
 	public Net getNet() {
 		return net;
 	}
 
+	/**
+	 * Tells the droplet which net it belongs to
+	 *
+	 * @param net
+	 * 		The net droplet should belong to
+	 * @warning Calling this method does *not* add the droplet to any net. It
+	 * merely sets a reference. The net itself has a list of IDs of droplets
+	 * that belong to it. No checks for actual membership are performed. So be
+	 * sure that you call this with the proper parameters!
+	 */
 	public void setNet(final Net net) {
+		// TODO check whether droplet actually belongs to that net?
 		this.net = net;
 	}
 
-
+	/**
+	 * @return Positions of the droplet
+	 * @warning Do not modify this returned vector as it will modify the
+	 * droplet. We could think about returning a copy but than again we believe
+	 * in the non-evilness of our clients :)
+	 */
 	public Vector<Point> getPositions() {
 		return positions;
 	}
@@ -73,14 +134,29 @@ public class Droplet {
 	}
 
 
-	public void addPosition(final int x,final int y) {
-		positions.add(new Point(x, y));
-	}
-
+	/**
+	 * Appends a position the the droplet's route (i.e. positions)
+	 *
+	 * @param p
+	 * 		Position that is added
+	 */
 	public void addPosition(final Point p) {
 		positions.add(p);
 	}
 
+	/**
+	 * Tries to return the position of the droplet at specified time step.
+	 * <p>
+	 * If the time step is before the droplet is spawned or after the droplet
+	 * has vanished, the first or last position, respectively, is returned in
+	 * stead.
+	 * <p>
+	 * The main feature of this function is that it does not return null.
+	 *
+	 * @param t
+	 * 		Time step for which the position is requested
+	 * @return Position of droplet at time step t oder first/last position.
+	 */
 	public Point getSafePositionAt(final int t) {
 
 		int index = t - spawnTime;
@@ -98,6 +174,11 @@ public class Droplet {
 		return positions.get(index);
 	}
 
+	/**
+	 * @param t
+	 * 		Time step for which the position is requested
+	 * @return Position at time step t or null if outside time range
+	 */
 	public Point getPositionAt(final int t) {
 
 		int index = t - spawnTime;
@@ -108,10 +189,22 @@ public class Droplet {
 		return positions.get(index);
 	}
 
+
+	/**
+	 * @return First position of the droplet
+	 * @throws NoSuchElementException
+	 * 		if list of positions is empty
+	 */
 	public Point getFirstPosition() {
 		return positions.firstElement();
 	}
 
+
+	/**
+	 * @return Last position of the droplet
+	 * @throws NoSuchElementException
+	 * 		if list of positions is empty
+	 */
 	public Point getLastPosition() {
 		return positions.lastElement();
 	}
@@ -168,11 +261,24 @@ public class Droplet {
 				  this.targetY * totalProgress;
 	}
 
+	/**
+	 * Computes and returns the hash code of this droplet.
+	 * <p>
+	 * The hash code simply is the droplets id. As this is unique, it serves as
+	 * a hash code.
+	 *
+	 * @return hash code of the Droplet
+	 */
 	@Override
 	public int hashCode() {
 		return this.getID();
 	}
 
+	/**
+	 * @param o
+	 * 		The object to compare against
+	 * @return true if both objects reference the same droplet
+	 */
 	@Override
 	public boolean equals(final Object o) {
 		if (o instanceof Droplet) {
@@ -195,15 +301,24 @@ public class Droplet {
 		return positions.size() + spawnTime - 1;
 	}
 
+	/**
+	 * @return The time step the droplet appears first on the chip
+	 */
 	public int getSpawnTime() {
 		return this.spawnTime;
 	}
 
+	/**
+	 * @return The String representation in the form "D[<ID>@<spawnTime>]"
+	 */
 	@Override
 	public String toString() {
 		return "D[" + id + "@" + spawnTime + "]";
 	}
 
+	/**
+	 * @return The ID of the droplet
+	 */
 	public int getID() {
 		return this.id;
 	}
@@ -216,7 +331,7 @@ public class Droplet {
 		return targetY;
 	}
 
-	public void setTargetPosition(final float targetX,final float targetY) {
+	public void setTargetPosition(final float targetX, final float targetY) {
 		if (this.targetX != targetX || this.targetY != targetY) {
 			originX = this.smoothX;
 			originY = this.smoothY;
