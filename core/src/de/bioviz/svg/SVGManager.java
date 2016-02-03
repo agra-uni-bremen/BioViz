@@ -26,6 +26,8 @@ public class SVGManager {
 
 	private static Logger logger = LoggerFactory.getLogger(SVGManager.class);
 
+	private SVGCoreCreator svgCoreCreator;
+
 	private HashMap<SVGE, String> svgs = new HashMap<>();
 
 
@@ -68,7 +70,9 @@ public class SVGManager {
 	 * @warning The folder name must not begin or end with a slash!
 	 */
 	public SVGManager(String folder) {
-		setFolder(folder);
+		svgCoreCreator = new SVGCoreCreator();
+		svgCoreCreator.setFolder(folder);
+		createCores();
 	}
 
 	/**
@@ -92,30 +96,14 @@ public class SVGManager {
 	 * specified in the TextureE enum
 	 * @warning The folder name must not begin or end with a slash!
 	 */
-	public void setFolder(String folder) {
+	public void createCores() {
 		svgs.clear();
 
-		svgFolder = folder;
 		for (SVGE s : SVGE.values()) {
 
 			// TODO Add BlackPixel svg!
 			if (s != SVGE.BlackPixel) {
-				String svgCoreFile = baseFolder + "/" + svgFolder + "/" +
-									 s +
-									 ".core";
-				logger.debug("Loading SVG core for {}", svgCoreFile);
-				Path svgCoreFilePath =
-						Gdx.files.internal(svgCoreFile).file().toPath();
-
-				try {
-					String svgCore =
-							new String(Files.readAllBytes(svgCoreFilePath));
-					svgs.put(s, svgCore);
-				} catch (IOException e) {
-					// TODO log if stuff goes wrong
-					e.printStackTrace();
-				}
-
+					svgs.put(s, svgCoreCreator.createSVGCore(s));
 			}
 		}
 	}
