@@ -61,6 +61,9 @@ public class Point extends Pair<Integer, Integer> {
 
 
 	public static boolean reachable(Point p1, Point p2) {
+		if (p1.equals(p2)) {
+			return true;
+		}
 		for (Point direction : DIRECTIONS) {
 //			logger.debug("p1.add("+direction+")="+p1.add(direction)+" == "+p2);
 
