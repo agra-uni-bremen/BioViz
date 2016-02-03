@@ -15,11 +15,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 import de.bioviz.messages.MessageCenter;
+import de.bioviz.messages.MsgAppender;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Droplet;
 import de.bioviz.parser.BioParser;
-
 import de.bioviz.svg.SVGManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +117,10 @@ public class BioViz implements ApplicationListener {
 		this.bioFile = null;
 		loadedCircuits = new HashMap<>();
 		textures = new TextureManager();
+		
+		// Weird static assignment needed to enable parameterless construction
+		// of appender in order to allow its creation from logger framework
+		MsgAppender.setMessageViz(this);
 	}
 
 	public BioViz(File bioFile) {

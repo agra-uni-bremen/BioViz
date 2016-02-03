@@ -33,8 +33,8 @@ public class PreferencesWindow extends JFrame {
 		pack();
 		setVisible(true);
 		setSize(
-				Gdx.graphics.getDesktopDisplayMode().width / 2,
-				Gdx.graphics.getDesktopDisplayMode().height / 2
+				320,
+				240
 				);
 	}
 

@@ -11,7 +11,7 @@ import de.bioviz.ui.DrawableCircuit;
 
 public class Droplet {
 	
-	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
+	static Logger logger = LoggerFactory.getLogger(Droplet.class);
 	
 	public static int movementTransitionDuration = 500;
 	
@@ -19,6 +19,16 @@ public class Droplet {
 
 	private int id=0;
 	private int spawnTime = 1;
+
+	public Net getNet() {
+		return net;
+	}
+
+	public void setNet(Net net) {
+		this.net = net;
+	}
+
+	private Net net = null;
 	
 	private float movementDelay = 4f;
 	

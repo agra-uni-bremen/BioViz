@@ -186,12 +186,12 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 
 		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2) + "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
-				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"+ (vals.msg == null ? "" : vals.msg) + "</text>\n";
+				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"+ (vals.getMsg() == null ? "" : vals.getMsg()) + "</text>\n";
 
-		logger.debug("Color: {}", vals.color);
+		logger.debug("Color: {}", vals.getColor());
 		
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-			   getScaleTransformation() + " xlink:href=\"#" + vals.texture + // the colorcode should be added here with a preceding minus
+			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + // the colorcode should be added here with a preceding minus
 			   "\" />\n" + msg;
 	}
 

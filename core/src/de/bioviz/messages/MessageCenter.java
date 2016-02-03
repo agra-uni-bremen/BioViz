@@ -3,10 +3,10 @@ package de.bioviz.messages;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 import de.bioviz.ui.BioViz;
 import de.bioviz.ui.DrawableCircuit;
@@ -27,15 +27,16 @@ public class MessageCenter {
 
 	private Vector<Message> messages;
 	private BitmapFont font;
+	private BitmapFont messageFont;
 	public boolean hidden = false;
 
-	public static final int MAX_MESSAGES_IN_UI = 5;
+	public static final int MAX_MESSAGES_IN_UI = 32;
 
-	private float scaleHUD = 0.25f;
-	private float scaleMsg = 0.25f;
+	private float scaleHUD = 1f / 4f;
+	private float scaleMsg = 1f / 8f;
 	private final float SCALEINCSTEP = 0.125f;
 	
-	public static final int textRenderResolution = 100;
+	public static final int textRenderResolution = 16;
 	
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
@@ -52,11 +53,17 @@ public class MessageCenter {
 			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 			parameter.size = textRenderResolution;
 			parameter.color = Color.WHITE.cpy();
-			parameter.borderWidth = 4;
+			parameter.borderWidth = 2;
 			parameter.borderColor = Color.BLACK.cpy();
 			parameter.genMipMaps = true;
 			BitmapFont font12 = generator.generateFont(parameter); // font size 12 pixels
 			generator.dispose(); // don't forget to dispose to avoid memory leaks!
+			
+			generator = new FreeTypeFontGenerator(Gdx.files.internal("images/Anonymous_Pro.ttf"));
+			parameter = new FreeTypeFontParameter();
+			parameter.size = 8;
+			parameter.color = Color.BLACK.cpy();
+			this.messageFont = generator.generateFont(parameter);
 			logger.debug("set up font");
 			
 			font = font12;//new BitmapFont();
@@ -125,19 +132,18 @@ public class MessageCenter {
 											   Gdx.graphics.getHeight());
 			parent.batch.setProjectionMatrix(normalProjection);
 
-			int spacing = 18;
+			int spacing = 10;
 			int yCoord = Gdx.graphics.getHeight() - spacing;
 			for (Message m : this.messages) {
 				if (m.color != null) {
-					font.setColor(m.color);
+					messageFont.setColor(m.color);
 				}
 				else {
-					font.setColor(Color.WHITE);
+					messageFont.setColor(Color.WHITE);
 				}
-				font.setScale(scaleMsg);
 				int start_x = spacing;
 				int start_y = yCoord;
-				font.draw(parent.batch, m.message, start_x,
+				messageFont.draw(parent.batch, m.message, start_x,
 						  start_y); // TODO name of closestHit
 
 
@@ -164,17 +170,17 @@ public class MessageCenter {
 				
 				font.setColor(targetColor);
 				
-				TextBounds tb = font.getBounds(s.message);
-				int x = (int) ((s.x - tb.width / 2f) +
-							   Gdx.graphics.getWidth() / 2);
-				int y = (int) ((s.y + tb.height / 2f) +
-							   Gdx.graphics.getHeight() / 2);
-				if (s.size > 0) {
-					font.setScale(s.size / 100f);
-				} else {
-					font.setScale((parent.currentCircuit.getSmoothScaleX() * scaleHUD) / 32f);
-				}
-				font.draw(parent.batch, s.message, x, y);
+				final GlyphLayout layout = new GlyphLayout(font, s.message);
+				// or for non final texts: layout.setText(font, text);
+
+				final float fontX = s.x -
+						layout.width / 2f +
+						Gdx.graphics.getWidth() / 2f;
+				final float fontY = s.y +
+						layout.height / 2f +
+						Gdx.graphics.getHeight() / 2f;
+
+				font.draw(parent.batch, layout, fontX, fontY);
 			}
 
 			long curTime = System.currentTimeMillis();

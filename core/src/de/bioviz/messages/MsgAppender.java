@@ -10,13 +10,15 @@ import de.bioviz.ui.BioViz;
  * @brief A wrapper that makes the MessageCenter a valid appender for the logback framework
  */
 public class MsgAppender extends AppenderBase<ILoggingEvent> {
+	/**
+	 * The "parent" MessageCenter.
+	 */
+	MessageCenter mc = null;
 
-    MessageCenter mc = null;
-    BioViz viz;
-    
-    public MsgAppender(BioViz viz) {
-		this.viz = viz;
-	}
+	/**
+	 * The "parent" visualization.
+	 */
+	private static BioViz viz;
 
     @Override
     /**
@@ -45,6 +47,9 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
         } else {
             return true;
         }
-
+    }
+    
+    public static void setMessageViz(BioViz viz) {
+    	MsgAppender.viz = viz;
     }
 }

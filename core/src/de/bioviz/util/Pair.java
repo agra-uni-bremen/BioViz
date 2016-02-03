@@ -26,6 +26,15 @@ public class Pair<K, V> {
 	 */
 	public final V snd;
 
+	/**
+	 * @brief Creates a new pair containing the values provided as parameters.
+	 * @param fst Value of the first entry of the pair
+	 * @param snd Value of the second entry of the pair
+	 */
+	public Pair(final K fst, final V snd) {
+		this.fst = fst;
+		this.snd = snd;
+	}
 
 	/**
 	 *
@@ -37,16 +46,6 @@ public class Pair<K, V> {
 	 */
 	public static <K, V> Pair<K, V> mkPair(final K fst, final V snd) {
 		return new Pair<K, V>(fst, snd);
-	}
-
-	/**
-	 * @brief Creates a new pair containing the values provided as parameters.
-	 * @param fst Value of the first entry of the pair
-	 * @param snd Value of the second entry of the pair
-	 */
-	public Pair(final K fst, final V snd) {
-		this.fst = fst;
-		this.snd = snd;
 	}
 
 
