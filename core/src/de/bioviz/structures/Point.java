@@ -20,12 +20,29 @@ public class Point extends Pair<Integer, Integer> {
 
 	static final Logger logger = LoggerFactory.getLogger(Point.class);
 
+	/**
+	 * Creates a point from two separate coordinates
+	 *
+	 * @param x
+	 * 		x coordinate of the point
+	 * @param y
+	 * 		y coordinate of the point
+	 */
 	public Point(int x, int y) {
-		super(x, y);
+		super(new Integer(x), new Integer(y));
 	}
 
+
+	/**
+	 * Copy constructor for Point objects
+	 *
+	 * @param p
+	 * 		Point to copy
+	 * 		<p>
+	 * 		It is only a real copy constructor as long as Integer(int) is.
+	 */
 	public Point(Point p) {
-		this(p.fst, p.snd);
+		this(new Integer(p.fst), new Integer(p.snd));
 	}
 
 
@@ -38,6 +55,17 @@ public class Point extends Pair<Integer, Integer> {
 		return (fst << 16) + snd;
 	}
 
+
+	/**
+	 * Adds a point by coordinate-wise addition.
+	 * <p>
+	 * This effectively moves the point on the 2D plane.
+	 *
+	 * @param p
+	 * 		the point to add to this
+	 * @return new Point created by adding the coordinates of p to this's
+	 * coordinates
+	 */
 	public Point add(Point p) {
 		return new Point(fst + p.fst, snd + p.snd);
 	}
@@ -60,6 +88,16 @@ public class Point extends Pair<Integer, Integer> {
 	}
 
 
+	/**
+	 * Check whether one point can be reached by another point in exactly one
+	 * time step moving horizontically, vertically or by not moving at all.
+	 *
+	 * @param p1
+	 * 		first point
+	 * @param p2
+	 * 		second point
+	 * @return true if p2 is reachable from p1 in one time step
+	 */
 	public static boolean reachable(Point p1, Point p2) {
 		if (p1.equals(p2)) {
 			return true;
@@ -74,6 +112,18 @@ public class Point extends Pair<Integer, Integer> {
 		return false;
 	}
 
+	/**
+	 * Checks whether two points are adjacent to each other
+	 *
+	 * @param p1
+	 * 		first Point
+	 * @param p2
+	 * 		second Point
+	 * @return true if p1 and p2 are adjacent, false otherwise
+	 * @note This method does only compare the points by examining their
+	 * coordinates. It does *not* take into account the grid, the droplets are
+	 * moving on.
+	 */
 	public static boolean adjacent(Point p1, Point p2) {
 		if (p1 == null || p2 == null) {
 			return false;
