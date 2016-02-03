@@ -21,5 +21,6 @@ public enum BDisplayOptions {
 	DetectorIcon,
 	FluidNames,
 	InterferenceRegion,
-	NetColors
+	NetColorOnDroplets,
+	NetColorOnFields
 }

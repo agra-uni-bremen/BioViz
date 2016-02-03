@@ -57,7 +57,7 @@ public class DrawableDroplet extends DrawableSprite {
 		Net net = droplet.getNet();
 		if (net != null &&
 			parentCircuit.displayOptions.getOption(BDisplayOptions
-														   .NetColors)) {
+														   .NetColorOnDroplets)) {
 			color = new Color(net.color);
 		}
 

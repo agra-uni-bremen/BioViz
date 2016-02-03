@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Mixer;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.util.Pair;
 
@@ -147,6 +148,14 @@ public class DrawableField extends DrawableSprite {
 		if (field.isBlocked(parentCircuit.currentTime)) {
 			result.add(blockedColor);
 			colorOverlayCount++;
+		}
+		
+		if (parentCircuit.displayOptions.getOption(
+				BDisplayOptions.NetColorOnFields)) {
+			for (Net n : this.parentCircuit.data.getNetsOf(this.field)) {
+				result.add(new Color(n.color));
+				colorOverlayCount++;
+			}
 		}
 
 
