@@ -7,16 +7,17 @@ import com.badlogic.gdx.graphics.Color;
  *
  * @author Oliver Keszocze
  */
-public class Colors {
+public abstract class Colors {
 	/**
 	 * Base color for a field. This color is used when no droplet is present
-	 * and no other indicator (e.g., for an interference region) is set,
+	 * and
+	 * no other indicator (e.g., for an interference region) is set,
 	 */
 	public static final Color FIELD_COLOR = new Color(0.5f, 0.5f, 0.75f, 1f);
 
 	/**
 	 * Base color used for 'emptyness'.
-	 *
+	 * <p>
 	 * It basically is white with no transparency. It is used to initialize the
 	 * color when drawing fields.
 	 */
@@ -58,8 +59,11 @@ public class Colors {
 
 
 	/**
-	 * Base color for an interference region. This color is used before any modifications are applied.
+	 * Base color for an interference region. This color is used before any
+	 * modifications are applied.
 	 */
 	public static final Color INTERFERENCE_REGION_COLOR
 			= new Color(0.25f, 0.25f, 0f, 1);
+
+
 }
