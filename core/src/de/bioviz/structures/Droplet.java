@@ -42,11 +42,11 @@ public class Droplet {
 	private long movementTransitionStartTime = 0, movementTransitionEndTime
 			= 0;
 
-	public Droplet(int id) {
+	public Droplet(final int id) {
 		this.id = id;
 	}
 
-	public Droplet(int id, int spawnTime) {
+	public Droplet(final int id, final int spawnTime) {
 		this.id = id;
 		this.spawnTime = spawnTime;
 	}
@@ -56,7 +56,7 @@ public class Droplet {
 		return net;
 	}
 
-	public void setNet(Net net) {
+	public void setNet(final Net net) {
 		this.net = net;
 	}
 
@@ -73,15 +73,15 @@ public class Droplet {
 	}
 
 
-	public void addPosition(int x, int y) {
+	public void addPosition(final int x,final int y) {
 		positions.add(new Point(x, y));
 	}
 
-	public void addPosition(Point p) {
+	public void addPosition(final Point p) {
 		positions.add(p);
 	}
 
-	public Point getSafePositionAt(int t) {
+	public Point getSafePositionAt(final int t) {
 
 		int index = t - spawnTime;
 
@@ -98,7 +98,7 @@ public class Droplet {
 		return positions.get(index);
 	}
 
-	public Point getPositionAt(int t) {
+	public Point getPositionAt(final int t) {
 
 		int index = t - spawnTime;
 
@@ -128,7 +128,7 @@ public class Droplet {
 	 * 		the current time
 	 * @return the timestamp at which the next step is performed.
 	 */
-	public long getNextStep(long current) {
+	public long getNextStep(final long current) {
 		long result = 0;
 
 		if (current > 0 && current < positions.size() - 1) {
@@ -174,7 +174,7 @@ public class Droplet {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (o instanceof Droplet) {
 			return ((Droplet) o).getID() == this.getID();
 		}
@@ -216,7 +216,7 @@ public class Droplet {
 		return targetY;
 	}
 
-	public void setTargetPosition(float targetX, float targetY) {
+	public void setTargetPosition(final float targetX,final float targetY) {
 		if (this.targetX != targetX || this.targetY != targetY) {
 			originX = this.smoothX;
 			originY = this.smoothY;
