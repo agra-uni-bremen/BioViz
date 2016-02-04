@@ -66,10 +66,6 @@ public class Droplet {
 	private float originX;
 	private float originY;
 
-
-	// TODO remove?
-	private float movementDelay = 4f;
-
 	private long movementTransitionStartTime = 0;
 	private long movementTransitionEndTime = 0;
 
