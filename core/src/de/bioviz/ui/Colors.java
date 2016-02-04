@@ -43,10 +43,6 @@ public abstract class Colors {
 	public static final Color MIXER_COLOR = new Color(0.45f, 0.33f, 0.25f, 1f);
 
 
-	// TODO check whether we actually need 'fieldAdjacentActivationColor'
-//	public static final Color fieldAdjacentActivationColor
-//			= new Color(1f / 2f, 1f / 3f, 0, 1); //218-165-32
-
 	/**
 	 * Color used to indicate a blockage.
 	 */
