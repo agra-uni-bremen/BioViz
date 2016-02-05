@@ -299,23 +299,7 @@ public class BioViz implements ApplicationListener {
 		Biochip bc;
 		boolean error = false;
 		String errorMsg = "";
-		if (bioFile == null) {
-			logger.debug("Loading default file");
-			FileHandle fh = Gdx.files.getFileHandle("examples/default_grid" +
-													".bio",
-													Files.FileType.Internal);
-			bc = BioParser.parse(fh.readString(), this);
-		}
-		else {
-			logger.debug("Loading {}", bioFile);
-			bc = BioParser.parseFile(bioFile, this);
-		}
-
-		if (bc == null) {
-			error = true;
-			errorMsg = "Could not parse file" + bioFile;
-			bc = new Biochip();
-		}
+			
 
 		try {
 			drawables.remove(currentCircuit);
@@ -329,11 +313,19 @@ public class BioViz implements ApplicationListener {
 									());
 				}
 				else {
+					logger.debug("Loading {}", bioFile);
+					bc = BioParser.parseFile(bioFile, this);
+
+					if (bc == null) {
+						error = true;
+						errorMsg = "Could not parse file" + bioFile;
+						bc = new Biochip();
+					}
 					logger.debug("loaded file, creating drawable elements...");
 					DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
 					currentCircuit = newCircuit;
 					this.loadedCircuits.put(bioFile.getCanonicalPath(),
-											newCircuit);
+							newCircuit);
 					currentCircuit.zoomExtents();
 				}
 				logger.debug("drawable created, replacing old elements...");
@@ -346,8 +338,7 @@ public class BioViz implements ApplicationListener {
 				else {
 					logger.info("Done loading file {}", bioFile);
 				}
-			}
-			else {
+			} else {
 				logger.debug(
 						"File to be set is empty, setting empty " +
 						"visualization" +
