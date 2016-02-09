@@ -20,11 +20,11 @@ public class DrawableField extends DrawableSprite {
 
 	public BiochipField field;
 
-	static final Color fieldDefaultColor = Colors.fieldColor;
-	static final Color sinkDefaultColor = Colors.sinkColor;
-	static final Color sourceDefaultColor = Colors.sourceColor;
-	static final Color mixerDefaultColor = Colors.mixerColor;
-	static final Color blockedColor = Colors.blockedColor;
+	static final Color fieldDefaultColor = Colors.FIELD_COLOR;
+	static final Color sinkDefaultColor = Colors.SINK_COLOR;
+	static final Color sourceDefaultColor = Colors.SOURCE_COLOR;
+	static final Color mixerDefaultColor = Colors.MIXER_COLOR;
+	static final Color blockedColor = Colors.BLOCKED_COLOR;
 
 
 	//private DrawableSprite adjacencyOverlay;
@@ -138,11 +138,11 @@ public class DrawableField extends DrawableSprite {
 
 		int colorOverlayCount = 0;
 		/*
-		We need to create a copy of the fieldEmptyColor as that value is final
+		We need to create a copy of the FIELD_EMPTY_COLOR as that value is final
 		 and thus can not be modified.
 		If that value is unchangeable, the cells all stay white
 		 */
-		Color result = new Color(Colors.fieldEmptyColor);
+		Color result = new Color(Colors.FIELD_EMPTY_COLOR);
 
 		if (field.isBlocked(parentCircuit.currentTime)) {
 			result.add(blockedColor);
@@ -167,7 +167,7 @@ public class DrawableField extends DrawableSprite {
 			for (Droplet d: parentCircuit.data.getDroplets()) {
 				Point p = d.getPositionAt(parentCircuit.currentTime);
 				if (p != null && p.adjacent(this.field.pos)) {
-					result.add(Colors.interferenceRegionColor);
+					result.add(Colors.INTERFERENCE_REGION_COLOR);
 				}
 			}
 		}
@@ -177,7 +177,7 @@ public class DrawableField extends DrawableSprite {
 		if (parentCircuit.displayOptions.getOption(
 				BDisplayOptions.Actuations)) {
 			if (field.isActuated(t)) {
-				result.add(Colors.actautedColor);
+				result.add(Colors.ACTAUTED_COLOR);
 				++colorOverlayCount;
 			}
 		}
