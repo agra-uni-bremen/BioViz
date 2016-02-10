@@ -2,6 +2,7 @@ package de.bioviz.svg;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Point;
 import de.bioviz.ui.*;
@@ -29,6 +30,7 @@ public class SVGManager {
 	private SVGCoreCreator svgCoreCreator;
 
 	private HashMap<SVGE, String> svgs = new HashMap<>();
+	private HashMap<String, String> colSvgs = new HashMap<>();
 
 
 	private String svgFolder;
@@ -73,6 +75,7 @@ public class SVGManager {
 		svgCoreCreator = new SVGCoreCreator();
 		svgCoreCreator.setFolder(folder);
 		createCores();
+
 	}
 
 	/**
@@ -83,9 +86,6 @@ public class SVGManager {
 	}
 
 	/**
-	 * @param folder
-	 * 		The name of the folder containing the theme, relative to the assets
-	 * 		folder
 	 * @brief Tells the manager where to find the svgs (i.e. .svg images).
 	 * <p>
 	 * The location is relative to the assets folder.
@@ -103,8 +103,11 @@ public class SVGManager {
 
 			// TODO Add BlackPixel svg!
 			if (s != SVGE.BlackPixel) {
-					svgs.put(s, svgCoreCreator.createSVGCore(s));
+					svgs.put(s, svgCoreCreator.createSVGCore(s, null, null));
+
+					colSvgs.put((s.toString() + "-" + Color.BLUE.toString().substring(0, 6)), svgCoreCreator.createSVGCore(s, Color.BLUE, null));
 			}
+
 		}
 	}
 
@@ -118,7 +121,9 @@ public class SVGManager {
 		Point maxCoord = circ.data.getMaxCoord();
 
 
-		sb.append(
+		sb.append("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+						"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
+						"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
 				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
 						(minCoord.fst) * coordinateMultiplier + " " +
 						(minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1)) * coordinateMultiplier + " " +
@@ -133,10 +138,11 @@ public class SVGManager {
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
-		logger.debug("svgs: {}",svgs);
+		//logger.debug("svgs: {}",svgs);
 		// need to modify the svgcodes here to get the color into them
 		// the color code should be added to the name
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
+		colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
 
 		for (DrawableField field : circ.fields) {
@@ -179,7 +185,7 @@ public class SVGManager {
 
 		logger.debug("Color: {}", vals.getColor());
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + // the colorcode should be added here with a preceding minus
+			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-0000ff" + // the colorcode should be added here with a preceding minus
 			   "\" />\n" + msg;
 	}
 
