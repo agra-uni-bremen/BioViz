@@ -39,14 +39,14 @@ public class DisplayOptions {
 		}
 		setOption(BDisplayOptions.SinkIcon, true);
 		setOption(BDisplayOptions.SourceTargetIcons, true);
-		setOption(BDisplayOptions.SourceTargetIDs, true);
+		setOption(BDisplayOptions.SourceTargetIDs, false);
 		setOption(BDisplayOptions.Droplets, true);
-		//setOption(BDisplayOptions.Coordinates,true);
+		setOption(BDisplayOptions.Coordinates,false);
 		setOption(BDisplayOptions.DispenserIcon, true);
 		setOption(BDisplayOptions.DispenserID, true);
 		setOption(BDisplayOptions.DetectorIcon, true);
 		setOption(BDisplayOptions.FluidNames, true);
-		setOption(BDisplayOptions.InterferenceRegion, true);
+		setOption(BDisplayOptions.InterferenceRegion, false);
 	}
 
 
