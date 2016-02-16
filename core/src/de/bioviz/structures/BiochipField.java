@@ -1,10 +1,12 @@
 package de.bioviz.structures;
 
 import de.bioviz.ui.BioViz;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 public class BiochipField {
 	public boolean isSink = false;
@@ -21,7 +23,7 @@ public class BiochipField {
 	public ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 	static private Logger logger = LoggerFactory.getLogger(BiochipField.class);
 
-	BioViz parent;
+	Biochip parent;
 
 	public int x() {
 		return pos.fst;
@@ -68,7 +70,7 @@ public class BiochipField {
 
 	public boolean isActuated(int timeStep) {
 
-		Biochip circ = parent.currentCircuit.data;
+		Biochip circ = parent;
 		Actuation act = Actuation.OFF;
 
 		// TODO document that pin actuations win over cell actuations
@@ -119,14 +121,14 @@ public class BiochipField {
 		direction = dispenseFrom;
 	}
 
-	public BiochipField(Point pos, int fluidID, Direction dispenseFrom, BioViz
+	public BiochipField(Point pos, int fluidID, Direction dispenseFrom, Biochip
 			parent) {
 		this.pos = pos;
 		setDispenser(fluidID, dispenseFrom);
 		this.parent = parent;
 	}
 
-	public BiochipField(Point pos, Direction removeTo, BioViz parent) {
+	public BiochipField(Point pos, Direction removeTo, Biochip parent) {
 		this.pos = pos;
 		setSink(removeTo);
 		this.parent = parent;
@@ -134,15 +136,26 @@ public class BiochipField {
 
 	// end of TODO
 	// ############################################################################################################
-	public BiochipField(int x, int y, BioViz parent) {
+	public BiochipField(int x, int y, Biochip parent) {
 		this.pos = new Point(x, y);
 		this.parent = parent;
 	}
 
-	public BiochipField(Point p, BioViz parent) {
+	public BiochipField(Point p, Biochip parent) {
 		this.pos = p;
 		this.parent = parent;
 	}
 
+	public enum NetBorder {
+		North, East, South, West;
+	}
+	
+	public EnumSet<NetBorder> getBorderType(Net partOf) {
+		if (partOf.containsField(this)) {
+			return null; //TODO
+		} else {
+			return EnumSet.noneOf(NetBorder.class);
+		}
+	}
 
 }
