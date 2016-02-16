@@ -151,11 +151,33 @@ public class BiochipField {
 	}
 	
 	public EnumSet<NetBorder> getBorderType(Net partOf) {
+		EnumSet<NetBorder> result = EnumSet.noneOf(NetBorder.class);
+		
 		if (partOf.containsField(this)) {
-			return null; //TODO
-		} else {
-			return EnumSet.noneOf(NetBorder.class);
+			BiochipField top, bottom, left, right;
+			int x = this.x();
+			int y = this.y();
+			
+			right = parent.getFieldAt(new Point(x + 1, y));
+			left = parent.getFieldAt(new Point(x - 1, y));
+			top = parent.getFieldAt(new Point(x, y + 1));
+			bottom = parent.getFieldAt(new Point(x, y - 1));
+			
+			if (!partOf.containsField(top)) {
+				result.add(NetBorder.North);
+			}
+			if (!partOf.containsField(bottom)) {
+				result.add(NetBorder.South);
+			}
+			if (!partOf.containsField(left)) {
+				result.add(NetBorder.West);
+			}
+			if (!partOf.containsField(right)) {
+				result.add(NetBorder.East);
+			}
 		}
+		
+		return result;
 	}
 
 }
