@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import de.bioviz.util.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,23 @@ public class Biochip {
 
 	public void addNets(Collection<Net> nets) {
 		this.nets.addAll(nets);
+	}
+	
+	/**
+	 * Returns all nets that a field belongs to
+	 * @param field the field to be tested
+	 * @return the nets that this field is a part of
+	 */
+	public Set<Net> getNetsOf(BiochipField field) {
+		HashSet<Net> result = new HashSet<Net>();
+
+		for (Net net : nets) {
+			if (net.containsField(field)) {
+				result.add(net);
+			}
+		}
+
+		return result;
 	}
 
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();

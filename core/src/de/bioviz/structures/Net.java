@@ -72,6 +72,46 @@ public final class Net {
 	public boolean containsDroplet(final Droplet d) {
 		return sources.stream().anyMatch(o -> o.dropletID == d.getID());
 	}
+	
+	/**
+	 * Checks whether this net contains the given field.
+	 * @param f the field that is supposedly part of this net
+	 * @return true if it is part of this net, otherwise false
+	 */
+	public boolean containsField(BiochipField f) {
+		int xMin = Integer.MAX_VALUE, yMin = Integer.MAX_VALUE,
+			xMax = Integer.MIN_VALUE, yMax = Integer.MIN_VALUE;
+
+		for (Source source : sources) {
+			if (source.startPosition.fst < xMin) {
+				xMin = source.startPosition.fst;
+			}
+			if (source.startPosition.snd < yMin) {
+				yMin = source.startPosition.snd;
+			}
+			if (source.startPosition.fst > xMax) {
+				xMax = source.startPosition.fst;
+			}
+			if (source.startPosition.snd > yMax) {
+				yMax = source.startPosition.snd;
+			}
+		}
+		if (target.fst < xMin) {
+			xMin = target.fst;
+		}
+		if (target.snd < yMin) {
+			yMin = target.snd;
+		}
+		if (target.fst > xMax) {
+			xMax = target.fst;
+		}
+		if (target.snd > yMax) {
+			yMax = target.snd;
+		}
+		
+		return (f.pos.fst >= xMin && f.pos.fst <= xMax &&
+				f.pos.snd >= yMin && f.pos.snd <= yMax);
+	}
 
 	/**
 	 * @return the target this net's droplets are directed to.
