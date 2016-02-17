@@ -56,9 +56,9 @@ public class DrawableDroplet extends DrawableSprite {
 
 		Net net = droplet.getNet();
 		if (net != null &&
-			parentCircuit.displayOptions.getOption(BDisplayOptions
-														   .NetColorOnDroplets)) {
-			color = new Color(net.color);
+			parentCircuit.displayOptions.getOption(
+					BDisplayOptions.NetColorOnDroplets)) {
+			color = new Color(net.getColor());
 		}
 
 
@@ -97,7 +97,6 @@ public class DrawableDroplet extends DrawableSprite {
 			msg = Integer.toString(droplet.getID()) + " ";
 
 		}
-		logger.trace("droplet msg after dropletIDs option: {}", msg);
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
 			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
@@ -109,7 +108,6 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 
 		}
-		logger.trace("droplet msg after fluidIDs option: {}", msg);
 		if (parentCircuit.displayOptions
 				.getOption(BDisplayOptions.FluidNames)) {
 			String fname = this.parentCircuit.data
@@ -124,7 +122,6 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 
 		}
-		logger.trace("droplet msg after fluidNames option: {}", msg);
 		return msg;
 	}
 

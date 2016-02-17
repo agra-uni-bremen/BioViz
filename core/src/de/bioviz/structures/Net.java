@@ -11,42 +11,65 @@ import java.util.Random;
  */
 public final class Net {
 
+
+	/**
+	 * The color for this net.
+	 * <p>
+	 * It is used when the option to color all droplets within a net with the
+	 * same color is chosen.
+	 */
+	private final int color;
+
+
 	/**
 	 * The target this net's droplets are directed to.
 	 */
 	private final Point target;
 
+
 	/**
 	 * The list of all starting points of this net's droplets.
 	 */
 	private final ArrayList<Source> sources = new ArrayList<Source>();
-	
-	public final int color;
 
 	/**
-	 * <p>Creates a <i>net</i>. That is, a structure that describes for a set of
-	 * droplets with a common target.</p>
-	 * <p>This class is basically immutable. The sources/target combination you
-	 * set in this constructor are final.</p>
-	 * @param sources this net's sources
-	 * @param target this net's droplets' common target
+	 * <p>Creates a <i>net</i>. That is, a structure that describes for a
+	 * set of
+	 * droplets with a common target.</p> <p>This class is basically immutable.
+	 * The sources/target combination you set in this constructor are
+	 * final.</p>
+	 *
+	 * @param sources
+	 * 		this net's sources
+	 * @param target
+	 * 		this net's droplets' common target
 	 */
 	public Net(final ArrayList<Source> sources, final Point target) {
 		this.target = target;
 		this.sources.addAll(sources);
 		Random rnd = new Random();
-		
+
 		// TODO be more sophisticated here ^^
-		rnd.setSeed(target.fst+target.snd);
-		color=rnd.nextInt();
+		rnd.setSeed(target.fst + target.snd);
+		color = rnd.nextInt();
+	}
+
+
+	/**
+	 * @return The net's color
+	 */
+	public int getColor() {
+		return color;
 	}
 
 	/**
 	 * Checks whether this net contains the given droplet.
-	 * @param d the droplet that is supposedly part of this net
+	 *
+	 * @param d
+	 * 		the droplet that is supposedly part of this net
 	 * @return true if it is part of this net, otherwise false
 	 */
-	public boolean containsDroplet(Droplet d) {
+	public boolean containsDroplet(final Droplet d) {
 		return sources.stream().anyMatch(o -> o.dropletID == d.getID());
 	}
 	

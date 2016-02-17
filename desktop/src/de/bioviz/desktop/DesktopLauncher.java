@@ -1037,6 +1037,8 @@ public class DesktopLauncher extends JFrame {
 		 */
 		@Override
 		public void bioVizEvent() {
+			logger.trace("Received timer event ("
+					+ currentViz.currentCircuit.currentTime + ")");
 			this.time.setValue(currentViz.currentCircuit.currentTime);
 			this.timeInfo.setText(
 					Integer.toString(currentViz.currentCircuit.currentTime));
@@ -1153,16 +1155,29 @@ public class DesktopLauncher extends JFrame {
 		 */
 		@Override
 		public void bioVizEvent() {
+			logger.trace("calling desktop LoadedFileCallback()");
 			if (currentViz.currentCircuit != null) {
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
+				int oldTime = currentViz.currentCircuit.currentTime;
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
+				// altering the max/min values already invokes the timer
+				// event, thus altering the currentCircuit's currenTime value.
+				// In order to still be able to set the current value as it
+				// was before, the oldTime value is being stored above and then
+				// used to set the slider's value, thus again reverting the
+				// currentCircuit's currentTime value to its original state.
+				// This means we're actually changing its time back and forth,
+				// but although this is a little ugly, it doesn't seem to have
+				// any problematic effect.
 				d.timeSlider.setMaximum(
 						currentViz.currentCircuit.data.getMaxT());
 				d.timeSlider.setMinimum(1);
-				d.timeSlider.setValue(0);
+				logger.trace("setting time slider to "
+						+ oldTime);
+				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
 						currentViz.currentCircuit.data.getMaxRouteLength());
@@ -1170,8 +1185,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
-			}
-			else {
+			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
 				d.timeSlider.setMaximum(1);
