@@ -6,9 +6,13 @@ import java.util.HashMap;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.NumberUtils;
+
 import de.bioviz.messages.MessageCenter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +41,9 @@ public abstract class DrawableSprite implements Drawable {
 	private Color targetColor = Color.WHITE.cpy();
 	private Color currentColor = Color.WHITE.cpy();
 	private Color originColor = Color.WHITE.cpy();
+	
+	protected Color cornerColors[] = null;
+	
 	private long colorTransitionStartTime = 0;
 	private long colorTransitionEndTime = 0;
 
@@ -138,6 +145,35 @@ public abstract class DrawableSprite implements Drawable {
 			this.sprite.setScale(scaleX, scaleY);
 			this.sprite.setRotation(rotation);
 			this.sprite.setColor(currentColor);
+			
+			float[] v = this.sprite.getVertices();
+
+			if (cornerColors != null) {
+				for(int i = 0; i < 4; i++) {
+					int intBits =
+						(int)(255 * cornerColors[i].a) << 24 |
+						(int)(255 * cornerColors[i].b) << 16 |
+						(int)(255 * cornerColors[i].g) << 8 |
+						(int)(255 * cornerColors[i].r);
+					switch (i) {
+					case 0:
+						v[SpriteBatch.C1] = NumberUtils.intToFloatColor(intBits);
+						break;
+					case 1:
+						v[SpriteBatch.C2] = NumberUtils.intToFloatColor(intBits);
+						break;
+					case 2:
+						v[SpriteBatch.C3] = NumberUtils.intToFloatColor(intBits);
+						break;
+					case 3:
+						v[SpriteBatch.C4] = NumberUtils.intToFloatColor(intBits);
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			
 			this.sprite.draw(viz.batch);
 		}
 	}

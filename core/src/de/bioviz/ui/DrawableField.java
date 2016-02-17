@@ -152,10 +152,49 @@ public class DrawableField extends DrawableSprite {
 		
 		if (parentCircuit.displayOptions.getOption(
 				BDisplayOptions.NetColorOnFields)) {
-			for (Net n : this.parentCircuit.data.getNetsOf(this.field)) {
-				result.add(new Color(n.color));
-				colorOverlayCount++;
+			if (cornerColors == null) {
+				cornerColors = new Color[4];
 			}
+			for (int i = 0; i < cornerColors.length; i++) {
+				cornerColors[i] = Color.BLACK.cpy();
+			}
+			for (Net n : this.parentCircuit.data.getNetsOf(this.field)) {
+				Point top = new Point(this.field.x(), this.field.y() + 1);
+				Point bottom = new Point(this.field.x(), this.field.y() - 1);
+				Point left = new Point(this.field.x() - 1, this.field.y());
+				Point right = new Point(this.field.x() + 1, this.field.y());
+
+				if (!parentCircuit.data.hasFieldAt(top) ||
+						!n.containsField(parentCircuit.data.getFieldAt(top))) {
+					this.cornerColors[1].add(new Color(n.color));
+					this.cornerColors[2].add(new Color(n.color));
+				}
+				if (!parentCircuit.data.hasFieldAt(bottom) ||
+						!n.containsField(parentCircuit.data.getFieldAt(bottom))) {
+					this.cornerColors[0].add(new Color(n.color));
+					this.cornerColors[3].add(new Color(n.color));
+				}
+				if (!parentCircuit.data.hasFieldAt(left) ||
+						!n.containsField(parentCircuit.data.getFieldAt(left))) {
+					this.cornerColors[0].add(new Color(n.color));
+					this.cornerColors[1].add(new Color(n.color));
+				}
+				if (!parentCircuit.data.hasFieldAt(right) ||
+						!n.containsField(parentCircuit.data.getFieldAt(right))) {
+					this.cornerColors[2].add(new Color(n.color));
+					this.cornerColors[3].add(new Color(n.color));
+				}
+			}
+			for (int i = 0; i < cornerColors.length; i++) {
+				if (!cornerColors[i].equals(Color.BLACK)) {
+					cornerColors[i] = cornerColors[i].mul(0.5f).add(
+							super.getColor().cpy().mul(0.5f));
+				} else {
+					cornerColors[i] = super.getColor();
+				}
+			}
+		} else {
+			cornerColors = null;
 		}
 
 
