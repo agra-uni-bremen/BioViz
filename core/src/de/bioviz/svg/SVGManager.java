@@ -168,8 +168,8 @@ public class SVGManager {
 		//		on the canvas.
 
 		int yCoord =
-				-field.field.y() + field.parentCircuit.data.getMaxCoord().snd;
-		int xCoord = field.field.x();
+				-field.getField().y() + field.getParentCircuit().data.getMaxCoord().snd;
+		int xCoord = field.getField().x();
 		yCoord = yCoord * coordinateMultiplier;
 		xCoord = xCoord * coordinateMultiplier;
 
