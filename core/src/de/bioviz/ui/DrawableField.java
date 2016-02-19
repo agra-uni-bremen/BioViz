@@ -55,6 +55,12 @@ public class DrawableField extends DrawableSprite {
 	public static final Color BLOCKED_COLOR = Colors.BLOCKED_COLOR;
 
 	/**
+	 * Overlay color used for fields that have adjacent activations.
+	 */
+	public static final Color ADJACENT_ACTIVATION_COLOR =
+			new Color(0.5f, -0.5f, -0.5f, 0);
+
+	/**
 	 * The zoom level at which fields resort to drawing boxes instead of actual
 	 * structures.
 	 */
@@ -201,8 +207,6 @@ public class DrawableField extends DrawableSprite {
 	 * @return the field's color.
 	 */
 	public Color getColor() {
-
-
 		int colorOverlayCount = 0;
 		/*
 		We need to create a copy of the FIELD_EMPTY_COLOR as that value is final
@@ -279,13 +283,11 @@ public class DrawableField extends DrawableSprite {
 			cornerColors = null;
 		}
 
-
 		if (getParentCircuit().displayOptions.getOption(BDisplayOptions
 														   .CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
 			float scalingFactor = 2f;
-
 			result.add(new Color(
 					this.getField().usage / scalingFactor,
 					this.getField().usage / scalingFactor,
@@ -298,14 +300,13 @@ public class DrawableField extends DrawableSprite {
 		if (getParentCircuit().displayOptions.getOption(
 				BDisplayOptions.InterferenceRegion)) {
 			boolean hasNeighbouringDroplet = false;
-			for (Droplet d: getParentCircuit().data.getDroplets()) {
+			for (final Droplet d: getParentCircuit().data.getDroplets()) {
 				Point p = d.getPositionAt(getParentCircuit().currentTime);
 				if (p != null && p.adjacent(this.getField().pos)) {
 					result.add(Colors.INTERFERENCE_REGION_COLOR);
 				}
 			}
 		}
-
 
 		int t = getParentCircuit().currentTime;
 		if (getParentCircuit().displayOptions.getOption(
@@ -324,18 +325,17 @@ public class DrawableField extends DrawableSprite {
 			if (this.getField().isSink) {
 				result.add(SINK_DEFAULT_COLOR);
 				colorOverlayCount++;
-			}
-			else if (this.getField().isDispenser) {
+			} else if (this.getField().isDispenser) {
 				result.add(SOURCE_DEFAULT_COLOR);
 				colorOverlayCount++;
-			}
-			else {
+			} else {
 				result.add(FIELD_DEFAULT_COLOR);
 				colorOverlayCount++;
 			}
+
 			if (!this.getField().mixers.isEmpty()) {
 
-				for (Mixer m : this.getField().mixers) {
+				for (final Mixer m : this.getField().mixers) {
 					if (m.timing.inRange(t)) {
 						result.add(MIXER_DEFAULT_COLOR);
 					}
@@ -345,14 +345,13 @@ public class DrawableField extends DrawableSprite {
 
 		if (getParentCircuit().displayOptions.getOption(BDisplayOptions
 														   .Adjacency) &&
-			getParentCircuit().data.getAdjacentActivations().contains(this.getField())) {
-			result.add(0.5f, -0.5f, -0.5f, 0);
+			getParentCircuit().data.getAdjacentActivations().contains(
+					this.getField())) {
+			result.add(ADJACENT_ACTIVATION_COLOR);
 		}
 
 		result.mul(1f / (float) colorOverlayCount);
-
 		result.clamp();
-
 
 		return result;
 	}
@@ -373,22 +372,39 @@ public class DrawableField extends DrawableSprite {
 	}
 
 
+	/**
+	 * Retrieves the *structural* field that is drawn by this
+	 * {@link DrawableField}.
+	 * @return the field that is drawn by this {@link DrawableField}
+	 */
 	public BiochipField getField() {
 		return field;
 	}
 
-
-	public void setField(BiochipField field) {
+	/**
+	 * Sets the field that is drawn by this {@link DrawableField}. This
+	 * shouldn't really be used at any point after the {@link DrawableCircuit}
+	 * has been fully initialized.
+	 * @param field the field that should be drawn by this {@link DrawableField}
+	 */
+	public void setField(final BiochipField field) {
 		this.field = field;
 	}
 
-
+	/**
+	 * Retrieves the parent circuit of this field.
+	 * @return the circuit that contains this field
+	 */
 	public DrawableCircuit getParentCircuit() {
 		return parentCircuit;
 	}
 
-
-	public void setParentCircuit(DrawableCircuit parentCircuit) {
+	/**
+	 * Sets the parent circuit of this field. This shouldn't really be used
+	 * after the whole circuit has been initialized.
+	 * @param parentCircuit the circuit that contains this field.
+	 */
+	public void setParentCircuit(final DrawableCircuit parentCircuit) {
 		this.parentCircuit = parentCircuit;
 	}
 }
