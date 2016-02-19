@@ -271,10 +271,7 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 			for (int i = 0; i < cornerColors.length; i++) {
-				if (!cornerColors[i].equals(Color.BLACK)) {
-					cornerColors[i] = cornerColors[i].mul(0.5f).add(
-							super.getColor().cpy().mul(0.5f));
-				} else {
+				if (cornerColors[i].equals(Color.BLACK)) {
 					cornerColors[i] = super.getColor();
 				}
 			}
