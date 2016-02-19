@@ -380,7 +380,7 @@ public class DrawableCircuit implements Drawable {
 
 	public void toggleShowDroplets() {
 		boolean showDroplets = displayOptions.toggleOption(BDisplayOptions.Droplets);
-		droplets.forEach(d -> {d.isVisible=showDroplets;});
+		droplets.forEach(d -> {d.setVisible(showDroplets);});
 	}
 
 	/**

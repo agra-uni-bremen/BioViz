@@ -153,29 +153,29 @@ public class DrawableDroplet extends DrawableSprite {
 			droplet.update();
 			route.draw();
 
-			if (isVisible) {
+			if (isVisible()) {
 
 				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
 				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
 
-				this.scaleX = circ.smoothScaleX;
-				this.scaleY = circ.smoothScaleY;
+				this.setScaleX(circ.smoothScaleX);
+				this.setScaleY(circ.smoothScaleY);
 
 				// if hidden, place below grid
 				int invisibleIndex =
 						this.parentCircuit.hiddenDroplets.indexOf(this);
 				if (invisibleIndex >= 0) {
 
-					this.scaleX = 32f;
-					this.scaleY = 32f;
+					this.setScaleX(32f);
+					this.setScaleY(32f);
 
 					xCoord = Gdx.graphics.getWidth() / 2f
-							 - this.scaleX * (invisibleIndex + 1);
-					yCoord = Gdx.graphics.getHeight() / 2f - this.scaleY;
+							 - this.getScaleX() * (invisibleIndex + 1);
+					yCoord = Gdx.graphics.getHeight() / 2f - this.getScaleY();
 				}
 
-				this.x = xCoord;
-				this.y = yCoord;
+				this.setX(xCoord);
+				this.setY(yCoord);
 
 				String msg = getMsg();
 

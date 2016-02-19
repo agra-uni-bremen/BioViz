@@ -130,10 +130,10 @@ public class DrawableField extends DrawableSprite {
 		float xCoord = circ.xCoordOnScreen(getField().x());
 		float yCoord = circ.yCoordOnScreen(getField().y());
 		TextureE texture = TextureE.GridMarker;
-		this.x = xCoord;
-		this.y = yCoord;
-		this.scaleX = circ.smoothScaleX;
-		this.scaleY = circ.smoothScaleY;
+		this.setX(xCoord);
+		this.setY(yCoord);
+		this.setScaleX(circ.smoothScaleX);
+		this.setScaleY(circ.smoothScaleY);
 
 
 		// TODO what happens if some of these options overlap?

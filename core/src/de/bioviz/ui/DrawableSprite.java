@@ -23,39 +23,131 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DrawableSprite implements Drawable {
 
-	public static int colorTransitionDuration = 500;
+	/**
+	 * How much display is being shifted.
+	 */
+	public static final float COORDINATE_SHIFT = 0.5f;
+
+	/**
+	 * The default amount of time required to change from one color to the next.
+	 */
+	public static final int DEFAULT_COLOR_TRANSITION_DURATION = 500;
+
+	/**
+	 * The default value at which the sprites switch to one-block display
+	 * instead of the more detailed textures.
+	 */
 	public static final float DEFAULT_LOD_THRESHOLD = 8f;
 
+	/**
+	 * The amount of time required to change from one color to the next.
+	 */
+	private static int colorTransitionDuration =
+			DEFAULT_COLOR_TRANSITION_DURATION;
+
+	/**
+	 * Used to log any events occuring in the {@link DrawableSprite} class.
+	 */
 	private static Logger logger =
 			LoggerFactory.getLogger(DrawableSprite.class);
 
+	/**
+	 * The default alpha (i.e. visibility) value. Set to 0 because sprites
+	 * are supposed to "fade in".
+	 */
+	private static final float DEFAULT_ALPHA = 0f;
 
-	public float x = 0, y = 0, scaleX = 1, scaleY = 1, rotation = 0;
-	protected boolean isVisible = true;
-	final float ALPHA_FULL = 0;
-	final float COORDINATE_SHIFT = 0.5f;
-
-	BioViz viz;
-	private Sprite sprite;
+	/**
+	 * Used to store all textures.
+	 */
 	private static TextureManager textures;
-	private Color targetColor = Color.WHITE.cpy();
-	private Color currentColor = Color.WHITE.cpy();
-	private Color originColor = Color.WHITE.cpy();
-	
+
+	/**
+	 * Link to the visualization this sprite is used in.
+	 */
+	BioViz viz;
+
+	/**
+	 * The colors that are set to the four corners of this sprite.
+	 * This may be set to null if no specific per-corner colors are supposed to
+	 * be set. Any color that is equal to Color.BLACK will be ignored and the
+	 * currentColor will be used instead.
+	 */
 	protected Color cornerColors[] = null;
-	
+
+	/**
+	 * The x coordinate of this sprite.
+	 */
+	private float x = 0;
+
+	/**
+	 * The y coordinate of this sprite.
+	 */
+	private float y = 0;
+
+	/**
+	 * The x scaling factor of this sprite.
+	 */
+	private float scaleX = 1;
+
+	/**
+	 * The y scaling factor of this sprite.
+	 */
+	private float scaleY = 1;
+
+	/**
+	 * The rotation of this sprite.
+	 */
+	private float rotation = 0;
+
+	/**
+	 * Whether or not this sprite should be drawn at all.
+	 */
+	private boolean isVisible = true;
+
+	/**
+	 * The link back to libgdx: the sprite that is used to draw this
+	 * {@link DrawableSprite}.
+	 */
+	private Sprite sprite;
+
+	/**
+	 * The color that is currently being targeted (important for the smooth
+	 * transition, together with currentColor and originColor).
+	 */
+	private Color targetColor = Color.WHITE.cpy();
+
+	/**
+	 * The current color - could be any color between originColor and
+	 * targetColor.
+	 */
+	private Color currentColor = Color.WHITE.cpy();
+
+	/**
+	 * The color the current transition was started from.
+	 */
+	private Color originColor = Color.WHITE.cpy();
+
+	/**
+	 * The time at which the current color transition started.
+	 */
 	private long colorTransitionStartTime = 0;
+
+	/**
+	 * The time at which the current color transition is supposed to end.
+	 */
 	private long colorTransitionEndTime = 0;
 
+	/**
+	 * The textures that are being used at certain levels of detail.
+	 * The float specifies the zoom factor until which a texture should be used.
+	 */
 	private HashMap<Float, TextureE> levelOfDetailTextures = new HashMap<>();
+
+	/**
+	 * The texture to be used atm.
+	 */
 	private TextureE currentTexture;
-
-
-
-
-
-
-
 
 	/**
 	 * This constructor checks if the given texture has been loaded before and
@@ -78,8 +170,8 @@ public abstract class DrawableSprite implements Drawable {
 
 		currentTexture = texture;
 		this.addLOD(Float.MAX_VALUE, texture);
-		this.targetColor.a = ALPHA_FULL;
-		this.currentColor.a = ALPHA_FULL;
+		this.targetColor.a = DEFAULT_ALPHA;
+		this.currentColor.a = DEFAULT_ALPHA;
 		this.viz = parent;
 	}
 
@@ -103,7 +195,7 @@ public abstract class DrawableSprite implements Drawable {
 	public void displayText(String msg) {
 		MessageCenter mc = viz.messageCenter;
 		if (msg != null) {
-			mc.addHUDMessage(this.hashCode(), msg, this.x, this.y);
+			mc.addHUDMessage(this.hashCode(), msg, this.getX(), this.getY());
 		}
 		else {
 			mc.removeHUDMessage(this.hashCode());
@@ -112,7 +204,7 @@ public abstract class DrawableSprite implements Drawable {
 
 	public void draw() {
 
-		if (isVisible) {
+		if (isVisible()) {
 
 			if (sprite == null) {
 				TextureRegion region = textures.getTexture(currentTexture);
@@ -125,7 +217,7 @@ public abstract class DrawableSprite implements Drawable {
 				float bestLODFactor = Float.MAX_VALUE;
 				boolean foundLOD = false;
 				for (Float factor : levelOfDetailTextures.keySet()) {
-					if (factor >= this.scaleX && factor <= bestLODFactor) {
+					if (factor >= this.getScaleX() && factor <= bestLODFactor) {
 						bestLODFactor = factor;
 						foundLOD = true;
 					}
@@ -140,10 +232,10 @@ public abstract class DrawableSprite implements Drawable {
 
 			update();
 
-			this.sprite.setPosition(x - sprite.getWidth() / 2f,
-									y - sprite.getHeight() / 2f);
-			this.sprite.setScale(scaleX, scaleY);
-			this.sprite.setRotation(rotation);
+			this.sprite.setPosition(getX() - sprite.getWidth() / 2f,
+									getY() - sprite.getHeight() / 2f);
+			this.sprite.setScale(getScaleX(), getScaleY());
+			this.sprite.setRotation(getRotation());
 			this.sprite.setColor(currentColor);
 			
 			float[] v = this.sprite.getVertices();
@@ -179,8 +271,8 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	public void setDimensions(final float dimX, final float dimY) {
-		this.scaleX = dimX / this.sprite.getWidth();
-		this.scaleY = dimY / this.sprite.getHeight();
+		this.setScaleX(dimX / this.sprite.getWidth());
+		this.setScaleY(dimY / this.sprite.getHeight());
 	}
 
 
@@ -201,7 +293,7 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	public boolean isHovered() {
-		if (isVisible && this.currentColor.a > 0) {
+		if (isVisible() && this.currentColor.a > 0) {
 			int mouseX = Gdx.input.getX();
 			int mouseY = Gdx.input.getY();
 			int resX = Gdx.graphics.getWidth();
@@ -216,8 +308,8 @@ public abstract class DrawableSprite implements Drawable {
 					-(((float) mouseY / (float) resY) * viewport.height +
 					  viewport.y);
 
-			float xCoord = viz.currentCircuit.xCoordInCells(this.x);
-			float yCoord = viz.currentCircuit.yCoordInCells(this.y);
+			float xCoord = viz.currentCircuit.xCoordInCells(this.getX());
+			float yCoord = viz.currentCircuit.yCoordInCells(this.getY());
 
 			boolean aboveX = viewMouseX > xCoord - COORDINATE_SHIFT;
 			boolean belowX = viewMouseX < xCoord + COORDINATE_SHIFT;
@@ -263,7 +355,7 @@ public abstract class DrawableSprite implements Drawable {
 			Date d = new Date();
 			this.colorTransitionStartTime = d.getTime();
 			this.colorTransitionEndTime = d.getTime() +
-										  colorTransitionDuration;
+										  getColorTransitionDuration();
 		}
 	}
 
@@ -278,6 +370,62 @@ public abstract class DrawableSprite implements Drawable {
 		this.targetColor = color;
 		Date d = new Date();
 		this.colorTransitionStartTime = d.getTime();
-		this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
+		this.colorTransitionEndTime = d.getTime() + getColorTransitionDuration();
+	}
+
+	public static int getColorTransitionDuration() {
+		return colorTransitionDuration;
+	}
+
+	public static void setColorTransitionDuration(int colorTransitionDuration) {
+		DrawableSprite.colorTransitionDuration = colorTransitionDuration;
+	}
+
+	public float getX() {
+		return x;
+	}
+
+	public void setX(float x) {
+		this.x = x;
+	}
+
+	public float getY() {
+		return y;
+	}
+
+	public void setY(float y) {
+		this.y = y;
+	}
+
+	public float getScaleX() {
+		return scaleX;
+	}
+
+	public void setScaleX(float scaleX) {
+		this.scaleX = scaleX;
+	}
+
+	public float getScaleY() {
+		return scaleY;
+	}
+
+	public void setScaleY(float scaleY) {
+		this.scaleY = scaleY;
+	}
+
+	public float getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(float rotation) {
+		this.rotation = rotation;
+	}
+
+	public boolean isVisible() {
+		return isVisible;
+	}
+
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
 	}
 }
