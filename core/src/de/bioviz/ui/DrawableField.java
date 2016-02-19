@@ -100,17 +100,22 @@ public class DrawableField extends DrawableSprite {
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 
-
+	/**
+	 * Retrieves information about this field: the color, the message being
+	 * displayed on top and the texture. All contained in a
+	 * {@link DisplayValues} instance.
+	 * @return the current color, message and texture
+	 */
 	public DisplayValues getDisplayValues() {
-
-
 		Pair<String, TextureE> msgTexture = getMsgTexture();
-
 		Color color = getColor();
-
 		return new DisplayValues(color, msgTexture.fst, msgTexture.snd);
 	}
 
+	/**
+	 * Retrieves this field's texture and the message being displayed on top.
+	 * @return a {@link Pair} of message and texture.
+	 */
 	public Pair<String, TextureE> getMsgTexture() {
 
 		String fieldHUDMsg = null;
@@ -190,6 +195,11 @@ public class DrawableField extends DrawableSprite {
 		return Pair.mkPair(fieldHUDMsg, texture);
 	}
 
+	/**
+	 * Calculates the current color based on the parent circuit's
+	 * displayOptions.
+	 * @return the field's color.
+	 */
 	public Color getColor() {
 
 
@@ -205,16 +215,26 @@ public class DrawableField extends DrawableSprite {
 			result.add(BLOCKED_COLOR);
 			colorOverlayCount++;
 		}
-		
+
+		/**
+		 * The NetColorOnFields display option is a little special and thus
+		 * gets quite some amount of code here.
+		 * The idea is that we use the sprite's corner vertices and colorize
+		 * them separately *if* they are part of a net's edge. At first, these
+		 * colors are stored in the cornerColors array. When drawing, this
+		 * array is checked for existence and if it isn't null, each none-black
+		 * color *completely overrides* the given field color at this corner.
+		 */
 		if (getParentCircuit().displayOptions.getOption(
 				BDisplayOptions.NetColorOnFields)) {
 			if (cornerColors == null) {
-				cornerColors = new Color[4];
+				cornerColors = new Color[4];	// one color for each corner
 			}
 			for (int i = 0; i < cornerColors.length; i++) {
+				// Create non-null array contents
 				cornerColors[i] = Color.BLACK.cpy();
 			}
-			for (Net n : this.getParentCircuit().data.
+			for (final Net n : this.getParentCircuit().data.
 					getNetsOf(this.getField())) {
 				Point top = new Point(
 						this.getField().x(), this.getField().y() + 1);
@@ -225,25 +245,29 @@ public class DrawableField extends DrawableSprite {
 				Point right = new Point(
 						this.getField().x() + 1, this.getField().y());
 
+				final int bottomleft = 0;
+				final int topleft = 1;
+				final int topright = 2;
+				final int bottomright = 3;
 				if (!getParentCircuit().data.hasFieldAt(top) ||
 						!n.containsField(getParentCircuit().data.getFieldAt(top))) {
-					this.cornerColors[1].add(new Color(n.getColor()));
-					this.cornerColors[2].add(new Color(n.getColor()));
+					this.cornerColors[topleft].add(new Color(n.getColor()));
+					this.cornerColors[topright].add(new Color(n.getColor()));
 				}
 				if (!getParentCircuit().data.hasFieldAt(bottom) ||
 						!n.containsField(getParentCircuit().data.getFieldAt(bottom))) {
-					this.cornerColors[0].add(new Color(n.getColor()));
-					this.cornerColors[3].add(new Color(n.getColor()));
+					this.cornerColors[bottomleft].add(new Color(n.getColor()));
+					this.cornerColors[bottomright].add(new Color(n.getColor()));
 				}
 				if (!getParentCircuit().data.hasFieldAt(left) ||
 						!n.containsField(getParentCircuit().data.getFieldAt(left))) {
-					this.cornerColors[0].add(new Color(n.getColor()));
-					this.cornerColors[1].add(new Color(n.getColor()));
+					this.cornerColors[bottomleft].add(new Color(n.getColor()));
+					this.cornerColors[topleft].add(new Color(n.getColor()));
 				}
 				if (!getParentCircuit().data.hasFieldAt(right) ||
 						!n.containsField(getParentCircuit().data.getFieldAt(right))) {
-					this.cornerColors[2].add(new Color(n.getColor()));
-					this.cornerColors[3].add(new Color(n.getColor()));
+					this.cornerColors[topright].add(new Color(n.getColor()));
+					this.cornerColors[bottomright].add(new Color(n.getColor()));
 				}
 			}
 			for (int i = 0; i < cornerColors.length; i++) {
@@ -265,10 +289,14 @@ public class DrawableField extends DrawableSprite {
 			// Usage verwenden)
 			float scalingFactor = 2f;
 
-			result.add(new Color(this.getField().usage / scalingFactor, this.getField().usage / scalingFactor, this.getField().usage / scalingFactor, 0));
+			result.add(new Color(
+					this.getField().usage / scalingFactor,
+					this.getField().usage / scalingFactor,
+					this.getField().usage / scalingFactor,
+					0));
 			++colorOverlayCount;
 		}
-		
+
 		/** Colours the interference region **/
 		if (getParentCircuit().displayOptions.getOption(
 				BDisplayOptions.InterferenceRegion)) {
