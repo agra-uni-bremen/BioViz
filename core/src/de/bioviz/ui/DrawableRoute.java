@@ -8,6 +8,14 @@ import org.slf4j.LoggerFactory;
 public class DrawableRoute extends DrawableSprite {
 
 	private static Logger logger = LoggerFactory.getLogger(DrawableRoute.class);
+	
+	private enum routeDrawingMode {
+		perField,
+		longEnd
+	}
+	
+	private routeDrawingMode currentRouteDrawingMode =
+			routeDrawingMode.longEnd;
 
 	public static int routeDisplayLength = 0;
 	public static int hoverTimesteps = 2 * routeDisplayLength + 8;
@@ -31,7 +39,7 @@ public class DrawableRoute extends DrawableSprite {
 
 		// TODO drawing of routes is now broken :(
 		// I totally do not get this if condition an what is supposed to be broken? (Oliver)
-		if (true) {
+		if (currentRouteDrawingMode == routeDrawingMode.perField) {
 
 			hoverTimesteps = 2 * routeDisplayLength + 8;
 
@@ -98,6 +106,26 @@ public class DrawableRoute extends DrawableSprite {
 
 				super.draw();
 			}
+		} else if (currentRouteDrawingMode == routeDrawingMode.longEnd) {
+			Point target = this.droplet.droplet.getNet().getTarget();
+			Point source = this.droplet.droplet.getFirstPosition();
+			Point current = this.droplet.droplet.getPositionAt(currentTime);
+			
+			Point toTarget = new Point(
+					target.fst - current.fst, target.snd - current.snd);
+			final float len = (float)Math.sqrt(
+					toTarget.fst * toTarget.fst + toTarget.snd * toTarget.snd); 
+			this.x = droplet.parentCircuit.xCoordOnScreen(
+					(current.fst + target.fst) / 2f);
+			this.y = droplet.parentCircuit.yCoordOnScreen(
+					(current.snd + target.snd) / 2f);
+			this.scaleX = droplet.parentCircuit.smoothScaleX * len;
+			this.scaleY = droplet.parentCircuit.smoothScaleY;
+			this.rotation = (float)
+					(Math.atan2(toTarget.snd, toTarget.fst) * (180f / Math.PI));
+			this.setColor(this.baseColor);
+			
+			super.draw();
 		}
 	}
 
