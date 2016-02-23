@@ -1,7 +1,10 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+
 import de.bioviz.structures.Point;
+import de.bioviz.util.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,9 +115,11 @@ public class DrawableRoute extends DrawableSprite {
 			this.setForcedLOD(1f);
 			Point target = this.droplet.droplet.getNet().getTarget();
 			Point source = this.droplet.droplet.getFirstPosition();
-			Point current = this.droplet.droplet.getPositionAt(currentTime);
+			//Point current = this.droplet.droplet.getPositionAt(currentTime);
+			Pair<Float, Float> current = new Pair<Float, Float>
+				(this.droplet.droplet.smoothX, this.droplet.droplet.smoothY);
 			
-			Point toTarget = new Point(
+			Pair<Float, Float> toTarget = new Pair<Float, Float> (
 					target.fst - current.fst, target.snd - current.snd);
 			final float len = (float)Math.sqrt(
 					toTarget.fst * toTarget.fst + toTarget.snd * toTarget.snd); 
