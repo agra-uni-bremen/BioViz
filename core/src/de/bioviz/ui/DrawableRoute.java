@@ -113,27 +113,41 @@ public class DrawableRoute extends DrawableSprite {
 			}
 		} else if (currentRouteDrawingMode == routeDrawingMode.longEnd) {
 			this.setForcedLOD(1f);
-			Point target = this.droplet.droplet.getNet().getTarget();
-			Point source = this.droplet.droplet.getFirstPosition();
+			Pair<Float, Float> target = new Pair<Float, Float> (
+				this.droplet.droplet.getNet().getTarget().fst.floatValue(),
+				this.droplet.droplet.getNet().getTarget().snd.floatValue());
+			Pair<Float, Float> source = new Pair<Float, Float> (
+					this.droplet.droplet.getFirstPosition().fst.floatValue(),
+					this.droplet.droplet.getFirstPosition().snd.floatValue());
 			Pair<Float, Float> current = new Pair<Float, Float>
 				(this.droplet.droplet.smoothX, this.droplet.droplet.smoothY);
 			
-			Pair<Float, Float> toTarget = new Pair<Float, Float> (
-					target.fst - current.fst, target.snd - current.snd);
-			final float len = (float)Math.sqrt(
-					toTarget.fst * toTarget.fst + toTarget.snd * toTarget.snd); 
-			this.x = droplet.parentCircuit.xCoordOnScreen(
-					(current.fst + target.fst) / 2f);
-			this.y = droplet.parentCircuit.yCoordOnScreen(
-					(current.snd + target.snd) / 2f);
-			this.scaleX = droplet.parentCircuit.smoothScaleX * len;
-			this.scaleY = 2f;
-			this.rotation = (float)
-					(Math.atan2(toTarget.snd, toTarget.fst) * (180f / Math.PI));
-			this.setColor(this.droplet.getColor().cpy().add(0, 0.25f, 0, 0));
-			
-			super.draw();
+			// draw to target
+			drawLine(target, current,
+					this.droplet.getColor().cpy().add(0.2f, 0.2f, 0.2f, 0));
+			drawLine(source, current,
+					this.droplet.getColor().cpy().sub(0.2f, 0.2f, 0.2f, 0));
 		}
+	}
+
+	private void drawLine(
+			Pair<Float, Float> from, 
+			Pair<Float, Float> to,
+			Color col) {
+		Pair<Float, Float> toTarget = new Pair<Float, Float> (
+				from.fst - to.fst, from.snd - to.snd);
+		final float len = (float)Math.sqrt(
+				toTarget.fst * toTarget.fst + toTarget.snd * toTarget.snd); 
+		this.x = droplet.parentCircuit.xCoordOnScreen(
+				(to.fst + from.fst) / 2f);
+		this.y = droplet.parentCircuit.yCoordOnScreen(
+				(to.snd + from.snd) / 2f);
+		this.scaleX = droplet.parentCircuit.smoothScaleX * len;
+		this.scaleY = 2f;
+		this.rotation = (float)
+				(Math.atan2(toTarget.snd, toTarget.fst) * (180f / Math.PI));
+		this.setColorImmediately(col);
+		super.draw();
 	}
 
 }
