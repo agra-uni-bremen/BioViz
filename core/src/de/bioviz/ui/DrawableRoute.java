@@ -127,6 +127,8 @@ public class DrawableRoute extends DrawableSprite {
 					this.droplet.getColor().cpy().add(0.2f, 0.2f, 0.2f, 0));
 			drawLine(source, current,
 					this.droplet.getColor().cpy().sub(0.2f, 0.2f, 0.2f, 0));
+			drawLine(source, target,
+					this.droplet.getColor().cpy().sub(0, 0, 0, 0.5f));
 		}
 	}
 
