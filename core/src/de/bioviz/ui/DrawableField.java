@@ -301,8 +301,12 @@ public class DrawableField extends DrawableSprite {
 				BDisplayOptions.InterferenceRegion)) {
 			boolean hasNeighbouringDroplet = false;
 			for (final Droplet d: getParentCircuit().data.getDroplets()) {
-				Point p = d.getPositionAt(getParentCircuit().currentTime);
-				if (p != null && p.adjacent(this.getField().pos)) {
+				Point cur_pos = d.getPositionAt(getParentCircuit().currentTime);
+				Point prev_pos = d.getPositionAt(getParentCircuit().currentTime-1);
+				if (cur_pos != null && cur_pos.adjacent(this.getField().pos)) {
+					result.add(Colors.INTERFERENCE_REGION_COLOR);
+				}
+				if (prev_pos != null && prev_pos.adjacent(this.getField().pos)) {
 					result.add(Colors.INTERFERENCE_REGION_COLOR);
 				}
 			}
