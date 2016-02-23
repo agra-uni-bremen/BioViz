@@ -130,7 +130,7 @@ public class DrawableRoute extends DrawableSprite {
 			this.scaleY = 2f;
 			this.rotation = (float)
 					(Math.atan2(toTarget.snd, toTarget.fst) * (180f / Math.PI));
-			this.setColor(this.baseColor);
+			this.setColor(this.droplet.getColor().cpy().add(0, 0.25f, 0, 0));
 			
 			super.draw();
 		}
