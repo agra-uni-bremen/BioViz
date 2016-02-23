@@ -48,6 +48,7 @@ public abstract class DrawableSprite implements Drawable {
 	private long colorTransitionEndTime = 0;
 
 	private HashMap<Float, TextureE> levelOfDetailTextures = new HashMap<>();
+	private float forcedLOD = -1f;
 	private TextureE currentTexture;
 
 
@@ -123,9 +124,13 @@ public abstract class DrawableSprite implements Drawable {
 			// sprite accordingly
 			if (this.levelOfDetailTextures.size() > 0) {
 				float bestLODFactor = Float.MAX_VALUE;
+				float targetLODFactor = this.scaleX;
+				if (this.forcedLOD >= 0) {
+					targetLODFactor = this.forcedLOD;
+				}
 				boolean foundLOD = false;
 				for (Float factor : levelOfDetailTextures.keySet()) {
-					if (factor >= this.scaleX && factor <= bestLODFactor) {
+					if (factor >= targetLODFactor && factor <= bestLODFactor) {
 						bestLODFactor = factor;
 						foundLOD = true;
 					}
@@ -279,5 +284,17 @@ public abstract class DrawableSprite implements Drawable {
 		Date d = new Date();
 		this.colorTransitionStartTime = d.getTime();
 		this.colorTransitionEndTime = d.getTime() + colorTransitionDuration;
+	}
+
+	protected float getForcedLOD() {
+		return forcedLOD;
+	}
+
+	protected void setForcedLOD(float forcedLOD) {
+		this.forcedLOD = forcedLOD;
+	}
+	
+	protected void disableForcedLOD() {
+		this.forcedLOD = -1f;
 	}
 }

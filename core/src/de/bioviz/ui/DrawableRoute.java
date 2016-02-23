@@ -40,6 +40,8 @@ public class DrawableRoute extends DrawableSprite {
 		// TODO drawing of routes is now broken :(
 		// I totally do not get this if condition an what is supposed to be broken? (Oliver)
 		if (currentRouteDrawingMode == routeDrawingMode.perField) {
+			
+			this.disableForcedLOD();
 
 			hoverTimesteps = 2 * routeDisplayLength + 8;
 
@@ -107,6 +109,7 @@ public class DrawableRoute extends DrawableSprite {
 				super.draw();
 			}
 		} else if (currentRouteDrawingMode == routeDrawingMode.longEnd) {
+			this.setForcedLOD(1f);
 			Point target = this.droplet.droplet.getNet().getTarget();
 			Point source = this.droplet.droplet.getFirstPosition();
 			Point current = this.droplet.droplet.getPositionAt(currentTime);
@@ -120,7 +123,7 @@ public class DrawableRoute extends DrawableSprite {
 			this.y = droplet.parentCircuit.yCoordOnScreen(
 					(current.snd + target.snd) / 2f);
 			this.scaleX = droplet.parentCircuit.smoothScaleX * len;
-			this.scaleY = droplet.parentCircuit.smoothScaleY;
+			this.scaleY = 2f;
 			this.rotation = (float)
 					(Math.atan2(toTarget.snd, toTarget.fst) * (180f / Math.PI));
 			this.setColor(this.baseColor);
