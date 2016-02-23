@@ -115,7 +115,6 @@ public class DrawableRoute extends DrawableSprite {
 			this.setForcedLOD(1f);
 			Point target = this.droplet.droplet.getNet().getTarget();
 			Point source = this.droplet.droplet.getFirstPosition();
-			//Point current = this.droplet.droplet.getPositionAt(currentTime);
 			Pair<Float, Float> current = new Pair<Float, Float>
 				(this.droplet.droplet.smoothX, this.droplet.droplet.smoothY);
 			
