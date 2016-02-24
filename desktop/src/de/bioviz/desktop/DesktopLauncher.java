@@ -333,14 +333,6 @@ public class DesktopLauncher extends JFrame {
 		zoomButton.addActionListener(
 				e -> currentViz.currentCircuit.zoomExtents());
 
-		JButton usageButton = new JButton("Cell Usage");
-		usageButton.setPreferredSize(new Dimension(buttonWidth,
-												   usageButton
-														   .getPreferredSize()
-														   .height));
-		usageButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowUsage());
-
 		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, 1, 1);
 		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		timeSlider.addChangeListener(
@@ -397,7 +389,6 @@ public class DesktopLauncher extends JFrame {
 		panel.add(new JLabel("Route length"));
 		panel.add(displayRouteLengthSlider);
 		panel.add(zoomButton);
-		panel.add(usageButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);
