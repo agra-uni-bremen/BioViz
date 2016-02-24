@@ -45,7 +45,11 @@ public class SVGManager {
 
 	// font options
 	String font = "Helvetica";
-	int size = 40;
+	int size = 50;
+
+	// hard coded colors
+	Color strokeColor = null; // means don't change svg stroke color
+	Color stepMarkerColor = Color.BLACK;
 
 	public String getTransformation(String params) {
 		return " transform=\"" + params + "\" ";
@@ -72,7 +76,6 @@ public class SVGManager {
 		svgCoreCreator = new SVGCoreCreator();
 		svgCoreCreator.setFolder(folder);
 		createCores();
-
 	}
 
 	/**
@@ -96,7 +99,6 @@ public class SVGManager {
 	public void createCores() {
 		svgs.clear();
 
-
 		for (TextureE s : TextureE.values()) {
 
 			// TODO Add BlackPixel svg!
@@ -107,26 +109,34 @@ public class SVGManager {
 		}
 	}
 
+	/**
+	 * Export the circuit to svg.
+	 *
+	 * @param circ The circuit to export
+	 * @return svg string representation
+	 */
 	public String toSVG(DrawableCircuit circ) {
 
 		logger.debug("[SVG] Creating all needed colored cores.");
 
 		for(DrawableField f : circ.fields){
 			colSvgs.put(f.toString() + "-" + f.getColor().toString().substring(0,6),
-					svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), null));
+					svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), strokeColor));
 		}
 		for(DrawableDroplet d : circ.droplets){
-			colSvgs.put(d.toString() + "-" + d.getColor().toString().substring(0,6), svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), null));
+			colSvgs.put(d.toString() + "-" + d.getColor().toString().substring(0,6),
+					svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
 		}
 		// TODO check if this could be done nicer
-		colSvgs.put("StepMarker" + "-" + Color.BLACK.toString().substring(0,6), svgCoreCreator.getSVGCode(TextureE.StepMarker, Color.BLACK, null));
+		colSvgs.put("StepMarker" + "-" + Color.BLACK.toString().substring(0,6),
+				svgCoreCreator.getSVGCode(TextureE.StepMarker, stepMarkerColor, strokeColor));
 
+		logger.debug("[SVG] Done creating colored cores.");
 		logger.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
 
 		Point minCoord = circ.data.getMinCoord();
 		Point maxCoord = circ.data.getMaxCoord();
-
 
 		sb.append("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
 						"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
@@ -139,15 +149,10 @@ public class SVGManager {
 						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
 						"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
-//		sb.append("<svg xmlns=\"http://www.w3.org/2000/svg\" " +
-//				  "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
-
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
 		//logger.debug("svgs: {}",svgs);
-		// need to modify the svgcodes here to get the color into them
-		// the color code should be added to the name
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
 		colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
@@ -160,13 +165,19 @@ public class SVGManager {
 				sb.append(toSVG(drop));
 			}
 		}
-		
+
 		sb.append("</g>\n");
 		sb.append("</svg>\n");
 
 		return sb.toString();
 	}
 
+	/**
+	 * Exports a drawableField to svg.
+	 *
+	 * @param field The field to export
+	 * @return svg string representation of a field
+	 */
 	private String toSVG(DrawableField field) {
 		// why would we need to acces " (-this.field.y + BioViz.singleton
 		// .currentCircuit.data.field[0].length - 1)"?
@@ -186,9 +197,12 @@ public class SVGManager {
 
 		DisplayValues vals = field.getDisplayValues();
 
-		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2) + "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
-				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"+ (vals.getMsg() == null ? "" : vals.getMsg()) + "</text>\n";
-
+		// create the msg text for the svg
+		// use the text-anchor middle to get a centered position
+		String msg = "<text text-anchor=\"middle\" x=\"" 	+ (xCoord+ coordinateMultiplier/2)
+				+ "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
+				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"
+				+ (vals.getMsg() == null ? "" : vals.getMsg()) + "</text>\n";
 
 		logger.debug("Color: {}", vals.getColor());
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
@@ -196,6 +210,12 @@ public class SVGManager {
 			   "\" />\n" + msg;
 	}
 
+	/**
+	 * Export drawableDroplets as svg.
+	 *
+	 * @param drawableDrop The drawableDroplet to export
+	 * @return svg string representation of the drop
+	 */
 	private String toSVG(DrawableDroplet drawableDrop) {
 		float yCoord = -drawableDrop.droplet.smoothY +
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
@@ -205,26 +225,28 @@ public class SVGManager {
 		yCoord = ((int) yCoord) * coordinateMultiplier;
 		xCoord = ((int) xCoord) * coordinateMultiplier;
 
-		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2) + "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
-				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"+ (drawableDrop.getMsg() == null ? "" : drawableDrop.getMsg()) + "</text>\n";
+		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2)
+				+ "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
+				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"
+				+ (drawableDrop.getMsg() == null ? "" : drawableDrop.getMsg()) + "</text>\n";
 
 		String route = toSVG(drawableDrop.route);
 		return
-				"<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +
-				getScaleTransformation() + " xlink:href=\"#Droplet-" + drawableDrop.getColor().toString().substring(0,6) + "\" />\n" +
-				route + msg;
+				route 
+						+ "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +	getScaleTransformation()
+						+ " xlink:href=\"#Droplet-" + drawableDrop.getColor().toString().substring(0,6) + "\" />\n"
+						+ msg;
 	}
 
 	private String toSVG(DrawableRoute drawableRoute) {
 		StringBuilder sb = new StringBuilder();
-
 
 		DrawableDroplet droplet = drawableRoute.droplet;
 
 		int currentTime = droplet.droplet.getSpawnTime();
 		int displayAt;
 
-		int displayLength = drawableRoute.routeDisplayLength;
+		int displayLength = DrawableRoute.routeDisplayLength;
 
 		Biochip circ = droplet.parentCircuit.data;
 
@@ -241,11 +263,8 @@ public class SVGManager {
 
 			logger.debug("i: {}", i);
 
-
 			// TODO possible problem here due to casting
 			float alpha = 1 - (Math.abs((float) i) / ((float) displayLength));
-			//float alpha = 1;
-
 
 			displayAt = currentTime + i;
 
@@ -283,7 +302,7 @@ public class SVGManager {
 									") ";
 				} else if (x1 == x2 && y2 < y1) {
 					transFormParams +=
-							"rotate(270 " + (targetX) + " " + (targetY + 0.5f * coordinateMultiplier) + ") ";
+							"rotate(270 " + targetX + " " + (targetY + 0.5f * coordinateMultiplier) + ") ";
 				} else {
 					app = false;
 				}
