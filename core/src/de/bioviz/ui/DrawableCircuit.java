@@ -183,17 +183,17 @@ public class DrawableCircuit implements Drawable {
 			maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.fields) {
-			if (minX > f.field.x()) {
-				minX = f.field.x();
+			if (minX > f.getField().x()) {
+				minX = f.getField().x();
 			}
-			if (minY > f.field.y()) {
-				minY = f.field.y();
+			if (minY > f.getField().y()) {
+				minY = f.getField().y();
 			}
-			if (maxX < f.field.x()) {
-				maxX = f.field.x();
+			if (maxX < f.getField().x()) {
+				maxX = f.getField().x();
 			}
-			if (maxY < f.field.y()) {
-				maxY = f.field.y();
+			if (maxY < f.getField().y()) {
+				maxY = f.getField().y();
 			}
 		}
 		
@@ -255,17 +255,17 @@ public class DrawableCircuit implements Drawable {
 			maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.fields) {
-			if (minX > f.field.x()) {
-				minX = f.field.x();
+			if (minX > f.getField().x()) {
+				minX = f.getField().x();
 			}
-			if (minY > f.field.y()) {
-				minY = f.field.y();
+			if (minY > f.getField().y()) {
+				minY = f.getField().y();
 			}
-			if (maxX < f.field.x()) {
-				maxX = f.field.x();
+			if (maxX < f.getField().x()) {
+				maxX = f.getField().x();
 			}
-			if (maxY < f.field.y()) {
-				maxY = f.field.y();
+			if (maxY < f.getField().y()) {
+				maxY = f.getField().y();
 			}
 		}
 		
@@ -380,7 +380,7 @@ public class DrawableCircuit implements Drawable {
 
 	public void toggleShowDroplets() {
 		boolean showDroplets = displayOptions.toggleOption(BDisplayOptions.Droplets);
-		droplets.forEach(d -> {d.isVisible=showDroplets;});
+		droplets.forEach(d -> {d.setVisible(showDroplets);});
 	}
 
 	/**
