@@ -232,7 +232,7 @@ public class SVGManager {
 
 		String route = toSVG(drawableDrop.route);
 		return
-				route 
+				route
 						+ "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +	getScaleTransformation()
 						+ " xlink:href=\"#Droplet-" + drawableDrop.getColor().toString().substring(0,6) + "\" />\n"
 						+ msg;

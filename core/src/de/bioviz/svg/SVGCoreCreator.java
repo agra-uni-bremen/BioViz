@@ -69,7 +69,7 @@ public class SVGCoreCreator {
 	public String getSVGCode(TextureE type) {
 		String svgCoreFile = baseFolder + "/" + svgCoreFolder + "/" + type + ".plain.svg";
 
-		logger.debug("Loading SVG core for {}", svgCoreFile);
+		logger.debug("[SVG] Loading SVG core for {}", svgCoreFile);
 
 		Path svgCoreFilePath = Gdx.files.internal(svgCoreFile).file().toPath();
 		String svgCore = "";
@@ -107,27 +107,26 @@ public class SVGCoreCreator {
 
 			doc.getDocumentElement().normalize();
 
-
+			// every svg should contain a group which contains the needed elements
 			Node group = null;
-			// set new id for this node
 			NodeList gList = doc.getElementsByTagName("g");
 			if (gList.getLength() > 0) {
 				group = gList.item(0);
 			} else {
-				logger.debug("There was no group in the svg code.");
-				return "No group in svg!";
+				logger.debug("[SVG] There was no group in the svg code.");
+				return "";
 			}
 
 			if(fillColor != null) {
-				logger.debug("Trying to change the fillColor to {}.", fillColor.toString().substring(0, 6));
-				// set new id for this node
+				logger.debug("[SVG] Changing fillColor to {}.", fillColor.toString().substring(0, 6));
+				// set new id for this node if there is a fillColor
 					if (group.getNodeType() == Node.ELEMENT_NODE) {
 						Element elem = (Element) group;
 						elem.setAttribute("id", type.toString() + "-" + fillColor.toString().substring(0, 6));
 					}
 			}
 			if(strokeColor != null) {
-				logger.debug("Trying to change the strokeColor to {}.", strokeColor.toString().substring(0, 6));
+				logger.debug("[SVG] Changing strokeColor to {}.", strokeColor.toString().substring(0, 6));
 			}
 
 			if(fillColor != null || strokeColor != null) {
@@ -136,126 +135,27 @@ public class SVGCoreCreator {
 					case Sink:
 					case Detector:
 					case Start:
-					case GridMarker:
 					case Target:
-						NodeList rectList = ((Element)group).getElementsByTagName("rect");
-						if (rectList.getLength() > 0) {
-							Node node = rectList.item(0);
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Element elem = (Element) node;
-								String style = elem.getAttribute("style");
-								String styleAfter = "";
-								for (String split : style.split(";")) {
-									String styleType = split.split(":")[0];
-									if (styleType.equals("fill") && fillColor != null) {
-										styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
-									} else if (styleType.equals("stroke") && strokeColor != null) {
-										styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
-									} else {
-										styleAfter += split + ";";
-									}
-								}
-
-								elem.setAttribute("style", styleAfter);
-							}
-						}
-					break;
+					case GridMarker:
+						// change fillColor of the rectangle
+						setStyleForElement((Element) group, "rect", fillColor, strokeColor);
+						break;
 					case Blockage:
-						NodeList blockageRectList = ((Element)group).getElementsByTagName("rect");
-						if (blockageRectList.getLength() > 0) {
-							Node node = blockageRectList.item(0);
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Element elem = (Element) node;
-								String style = elem.getAttribute("style");
-								String styleAfter = "";
-								for (String split : style.split(";")) {
-									String styleType = split.split(":")[0];
-									if (styleType.equals("fill") && fillColor != null) {
-										styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
-									} else if (styleType.equals("stroke") && strokeColor != null) {
-										styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
-									} else {
-										styleAfter += split + ";";
-									}
-								}
-
-								elem.setAttribute("style", styleAfter);
-							}
-						}
-
-						NodeList blockageCircList = ((Element)group).getElementsByTagName("circle");
-						if(blockageCircList.getLength() > 0){
-							Node node = blockageCircList.item(0);
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Element elem = (Element) node;
-								String style = elem.getAttribute("style");
-								String styleAfter = "";
-								for (String split : style.split(";")) {
-									String styleType = split.split(":")[0];
-									if (styleType.equals("fill") && fillColor != null) {
-										styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
-									} else if (styleType.equals("stroke") && strokeColor != null) {
-										styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
-									} else {
-										styleAfter += split + ";";
-									}
-								}
-
-								elem.setAttribute("style", styleAfter);
-							}
-						}
+						// change fillColor of the rectangle
+						setStyleForElement((Element) group, "rect", fillColor, strokeColor);
+						// change fillColor of the circle
+						setStyleForElement((Element) group, "circle", fillColor, strokeColor);
 
 						break;
 					case Droplet:
-						NodeList pathList = ((Element)group).getElementsByTagName("path");
-						if (pathList.getLength() > 0){
-							Node node = pathList.item(0);
-							if(node.getNodeType() == Node.ELEMENT_NODE){
-								Element elem = (Element) node;
-								String style = elem.getAttribute("style");
-								String styleAfter = "";
-								for (String split : style.split(";")) {
-									String styleType = split.split(":")[0];
-									if (styleType.equals("fill") && fillColor != null) {
-										styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
-									} else if (styleType.equals("stroke") && strokeColor != null) {
-										styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
-									} else {
-										styleAfter += split + ";";
-									}
-								}
-
-								elem.setAttribute("style", styleAfter);
-							}
-						}
+						// change fillColor of the first path element
+						setStyleForElement((Element) group, "path", fillColor, strokeColor);
 						break;
 					case AdjacencyMarker:
 						break;
 					case StepMarker:
-						NodeList stepMarkerPathList = ((Element)group).getElementsByTagName("path");
-						if (stepMarkerPathList.getLength() > 0) {
-							Node node = stepMarkerPathList.item(0);
-							logger.debug("Current Element StepMarker: {}", node.getNodeName());
-							if (node.getNodeType() == Node.ELEMENT_NODE) {
-								Element elem = (Element) node;
-								logger.debug("Attribute StepMarker: {}", elem.getAttribute("style"));
-								String style = elem.getAttribute("style");
-								String styleAfter = "";
-								for (String split : style.split(";")) {
-									String styleType = split.split(":")[0];
-									if (styleType.equals("fill") && fillColor != null) {
-										logger.debug("Setting fill value for StepMarker.");
-										styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
-									} else if (styleType.equals("stroke") && strokeColor != null) {
-										styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
-									} else {
-										styleAfter += split + ";";
-									}
-								}
-
-								elem.setAttribute("style", styleAfter);
-							}
-						}
+						// change fillColor of the first path element
+						setStyleForElement((Element) group, "path", fillColor, strokeColor);
 						break;
 				}
 			}
@@ -277,6 +177,45 @@ public class SVGCoreCreator {
 		return coloredCore;
 	}
 
+	/**
+	 * Sets the style tag for the first tag occurence.
+	 *
+	 * @param element
+	 * @param tagName
+	 * @param fillColor
+	 * @param strokeColor
+	 */
+	private void setStyleForElement(Element element, String tagName, Color fillColor, Color strokeColor){
+		NodeList elements = element.getElementsByTagName(tagName);
+		if (elements.getLength() > 0) {
+			Node node = elements.item(0);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element elem = (Element) node;
+				String style = elem.getAttribute("style");
+				String styleAfter = "";
+				for (String split : style.split(";")) {
+					String styleType = split.split(":")[0];
+					if (styleType.equals("fill") && fillColor != null) {
+						styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
+					} else if (styleType.equals("stroke") && strokeColor != null) {
+						styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
+					} else {
+						styleAfter += split + ";";
+					}
+				}
+
+				elem.setAttribute("style", styleAfter);
+			}
+		}
+	}
+
+	/**
+	 * Create string from xml representation.
+	 *
+	 * @param doc The xml document.
+	 * @return String representing the xml document.
+	 * @throws TransformerException
+	 */
 	private String getGroupFromDocument(Document doc) throws TransformerException {
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer = tFactory.newTransformer();
@@ -287,7 +226,6 @@ public class SVGCoreCreator {
 		StringWriter writer = new StringWriter();
 		StreamResult result = new StreamResult(writer);
 		transformer.transform(source, result);
-		logger.debug("svg: {}", writer.toString());
 
 		return writer.toString();
 	}
