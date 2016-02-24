@@ -11,14 +11,6 @@ import org.slf4j.LoggerFactory;
 public class DrawableRoute extends DrawableSprite {
 
 	private static Logger logger = LoggerFactory.getLogger(DrawableRoute.class);
-	
-	private enum routeDrawingMode {
-		perField,
-		longEnd
-	}
-	
-	private routeDrawingMode currentRouteDrawingMode =
-			routeDrawingMode.longEnd;
 
 	public static int routeDisplayLength = 0;
 	public static int hoverTimesteps = 2 * routeDisplayLength + 8;
@@ -39,96 +31,100 @@ public class DrawableRoute extends DrawableSprite {
 		int currentTime = droplet.parentCircuit.currentTime;
 		int displayAt;
 
+		this.disableForcedLOD();
 
-		// TODO drawing of routes is now broken :(
-		// I totally do not get this if condition an what is supposed to be broken? (Oliver)
-		if (currentRouteDrawingMode == routeDrawingMode.perField) {
-			
-			this.disableForcedLOD();
+		hoverTimesteps = 2 * routeDisplayLength + 8;
 
-			hoverTimesteps = 2 * routeDisplayLength + 8;
+		int stepsToUse = routeDisplayLength;
+		if (this.droplet.isHovered()) {
+			stepsToUse = hoverTimesteps;
+		}
 
-			int stepsToUse = routeDisplayLength;
-			if (this.droplet.isHovered()) {
-				stepsToUse = hoverTimesteps;
+		for (int i = -stepsToUse; i < stepsToUse; i++) {
+
+			Color c = this.baseColor.cpy();
+			if (droplet.parentCircuit.displayOptions.getOption(
+					BDisplayOptions.ColorfulRoutes)) {
+				c = this.droplet.getColor().cpy();
 			}
 
-			for (int i = -stepsToUse; i < stepsToUse; i++) {
-
-				Color c = this.baseColor.cpy();
-				if (droplet.parentCircuit.displayOptions.getOption(
-						BDisplayOptions.ColorfulRoutes)) {
-					c = this.droplet.getColor().cpy();
-				}
-				
-				if (i >= 0) {
-					c.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
-				} else {
-					c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
-				}
-				this.setColorImmediately(c);
-				
-
-				displayAt = currentTime + i;
-				Point p1 = droplet.droplet.getSafePositionAt(displayAt);
-				Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
-
-				logger.trace("Point p1: {} (timestep {})", p1, displayAt);
-				logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
-
-				int x1 = p1.fst;
-				int x2 = p2.fst;
-				int y1 = p1.snd;
-				int y2 = p2.snd;
-
-				float xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
-				float yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
-
-				if (y1 == y2 && x2 > x1) {
-					xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
-					yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
-					this.rotation = 0;
-				} else if (y1 == y2 && x2 < x1) {
-					xCoord = droplet.parentCircuit.xCoordOnScreen(x1 - 0.5f);
-					yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
-					this.rotation = 180;
-				} else if (x1 == x2 && y2 > y1) {
-					xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
-					yCoord = droplet.parentCircuit.yCoordOnScreen(y1 + 0.5f);
-					this.rotation = 90;
-				} else if (x1 == x2 && y2 < y1) {
-					xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
-					yCoord = droplet.parentCircuit.yCoordOnScreen(y1 - 0.5f);
-					this.rotation = 270;
-				} else {
-					continue;
-				}
-
-				this.x = xCoord;
-				this.y = yCoord;
-				this.scaleX = droplet.parentCircuit.smoothScaleX;
-				this.scaleY = droplet.parentCircuit.smoothScaleY;
-
-				super.draw();
+			if (i >= 0) {
+				c.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
+			} else {
+				c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
 			}
-		} else if (currentRouteDrawingMode == routeDrawingMode.longEnd) {
+			this.setColorImmediately(c);
+
+
+			displayAt = currentTime + i;
+			Point p1 = droplet.droplet.getSafePositionAt(displayAt);
+			Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
+
+			logger.trace("Point p1: {} (timestep {})", p1, displayAt);
+			logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
+
+			int x1 = p1.fst;
+			int x2 = p2.fst;
+			int y1 = p1.snd;
+			int y2 = p2.snd;
+
+			float xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
+			float yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
+
+			if (y1 == y2 && x2 > x1) {
+				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
+				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
+				this.rotation = 0;
+			} else if (y1 == y2 && x2 < x1) {
+				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 - 0.5f);
+				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
+				this.rotation = 180;
+			} else if (x1 == x2 && y2 > y1) {
+				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
+				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 + 0.5f);
+				this.rotation = 90;
+			} else if (x1 == x2 && y2 < y1) {
+				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
+				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 - 0.5f);
+				this.rotation = 270;
+			} else {
+				continue;
+			}
+
+			this.x = xCoord;
+			this.y = yCoord;
+			this.scaleX = droplet.parentCircuit.smoothScaleX;
+			this.scaleY = droplet.parentCircuit.smoothScaleY;
+
+			super.draw();
+		}
+		
+		boolean dropletLongIndicator = droplet.parentCircuit.displayOptions
+				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
+		boolean fieldIndicator = droplet.parentCircuit.displayOptions
+				.getOption(BDisplayOptions.LongNetIndicatorsOnFields);
+		if (dropletLongIndicator || fieldIndicator) {
 			this.setForcedLOD(1f);
 			Pair<Float, Float> target = new Pair<Float, Float> (
-				this.droplet.droplet.getNet().getTarget().fst.floatValue(),
-				this.droplet.droplet.getNet().getTarget().snd.floatValue());
+					this.droplet.droplet.getNet().getTarget().fst.floatValue(),
+					this.droplet.droplet.getNet().getTarget().snd.floatValue());
 			Pair<Float, Float> source = new Pair<Float, Float> (
 					this.droplet.droplet.getFirstPosition().fst.floatValue(),
 					this.droplet.droplet.getFirstPosition().snd.floatValue());
 			Pair<Float, Float> current = new Pair<Float, Float>
-				(this.droplet.droplet.smoothX, this.droplet.droplet.smoothY);
-			
+			(this.droplet.droplet.smoothX, this.droplet.droplet.smoothY);
+
 			// draw to target
-			drawLine(target, current,
-					this.droplet.getColor().cpy().add(0.2f, 0.2f, 0.2f, 0));
-			drawLine(source, current,
-					this.droplet.getColor().cpy().sub(0.2f, 0.2f, 0.2f, 0));
-			drawLine(source, target,
-					this.droplet.getColor().cpy().sub(0, 0, 0, 0.5f));
+			if (dropletLongIndicator) {
+				drawLine(target, current,
+						this.droplet.getColor().cpy().add(0.2f, 0.2f, 0.2f, 0));
+				drawLine(source, current,
+						this.droplet.getColor().cpy().sub(0.2f, 0.2f, 0.2f, 0));
+			}
+			if (fieldIndicator) {
+				drawLine(source, target,
+						this.droplet.getColor().cpy().sub(0, 0, 0, 0.5f));
+			}
 		}
 	}
 
