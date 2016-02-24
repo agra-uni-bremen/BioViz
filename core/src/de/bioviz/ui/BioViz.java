@@ -142,6 +142,8 @@ public class BioViz implements ApplicationListener {
 
 		inputProcessor = new BioVizInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);
+		
+		DrawableLine.singleton = new DrawableLine(this);
 
 		//this.menu = new Menu();
 		//this.drawables.add(menu);

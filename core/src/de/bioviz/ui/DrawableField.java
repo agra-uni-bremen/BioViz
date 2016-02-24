@@ -7,6 +7,7 @@ import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Mixer;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
 
 import org.slf4j.Logger;
@@ -284,5 +285,27 @@ public class DrawableField extends DrawableSprite {
 		setColor(vals.getColor());
 
 		super.draw();
+		
+		if (parentCircuit.displayOptions
+				.getOption(BDisplayOptions.LongNetIndicatorsOnFields)) {
+			for (Net net : this.parentCircuit.data.getNetsOf(this.field)) {
+				for (Source s : net.getSources()) {
+					if (this.field.pos.equals(s.startPosition)) {
+						this.setForcedLOD(1f);
+						Pair<Float, Float> target = new Pair<Float, Float> (
+								net.getTarget().fst.floatValue(),
+								net.getTarget().snd.floatValue());
+
+						Pair<Float, Float> source = new Pair<Float, Float> (
+								s.startPosition.fst.floatValue(),
+								s.startPosition.snd.floatValue());
+
+						// draw to target
+						DrawableLine.draw(source, target,
+								new Color(net.getColor()).sub(0, 0, 0, 0.5f));
+					}
+				}
+			}
+		}
 	}
 }

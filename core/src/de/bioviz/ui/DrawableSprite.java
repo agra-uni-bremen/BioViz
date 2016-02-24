@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.NumberUtils;
 
 import de.bioviz.messages.MessageCenter;
+import de.bioviz.util.Pair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,7 @@ public abstract class DrawableSprite implements Drawable {
 	private float forcedLOD = -1f;
 	private TextureE currentTexture;
 
+	private static DrawableSprite pixel = null;
 
 
 
