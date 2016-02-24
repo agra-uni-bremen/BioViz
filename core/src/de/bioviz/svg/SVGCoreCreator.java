@@ -103,6 +103,17 @@ public class SVGCoreCreator {
 
 			if(fillColor != null) {
 				logger.debug("Trying to change the fillColor to {}.", fillColor.toString().substring(0, 6));
+				// set new id for this node
+				NodeList gList = doc.getElementsByTagName("g");
+				if (gList.getLength() > 0) {
+					Node node = gList.item(0);
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						Element elem = (Element) node;
+						elem.setAttribute("id", type.toString() + "-" + fillColor.toString().substring(0, 6));
+					}
+				} else {
+					logger.debug("There was no group in the svg code.");
+				}
 			}
 			if(strokeColor != null) {
 				logger.debug("Trying to change the strokeColor to {}.", strokeColor.toString().substring(0, 6));
@@ -117,19 +128,6 @@ public class SVGCoreCreator {
 					case Blockage:
 					case GridMarker:
 					case Target:
-						if (fillColor != null) {
-							NodeList gList = doc.getElementsByTagName("g");
-							if (gList.getLength() > 0) {
-								Node node = gList.item(0);
-								if (node.getNodeType() == Node.ELEMENT_NODE) {
-									Element elem = (Element) node;
-									elem.setAttribute("id", type.toString() + "-" + fillColor.toString().substring(0, 6));
-								}
-							} else {
-								logger.debug("There was no group in the svg code.");
-							}
-						}
-
 						NodeList rectList = doc.getElementsByTagName("rect");
 						if (rectList.getLength() > 0) {
 							Node node = rectList.item(0);
@@ -152,17 +150,52 @@ public class SVGCoreCreator {
 							}
 						}
 					case Droplet:
+						NodeList pathList = doc.getElementsByTagName("path");
+						if (pathList.getLength() > 0){
+							Node node = pathList.item(0);
+							if(node.getNodeType() == Node.ELEMENT_NODE){
+								Element elem = (Element) node;
+								String style = elem.getAttribute("style");
+								String styleAfter = "";
+								for (String split : style.split(";")) {
+									String styleType = split.split(":")[0];
+									if (styleType.equals("fill") && fillColor != null) {
+										styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
+									} else if (styleType.equals("stroke") && strokeColor != null) {
+										styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
+									} else {
+										styleAfter += split + ";";
+									}
+								}
+
+								elem.setAttribute("style", styleAfter);
+							}
+						}
 						break;
 					case AdjacencyMarker:
 						break;
 					case StepMarker:
-						NodeList pathList = doc.getElementsByTagName("path");
-						if (pathList.getLength() > 0) {
-							Node node = pathList.item(0);
+						NodeList stepMarkerPathList = doc.getElementsByTagName("path");
+						if (stepMarkerPathList.getLength() > 0) {
+							Node node = stepMarkerPathList.item(0);
 							logger.debug("Current Element: {}", node.getNodeName());
 							if (node.getNodeType() == Node.ELEMENT_NODE) {
 								Element elem = (Element) node;
 								logger.debug("Attribute: {}", elem.getAttribute("style"));
+								String style = elem.getAttribute("style");
+								String styleAfter = "";
+								for (String split : style.split(";")) {
+									String styleType = split.split(":")[0];
+									if (styleType.equals("fill") && fillColor != null) {
+										styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
+									} else if (styleType.equals("stroke") && strokeColor != null) {
+										styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
+									} else {
+										styleAfter += split + ";";
+									}
+								}
+
+								elem.setAttribute("style", styleAfter);
 							}
 						}
 						break;

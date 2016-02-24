@@ -112,11 +112,12 @@ public class SVGManager {
 		logger.debug("[SVG] Creating all needed colored cores.");
 
 		for(DrawableField f : circ.fields){
-			colSvgs.put(f.toString() + "-" + f.getColor().toString().substring(0,6), svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), Color.BLACK));
+			colSvgs.put(f.toString() + "-" + f.getColor().toString().substring(0,6),
+					svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), null));
 		}
-//		for(DrawableDroplet d : circ.droplets){
-//			colSvgs.put(d.toString() + "-" + d.getColor().toString().substring(0,6), svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), null));
-//		}
+		for(DrawableDroplet d : circ.droplets){
+			colSvgs.put(d.toString() + "-" + d.getColor().toString().substring(0,6), svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), null));
+		}
 
 		logger.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
@@ -189,7 +190,7 @@ public class SVGManager {
 
 		logger.debug("Color: {}", vals.getColor());
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + vals.getColor().toString().substring(0,6) + // the colorcode should be added here with a preceding minus
+			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + vals.getColor().toString().substring(0,6) +
 			   "\" />\n" + msg;
 	}
 
@@ -208,7 +209,7 @@ public class SVGManager {
 		String route = toSVG(drawableDrop.route);
 		return
 				"<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +
-				getScaleTransformation() + " xlink:href=\"#Droplet\" />\n" +
+				getScaleTransformation() + " xlink:href=\"#Droplet-" + drawableDrop.getColor().toString().substring(0,6) + "\" />\n" +
 				route + msg;
 	}
 
@@ -296,26 +297,5 @@ public class SVGManager {
 			}
 		}
 		return sb.toString();
-	}
-}
-
-class ColoredCore{
-
-	public TextureE type;
-	public Color color;
-
-	public ColoredCore(TextureE type, Color color){
-		this.type = type;
-		this.color = color;
-	}
-
-	@Override
-	public int hashCode(){
-		return this.toString().hashCode();
-	}
-
-	@Override
-	public String toString(){
-		return type.toString() + "-" + color.toString().substring(0,6);
 	}
 }
