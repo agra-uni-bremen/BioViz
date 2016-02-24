@@ -123,18 +123,27 @@ public class SVGManager {
 		logger.debug("[SVG] Creating all needed colored cores.");
 
 		for(DrawableField f : circ.fields){
-			colSvgs.put(f.getDisplayValues().getTexture().toString() + "-" + f.getColor().toString().substring(0,6),
-					svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), strokeColor));
+			String key = f.getDisplayValues().getTexture().toString() + "-" + f.getColor().toString().substring(0,6);
+			// don't create the svg core code twice
+			if(!colSvgs.containsKey(key)) {
+				colSvgs.put(key,
+						svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), strokeColor));
+			}
 		}
 		for(DrawableDroplet d : circ.droplets){
-			colSvgs.put("Droplet" + "-" + d.getColor().toString().substring(0,6),
-					svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
+			String key = "Droplet" + "-" + d.getColor().toString().substring(0,6);
+			// don't create the svg core code twice
+			if(!colSvgs.containsKey(key)) {
+				colSvgs.put(key,
+						svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
+			}
 		}
 		// TODO check if this could be done nicer
 		colSvgs.put("StepMarker" + "-" + Color.BLACK.toString().substring(0,6),
 				svgCoreCreator.getSVGCode(TextureE.StepMarker, stepMarkerColor, strokeColor));
 
 		logger.debug("[SVG] Done creating colored cores.");
+
 		logger.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
 
@@ -207,7 +216,6 @@ public class SVGManager {
 				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"#" + fontColor + "\">"
 				+ (vals.getMsg() == null ? "" : vals.getMsg()) + "</text>\n";
 
-		logger.debug("Color: {}", vals.getColor());
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + vals.getColor().toString().substring(0,6) +
 			   "\" />\n" + msg;
@@ -315,7 +323,7 @@ public class SVGManager {
 					sb.append(widthHeight);
 					sb.append(getTransformation(transFormParams));
 					sb.append(opacity);
-					sb.append("xlink:href=\"#StepMarker-000000\"");
+					sb.append("xlink:href=\"#StepMarker-" + stepMarkerColor.toString().substring(0,6) +"\"");
 					sb.append(" />\n");
 				}
 			}
