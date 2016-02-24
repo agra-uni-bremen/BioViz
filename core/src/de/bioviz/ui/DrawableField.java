@@ -291,7 +291,6 @@ public class DrawableField extends DrawableSprite {
 			for (Net net : this.parentCircuit.data.getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
-						this.setForcedLOD(1f);
 						Pair<Float, Float> target = new Pair<Float, Float> (
 								net.getTarget().fst.floatValue(),
 								net.getTarget().snd.floatValue());
@@ -300,9 +299,10 @@ public class DrawableField extends DrawableSprite {
 								s.startPosition.fst.floatValue(),
 								s.startPosition.snd.floatValue());
 
+						
 						// draw to target
 						DrawableLine.draw(source, target,
-								new Color(net.getColor()).sub(0, 0, 0, 0.5f));
+								Color.BLACK.cpy().sub(0, 0, 0, 0.5f));
 					}
 				}
 			}

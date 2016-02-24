@@ -52,13 +52,6 @@ public abstract class DrawableSprite implements Drawable {
 	private float forcedLOD = -1f;
 	private TextureE currentTexture;
 
-	private static DrawableSprite pixel = null;
-
-
-
-
-
-
 
 	/**
 	 * This constructor checks if the given texture has been loaded before and

@@ -183,6 +183,8 @@ public class BioViz implements ApplicationListener {
 		for (Drawable drawable : drawables) {
 			drawable.draw();
 		}
+		
+		DrawableLine.drawNow();
 
 		messageCenter.render();
 
