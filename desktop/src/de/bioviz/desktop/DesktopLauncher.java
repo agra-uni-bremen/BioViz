@@ -1,6 +1,7 @@
 package de.bioviz.desktop;
 
 import java.awt.BorderLayout;
+import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -18,9 +19,13 @@ import java.util.prefs.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -152,6 +157,11 @@ public class DesktopLauncher extends JFrame {
 	 * Used to display the tabs for open files.
 	 */
 	private JTabbedPane visualizationTabs;
+	
+	/**
+	 * Used for more options than the panel can hold.
+	 */
+	private JMenuBar menubar;
 
 	/**
 	 * The visualization instance. From the DesktopLauncher, this field is usd
@@ -209,7 +219,9 @@ public class DesktopLauncher extends JFrame {
 		manager.addKeyEventDispatcher(new MyDispatcher());
 
 		JPanel panel = initializePanel();
+		menubar = initializeMenubar();
 
+		this.setJMenuBar(menubar);
 
 		input = new LwjglAWTInput(canvas);
 
@@ -241,6 +253,29 @@ public class DesktopLauncher extends JFrame {
 		setVisible(true);
 
 		setSize(800, 600);
+	}
+
+	/**
+	 * Initializes and returns the top menu bar
+	 * @return the menu bar to be displayed at the top of the window
+	 */
+	private JMenuBar initializeMenubar() {
+		JMenuBar result = new JMenuBar();
+
+		JMenu menu = new JMenu("Display Options");
+		menu.setMnemonic(KeyEvent.VK_D);
+		menu.getAccessibleContext().setAccessibleDescription(
+		        "This menu triggers all kinds of display options.");
+		result.add(menu);
+		
+		for (BDisplayOptions option : BDisplayOptions.values()) {
+			BioCheckboxMenuItem menuItem =
+					new BioCheckboxMenuItem(option.toString(), option);
+			menu.add(menuItem);
+			currentViz.addLoadedFileListener(() -> {menuItem.updateState(); return;});
+		}
+
+		return result;
 	}
 
 	/**
@@ -1291,6 +1326,24 @@ public class DesktopLauncher extends JFrame {
 				}
 			}
 			return false;
+		}
+	}
+
+	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
+		private BDisplayOptions option;
+		public BioCheckboxMenuItem(String label, BDisplayOptions option) {
+			super(label);
+			this.option = option;
+
+			this.addActionListener(l -> {
+					currentViz.currentCircuit.displayOptions.toggleOption(option);
+					setState(currentViz.currentCircuit.displayOptions.getOption(option));
+				});
+		}
+		
+		public void updateState() {
+			setState(currentViz.currentCircuit.
+					displayOptions.getOption(option));
 		}
 	}
 }
