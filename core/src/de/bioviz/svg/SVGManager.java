@@ -120,11 +120,11 @@ public class SVGManager {
 		logger.debug("[SVG] Creating all needed colored cores.");
 
 		for(DrawableField f : circ.fields){
-			colSvgs.put(f.toString() + "-" + f.getColor().toString().substring(0,6),
+			colSvgs.put(f.getDisplayValues().getTexture().toString() + "-" + f.getColor().toString().substring(0,6),
 					svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), strokeColor));
 		}
 		for(DrawableDroplet d : circ.droplets){
-			colSvgs.put(d.toString() + "-" + d.getColor().toString().substring(0,6),
+			colSvgs.put("Droplet" + "-" + d.getColor().toString().substring(0,6),
 					svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
 		}
 		// TODO check if this could be done nicer
