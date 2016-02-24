@@ -118,6 +118,8 @@ public class SVGManager {
 		for(DrawableDroplet d : circ.droplets){
 			colSvgs.put(d.toString() + "-" + d.getColor().toString().substring(0,6), svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), null));
 		}
+		// TODO check if this could be done nicer
+		colSvgs.put("StepMarker" + "-" + Color.BLACK.toString().substring(0,6), svgCoreCreator.getSVGCode(TextureE.StepMarker, Color.BLACK, null));
 
 		logger.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
@@ -291,7 +293,7 @@ public class SVGManager {
 					sb.append(widthHeight);
 					sb.append(getTransformation(transFormParams));
 					sb.append(opacity);
-					sb.append("xlink:href=\"#StepMarker\"");
+					sb.append("xlink:href=\"#StepMarker-000000\"");
 					sb.append(" />\n");
 				}
 			}
