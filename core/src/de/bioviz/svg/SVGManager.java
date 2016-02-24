@@ -45,7 +45,10 @@ public class SVGManager {
 
 	// font options
 	String font = "Helvetica";
-	int size = 50;
+	int size = 60;
+	int fontSizeIds = 60;
+	Color fColor = Color.BLACK;
+	String fontColor = fColor.toString().substring(0,6);
 
 	// hard coded colors
 	Color strokeColor = null; // means don't change svg stroke color
@@ -166,7 +169,7 @@ public class SVGManager {
 			}
 		}
 
-		sb.append("</g>\n");
+		//sb.append("</g>\n");
 		sb.append("</svg>\n");
 
 		return sb.toString();
@@ -201,7 +204,7 @@ public class SVGManager {
 		// use the text-anchor middle to get a centered position
 		String msg = "<text text-anchor=\"middle\" x=\"" 	+ (xCoord+ coordinateMultiplier/2)
 				+ "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
-				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"
+				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"#" + fontColor + "\">"
 				+ (vals.getMsg() == null ? "" : vals.getMsg()) + "</text>\n";
 
 		logger.debug("Color: {}", vals.getColor());
@@ -227,8 +230,8 @@ public class SVGManager {
 
 		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2)
 				+ "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
-				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"white\">"
-				+ (drawableDrop.getMsg() == null ? "" : drawableDrop.getMsg()) + "</text>\n";
+				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"#" + fontColor + "\">"
+				+ (drawableDrop.getMsg().isEmpty() ? String.valueOf(drawableDrop.droplet.getID()) : drawableDrop.getMsg()) + "</text>\n";
 
 		String route = toSVG(drawableDrop.route);
 		return
