@@ -1,7 +1,6 @@
 package de.bioviz.svg;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Point;
@@ -9,9 +8,6 @@ import de.bioviz.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 
 /**
@@ -29,7 +25,8 @@ public class SVGManager {
 
 	private SVGCoreCreator svgCoreCreator;
 
-	private HashMap<SVGE, String> svgs = new HashMap<>();
+	private HashMap<TextureE, String> svgs = new HashMap<>();
+	//private HashMap<ColoredCore, String> colSvgs = new HashMap<>();
 	private HashMap<String, String> colSvgs = new HashMap<>();
 
 
@@ -99,13 +96,12 @@ public class SVGManager {
 	public void createCores() {
 		svgs.clear();
 
-		for (SVGE s : SVGE.values()) {
+
+		for (TextureE s : TextureE.values()) {
 
 			// TODO Add BlackPixel svg!
-			if (s != SVGE.BlackPixel) {
-					svgs.put(s, svgCoreCreator.createSVGCore(s, null, null));
-
-					colSvgs.put((s.toString() + "-" + Color.BLUE.toString().substring(0, 6)), svgCoreCreator.createSVGCore(s, Color.BLUE, null));
+			if (s != TextureE.BlackPixel) {
+				svgs.put(s, svgCoreCreator.getSVGCode(s, null, null));
 			}
 
 		}
@@ -113,6 +109,14 @@ public class SVGManager {
 
 	public String toSVG(DrawableCircuit circ) {
 
+		logger.debug("[SVG] Creating all needed colored cores.");
+
+		for(DrawableField f : circ.fields){
+			colSvgs.put(f.toString() + "-" + f.getColor().toString().substring(0,6), svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), Color.BLACK));
+		}
+//		for(DrawableDroplet d : circ.droplets){
+//			colSvgs.put(d.toString() + "-" + d.getColor().toString().substring(0,6), svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), null));
+//		}
 
 		logger.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
@@ -185,7 +189,7 @@ public class SVGManager {
 
 		logger.debug("Color: {}", vals.getColor());
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-0000ff" + // the colorcode should be added here with a preceding minus
+			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + vals.getColor().toString().substring(0,6) + // the colorcode should be added here with a preceding minus
 			   "\" />\n" + msg;
 	}
 
@@ -292,5 +296,26 @@ public class SVGManager {
 			}
 		}
 		return sb.toString();
+	}
+}
+
+class ColoredCore{
+
+	public TextureE type;
+	public Color color;
+
+	public ColoredCore(TextureE type, Color color){
+		this.type = type;
+		this.color = color;
+	}
+
+	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
+
+	@Override
+	public String toString(){
+		return type.toString() + "-" + color.toString().substring(0,6);
 	}
 }

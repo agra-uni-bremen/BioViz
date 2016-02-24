@@ -2,6 +2,7 @@ package de.bioviz.svg;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.ui.TextureE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -22,9 +23,6 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Maximilian Luenert
@@ -62,7 +60,7 @@ public class SVGCoreCreator {
 	 * @param type The type of the core.
 	 * @return
 	 */
-	public String createSVGCore(SVGE type) {
+	public String getSVGCode(TextureE type) {
 		String svgCoreFile = baseFolder + "/" + svgCoreFolder + "/" + type + ".plain.svg";
 
 		logger.debug("Loading SVG core for {}", svgCoreFile);
@@ -80,13 +78,15 @@ public class SVGCoreCreator {
 	/**
 	 * Returns a string containing the svg core data with the given fill and stroke color.
 	 *
+	 * TODO Better error handling.
+	 *
 	 * @param type        The type of the core.
 	 * @param fillColor   The fill color.
 	 * @param strokeColor The stroke color.
 	 * @return String containing svg core data.
 	 */
-	public String createSVGCore(SVGE type, Color fillColor, Color strokeColor) {
-		String uncoloredCore = createSVGCore(type);
+	public String getSVGCode(TextureE type, Color fillColor, Color strokeColor) {
+		String uncoloredCore = getSVGCode(type);
 		String coloredCore = "";
 
 		DocumentBuilderFactory factory =	DocumentBuilderFactory.newInstance();
@@ -101,80 +101,75 @@ public class SVGCoreCreator {
 
 			doc.getDocumentElement().normalize();
 
-			logger.debug("Root Element: {}", doc.getDocumentElement().getNodeName());
-
-			switch(type) {
-				case Dispenser:
-				case Sink:
-				case Detector:
-				case Start:
-				case Blockage:
-				case GridMarker:
-				case Target:
-					NodeList gList = doc.getElementsByTagName("g");
-					if(gList.getLength() > 0) {
-						Node node = gList.item(0);
-						if(node.getNodeType() == Node.ELEMENT_NODE){
-							Element elem = (Element) node;
-							if(fillColor != null) {
-								elem.removeAttribute("id");
-								elem.setAttribute("id", type.toString() + "-" + fillColor.toString().substring(0,6));
-							}
-						}
-					}
-					NodeList rectList = doc.getElementsByTagName("rect");
-					if (rectList.getLength() > 0) {
-						Node node = rectList.item(0);
-						logger.debug("Current Element: {}", node.getNodeName());
-						if (node.getNodeType() == Node.ELEMENT_NODE) {
-							Element elem = (Element) node;
-							String style = elem.getAttribute("style");
-							elem.removeAttribute("style");
-							String styleAfter = "";
-							logger.debug("Attribute: {}", style);
-							for (String split : style.split(";")) {
-								logger.debug("split is: {}", split);
-								String styleType = split.split(":")[0];
-								if (styleType.equals("fill") && fillColor != null) {
-									styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
-								} else if (styleType.equals("stroke") && strokeColor != null) {
-									styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
-								} else {
-									styleAfter += split + ";";
-								}
-							}
-
-							elem.setAttribute("style", styleAfter);
-						}
-					}
-				case Droplet:
-					break;
-				case AdjacencyMarker:
-					break;
-				case StepMarker:
-					NodeList pathList = doc.getElementsByTagName("path");
-					if (pathList.getLength() > 0) {
-						Node node = pathList.item(0);
-						logger.debug("Current Element: {}", node.getNodeName());
-						if (node.getNodeType() == Node.ELEMENT_NODE) {
-							Element elem = (Element) node;
-							logger.debug("Attribute: {}", elem.getAttribute("style"));
-						}
-					}
-					break;
+			if(fillColor != null) {
+				logger.debug("Trying to change the fillColor to {}.", fillColor.toString().substring(0, 6));
+			}
+			if(strokeColor != null) {
+				logger.debug("Trying to change the strokeColor to {}.", strokeColor.toString().substring(0, 6));
 			}
 
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-			Transformer transformer = tFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			if(fillColor != null || strokeColor != null) {
+				switch (type) {
+					case Dispenser:
+					case Sink:
+					case Detector:
+					case Start:
+					case Blockage:
+					case GridMarker:
+					case Target:
+						if (fillColor != null) {
+							NodeList gList = doc.getElementsByTagName("g");
+							if (gList.getLength() > 0) {
+								Node node = gList.item(0);
+								if (node.getNodeType() == Node.ELEMENT_NODE) {
+									Element elem = (Element) node;
+									elem.setAttribute("id", type.toString() + "-" + fillColor.toString().substring(0, 6));
+								}
+							} else {
+								logger.debug("There was no group in the svg code.");
+							}
+						}
 
-			DOMSource source = new DOMSource(doc.getElementsByTagName("g").item(0));
-			StringWriter writer = new StringWriter();
-			StreamResult result = new StreamResult(writer);
-			transformer.transform(source, result);
-			logger.debug("svg: {}", writer.toString());
-			coloredCore = writer.toString();
+						NodeList rectList = doc.getElementsByTagName("rect");
+						if (rectList.getLength() > 0) {
+							Node node = rectList.item(0);
+							if (node.getNodeType() == Node.ELEMENT_NODE) {
+								Element elem = (Element) node;
+								String style = elem.getAttribute("style");
+								String styleAfter = "";
+								for (String split : style.split(";")) {
+									String styleType = split.split(":")[0];
+									if (styleType.equals("fill") && fillColor != null) {
+										styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
+									} else if (styleType.equals("stroke") && strokeColor != null) {
+										styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
+									} else {
+										styleAfter += split + ";";
+									}
+								}
+
+								elem.setAttribute("style", styleAfter);
+							}
+						}
+					case Droplet:
+						break;
+					case AdjacencyMarker:
+						break;
+					case StepMarker:
+						NodeList pathList = doc.getElementsByTagName("path");
+						if (pathList.getLength() > 0) {
+							Node node = pathList.item(0);
+							logger.debug("Current Element: {}", node.getNodeName());
+							if (node.getNodeType() == Node.ELEMENT_NODE) {
+								Element elem = (Element) node;
+								logger.debug("Attribute: {}", elem.getAttribute("style"));
+							}
+						}
+						break;
+				}
+			}
+
+			coloredCore = getGroupFromDocument(doc);
 
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -184,13 +179,26 @@ public class SVGCoreCreator {
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
-		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
 		} catch (TransformerException e) {
 			e.printStackTrace();
 		}
 
 		return coloredCore;
+	}
+
+	private String getGroupFromDocument(Document doc) throws TransformerException {
+		TransformerFactory tFactory = TransformerFactory.newInstance();
+		Transformer transformer = tFactory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+		DOMSource source = new DOMSource(doc.getElementsByTagName("g").item(0));
+		StringWriter writer = new StringWriter();
+		StreamResult result = new StreamResult(writer);
+		transformer.transform(source, result);
+		logger.debug("svg: {}", writer.toString());
+
+		return writer.toString();
 	}
 
 
