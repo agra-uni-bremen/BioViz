@@ -214,7 +214,7 @@ public class SVGManager {
 		String msg = "<text text-anchor=\"middle\" x=\"" 	+ (xCoord+ coordinateMultiplier/2)
 				+ "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
 				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"#" + fontColor + "\">"
-				+ (vals.getMsg() == null ? "" : vals.getMsg()) + "</text>\n";
+				+ (vals.getMsg() == null ||vals.getMsg().isEmpty() ? "" : vals.getMsg()) + "</text>\n";
 
 		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + vals.getColor().toString().substring(0,6) +
@@ -236,10 +236,14 @@ public class SVGManager {
 		yCoord = ((int) yCoord) * coordinateMultiplier;
 		xCoord = ((int) xCoord) * coordinateMultiplier;
 
+		// check if dropletIds should be printed and set the id accordingly
+		String dropletID = drawableDrop.parentCircuit.displayOptions.getOption(BDisplayOptions.DropletIDs)
+				? String.valueOf(drawableDrop.droplet.getID()) : "";
+
 		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2)
 				+ "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
 				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"#" + fontColor + "\">"
-				+ (drawableDrop.getMsg().isEmpty() ? String.valueOf(drawableDrop.droplet.getID()) : drawableDrop.getMsg()) + "</text>\n";
+				+ (drawableDrop.getMsg() == null || drawableDrop.getMsg().isEmpty() ? dropletID : drawableDrop.getMsg()) + "</text>\n";
 
 		String route = toSVG(drawableDrop.route);
 		return
