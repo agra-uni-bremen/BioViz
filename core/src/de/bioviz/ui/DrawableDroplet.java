@@ -199,4 +199,8 @@ public class DrawableDroplet extends DrawableSprite {
 			parentCircuit.hiddenDroplets.add(this);
 		}
 	}
+
+	public void setDropletColor(Color c) {
+		this.dropletColor = c;
+	}
 }
