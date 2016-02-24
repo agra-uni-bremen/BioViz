@@ -333,16 +333,6 @@ public class DesktopLauncher extends JFrame {
 		zoomButton.addActionListener(
 				e -> currentViz.currentCircuit.zoomExtents());
 
-		JButton dropletButton = new JButton("Droplets");
-		dropletButton.setPreferredSize(new Dimension(buttonWidth,
-													 dropletButton
-															 .getPreferredSize
-																	 ()
-															 .height));
-
-		dropletButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowDroplets());
-
 		JButton usageButton = new JButton("Cell Usage");
 		usageButton.setPreferredSize(new Dimension(buttonWidth,
 												   usageButton
@@ -350,22 +340,6 @@ public class DesktopLauncher extends JFrame {
 														   .height));
 		usageButton.addActionListener(
 				e -> currentViz.currentCircuit.toggleShowUsage());
-
-		JButton actuationButton = new JButton("Actuations");
-		actuationButton.setPreferredSize(new Dimension(buttonWidth,
-													   actuationButton
-															   .getPreferredSize().height));
-		actuationButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Actuations));
-
-		JButton interferenceButton = new JButton("Interference");
-		interferenceButton.setPreferredSize(new Dimension(buttonWidth,
-														  actuationButton
-																  .getPreferredSize().height));
-		interferenceButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.InterferenceRegion));
 
 		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, 1, 1);
 		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
@@ -383,85 +357,6 @@ public class DesktopLauncher extends JFrame {
 		displayRouteLengthSlider.addChangeListener(
 				ce -> DrawableRoute.routeDisplayLength =
 						((JSlider) ce.getSource()).getValue());
-
-
-		JButton adjacencyButton = new JButton("Adjacency");
-		adjacencyButton.setPreferredSize(new Dimension(buttonWidth,
-													   adjacencyButton
-															   .getPreferredSize().height));
-		adjacencyButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Adjacency));
-
-
-		JButton displayDropletIDsButton = new JButton("Drop IDs");
-		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth,
-															   displayDropletIDsButton.getPreferredSize().height));
-		displayDropletIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.DropletIDs));
-
-		JButton displayFluidIDsButton = new JButton("Fluid IDs");
-		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth,
-															 displayFluidIDsButton.getPreferredSize().height));
-		displayFluidIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.FluidIDs));
-
-		JButton displayFluidTypesButton = new JButton("Fluid Types");
-		displayFluidTypesButton.setPreferredSize(new Dimension(buttonWidth,
-															   displayFluidIDsButton.getPreferredSize().height));
-		displayFluidTypesButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.FluidNames));
-
-		JButton pinButton = new JButton("Pins");
-		pinButton.setPreferredSize(new Dimension(buttonWidth,
-												 pinButton.getPreferredSize()
-														 .height));
-		pinButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Pins));
-
-		JButton stIconButton = new JButton("Net Icons");
-		stIconButton.setPreferredSize(new Dimension(buttonWidth,
-													stIconButton
-															.getPreferredSize
-																	()
-															.height));
-		stIconButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.SourceTargetIcons));
-
-		JButton stIDButton = new JButton("Net IDs");
-		stIDButton.setPreferredSize(new Dimension(buttonWidth,
-												  stIDButton.getPreferredSize
-														  ().height));
-		stIDButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.SourceTargetIDs));
-
-		JButton netColorsButton = new JButton("Net Colors on Droplets");
-		netColorsButton.setPreferredSize(new Dimension(buttonWidth,
-													   netColorsButton.getPreferredSize().height));
-		netColorsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.NetColorOnDroplets));
-
-		JButton netColorFieldsButton = new JButton("Net Colors on Fields");
-		netColorFieldsButton.setPreferredSize(new Dimension(buttonWidth,
-													   netColorsButton.getPreferredSize().height));
-		netColorFieldsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.NetColorOnFields));
-
-		JButton detectorsButton = new JButton("Detectors");
-		detectorsButton.setPreferredSize(new Dimension(buttonWidth,
-													   detectorsButton
-															   .getPreferredSize().height));
-		detectorsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.DetectorIcon));
 
 
 		JButton nextStepButton = new JButton("->");
@@ -502,20 +397,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(new JLabel("Route length"));
 		panel.add(displayRouteLengthSlider);
 		panel.add(zoomButton);
-		panel.add(dropletButton);
-		panel.add(displayDropletIDsButton);
-		panel.add(displayFluidIDsButton);
-		panel.add(displayFluidTypesButton);
-		panel.add(pinButton);
-		panel.add(actuationButton);
-		panel.add(adjacencyButton);
 		panel.add(usageButton);
-		panel.add(stIconButton);
-		panel.add(stIDButton);
-		panel.add(netColorsButton);
-		panel.add(netColorFieldsButton);
-		panel.add(detectorsButton);
-		panel.add(interferenceButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);
