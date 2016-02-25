@@ -41,7 +41,7 @@ public class BioViz implements ApplicationListener {
 	 */
 	public static void setAnimationDuration(int value) {
 		Droplet.movementTransitionDuration = value;
-		DrawableSprite.colorTransitionDuration = value;
+		DrawableSprite.setColorTransitionDuration(value);
 	}
 
 

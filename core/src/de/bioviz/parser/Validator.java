@@ -16,15 +16,18 @@ import java.util.stream.Collectors;
  * The way this validator works is that every problem found will be added to an
  * error list that will be returned to the caller.
  *
- * @author Oliver Keszocze
+ * @author keszocze
  */
 public class Validator {
+	/**
+	 * Logger used for debugging purposes.
+	 */
 	static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
 
 	/**
 	 * This method checks that all the positions a droplet moves along is
-	 * actually a position of the chip
+	 * actually a position of the chip.
 	 *
 	 * @param drops
 	 * 		Droplets, whose positions should be validated
@@ -32,10 +35,10 @@ public class Validator {
 	 * 		The possible positions of
 	 * @return List of errors
 	 */
-	static ArrayList<String> checkPathsForPositions(ArrayList<Droplet> drops,
-													Set<Point> points) {
+	static ArrayList<String> checkPathsForPositions(
+			final ArrayList<Droplet> drops, final Set<Point> points) {
 		ArrayList<String> errors = new ArrayList<String>();
-		for (Droplet drop : drops) {
+		for (final Droplet drop : drops) {
 			Vector<Point> ps = drop.getPositions();
 			ps.forEach(p -> {
 				if (!points.contains(p)) {
@@ -48,11 +51,18 @@ public class Validator {
 		return errors;
 	}
 
-	static ArrayList<String> checkPathForBlockages(Biochip chip) {
+	/**
+	 * Checks whether paths move through blockages.
+	 *
+	 * @param chip
+	 * 		Biochips that is checked for errors
+	 * @return List of errors
+	 */
+	static ArrayList<String> checkPathForBlockages(final Biochip chip) {
 		Set<Droplet> droplets = chip.getDroplets();
 		ArrayList<String> errors = new ArrayList<String>();
 
-		for (Droplet drop : droplets) {
+		for (final Droplet drop : droplets) {
 			Vector<Point> positions = drop.getPositions();
 			for (int i = 0; i < positions.size(); i++) {
 				Point pos = positions.get(i);
@@ -61,8 +71,8 @@ public class Validator {
 					BiochipField field = chip.getFieldAt(pos);
 					if (field.isBlocked(timestep)) {
 						errors.add("Droplet " + drop.getID() +
-								" moves into blockage at " + pos +
-								" in time step " + timestep);
+								   " moves into blockage at " + pos +
+								   " in time step " + timestep);
 					}
 				}
 			}
@@ -74,15 +84,16 @@ public class Validator {
 	/**
 	 * This method checks whether droplets only move a single cell in
 	 * horizontal
-	 * or vertical direction in one time step
+	 * or vertical direction in one time step.
 	 *
 	 * @param drops
 	 * 		Droplets whose positions on the grid will be checked for 'jumps'
 	 * @return List of errors
 	 */
-	static ArrayList<String> checkPathsForJumps(ArrayList<Droplet> drops) {
+	static ArrayList<String> checkPathsForJumps(
+			final ArrayList<Droplet> drops) {
 		ArrayList<String> errors = new ArrayList<String>();
-		for (Droplet drop : drops) {
+		for (final Droplet drop : drops) {
 			Vector<Point> points = drop.getPositions();
 //			logger.debug("Evaluating router of length {} for droplet {}",
 // points.size(),drop.getID());
@@ -127,19 +138,19 @@ public class Validator {
 	 * @note This method will generate error messages even if one cell gets
 	 * assigned the same pin multiple times.
 	 */
-	static ArrayList<String> checkMultiplePinAssignments(Collection<Pin>
-																 pins) {
+	static ArrayList<String> checkMultiplePinAssignments(
+			final Collection<Pin> pins) {
 		ArrayList<Point> points = new ArrayList<>();
 		ArrayList<String> errors = new ArrayList<String>();
 
-		for (Pin pin : pins) {
+		for (final Pin pin : pins) {
 			points.addAll(pin.cells);
 		}
 
 		Map<Point, Long> counts = points.stream().collect(
 				Collectors.groupingBy(e -> e, Collectors.counting()));
 
-		for (Map.Entry<Point, Long> e : counts.entrySet()) {
+		for (final Map.Entry<Point, Long> e : counts.entrySet()) {
 			long count = e.getValue();
 			if (count > 1) {
 				errors.add(
@@ -154,7 +165,7 @@ public class Validator {
 
 	/**
 	 * This method checks that all actuations sequences provided have the same
-	 * length
+	 * length.
 	 *
 	 * @param cellActuations
 	 * 		List of actuations given on the cell level (might be null)
@@ -162,9 +173,9 @@ public class Validator {
 	 * 		List of actuations given on the pin level (might be nulll)
 	 * @return List of errors
 	 */
-	static ArrayList<String> checkActuationVectorLengths(HashMap<Point,
-			ActuationVector> cellActuations, HashMap<Integer, ActuationVector>
-			pinActuations) {
+	static ArrayList<String> checkActuationVectorLengths(
+			final HashMap<Point, ActuationVector> cellActuations,
+			final HashMap<Integer, ActuationVector> pinActuations) {
 		ArrayList<String> errors = new ArrayList<String>();
 
 		Integer cellActs = null;
@@ -172,7 +183,7 @@ public class Validator {
 		boolean addedCellError = false;
 
 		if (cellActuations != null && !cellActuations.isEmpty()) {
-			for (Map.Entry<Point, ActuationVector> pair : cellActuations
+			for (final Map.Entry<Point, ActuationVector> pair : cellActuations
 					.entrySet()) {
 				int len = pair.getValue().size();
 				if (cellActs == null) {
@@ -190,7 +201,7 @@ public class Validator {
 		boolean addedPinError = false;
 		boolean diffError = false;
 		if (pinActuations != null && !pinActuations.isEmpty()) {
-			for (Map.Entry<Integer, ActuationVector> pair : pinActuations
+			for (final Map.Entry<Integer, ActuationVector> pair : pinActuations
 					.entrySet()) {
 				int len = pair.getValue().size();
 				if (pinActs == null) {
@@ -229,17 +240,19 @@ public class Validator {
 	 * 		detectors
 	 * @return List of errors
 	 */
-	public static ArrayList<String> checkForDetectorPositions(Biochip chip,
-															  ArrayList<Detector> detectors, boolean removeWrongDetectors) {
+	public static ArrayList<String>
+	checkForDetectorPositions(final Biochip chip,
+							  final ArrayList<Detector> detectors,
+							  final boolean removeWrongDetectors) {
 		ArrayList<String> errors = new ArrayList<String>();
 
 		if (detectors != null && !detectors.isEmpty()) {
 			ArrayList<Detector> removeList = new ArrayList<Detector>();
-			for (Detector det : detectors) {
+			for (final Detector det : detectors) {
 				Point pos = det.position();
 				try {
 					chip.getFieldAt(pos);
-				} catch (RuntimeException e) {
+				} catch (final RuntimeException e) {
 					String msg = "Can not place detectors at position " + pos +
 								 ". Position does not exist on chip.";
 					if (removeWrongDetectors) {
@@ -254,8 +267,24 @@ public class Validator {
 		return errors;
 	}
 
-	public static String checkOutsidePosition(Biochip chip, String type,
-											  Pair<Point, Direction> dir) {
+	/**
+	 * Check the validity of dispenser/sink positions.
+	 * <p>
+	 * A dispenser/sink itself must sit outside of the regular chip positions.
+	 * Its target/source, on the other hand, must be a valid chip position.
+	 *
+	 * @param chip
+	 * 		Biochip to check for errors
+	 * @param type
+	 * 		What is tested (dispensers or sinks)
+	 * @param dir
+	 * 		Position and direction of the dispenser
+	 * @return Error message
+	 */
+	public static String checkOutsidePosition(
+			final Biochip chip,
+			final String type,
+			final Pair<Point, Direction> dir) {
 		String msg = "";
 		boolean targetExists = true;
 		boolean sourceExists = true;
@@ -264,14 +293,13 @@ public class Validator {
 
 		try {
 			chip.getFieldAt(dir.fst);
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			targetExists = false;
 		}
 
 		try {
-
 			chip.getFieldAt(source);
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			sourceExists = false;
 		}
 
@@ -288,17 +316,32 @@ public class Validator {
 		return msg;
 	}
 
-	public static ArrayList<String> checkSinkPositions(Biochip chip,
-													   ArrayList<Pair<Point,
-															   Direction>>
-															   sinks, boolean
-															   removeWrongDirs) {
+
+	/**
+	 * Check the validity of sink positions.
+	 * <p>
+	 * A sink itself must sit outside of the regular chip positions. Its
+	 * source,
+	 * on the other hand, must be a valid chip position.
+	 *
+	 * @param chip
+	 * 		The biochip to check
+	 * @param sinks
+	 * 		List of sinks to check
+	 * @param removeWrongDirs
+	 * 		If true, erroneous sinkgs will be removed
+	 * @return List of errors
+	 */
+	public static ArrayList<String> checkSinkPositions(
+			final Biochip chip,
+			final ArrayList<Pair<Point, Direction>> sinks,
+			final boolean removeWrongDirs) {
 		ArrayList<String> errors = new ArrayList<String>();
 
 		if (sinks != null && !sinks.isEmpty()) {
 			ArrayList<Pair<Point, Direction>> removeList =
 					new ArrayList<Pair<Point, Direction>>();
-			for (Pair<Point, Direction> sink : sinks) {
+			for (final Pair<Point, Direction> sink : sinks) {
 				String msg = checkOutsidePosition(chip, "Sink", sink);
 				if (!msg.isEmpty()) {
 					if (removeWrongDirs) {
@@ -314,17 +357,31 @@ public class Validator {
 		return errors;
 	}
 
+	/**
+	 * Check the validity of dispenser positions.
+	 * <p>
+	 * A dispenser itself must sit outside of the regular chip positions. Its
+	 * target, on the other hand, must be a valid chip position.
+	 *
+	 * @param chip
+	 * 		The biochip to check
+	 * @param disps
+	 * 		List of dispensers to check
+	 * @param removeWrongDirs
+	 * 		If true, erroneous sinkgs will be removed
+	 * @return List of errors
+	 */
 	public static ArrayList<String> checkDispenserPositions(
-			Biochip chip,
-			ArrayList<Pair<Integer, Pair<Point, Direction>>> disps,
-			boolean removeWrongDirs) {
+			final Biochip chip,
+			final ArrayList<Pair<Integer, Pair<Point, Direction>>> disps,
+			final boolean removeWrongDirs) {
 
 		ArrayList<String> errors = new ArrayList<String>();
 
 		if (disps != null && !disps.isEmpty()) {
 			ArrayList<Pair<Integer, Pair<Point, Direction>>> removeList
 					= new ArrayList<Pair<Integer, Pair<Point, Direction>>>();
-			for (Pair<Integer, Pair<Point, Direction>> dir : disps) {
+			for (final Pair<Integer, Pair<Point, Direction>> dir : disps) {
 				String msg = checkOutsidePosition(chip, "Dispenser", dir.snd);
 				if (!msg.isEmpty()) {
 					if (removeWrongDirs) {
@@ -341,12 +398,29 @@ public class Validator {
 		return errors;
 	}
 
-
-	private static void compatibility(ActuationVector v1,
-									  ActuationVector v2,
-									  ArrayList<String> errors,
-									  boolean strong,
-									  String what) {
+	/**
+	 * Checks the compatibility of two actuation vectors.
+	 * <p>
+	 * There are two modes of operation: strong and non-strong. In the strong
+	 * mode, every entry has to be identical, i.e. 'X' and '0'/'1' is not
+	 * counted as compatible.
+	 *
+	 * @param v1
+	 * 		First actuation vector
+	 * @param v2
+	 * 		Second actuation vector
+	 * @param errors
+	 * 		List of errors that is filled by this method
+	 * @param strong
+	 * 		Whether strong matching should be performed
+	 * @param what
+	 * 		Free text that is added to the error message
+	 */
+	private static void compatibility(final ActuationVector v1,
+									  final ActuationVector v2,
+									  final ArrayList<String> errors,
+									  final boolean strong,
+									  final String what) {
 
 
 		if (v1 != null && v1.size() == v2.size()) {
@@ -373,11 +447,28 @@ public class Validator {
 		}
 	}
 
+	/**
+	 * Checks that the actuations specified pin-wise and cell-wise match.
+	 * <p>
+	 * There are two modes of operation: strong and non-strong. In the strong
+	 * mode, every entry has to be identical, i.e. 'X' and '0'/'1' is not
+	 * counted as compatible.
+	 *
+	 * @param chip
+	 * 		Biochip to test
+	 * @param cellActuations
+	 * 		Actuations defined by cells
+	 * @param pinActuations
+	 * 		Actuations defined by pins
+	 * @param strongCompatibility
+	 * 		Whether strong matching should be performed
+	 * @return List of errors
+	 */
 	public static ArrayList<String> checkCellPinActuationCompatibility(
-			Biochip chip,
-			HashMap<Point, ActuationVector> cellActuations,
-			HashMap<Integer, ActuationVector> pinActuations,
-			boolean strongCompatibility) {
+			final Biochip chip,
+			final HashMap<Point, ActuationVector> cellActuations,
+			final HashMap<Integer, ActuationVector> pinActuations,
+			final boolean strongCompatibility) {
 
 		ArrayList<String> errors = new ArrayList<String>();
 
@@ -388,7 +479,8 @@ public class Validator {
 		 */
 		//logger.debug("cellActuations.entrySet()={}", cellActuations.entrySet
 		// ());
-		for (Map.Entry<Point, ActuationVector> e : cellActuations.entrySet()) {
+		for (final Map.Entry<Point, ActuationVector> e : cellActuations
+				.entrySet()) {
 			Point p = e.getKey();
 			ActuationVector cellActVec = e.getValue();
 			//logger.debug("Working on cell actuation {}", e);
@@ -417,7 +509,7 @@ public class Validator {
 		//logger.debug("pinActuations.entrySet().size()={}",pinActuations
 		// .entrySet().size());
 		for (
-				Map.Entry<Integer, ActuationVector> e
+				final Map.Entry<Integer, ActuationVector> e
 				: pinActuations.entrySet())
 
 		{
@@ -429,12 +521,11 @@ public class Validator {
 			//logger.debug("Working on pin actuation vector for pin {}:{}",
 			// pinID,pinActVec);
 
-			final int n = pinActVec.size();
-
 			if (!fields.isEmpty()) {
-				for (BiochipField f : fields) {
+				for (final BiochipField f : fields) {
 					ActuationVector cellActVec = f.actVec;
-					//logger.debug("pin -> cell: comparing {} and {}",pinActVec,cellActVec);
+					//logger.debug("pin -> cell: comparing {} and {}",
+					// pinActVec,cellActVec);
 					compatibility(cellActVec, pinActVec, errors,
 								  strongCompatibility,
 								  "pin with ID " + pinID + " and cell at " +

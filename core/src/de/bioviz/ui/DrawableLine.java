@@ -36,14 +36,16 @@ public class DrawableLine extends DrawableSprite {
 						from.fst - to.fst, from.snd - to.snd);
 				final float len = (float)Math.sqrt(
 						toTarget.fst * toTarget.fst + toTarget.snd * toTarget.snd); 
-				singleton.x = singleton.viz.currentCircuit.xCoordOnScreen(
-						(to.fst + from.fst) / 2f);
-				singleton.y = singleton.viz.currentCircuit.yCoordOnScreen(
-						(to.snd + from.snd) / 2f);
-				singleton.scaleX = singleton.viz.currentCircuit.smoothScaleX * len;
-				singleton.scaleY = 2f;
-				singleton.rotation = (float)
-						(Math.atan2(toTarget.snd, toTarget.fst) * (180f / Math.PI));
+				singleton.setX(singleton.viz.currentCircuit.xCoordOnScreen(
+						(to.fst + from.fst) / 2f));
+				singleton.setY(singleton.viz.currentCircuit.yCoordOnScreen(
+						(to.snd + from.snd) / 2f));
+				singleton.setScaleX(
+						singleton.viz.currentCircuit.smoothScaleX * len);
+				singleton.setScaleY(2f);
+				singleton.setRotation((float)
+						(Math.atan2(toTarget.snd, toTarget.fst) *
+								(180f / Math.PI)));
 				singleton.setColorImmediately(col);
 				singleton.draw();
 			}

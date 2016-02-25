@@ -74,27 +74,27 @@ public class DrawableRoute extends DrawableSprite {
 			if (y1 == y2 && x2 > x1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
-				this.rotation = 0;
+				this.setRotation(0);
 			} else if (y1 == y2 && x2 < x1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 - 0.5f);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
-				this.rotation = 180;
+				this.setRotation(180);
 			} else if (x1 == x2 && y2 > y1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 + 0.5f);
-				this.rotation = 90;
+				this.setRotation(90);
 			} else if (x1 == x2 && y2 < y1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 - 0.5f);
-				this.rotation = 270;
+				this.setRotation(270);
 			} else {
 				continue;
 			}
 
-			this.x = xCoord;
-			this.y = yCoord;
-			this.scaleX = droplet.parentCircuit.smoothScaleX;
-			this.scaleY = droplet.parentCircuit.smoothScaleY;
+			this.setX(xCoord);
+			this.setY(yCoord);
+			this.setScaleX(droplet.parentCircuit.smoothScaleX);
+			this.setScaleY(droplet.parentCircuit.smoothScaleY);
 
 			super.draw();
 		}
