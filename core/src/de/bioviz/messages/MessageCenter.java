@@ -120,8 +120,7 @@ public class MessageCenter {
 			for (Message m : this.messages) {
 				if (m.color != null) {
 					messageFont.setColor(m.color);
-				}
-				else {
+				} else {
 					messageFont.setColor(Color.WHITE);
 				}
 				int start_x = spacing;
