@@ -3,7 +3,8 @@ package de.bioviz.messages;
 import com.badlogic.gdx.graphics.Color;
 
 /**
- * A text message that will be displayed for some time at the top of the screen.
+ * A text message that will be displayed for some time at the top of the
+ * screen.
  *
  * @author jannis
  */
@@ -16,18 +17,30 @@ public class Message extends MessageBase {
 
 	/**
 	 * The time when the message was created.
-	 *
+	 * <p>
 	 * The variable will be used to check whether the message is still to be
 	 * displayed.
 	 */
 	public long createdOn;
 
 	/**
-	 *
-	 * @param msg The message that will be displayed.
+	 * @param msg
+	 * 		The message that will be displayed.
 	 */
 	public Message(final String msg) {
 		super(msg);
 		this.createdOn = System.currentTimeMillis();
+	}
+
+	/**
+	 * Computes whether the messages has expired.
+	 *
+	 * @return true if the messages has epxired, false otherwise
+	 */
+	public boolean expired() {
+		long currentTime = System.currentTimeMillis();
+
+		return createdOn + displayTime > currentTime;
+
 	}
 }
