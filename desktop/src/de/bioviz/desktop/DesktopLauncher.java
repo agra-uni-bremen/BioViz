@@ -1057,7 +1057,7 @@ public class DesktopLauncher extends JFrame {
 								JColorChooser.showDialog(null, "Choose a " +
 															   "Color",
 														 Color.red);
-						currentViz.selectedDroplet.setColor(
+						currentViz.selectedDroplet.setDropletColor(
 								new com.badlogic.gdx.graphics.Color(
 										c.getRed() / 255f, c.getGreen() / 255f,
 										c.getBlue() / 255f, 1f));
