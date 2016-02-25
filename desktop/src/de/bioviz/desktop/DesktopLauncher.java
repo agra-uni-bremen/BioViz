@@ -1186,6 +1186,7 @@ public class DesktopLauncher extends JFrame {
 			// here and once from libgdx)
 			if (DesktopLauncher.singleton.getFocusOwner()
 				!= DesktopLauncher.singleton.canvas.getCanvas()) {
+
 				if (e.getID() == KeyEvent.KEY_PRESSED) {
 					bioViz.getInputProcessor().keyDown(
 							translateKeyCode(e.getKeyCode()));
@@ -1195,7 +1196,10 @@ public class DesktopLauncher extends JFrame {
 							translateKeyCode(e.getKeyCode()));
 				}
 				else if (e.getID() == KeyEvent.KEY_TYPED) {
-					bioViz.getInputProcessor().keyTyped(e.getKeyChar());
+					// That thing might not have been initiliazed yet
+					if (bioViz.getInputProcessor() != null) {
+						bioViz.getInputProcessor().keyTyped(e.getKeyChar());
+					}
 				}
 			}
 			return false;
