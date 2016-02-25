@@ -84,6 +84,26 @@ public enum BDisplayOptions {
 	 * Option for displaying the icon of a detector.
 	 */
 	DetectorIcon,
+
+	/**
+	 * Option for displaying a net's colour on all its corresponding droplets 
+	 */
 	NetColorOnDroplets,
-	NetColorOnFields
+
+	/**
+	 * Option for displaying a net's colour on all its corresponding fields 
+	 */
+	NetColorOnFields,
+
+	/**
+	 * Option for displaying a droplet's source and target via single, long
+	 * indicators
+	 */
+	LongNetIndicatorsOnDroplets,
+
+	/**
+	 * Option for dispalying a net's sources and target via single, long
+	 * indicators on its fields
+	 */
+	LongNetIndicatorsOnFields
 }

@@ -95,9 +95,16 @@ public class DrawableCircuit implements Drawable {
 		this.data = toDraw;
 		this.parent = parent;
 		this.initializeDrawables();
+		this.displayOptions.addOptionChangedEvent(e -> {
+			if (e.equals(BDisplayOptions.CellUsage)) {
+				boolean doIt = displayOptions.getOption(e);
+				if (doIt) {
+					data.computeCellUsage();
+				}
+			}
+		});
 		logger.debug("New DrawableCircuit created successfully.");
 	}
-
 	/**
 	 * Initializes the drawables according to the circuit stored in the data field
 	 */
@@ -368,19 +375,6 @@ public class DrawableCircuit implements Drawable {
 			default:
 				throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
 		}
-	}
-
-
-	public void toggleShowUsage() {
-		boolean doIt = displayOptions.toggleOption(BDisplayOptions.CellUsage);
-		if (doIt) {
-			data.computeCellUsage();
-		}
-	}
-
-	public void toggleShowDroplets() {
-		boolean showDroplets = displayOptions.toggleOption(BDisplayOptions.Droplets);
-		droplets.forEach(d -> {d.setVisible(showDroplets);});
 	}
 
 	/**

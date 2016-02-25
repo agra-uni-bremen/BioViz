@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * @author Oliver Keszöcze
@@ -25,6 +26,12 @@ public class DisplayOptions {
 	 * Stores all options as defined in {@link BDisplayOptions}.
 	 */
 	private HashMap<BDisplayOptions, Boolean> options;
+
+	/**
+	 * Collects all methods that should be called when a value changes.
+	 */
+	private HashSet<DisplayOptions.displayOptionEvent> optionChangedEvents =
+			new HashSet<>();
 
 
 	/**
@@ -68,6 +75,7 @@ public class DisplayOptions {
 
 		logger.debug("Setting option \"{}\" to {}", opt, val);
 		options.put(opt, val);
+		callOptionChangedEvents(opt);
 	}
 
 	/**
@@ -80,5 +88,18 @@ public class DisplayOptions {
 		setOption(opt, val);
 		return val;
 	}
+	
+	public interface displayOptionEvent {
+		void e(BDisplayOptions value);
+	}
+	
+	public void addOptionChangedEvent(displayOptionEvent e) {
+		optionChangedEvents.add(e);
+	}
 
+	private void callOptionChangedEvents(BDisplayOptions opt) {
+		for (displayOptionEvent displayOptionEvent : optionChangedEvents) {
+			displayOptionEvent.e(opt);
+		}
+	}
 }

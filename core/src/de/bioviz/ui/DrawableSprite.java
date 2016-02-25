@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.NumberUtils;
 
 import de.bioviz.messages.MessageCenter;
+import de.bioviz.util.Pair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,6 +151,12 @@ public abstract class DrawableSprite implements Drawable {
 	private TextureE currentTexture;
 
 	/**
+	 * Forces a specific level of detail value that overrides the one that is
+	 * derived from the current zoom level.
+	 */
+	private float forcedLOD = -1f;
+
+	/**
 	 * This constructor checks if the given texture has been loaded before and
 	 * does so if that's not the case. A sprite is initialized accordingly.
 	 *
@@ -215,9 +222,13 @@ public abstract class DrawableSprite implements Drawable {
 			// sprite accordingly
 			if (this.levelOfDetailTextures.size() > 0) {
 				float bestLODFactor = Float.MAX_VALUE;
+				float targetLODFactor = this.scaleX;
+				if (this.forcedLOD >= 0) {
+					targetLODFactor = this.forcedLOD;
+				}
 				boolean foundLOD = false;
 				for (Float factor : levelOfDetailTextures.keySet()) {
-					if (factor >= this.getScaleX() && factor <= bestLODFactor) {
+					if (factor >= targetLODFactor && factor <= bestLODFactor) {
 						bestLODFactor = factor;
 						foundLOD = true;
 					}
@@ -427,5 +438,17 @@ public abstract class DrawableSprite implements Drawable {
 
 	public void setVisible(boolean isVisible) {
 		this.isVisible = isVisible;
+	}
+
+	protected float getForcedLOD() {
+		return forcedLOD;
+	}
+
+	protected void setForcedLOD(float forcedLOD) {
+		this.forcedLOD = forcedLOD;
+	}
+	
+	protected void disableForcedLOD() {
+		this.forcedLOD = -1f;
 	}
 }

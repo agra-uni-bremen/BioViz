@@ -153,7 +153,8 @@ public class DrawableDroplet extends DrawableSprite {
 			droplet.update();
 			route.draw();
 
-			if (isVisible()) {
+			if (isVisible() && viz.currentCircuit.displayOptions.
+					getOption(BDisplayOptions.Droplets)) {
 
 				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
 				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
