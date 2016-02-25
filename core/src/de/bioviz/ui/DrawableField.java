@@ -303,10 +303,11 @@ public class DrawableField extends DrawableSprite {
 			for (final Droplet d: getParentCircuit().data.getDroplets()) {
 				Point cur_pos = d.getPositionAt(getParentCircuit().currentTime);
 				Point prev_pos = d.getPositionAt(getParentCircuit().currentTime-1);
-				if (cur_pos != null && cur_pos.adjacent(this.getField().pos)) {
-					result.add(Colors.INTERFERENCE_REGION_COLOR);
-				}
-				if (prev_pos != null && prev_pos.adjacent(this.getField().pos)) {
+				if (
+						(cur_pos != null &&
+						cur_pos.adjacent(this.getField().pos)) ||
+						prev_pos != null &&
+						prev_pos.adjacent(this.getField().pos)) {
 					result.add(Colors.INTERFERENCE_REGION_COLOR);
 				}
 			}
