@@ -299,17 +299,20 @@ public class DrawableField extends DrawableSprite {
 		/** Colours the interference region **/
 		if (getParentCircuit().displayOptions.getOption(
 				BDisplayOptions.InterferenceRegion)) {
-			boolean hasNeighbouringDroplet = false;
+
+			int amountOfInterferenceRegions = 0;
+
 			for (final Droplet d: getParentCircuit().data.getDroplets()) {
-				Point cur_pos = d.getPositionAt(getParentCircuit().currentTime);
-				Point prev_pos = d.getPositionAt(getParentCircuit().currentTime-1);
-				if (
-						(cur_pos != null &&
-						cur_pos.adjacent(this.getField().pos)) ||
-						prev_pos != null &&
-						prev_pos.adjacent(this.getField().pos)) {
-					result.add(Colors.INTERFERENCE_REGION_COLOR);
+				if (isPartOfInterferenceRegion(d)) {
+					++amountOfInterferenceRegions;
 				}
+			}
+			if (amountOfInterferenceRegions == 1) {
+				result.add(Colors.INTERFERENCE_REGION_COLOR);
+				++colorOverlayCount;
+			} else if (amountOfInterferenceRegions >= 1) {
+				result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
+				++colorOverlayCount;
 			}
 		}
 
@@ -374,6 +377,21 @@ public class DrawableField extends DrawableSprite {
 		setColor(vals.getColor());
 
 		super.draw();
+	}
+
+	/**
+	 * Calculates whether or not this field is part of a droplet's interference
+	 * region.
+	 * @param d the droplet to calculate it for
+	 * @return whether or not this field is part of its interference region
+	 */
+	private boolean isPartOfInterferenceRegion(Droplet d) {
+		Point cur_pos = d.getPositionAt(getParentCircuit().currentTime);
+		Point prev_pos = d.getPositionAt(getParentCircuit().currentTime-1);
+		return 	(cur_pos != null &&
+				cur_pos.adjacent(this.getField().pos)) ||
+				(prev_pos != null &&
+				prev_pos.adjacent(this.getField().pos));
 	}
 
 

@@ -59,7 +59,14 @@ public abstract class Colors {
 	 * modifications are applied.
 	 */
 	public static final Color INTERFERENCE_REGION_COLOR
-			= new Color(0.25f, 0.25f, 0f, 1);
+			= new Color(0.75f, 0.75f, 0.5f, 1);
+	
+	/**
+	 * Base color for an interference region overlap. This color is used before
+	 * any modifications are applied.
+	 */
+	public static final Color INTERFERENCE_REGION_OVERLAP_COLOR
+			= new Color(1f, 0.5f, 0.5f, 1);
 
 
 }
