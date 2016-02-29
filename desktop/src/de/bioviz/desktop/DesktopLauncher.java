@@ -278,7 +278,7 @@ public class DesktopLauncher extends JFrame {
 		});
 		for (BDisplayOptions option : enumValues) {
 			BioCheckboxMenuItem menuItem =
-					new BioCheckboxMenuItem(option.toString(), option);
+					new BioCheckboxMenuItem(option.description(), option);
 			menu.add(menuItem);
 			currentViz.addLoadedFileListener(() -> {menuItem.updateState(); return;});
 		}
