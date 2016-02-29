@@ -423,10 +423,16 @@ public class DrawableField extends DrawableSprite {
 	private boolean isPartOfInterferenceRegion(Droplet d) {
 		Point cur_pos = d.getPositionAt(getParentCircuit().currentTime);
 		Point prev_pos = d.getPositionAt(getParentCircuit().currentTime-1);
-		return 	(cur_pos != null &&
-				cur_pos.adjacent(this.getField().pos)) ||
-				(prev_pos != null &&
-				prev_pos.adjacent(this.getField().pos));
+		if(parentCircuit.displayOptions
+				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
+			return 	(cur_pos != null &&
+					cur_pos.adjacent(this.getField().pos)) ||
+					(prev_pos != null &&
+					prev_pos.adjacent(this.getField().pos));
+		} else {
+			return 	(cur_pos != null &&
+					cur_pos.adjacent(this.getField().pos));
+		}
 	}
 
 
