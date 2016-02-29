@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
+import static de.bioviz.ui.BDisplayOptions.*;
 
 /**
  * <p> The {@link DrawableField} class implements the element that draws its
@@ -151,14 +152,14 @@ public class DrawableField extends DrawableSprite {
 		detector ID. This is a real use case as a detector is a very valid
 		 routing target.
 		 */
-		if (this.getField().isSink && option(BDisplayOptions.SinkIcon)) {
+		if (this.getField().isSink && option(SinkIcon)) {
 			texture = TextureE.Sink;
 		}
 		else if (this.getField().isDispenser) {
-			if (option(BDisplayOptions.DispenserIcon)) {
+			if (option(DispenserIcon)) {
 				texture = TextureE.Dispenser;
 			}
-			if (option(BDisplayOptions.DispenserID)) {
+			if (option(DispenserID)) {
 				fieldHUDMsg = Integer.toString(getField().fluidID);
 			}
 		}
@@ -166,15 +167,15 @@ public class DrawableField extends DrawableSprite {
 			texture = TextureE.Blockage;
 		}
 		else if (this.getField().getDetector() != null &&
-				 option(BDisplayOptions.DetectorIcon)) {
+				 option(DetectorIcon)) {
 			texture = TextureE.Detector;
 		}
 		else if (!this.getField().source_ids.isEmpty()) {
-			if (option(BDisplayOptions.SourceTargetIcons)) {
+			if (option(SourceTargetIcons)) {
 				texture = TextureE.Start;
 			}
 
-			if (option(BDisplayOptions.SourceTargetIDs)) {
+			if (option(SourceTargetIDs)) {
 				ArrayList<Integer> sources = this.getField().source_ids;
 				fieldHUDMsg = sources.get(0).toString();
 				if (sources.size() > 1) {
@@ -185,10 +186,10 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 		else if (!this.getField().target_ids.isEmpty()) {
-			if (option(BDisplayOptions.SourceTargetIcons)) {
+			if (option(SourceTargetIcons)) {
 				texture = TextureE.Target;
 			}
-			if (option(BDisplayOptions.SourceTargetIDs)) {
+			if (option(SourceTargetIDs)) {
 				ArrayList<Integer> targets = this.getField().target_ids;
 				fieldHUDMsg = targets.get(0).toString();
 				if (targets.size() > 1) {
@@ -198,7 +199,7 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 		}
-		else if (option(BDisplayOptions.CellUsageCount)) {
+		else if (option(CellUsageCount)) {
 			fieldHUDMsg = Integer.toString(this.getField().usage);
 
 		}
@@ -207,7 +208,7 @@ public class DrawableField extends DrawableSprite {
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show
 		// what
-		if (option(BDisplayOptions.Pins)) {
+		if (option(Pins)) {
 			if (this.getField().pin != null) {
 				fieldHUDMsg = Integer.toString(this.getField().pin.pinID);
 			}
@@ -246,7 +247,7 @@ public class DrawableField extends DrawableSprite {
 		 * array is checked for existence and if it isn't null, each none-black
 		 * color *completely overrides* the given field color at this corner.
 		 */
-		if (option(BDisplayOptions.NetColorOnFields)) {
+		if (option(NetColorOnFields)) {
 			if (cornerColors == null) {
 				cornerColors = new Color[4];    // one color for each corner
 			}
@@ -306,7 +307,7 @@ public class DrawableField extends DrawableSprite {
 			cornerColors = null;
 		}
 
-		if (option(BDisplayOptions.CellUsage)) {
+		if (option(CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
 			float scalingFactor = 2f;
@@ -319,7 +320,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		/** Colours the interference region **/
-		if (option(BDisplayOptions.InterferenceRegion)) {
+		if (option(InterferenceRegion)) {
 			boolean hasNeighbouringDroplet = false;
 			for (final Droplet d : getParentCircuit().data.getDroplets()) {
 				Point p = d.getPositionAt(getParentCircuit().currentTime);
@@ -330,7 +331,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		int t = getParentCircuit().currentTime;
-		if (option(BDisplayOptions.Actuations)) {
+		if (option(Actuations)) {
 			if (getField().isActuated(t)) {
 				result.add(Colors.ACTAUTED_COLOR);
 				++colorOverlayCount;
@@ -365,7 +366,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		if (option(BDisplayOptions.Adjacency) &&
+		if (option(Adjacency) &&
 			getParentCircuit().data.getAdjacentActivations().contains(
 					this.getField())) {
 			result.add(ADJACENT_ACTIVATION_COLOR);
@@ -391,7 +392,7 @@ public class DrawableField extends DrawableSprite {
 
 		super.draw();
 
-		if (option(BDisplayOptions.LongNetIndicatorsOnFields)) {
+		if (option(LongNetIndicatorsOnFields)) {
 			for (Net net : this.parentCircuit.data.getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
