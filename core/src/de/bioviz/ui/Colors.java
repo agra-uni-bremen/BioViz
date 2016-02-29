@@ -66,7 +66,6 @@ public abstract class Colors {
 	 * any modifications are applied.
 	 */
 	public static final Color INTERFERENCE_REGION_OVERLAP_COLOR
-			= new Color(1f, 0.5f, 0.5f, 1);
-
+			= new Color(1f, 0f, 0f, 1f);
 
 }

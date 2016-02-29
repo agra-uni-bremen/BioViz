@@ -214,7 +214,7 @@ public class DrawableField extends DrawableSprite {
 		 and thus can not be modified.
 		If that value is unchangeable, the cells all stay white
 		 */
-		Color result = new Color(Colors.FIELD_EMPTY_COLOR);
+		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
 
 		if (getField().isBlocked(getParentCircuit().currentTime)) {
 			result.add(BLOCKED_COLOR);
@@ -305,14 +305,22 @@ public class DrawableField extends DrawableSprite {
 
 			for (final Droplet d: getParentCircuit().data.getDroplets()) {
 				if (isPartOfInterferenceRegion(d)) {
-					++amountOfInterferenceRegions;
+					boolean interferenceViolation = false;
+					for (DrawableDroplet d2 : parentCircuit.droplets) {
+						if (d2.droplet != d && d2.droplet.getPositionAt(this.parentCircuit.currentTime).equals(this.field.pos)) {
+							result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
+							++colorOverlayCount;
+							interferenceViolation = true;
+						}
+					}
+					if (!interferenceViolation) {
+						++amountOfInterferenceRegions;
+					}
 				}
 			}
-			if (amountOfInterferenceRegions == 1) {
-				result.add(Colors.INTERFERENCE_REGION_COLOR);
-				++colorOverlayCount;
-			} else if (amountOfInterferenceRegions >= 1) {
-				result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
+			
+			if (amountOfInterferenceRegions > 0) {
+				result.add(new de.bioviz.ui.Color(Colors.INTERFERENCE_REGION_COLOR).mul((float)Math.sqrt(amountOfInterferenceRegions)));
 				++colorOverlayCount;
 			}
 		}
@@ -358,11 +366,15 @@ public class DrawableField extends DrawableSprite {
 					this.getField())) {
 			result.add(ADJACENT_ACTIVATION_COLOR);
 		}
+		
+		if (colorOverlayCount > 0) {
+			result.mul(1f / ((float) colorOverlayCount));
+			result.clamp();
+		} else {
+			result = new de.bioviz.ui.Color(Colors.FIELD_COLOR);
+		}
 
-		result.mul(1f / (float) colorOverlayCount);
-		result.clamp();
-
-		return result;
+		return result.buildGdxColor();
 	}
 
 	@Override
