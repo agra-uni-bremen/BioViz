@@ -14,6 +14,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.prefs.*;
 
@@ -268,7 +270,13 @@ public class DesktopLauncher extends JFrame {
 		        "This menu triggers all kinds of display options.");
 		result.add(menu);
 		
-		for (BDisplayOptions option : BDisplayOptions.values()) {
+		BDisplayOptions[] enumValues = BDisplayOptions.values();
+		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
+			public int compare(BDisplayOptions left, BDisplayOptions right){
+		        return left.toString().compareTo(right.toString()); //use your criteria here
+		    }
+		});
+		for (BDisplayOptions option : enumValues) {
 			BioCheckboxMenuItem menuItem =
 					new BioCheckboxMenuItem(option.toString(), option);
 			menu.add(menuItem);
