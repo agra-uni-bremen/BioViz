@@ -10,106 +10,119 @@ public enum BDisplayOptions {
 	/**
 	 * Option for displaying the amount of cell usage.
 	 */
-	CellUsage,
+	CellUsage("Show cell usage colored"),
 
 	/**
 	 * Option for highlighting used cells that are too close to other used
 	 * cells. See also {@link BDisplayOptions#InterferenceRegion}.
 	 */
-	Adjacency,
+	Adjacency("Show fluidic constraint violations"),
 	/**
 	 * Option for coloring the neighbouring cells of droplets (also known as
 	 * the
 	 * interference region).
 	 */
-	InterferenceRegion,
+	InterferenceRegion("Show the interference region"),
 	/**
 	 * Option for displaying the IDs of the droplets.
 	 */
-	DropletIDs,
+	DropletIDs("Show droplet IDs"),
 	/**
 	 * Option for displaying the fluid IDs of the droplets.
 	 */
-	FluidIDs,
+	FluidIDs("Show fluid IDs"),
 	/**
 	 * Option for displaying the names of the fluids (e.g. blood) on top of the
 	 * droplets.
 	 */
-	FluidNames,
+	FluidNames("Show fluid names"),
 	/**
 	 * Option for displaying the pins assigned to the cells.
 	 */
-	Pins,
+	Pins("Show pin assignment"),
 	/**
 	 * Option for displaying droplets in general.
 	 */
-	Droplets,
+	Droplets("Show droplets"),
 	/**
+	 * Option for displaying actuations.
 	 *
+	 * An cell is actuated when the underlying electrode is turned on. This
+	 * makes a droplet move to that cell.
 	 */
-	Actuations,
+	Actuations("Show actuations"),
 	/**
 	 * Option for displaying icons at the source(s) and target of a net.
 	 */
-	SourceTargetIcons,
+	SourceTargetIcons("Show net icons"),
 	/**
 	 * Option for displaying the droplet IDs at the source(s) and target of a
 	 * net.
 	 */
-	SourceTargetIDs,
+	SourceTargetIDs("Show net IDs"),
 	/**
 	 * Option for displaying coordinates at the upper and left part of the
 	 * canvas.
 	 */
-	Coordinates,
+	Coordinates("Show coordinates"),
 	/**
 	 * Option for coloring the routes' arrows in the color of the droplet
 	 * instead of black.
 	 */
-	ColorfulRoutes,
+	ColorfulRoutes("Color routes"),
 	/**
 	 * Option for displaying the fluid ID dispensed by the given dispenser.
 	 * Please note that this is not the ID of the dispensing unit!
 	 */
-	DispenserID,
+	DispenserID("Show dispenser IDs"),
 	/**
 	 * Option for displaying the icon of a dispenser.
 	 */
-	DispenserIcon,
+	DispenserIcon("Show dispenser icons"),
 	/**
 	 * Option for displaying the icon of a sink.
 	 */
-	SinkIcon,
+	SinkIcon("Show sink icons"),
 	/**
 	 * Option for displaying the icon of a detector.
 	 */
-	DetectorIcon,
+	DetectorIcon("Show detector icons"),
 
 	/**
 	 * Option for displaying a net's colour on all its corresponding droplets 
 	 */
-	NetColorOnDroplets,
+	NetColorOnDroplets("Color droplets within net"),
 
 	/**
 	 * Option for displaying a net's colour on all its corresponding fields 
 	 */
-	NetColorOnFields,
+	NetColorOnFields("Show bunding boxes for nets"),
 
 	/**
 	 * Option for displaying a droplet's source and target via single, long
 	 * indicators
 	 */
-	LongNetIndicatorsOnDroplets,
+	LongNetIndicatorsOnDroplets("Draw lines on droplets"),
 
 	/**
 	 * Option for dispalying a net's sources and target via single, long
 	 * indicators on its fields
 	 */
-	LongNetIndicatorsOnFields,
+	LongNetIndicatorsOnFields("Draw source -> traget lines"),
 	
 	/**
 	 * Whether or not interference regions should "linger" behind, i.e.
 	 * encompass all fields that are adjacent at t *and* t-1.
 	 */
-	LingeringInterferenceRegions
+	LingeringInterferenceRegions("Show dynamic interference region");
+
+	private final String description;
+
+	BDisplayOptions(String desc) {
+		this.description=desc;
+	}
+
+	public String description() {
+		return description;
+	}
 }
