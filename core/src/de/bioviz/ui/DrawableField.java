@@ -214,7 +214,7 @@ public class DrawableField extends DrawableSprite {
 		 and thus can not be modified.
 		If that value is unchangeable, the cells all stay white
 		 */
-		Color result = new Color(Colors.FIELD_EMPTY_COLOR);
+		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
 
 		if (getField().isBlocked(getParentCircuit().currentTime)) {
 			result.add(BLOCKED_COLOR);
@@ -300,12 +300,30 @@ public class DrawableField extends DrawableSprite {
 		/** Colours the interference region **/
 		if (getParentCircuit().displayOptions.getOption(
 				BDisplayOptions.InterferenceRegion)) {
-			boolean hasNeighbouringDroplet = false;
+
+			int amountOfInterferenceRegions = 0;
+
 			for (final Droplet d: getParentCircuit().data.getDroplets()) {
-				Point p = d.getPositionAt(getParentCircuit().currentTime);
-				if (p != null && p.adjacent(this.getField().pos)) {
-					result.add(Colors.INTERFERENCE_REGION_COLOR);
+				if (isPartOfInterferenceRegion(d)) {
+					boolean interferenceViolation = false;
+					for (DrawableDroplet d2 : parentCircuit.droplets) {
+						if (d2.droplet.getPositionAt(this.parentCircuit.currentTime) != null &&
+								d2.droplet.getNet() != d.getNet() &&
+								d2.droplet.getPositionAt(this.parentCircuit.currentTime).equals(this.field.pos)) {
+							result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
+							++colorOverlayCount;
+							interferenceViolation = true;
+						}
+					}
+					if (!interferenceViolation) {
+						++amountOfInterferenceRegions;
+					}
 				}
+			}
+			
+			if (amountOfInterferenceRegions > 0) {
+				result.add(new de.bioviz.ui.Color(Colors.INTERFERENCE_REGION_COLOR).mul((float)Math.sqrt(amountOfInterferenceRegions)));
+				++colorOverlayCount;
 			}
 		}
 
@@ -350,11 +368,15 @@ public class DrawableField extends DrawableSprite {
 					this.getField())) {
 			result.add(ADJACENT_ACTIVATION_COLOR);
 		}
+		
+		if (colorOverlayCount > 0) {
+			result.mul(1f / ((float) colorOverlayCount));
+			result.clamp();
+		} else {
+			result = new de.bioviz.ui.Color(Colors.FIELD_COLOR);
+		}
 
-		result.mul(1f / (float) colorOverlayCount);
-		result.clamp();
-
-		return result;
+		return result.buildGdxColor();
 	}
 
 	@Override
@@ -391,6 +413,27 @@ public class DrawableField extends DrawableSprite {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Calculates whether or not this field is part of a droplet's interference
+	 * region.
+	 * @param d the droplet to calculate it for
+	 * @return whether or not this field is part of its interference region
+	 */
+	private boolean isPartOfInterferenceRegion(Droplet d) {
+		Point cur_pos = d.getPositionAt(getParentCircuit().currentTime);
+		Point prev_pos = d.getPositionAt(getParentCircuit().currentTime-1);
+		if(parentCircuit.displayOptions
+				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
+			return 	(cur_pos != null &&
+					cur_pos.adjacent(this.getField().pos)) ||
+					(prev_pos != null &&
+					prev_pos.adjacent(this.getField().pos));
+		} else {
+			return 	(cur_pos != null &&
+					cur_pos.adjacent(this.getField().pos));
 		}
 	}
 

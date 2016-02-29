@@ -105,5 +105,11 @@ public enum BDisplayOptions {
 	 * Option for dispalying a net's sources and target via single, long
 	 * indicators on its fields
 	 */
-	LongNetIndicatorsOnFields
+	LongNetIndicatorsOnFields,
+	
+	/**
+	 * Whether or not interference regions should "linger" behind, i.e.
+	 * encompass all fields that are adjacent at t *and* t-1.
+	 */
+	LingeringInterferenceRegions
 }
