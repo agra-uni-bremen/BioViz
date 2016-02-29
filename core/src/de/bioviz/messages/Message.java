@@ -40,7 +40,6 @@ public class Message extends MessageBase {
 	public boolean expired() {
 		long currentTime = System.currentTimeMillis();
 
-		return createdOn + displayTime > currentTime;
-
+		return createdOn + displayTime <= currentTime;
 	}
 }

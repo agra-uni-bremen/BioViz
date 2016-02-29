@@ -170,15 +170,8 @@ public class MessageCenter {
 				font.draw(parent.batch, layout, fontX, fontY);
 			}
 
-
-			/*
-			TODO why does the following code work as intended?
-			Shouldn't it remove the message when it is expired? For some
-			reasons,
-			the code words fine though. @jannis please check
-			 */
 			while (this.messages.size() > 0 &&
-				   !this.messages.get(0).expired()) {
+				   this.messages.get(0).expired()) {
 				this.messages.remove(0);
 			}
 		}
