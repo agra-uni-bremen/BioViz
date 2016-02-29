@@ -307,7 +307,7 @@ public class DrawableField extends DrawableSprite {
 				if (isPartOfInterferenceRegion(d)) {
 					boolean interferenceViolation = false;
 					for (DrawableDroplet d2 : parentCircuit.droplets) {
-						if (d2.droplet != d && d2.droplet.getPositionAt(this.parentCircuit.currentTime).equals(this.field.pos)) {
+						if (d2.droplet.getNet() != d.getNet() && d2.droplet.getPositionAt(this.parentCircuit.currentTime).equals(this.field.pos)) {
 							result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 							++colorOverlayCount;
 							interferenceViolation = true;
