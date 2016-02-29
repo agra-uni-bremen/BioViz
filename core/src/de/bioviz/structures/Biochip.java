@@ -23,6 +23,11 @@ public class Biochip {
 	private HashMap<Point, BiochipField> field =
 			new HashMap<Point, BiochipField>();
 
+	/**
+	 * Caches the maximum usage of all fields to save computation time.
+	 */
+	private int maxUsageCache = -1;
+
 	public final ArrayList<Pair<Rectangle, Range>> blockages =
 			new ArrayList<Pair<Rectangle, Range>>();
 	public final ArrayList<Detector> detectors = new ArrayList<Detector>();
@@ -421,4 +426,14 @@ public class Biochip {
 		return new Point(minX, minY);
 	}
 
+	public int getMaxUsage() {
+		if (this.maxUsageCache <= 0) {
+			for (BiochipField f : this.field.values()) {
+				if (f.usage > this.maxUsageCache) {
+					this.maxUsageCache = f.usage;
+				}
+			}
+		}
+		return maxUsageCache;
+	}
 }

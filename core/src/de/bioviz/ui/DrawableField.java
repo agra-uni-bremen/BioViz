@@ -288,7 +288,7 @@ public class DrawableField extends DrawableSprite {
 														   .CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
-			float scalingFactor = 2f;
+			float scalingFactor = this.parentCircuit.data.getMaxUsage();
 			result.add(new Color(
 					this.getField().usage / scalingFactor,
 					this.getField().usage / scalingFactor,
