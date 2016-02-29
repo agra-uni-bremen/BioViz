@@ -151,15 +151,14 @@ public class DrawableField extends DrawableSprite {
 		detector ID. This is a real use case as a detector is a very valid
 		 routing target.
 		 */
-		if (this.getField().isSink &&
-			circ.displayOptions.getOption(BDisplayOptions.SinkIcon)) {
+		if (this.getField().isSink && option(BDisplayOptions.SinkIcon)) {
 			texture = TextureE.Sink;
 		}
 		else if (this.getField().isDispenser) {
-			if (circ.displayOptions.getOption(BDisplayOptions.DispenserIcon)) {
+			if (option(BDisplayOptions.DispenserIcon)) {
 				texture = TextureE.Dispenser;
 			}
-			if (circ.displayOptions.getOption(BDisplayOptions.DispenserID)) {
+			if (option(BDisplayOptions.DispenserID)) {
 				fieldHUDMsg = Integer.toString(getField().fluidID);
 			}
 		}
@@ -167,17 +166,15 @@ public class DrawableField extends DrawableSprite {
 			texture = TextureE.Blockage;
 		}
 		else if (this.getField().getDetector() != null &&
-				 circ.displayOptions.getOption(BDisplayOptions.DetectorIcon)) {
+				 option(BDisplayOptions.DetectorIcon)) {
 			texture = TextureE.Detector;
 		}
 		else if (!this.getField().source_ids.isEmpty()) {
-			if (circ.displayOptions.getOption(BDisplayOptions
-													  .SourceTargetIcons)) {
+			if (option(BDisplayOptions.SourceTargetIcons)) {
 				texture = TextureE.Start;
 			}
 
-			if (circ.displayOptions.getOption(
-					BDisplayOptions.SourceTargetIDs)) {
+			if (option(BDisplayOptions.SourceTargetIDs)) {
 				ArrayList<Integer> sources = this.getField().source_ids;
 				fieldHUDMsg = sources.get(0).toString();
 				if (sources.size() > 1) {
@@ -188,12 +185,10 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 		else if (!this.getField().target_ids.isEmpty()) {
-			if (circ.displayOptions.getOption(
-					BDisplayOptions.SourceTargetIcons)) {
+			if (option(BDisplayOptions.SourceTargetIcons)) {
 				texture = TextureE.Target;
 			}
-			if (circ.displayOptions.getOption(
-					BDisplayOptions.SourceTargetIDs)) {
+			if (option(BDisplayOptions.SourceTargetIDs)) {
 				ArrayList<Integer> targets = this.getField().target_ids;
 				fieldHUDMsg = targets.get(0).toString();
 				if (targets.size() > 1) {
@@ -203,8 +198,7 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 		}
-		else if (getParentCircuit().displayOptions.getOption(BDisplayOptions
-																	 .CellUsageCount)) {
+		else if (option(BDisplayOptions.CellUsageCount)) {
 			fieldHUDMsg = Integer.toString(this.getField().usage);
 
 		}
@@ -213,7 +207,7 @@ public class DrawableField extends DrawableSprite {
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show
 		// what
-		if (circ.displayOptions.getOption(BDisplayOptions.Pins)) {
+		if (option(BDisplayOptions.Pins)) {
 			if (this.getField().pin != null) {
 				fieldHUDMsg = Integer.toString(this.getField().pin.pinID);
 			}
@@ -252,8 +246,7 @@ public class DrawableField extends DrawableSprite {
 		 * array is checked for existence and if it isn't null, each none-black
 		 * color *completely overrides* the given field color at this corner.
 		 */
-		if (getParentCircuit().displayOptions.getOption(
-				BDisplayOptions.NetColorOnFields)) {
+		if (option(BDisplayOptions.NetColorOnFields)) {
 			if (cornerColors == null) {
 				cornerColors = new Color[4];    // one color for each corner
 			}
@@ -313,8 +306,7 @@ public class DrawableField extends DrawableSprite {
 			cornerColors = null;
 		}
 
-		if (getParentCircuit().displayOptions.getOption(BDisplayOptions
-																.CellUsage)) {
+		if (option(BDisplayOptions.CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
 			float scalingFactor = 2f;
@@ -327,8 +319,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		/** Colours the interference region **/
-		if (getParentCircuit().displayOptions.getOption(
-				BDisplayOptions.InterferenceRegion)) {
+		if (option(BDisplayOptions.InterferenceRegion)) {
 			boolean hasNeighbouringDroplet = false;
 			for (final Droplet d : getParentCircuit().data.getDroplets()) {
 				Point p = d.getPositionAt(getParentCircuit().currentTime);
@@ -339,8 +330,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		int t = getParentCircuit().currentTime;
-		if (getParentCircuit().displayOptions.getOption(
-				BDisplayOptions.Actuations)) {
+		if (option(BDisplayOptions.Actuations)) {
 			if (getField().isActuated(t)) {
 				result.add(Colors.ACTAUTED_COLOR);
 				++colorOverlayCount;
@@ -375,8 +365,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		if (getParentCircuit().displayOptions.getOption(BDisplayOptions
-																.Adjacency) &&
+		if (option(BDisplayOptions.Adjacency) &&
 			getParentCircuit().data.getAdjacentActivations().contains(
 					this.getField())) {
 			result.add(ADJACENT_ACTIVATION_COLOR);
@@ -402,8 +391,7 @@ public class DrawableField extends DrawableSprite {
 
 		super.draw();
 
-		if (parentCircuit.displayOptions
-				.getOption(BDisplayOptions.LongNetIndicatorsOnFields)) {
+		if (option(BDisplayOptions.LongNetIndicatorsOnFields)) {
 			for (Net net : this.parentCircuit.data.getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
@@ -417,8 +405,9 @@ public class DrawableField extends DrawableSprite {
 
 
 						// draw to target
-						DrawableLine.draw(source, target,
-										  Color.BLACK.cpy().sub(0, 0, 0, 0.5f));
+						DrawableLine.draw(
+								source, target,
+								Color.BLACK.cpy().sub(0, 0, 0, 0.5f));
 					}
 				}
 			}
@@ -466,5 +455,20 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public void setParentCircuit(final DrawableCircuit parentCircuit) {
 		this.parentCircuit = parentCircuit;
+	}
+
+	/**
+	 * Convenience function for checking options.
+	 * <p>
+	 * It basically is syntactic sugar to make the huge amount of checking
+	 * above
+	 * easier to read.
+	 *
+	 * @param opt
+	 * 		The option to check
+	 * @return whether the option is set
+	 */
+	private boolean option(BDisplayOptions opt) {
+		return getParentCircuit().displayOptions.getOption(opt);
 	}
 }
