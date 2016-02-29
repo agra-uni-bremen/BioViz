@@ -1,16 +1,22 @@
 package de.bioviz.ui;
 
 /**
- * @author Oliver Keszöcze
- *         <p>
- *         This enum stores all the options available when displaying a biochip.
- *         All options are on/off only.
+ * This enum stores all the options available when displaying a biochip.
+ * <p>
+ * All options are on/off only.
+ *
+ * @author keszocze
  */
 public enum BDisplayOptions {
 	/**
 	 * Option for displaying the amount of cell usage.
 	 */
 	CellUsage,
+
+	/**
+	 * Option for displaying the amount of actuations of a given cell
+	 */
+	CellUsageCount,
 
 	/**
 	 * Option for highlighting used cells that are too close to other used
@@ -86,12 +92,12 @@ public enum BDisplayOptions {
 	DetectorIcon,
 
 	/**
-	 * Option for displaying a net's colour on all its corresponding droplets 
+	 * Option for displaying a net's colour on all its corresponding droplets
 	 */
 	NetColorOnDroplets,
 
 	/**
-	 * Option for displaying a net's colour on all its corresponding fields 
+	 * Option for displaying a net's colour on all its corresponding fields
 	 */
 	NetColorOnFields,
 
