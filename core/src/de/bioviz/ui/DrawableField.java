@@ -375,6 +375,10 @@ public class DrawableField extends DrawableSprite {
 		} else {
 			result = new de.bioviz.ui.Color(Colors.FIELD_COLOR);
 		}
+		
+		if (this.isHovered()) {
+			result.add(0.2f, 0.2f, 0.2f, 0);
+		}
 
 		return result.buildGdxColor();
 	}
@@ -384,12 +388,7 @@ public class DrawableField extends DrawableSprite {
 		DisplayValues vals = getDisplayValues();
 
 		displayText(vals.getMsg());
-
-		if (this.isHovered()) {
-			setColor(vals.getColor().add(0.2f, 0.2f, 0.2f, 0));
-		} else {
-			setColor(vals.getColor());
-		}
+		setColor(vals.getColor());
 
 		super.draw();
 		
