@@ -66,7 +66,7 @@ public class SVGCoreCreator {
 	 * @param type The type of the core.
 	 * @return
 	 */
-	private String getSVGCode(TextureE type) {
+	private String getSVGCode(final TextureE type) {
 		String svgCoreFile = baseFolder + "/" + svgCoreFolder + "/" + type + ".plain.svg";
 
 		logger.debug("[SVG] Loading SVG core for {}", svgCoreFile);
@@ -91,7 +91,7 @@ public class SVGCoreCreator {
 	 * @param strokeColor The stroke color.
 	 * @return String containing svg core data.
 	 */
-	public String getSVGCode(TextureE type, Color fillColor, Color strokeColor) {
+	public String getSVGCode(final TextureE type,final Color fillColor,final Color strokeColor) {
 		String uncoloredCore = getSVGCode(type);
 		String coloredCore = uncoloredCore;
 
@@ -178,14 +178,14 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * Sets the style tag for the first tag occurence.
+	 * Sets the style tag for the first tag occurrence.
 	 *
 	 * @param element
 	 * @param tagName
 	 * @param fillColor
 	 * @param strokeColor
 	 */
-	private void setStyleForElement(Element element, String tagName, Color fillColor, Color strokeColor){
+	private void setStyleForElement(final Element element,final String tagName,final Color fillColor,final Color strokeColor){
 		NodeList elements = element.getElementsByTagName(tagName);
 		if (elements.getLength() > 0) {
 			Node node = elements.item(0);
@@ -216,7 +216,7 @@ public class SVGCoreCreator {
 	 * @return String representing the xml document.
 	 * @throws TransformerException
 	 */
-	private String getGroupFromDocument(Document doc) throws TransformerException {
+	private String getGroupFromDocument(final Document doc) throws TransformerException {
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer = tFactory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
