@@ -73,6 +73,11 @@ public class SVGManager {
 		return c.toString().substring(0,6);
 	}
 
+	String generateID(final String baseName,final Color c) {
+		return baseName + "-" + colorToSVG(c);
+	}
+
+
 	/**
 	 * @param folder
 	 * 		The name of the folder containing the theme, relative to the assets
@@ -130,7 +135,7 @@ public class SVGManager {
 		logger.debug("[SVG] Creating all needed colored cores.");
 
 		for(DrawableField f : circ.fields){
-			String key = f.getDisplayValues().getTexture().toString() + "-" + colorToSVG(f.getColor());
+			String 	key = generateID(f.getDisplayValues().getTexture().toString(),f.getColor());
 			// don't create the svg core code twice
 			if(!colSvgs.containsKey(key)) {
 				colSvgs.put(key,
@@ -139,7 +144,7 @@ public class SVGManager {
 		}
 		for(DrawableDroplet d : circ.droplets){
 			// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
-			String key = "Droplet" + "-" + colorToSVG(d.getColor());
+			String key = generateID("Droplet",d.getColor());
 			// don't create the svg core code twice
 			if(!colSvgs.containsKey(key)) {
 				colSvgs.put(key,
@@ -148,7 +153,7 @@ public class SVGManager {
 
 			if (d.route != null) {
 				Color routeColor = d.route.getColor();
-				key = "StepMarker" + "-" + colorToSVG(routeColor);
+				key = generateID("StepMarker",routeColor);
 				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
 								svgCoreCreator.getSVGCode(TextureE.StepMarker, routeColor, strokeColor));
@@ -224,8 +229,9 @@ public class SVGManager {
 
 		DisplayValues vals = field.getDisplayValues();
 
+		String fieldID = generateID(vals.getTexture().toString(),vals.getColor());
 		String field_svg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-						   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + colorToSVG(vals.getColor()) +
+						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
 						   "\" />\n";
 
 		// create the msg text for the svg
@@ -257,8 +263,9 @@ public class SVGManager {
 		xCoord = ((int) xCoord) * coordinateMultiplier;
 
 		String route = toSVG(drawableDrop.route);
+		String dropletID = generateID("Droplet",drawableDrop.getColor());
 		String drop_shape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" + getScaleTransformation()
-							+ " xlink:href=\"#Droplet-" + colorToSVG(drawableDrop.getColor()) + "\" />\n";
+							+ " xlink:href=\"#" + dropletID + "\" />\n";
 
 		String drop_svg = route + drop_shape;
 
@@ -353,12 +360,13 @@ public class SVGManager {
 					app = false;
 				}
 				if (app) {
+					String routeID = generateID("StepMarker",routeColor);
 					sb.append("<use");
 					sb.append(position);
 					sb.append(widthHeight);
 					sb.append(getTransformation(transFormParams));
 					sb.append(opacity);
-					sb.append("xlink:href=\"#StepMarker-" + colorToSVG(routeColor) + "\"");
+					sb.append("xlink:href=\"#" + routeID + "\"");
 					sb.append(" />\n");
 					logger.debug("[SVG] StepMarker color: {}",routeColor);
 				}
