@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * @author Oliver Keszöcze
@@ -26,6 +27,12 @@ public class DisplayOptions {
 	 */
 	private HashMap<BDisplayOptions, Boolean> options;
 
+	/**
+	 * Collects all methods that should be called when a value changes.
+	 */
+	private HashSet<DisplayOptions.displayOptionEvent> optionChangedEvents =
+			new HashSet<>();
+
 
 	/**
 	 * The construct loads all options as defined in the
@@ -39,14 +46,14 @@ public class DisplayOptions {
 		}
 		setOption(BDisplayOptions.SinkIcon, true);
 		setOption(BDisplayOptions.SourceTargetIcons, true);
-		setOption(BDisplayOptions.SourceTargetIDs, true);
+		setOption(BDisplayOptions.SourceTargetIDs, false);
 		setOption(BDisplayOptions.Droplets, true);
-		//setOption(BDisplayOptions.Coordinates,true);
+		setOption(BDisplayOptions.Coordinates,false);
 		setOption(BDisplayOptions.DispenserIcon, true);
 		setOption(BDisplayOptions.DispenserID, true);
 		setOption(BDisplayOptions.DetectorIcon, true);
 		setOption(BDisplayOptions.FluidNames, true);
-		setOption(BDisplayOptions.InterferenceRegion, true);
+		setOption(BDisplayOptions.InterferenceRegion, false);
 	}
 
 
@@ -68,6 +75,7 @@ public class DisplayOptions {
 
 		logger.debug("Setting option \"{}\" to {}", opt, val);
 		options.put(opt, val);
+		callOptionChangedEvents(opt);
 	}
 
 	/**
@@ -80,5 +88,18 @@ public class DisplayOptions {
 		setOption(opt, val);
 		return val;
 	}
+	
+	public interface displayOptionEvent {
+		void e(BDisplayOptions value);
+	}
+	
+	public void addOptionChangedEvent(displayOptionEvent e) {
+		optionChangedEvents.add(e);
+	}
 
+	private void callOptionChangedEvents(BDisplayOptions opt) {
+		for (displayOptionEvent displayOptionEvent : optionChangedEvents) {
+			displayOptionEvent.e(opt);
+		}
+	}
 }

@@ -41,7 +41,7 @@ public class BioViz implements ApplicationListener {
 	 */
 	public static void setAnimationDuration(int value) {
 		Droplet.movementTransitionDuration = value;
-		DrawableSprite.colorTransitionDuration = value;
+		DrawableSprite.setColorTransitionDuration(value);
 	}
 
 
@@ -142,6 +142,8 @@ public class BioViz implements ApplicationListener {
 
 		inputProcessor = new BioVizInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);
+		
+		DrawableLine.singleton = new DrawableLine(this);
 
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
@@ -181,6 +183,8 @@ public class BioViz implements ApplicationListener {
 		for (Drawable drawable : drawables) {
 			drawable.draw();
 		}
+		
+		DrawableLine.drawNow();
 
 		messageCenter.render();
 
@@ -299,23 +303,7 @@ public class BioViz implements ApplicationListener {
 		Biochip bc;
 		boolean error = false;
 		String errorMsg = "";
-		if (bioFile == null) {
-			logger.debug("Loading default file");
-			FileHandle fh = Gdx.files.getFileHandle("examples/default_grid" +
-													".bio",
-													Files.FileType.Internal);
-			bc = BioParser.parse(fh.readString(), this);
-		}
-		else {
-			logger.debug("Loading {}", bioFile);
-			bc = BioParser.parseFile(bioFile, this);
-		}
-
-		if (bc == null) {
-			error = true;
-			errorMsg = "Could not parse file" + bioFile;
-			bc = new Biochip();
-		}
+			
 
 		try {
 			drawables.remove(currentCircuit);
@@ -329,18 +317,24 @@ public class BioViz implements ApplicationListener {
 									());
 				}
 				else {
+					logger.debug("Loading {}", bioFile);
+					bc = BioParser.parseFile(bioFile, this);
+
+					if (bc == null) {
+						error = true;
+						errorMsg = "Could not parse file" + bioFile;
+						bc = new Biochip();
+					}
 					logger.debug("loaded file, creating drawable elements...");
 					DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
 					currentCircuit = newCircuit;
 					this.loadedCircuits.put(bioFile.getCanonicalPath(),
-											newCircuit);
+							newCircuit);
 					currentCircuit.zoomExtents();
 				}
 				logger.debug("drawable created, replacing old elements...");
 				drawables.add(currentCircuit);
 				logger.debug("Initializing circuit");
-				currentCircuit.addTimeChangedListener(
-						() -> callTimeChangedListeners());
 				currentCircuit.data.recalculateAdjacency = true;
 				if (bioFile == null) {
 					logger.info("Done loading default file");
@@ -348,8 +342,7 @@ public class BioViz implements ApplicationListener {
 				else {
 					logger.info("Done loading file {}", bioFile);
 				}
-			}
-			else {
+			} else {
 				logger.debug(
 						"File to be set is empty, setting empty " +
 						"visualization" +

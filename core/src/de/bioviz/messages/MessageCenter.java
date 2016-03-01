@@ -3,19 +3,17 @@ package de.bioviz.messages;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+		.FreeTypeFontParameter;
+import com.badlogic.gdx.math.Matrix4;
 import de.bioviz.ui.BioViz;
-import de.bioviz.ui.DrawableCircuit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Vector;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class provides some methods to draw text.
@@ -35,9 +33,9 @@ public class MessageCenter {
 	private float scaleHUD = 1f / 4f;
 	private float scaleMsg = 1f / 8f;
 	private final float SCALEINCSTEP = 0.125f;
-	
+
 	public static final int textRenderResolution = 16;
-	
+
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
 	BioViz parent;
@@ -49,43 +47,30 @@ public class MessageCenter {
 
 	public BitmapFont getFont() {
 		if (font == null) {
-			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("images/FreeUniversal-Regular.ttf"));
+			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
+					Gdx.files.internal("images/FreeUniversal-Regular.ttf"));
 			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 			parameter.size = textRenderResolution;
 			parameter.color = Color.WHITE.cpy();
 			parameter.borderWidth = 2;
 			parameter.borderColor = Color.BLACK.cpy();
 			parameter.genMipMaps = true;
-			BitmapFont font12 = generator.generateFont(parameter); // font size 12 pixels
-			generator.dispose(); // don't forget to dispose to avoid memory leaks!
-			
-			generator = new FreeTypeFontGenerator(Gdx.files.internal("images/Anonymous_Pro.ttf"));
+			BitmapFont font12 =
+					generator.generateFont(parameter); // font size 12 pixels
+			generator.dispose(); // don't forget to dispose to avoid memory
+			// leaks!
+
+			generator = new FreeTypeFontGenerator(
+					Gdx.files.internal("images/Anonymous_Pro.ttf"));
 			parameter = new FreeTypeFontParameter();
 			parameter.size = 8;
 			parameter.color = Color.BLACK.cpy();
 			this.messageFont = generator.generateFont(parameter);
 			logger.debug("set up font");
-			
+
 			font = font12;//new BitmapFont();
 		}
 		return font;
-	}
-
-	private class HUDMessage {
-		public String message;
-		public float x;
-		public float y;
-		public Color color;
-		public float size;
-		public boolean hideWhenZoomedOut = true;
-
-		public HUDMessage(String message, float x, float y) {
-			this.message = message;
-			this.x = x;
-			this.y = y;
-			this.color = Color.WHITE;
-			this.size = -1f;
-		}
 	}
 
 	private HashMap<Integer, HUDMessage> HUDMessages =
@@ -144,7 +129,7 @@ public class MessageCenter {
 				int start_x = spacing;
 				int start_y = yCoord;
 				messageFont.draw(parent.batch, m.message, start_x,
-						  start_y); // TODO name of closestHit
+								 start_y); // TODO name of closestHit
 
 
 				yCoord -= spacing;
@@ -152,41 +137,41 @@ public class MessageCenter {
 
 			for (HUDMessage s : this.HUDMessages.values()) {
 				Color targetColor = s.color.cpy();
-				
+
 				float hideAt = (1f / scaleHUD) * 4f;
 				float showAt = (1f / scaleHUD) * 8f;
-				if (s.hideWhenZoomedOut){ 
+				if (s.hideWhenZoomedOut) {
 					// Hide when zoomed out
 					if (this.parent.currentCircuit.getScaleX() < hideAt) {
 						targetColor.a = 0;
-					} else if (this.parent.currentCircuit.getScaleX() < showAt) {
+					}
+					else if (this.parent.currentCircuit.getScaleX() < showAt) {
 						float val = this.parent.currentCircuit.getScaleX();
 						val = (val - hideAt) / (showAt - hideAt);
 						targetColor.a = val;
-					} else {
+					}
+					else {
 						targetColor.a = 1;
 					}
 				}
-				
+
 				font.setColor(targetColor);
-				
+
 				final GlyphLayout layout = new GlyphLayout(font, s.message);
 				// or for non final texts: layout.setText(font, text);
 
 				final float fontX = s.x -
-						layout.width / 2f +
-						Gdx.graphics.getWidth() / 2f;
+									layout.width / 2f +
+									Gdx.graphics.getWidth() / 2f;
 				final float fontY = s.y +
-						layout.height / 2f +
-						Gdx.graphics.getHeight() / 2f;
+									layout.height / 2f +
+									Gdx.graphics.getHeight() / 2f;
 
 				font.draw(parent.batch, layout, fontX, fontY);
 			}
 
-			long curTime = System.currentTimeMillis();
 			while (this.messages.size() > 0 &&
-				   this.messages.get(0).displayTime +
-				   this.messages.get(0).createdOn < curTime) {
+				   this.messages.get(0).expired()) {
 				this.messages.remove(0);
 			}
 		}

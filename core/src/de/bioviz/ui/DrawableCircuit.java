@@ -95,9 +95,16 @@ public class DrawableCircuit implements Drawable {
 		this.data = toDraw;
 		this.parent = parent;
 		this.initializeDrawables();
+		this.displayOptions.addOptionChangedEvent(e -> {
+			if (e.equals(BDisplayOptions.CellUsage)) {
+				boolean doIt = displayOptions.getOption(e);
+				if (doIt) {
+					data.computeCellUsage();
+				}
+			}
+		});
 		logger.debug("New DrawableCircuit created successfully.");
 	}
-
 	/**
 	 * Initializes the drawables according to the circuit stored in the data field
 	 */
@@ -183,17 +190,17 @@ public class DrawableCircuit implements Drawable {
 			maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.fields) {
-			if (minX > f.field.x()) {
-				minX = f.field.x();
+			if (minX > f.getField().x()) {
+				minX = f.getField().x();
 			}
-			if (minY > f.field.y()) {
-				minY = f.field.y();
+			if (minY > f.getField().y()) {
+				minY = f.getField().y();
 			}
-			if (maxX < f.field.x()) {
-				maxX = f.field.x();
+			if (maxX < f.getField().x()) {
+				maxX = f.getField().x();
 			}
-			if (maxY < f.field.y()) {
-				maxY = f.field.y();
+			if (maxY < f.getField().y()) {
+				maxY = f.getField().y();
 			}
 		}
 		
@@ -255,17 +262,17 @@ public class DrawableCircuit implements Drawable {
 			maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.fields) {
-			if (minX > f.field.x()) {
-				minX = f.field.x();
+			if (minX > f.getField().x()) {
+				minX = f.getField().x();
 			}
-			if (minY > f.field.y()) {
-				minY = f.field.y();
+			if (minY > f.getField().y()) {
+				minY = f.getField().y();
 			}
-			if (maxX < f.field.x()) {
-				maxX = f.field.x();
+			if (maxX < f.getField().x()) {
+				maxX = f.getField().x();
 			}
-			if (maxY < f.field.y()) {
-				maxY = f.field.y();
+			if (maxY < f.getField().y()) {
+				maxY = f.getField().y();
 			}
 		}
 		
@@ -368,19 +375,6 @@ public class DrawableCircuit implements Drawable {
 			default:
 				throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
 		}
-	}
-
-
-	public void toggleShowUsage() {
-		boolean doIt = displayOptions.toggleOption(BDisplayOptions.CellUsage);
-		if (doIt) {
-			data.computeCellUsage();
-		}
-	}
-
-	public void toggleShowDroplets() {
-		boolean showDroplets = displayOptions.toggleOption(BDisplayOptions.Droplets);
-		droplets.forEach(d -> {d.isVisible=showDroplets;});
 	}
 
 	/**

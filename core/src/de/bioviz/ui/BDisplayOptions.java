@@ -84,8 +84,32 @@ public enum BDisplayOptions {
 	 * Option for displaying the icon of a detector.
 	 */
 	DetectorIcon,
+
 	/**
-	 * Option for coloring all droplets in a net with the same color.
+	 * Option for displaying a net's colour on all its corresponding droplets 
 	 */
-	NetColors
+	NetColorOnDroplets,
+
+	/**
+	 * Option for displaying a net's colour on all its corresponding fields 
+	 */
+	NetColorOnFields,
+
+	/**
+	 * Option for displaying a droplet's source and target via single, long
+	 * indicators
+	 */
+	LongNetIndicatorsOnDroplets,
+
+	/**
+	 * Option for dispalying a net's sources and target via single, long
+	 * indicators on its fields
+	 */
+	LongNetIndicatorsOnFields,
+	
+	/**
+	 * Whether or not interference regions should "linger" behind, i.e.
+	 * encompass all fields that are adjacent at t *and* t-1.
+	 */
+	LingeringInterferenceRegions
 }

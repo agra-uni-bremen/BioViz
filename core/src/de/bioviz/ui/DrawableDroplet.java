@@ -56,8 +56,8 @@ public class DrawableDroplet extends DrawableSprite {
 
 		Net net = droplet.getNet();
 		if (net != null &&
-			parentCircuit.displayOptions.getOption(BDisplayOptions
-														   .NetColors)) {
+			parentCircuit.displayOptions.getOption(
+					BDisplayOptions.NetColorOnDroplets)) {
 			color = new Color(net.getColor());
 		}
 
@@ -97,7 +97,6 @@ public class DrawableDroplet extends DrawableSprite {
 			msg = Integer.toString(droplet.getID()) + " ";
 
 		}
-		logger.trace("droplet msg after dropletIDs option: {}", msg);
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
 			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
@@ -109,7 +108,6 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 
 		}
-		logger.trace("droplet msg after fluidIDs option: {}", msg);
 		if (parentCircuit.displayOptions
 				.getOption(BDisplayOptions.FluidNames)) {
 			String fname = this.parentCircuit.data
@@ -156,29 +154,30 @@ public class DrawableDroplet extends DrawableSprite {
 			droplet.update();
 			route.draw();
 
-			if (isVisible) {
+			if (isVisible() && viz.currentCircuit.displayOptions.
+					getOption(BDisplayOptions.Droplets)) {
 
 				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
 				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
 
-				this.scaleX = circ.smoothScaleX;
-				this.scaleY = circ.smoothScaleY;
+				this.setScaleX(circ.smoothScaleX);
+				this.setScaleY(circ.smoothScaleY);
 
 				// if hidden, place below grid
 				int invisibleIndex =
 						this.parentCircuit.hiddenDroplets.indexOf(this);
 				if (invisibleIndex >= 0) {
 
-					this.scaleX = 32f;
-					this.scaleY = 32f;
+					this.setScaleX(32f);
+					this.setScaleY(32f);
 
 					xCoord = Gdx.graphics.getWidth() / 2f
-							 - this.scaleX * (invisibleIndex + 1);
-					yCoord = Gdx.graphics.getHeight() / 2f - this.scaleY;
+							 - this.getScaleX() * (invisibleIndex + 1);
+					yCoord = Gdx.graphics.getHeight() / 2f - this.getScaleY();
 				}
 
-				this.x = xCoord;
-				this.y = yCoord;
+				this.setX(xCoord);
+				this.setY(yCoord);
 
 				String msg = getMsg();
 
@@ -201,5 +200,9 @@ public class DrawableDroplet extends DrawableSprite {
 		else {
 			parentCircuit.hiddenDroplets.add(this);
 		}
+	}
+
+	public void setDropletColor(Color c) {
+		this.dropletColor = c;
 	}
 }

@@ -1,6 +1,7 @@
 package de.bioviz.desktop;
 
 import java.awt.BorderLayout;
+import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -13,14 +14,20 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.prefs.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -152,6 +159,11 @@ public class DesktopLauncher extends JFrame {
 	 * Used to display the tabs for open files.
 	 */
 	private JTabbedPane visualizationTabs;
+	
+	/**
+	 * Used for more options than the panel can hold.
+	 */
+	private JMenuBar menubar;
 
 	/**
 	 * The visualization instance. From the DesktopLauncher, this field is usd
@@ -209,6 +221,9 @@ public class DesktopLauncher extends JFrame {
 		manager.addKeyEventDispatcher(new MyDispatcher());
 
 		JPanel panel = initializePanel();
+		menubar = initializeMenubar();
+
+		this.setJMenuBar(menubar);
 
 		input = new LwjglAWTInput(canvas);
 
@@ -240,6 +255,35 @@ public class DesktopLauncher extends JFrame {
 		setVisible(true);
 
 		setSize(800, 600);
+	}
+
+	/**
+	 * Initializes and returns the top menu bar
+	 * @return the menu bar to be displayed at the top of the window
+	 */
+	private JMenuBar initializeMenubar() {
+		JMenuBar result = new JMenuBar();
+
+		JMenu menu = new JMenu("Display Options");
+		menu.setMnemonic(KeyEvent.VK_D);
+		menu.getAccessibleContext().setAccessibleDescription(
+		        "This menu triggers all kinds of display options.");
+		result.add(menu);
+		
+		BDisplayOptions[] enumValues = BDisplayOptions.values();
+		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
+			public int compare(BDisplayOptions left, BDisplayOptions right){
+		        return left.toString().compareTo(right.toString()); //use your criteria here
+		    }
+		});
+		for (BDisplayOptions option : enumValues) {
+			BioCheckboxMenuItem menuItem =
+					new BioCheckboxMenuItem(option.toString(), option);
+			menu.add(menuItem);
+			currentViz.addLoadedFileListener(() -> {menuItem.updateState(); return;});
+		}
+
+		return result;
 	}
 
 	/**
@@ -305,40 +349,6 @@ public class DesktopLauncher extends JFrame {
 		zoomButton.addActionListener(
 				e -> currentViz.currentCircuit.zoomExtents());
 
-		JButton dropletButton = new JButton("Droplets");
-		dropletButton.setPreferredSize(new Dimension(buttonWidth,
-													 dropletButton
-															 .getPreferredSize
-																	 ()
-															 .height));
-
-		dropletButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowDroplets());
-
-		JButton usageButton = new JButton("Cell Usage");
-		usageButton.setPreferredSize(new Dimension(buttonWidth,
-												   usageButton
-														   .getPreferredSize()
-														   .height));
-		usageButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleShowUsage());
-
-		JButton actuationButton = new JButton("Actuations");
-		actuationButton.setPreferredSize(new Dimension(buttonWidth,
-													   actuationButton
-															   .getPreferredSize().height));
-		actuationButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Actuations));
-
-		JButton interferenceButton = new JButton("Interference");
-		interferenceButton.setPreferredSize(new Dimension(buttonWidth,
-														  actuationButton
-																  .getPreferredSize().height));
-		interferenceButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.InterferenceRegion));
-
 		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, 1, 1);
 		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		timeSlider.addChangeListener(
@@ -355,78 +365,6 @@ public class DesktopLauncher extends JFrame {
 		displayRouteLengthSlider.addChangeListener(
 				ce -> DrawableRoute.routeDisplayLength =
 						((JSlider) ce.getSource()).getValue());
-
-
-		JButton adjacencyButton = new JButton("Adjacency");
-		adjacencyButton.setPreferredSize(new Dimension(buttonWidth,
-													   adjacencyButton
-															   .getPreferredSize().height));
-		adjacencyButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Adjacency));
-
-
-		JButton displayDropletIDsButton = new JButton("Drop IDs");
-		displayDropletIDsButton.setPreferredSize(new Dimension(buttonWidth,
-															   displayDropletIDsButton.getPreferredSize().height));
-		displayDropletIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.DropletIDs));
-
-		JButton displayFluidIDsButton = new JButton("Fluid IDs");
-		displayFluidIDsButton.setPreferredSize(new Dimension(buttonWidth,
-															 displayFluidIDsButton.getPreferredSize().height));
-		displayFluidIDsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.FluidIDs));
-
-		JButton displayFluidTypesButton = new JButton("Fluid Types");
-		displayFluidTypesButton.setPreferredSize(new Dimension(buttonWidth,
-															   displayFluidIDsButton.getPreferredSize().height));
-		displayFluidTypesButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.FluidNames));
-
-		JButton pinButton = new JButton("Pins");
-		pinButton.setPreferredSize(new Dimension(buttonWidth,
-												 pinButton.getPreferredSize()
-														 .height));
-		pinButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Pins));
-
-		JButton stIconButton = new JButton("Net Icons");
-		stIconButton.setPreferredSize(new Dimension(buttonWidth,
-													stIconButton
-															.getPreferredSize
-																	()
-															.height));
-		stIconButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.SourceTargetIcons));
-
-		JButton stIDButton = new JButton("Net IDs");
-		stIDButton.setPreferredSize(new Dimension(buttonWidth,
-												  stIDButton.getPreferredSize
-														  ().height));
-		stIDButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.SourceTargetIDs));
-
-		JButton netColorsButton = new JButton("Net Colors");
-		netColorsButton.setPreferredSize(new Dimension(buttonWidth,
-													   netColorsButton.getPreferredSize().height));
-		netColorsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.NetColors));
-
-		JButton detectorsButton = new JButton("Detectors");
-		detectorsButton.setPreferredSize(new Dimension(buttonWidth,
-													   detectorsButton
-															   .getPreferredSize().height));
-		detectorsButton.addActionListener(
-				e -> currentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.DetectorIcon));
 
 
 		JButton nextStepButton = new JButton("->");
@@ -467,19 +405,6 @@ public class DesktopLauncher extends JFrame {
 		panel.add(new JLabel("Route length"));
 		panel.add(displayRouteLengthSlider);
 		panel.add(zoomButton);
-		panel.add(dropletButton);
-		panel.add(displayDropletIDsButton);
-		panel.add(displayFluidIDsButton);
-		panel.add(displayFluidTypesButton);
-		panel.add(pinButton);
-		panel.add(actuationButton);
-		panel.add(adjacencyButton);
-		panel.add(usageButton);
-		panel.add(stIconButton);
-		panel.add(stIDButton);
-		panel.add(netColorsButton);
-		panel.add(detectorsButton);
-		panel.add(interferenceButton);
 		panel.add(invisiSep);
 		panel.add(new JLabel("Time"));
 		panel.add(timeSep);
@@ -1037,6 +962,8 @@ public class DesktopLauncher extends JFrame {
 		 */
 		@Override
 		public void bioVizEvent() {
+			logger.trace("Received timer event ("
+					+ currentViz.currentCircuit.currentTime + ")");
 			this.time.setValue(currentViz.currentCircuit.currentTime);
 			this.timeInfo.setText(
 					Integer.toString(currentViz.currentCircuit.currentTime));
@@ -1055,7 +982,7 @@ public class DesktopLauncher extends JFrame {
 								JColorChooser.showDialog(null, "Choose a " +
 															   "Color",
 														 Color.red);
-						currentViz.selectedDroplet.setColor(
+						currentViz.selectedDroplet.setDropletColor(
 								new com.badlogic.gdx.graphics.Color(
 										c.getRed() / 255f, c.getGreen() / 255f,
 										c.getBlue() / 255f, 1f));
@@ -1153,16 +1080,29 @@ public class DesktopLauncher extends JFrame {
 		 */
 		@Override
 		public void bioVizEvent() {
+			logger.trace("calling desktop LoadedFileCallback()");
 			if (currentViz.currentCircuit != null) {
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
+				int oldTime = currentViz.currentCircuit.currentTime;
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
+				// altering the max/min values already invokes the timer
+				// event, thus altering the currentCircuit's currenTime value.
+				// In order to still be able to set the current value as it
+				// was before, the oldTime value is being stored above and then
+				// used to set the slider's value, thus again reverting the
+				// currentCircuit's currentTime value to its original state.
+				// This means we're actually changing its time back and forth,
+				// but although this is a little ugly, it doesn't seem to have
+				// any problematic effect.
 				d.timeSlider.setMaximum(
 						currentViz.currentCircuit.data.getMaxT());
 				d.timeSlider.setMinimum(1);
-				d.timeSlider.setValue(0);
+				logger.trace("setting time slider to "
+						+ oldTime);
+				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
 						currentViz.currentCircuit.data.getMaxRouteLength());
@@ -1170,8 +1110,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
-			}
-			else {
+			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
 				d.timeSlider.setMaximum(1);
@@ -1264,6 +1203,7 @@ public class DesktopLauncher extends JFrame {
 			// here and once from libgdx)
 			if (DesktopLauncher.singleton.getFocusOwner()
 				!= DesktopLauncher.singleton.canvas.getCanvas()) {
+
 				if (e.getID() == KeyEvent.KEY_PRESSED) {
 					bioViz.getInputProcessor().keyDown(
 							translateKeyCode(e.getKeyCode()));
@@ -1273,10 +1213,31 @@ public class DesktopLauncher extends JFrame {
 							translateKeyCode(e.getKeyCode()));
 				}
 				else if (e.getID() == KeyEvent.KEY_TYPED) {
-					bioViz.getInputProcessor().keyTyped(e.getKeyChar());
+					// That thing might not have been initiliazed yet
+					if (bioViz.getInputProcessor() != null) {
+						bioViz.getInputProcessor().keyTyped(e.getKeyChar());
+					}
 				}
 			}
 			return false;
+		}
+	}
+
+	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
+		private BDisplayOptions option;
+		public BioCheckboxMenuItem(String label, BDisplayOptions option) {
+			super(label);
+			this.option = option;
+
+			this.addActionListener(l -> {
+					currentViz.currentCircuit.displayOptions.toggleOption(option);
+					setState(currentViz.currentCircuit.displayOptions.getOption(option));
+				});
+		}
+		
+		public void updateState() {
+			setState(currentViz.currentCircuit.
+					displayOptions.getOption(option));
 		}
 	}
 }
