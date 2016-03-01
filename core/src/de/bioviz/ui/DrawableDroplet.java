@@ -125,7 +125,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 		}
 		logger.trace("droplet msg after fluidNames option: {}", msg);
-		return msg;
+		return msg.isEmpty() ? null : msg;
 	}
 
 	@Override
