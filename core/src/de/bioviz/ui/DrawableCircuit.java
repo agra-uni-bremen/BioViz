@@ -530,4 +530,12 @@ public class DrawableCircuit implements Drawable {
 
 		}
 	}
+
+	/**
+	 * Retrieves the field that is currently being hovered.
+	 * @return the currently hovered field.
+	 */
+	public DrawableField getHoveredField() {
+		return this.hoveredField;
+	}
 }
