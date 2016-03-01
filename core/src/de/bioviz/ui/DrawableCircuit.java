@@ -454,9 +454,6 @@ public class DrawableCircuit implements Drawable {
 		this.offsetY = targetOffsetY;
 	}
 
-	private int busDrawn = 0;
-
-
 	/**
 	 * Resets the zoom to 1 px per element
 	 */
