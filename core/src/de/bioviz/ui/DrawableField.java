@@ -381,19 +381,14 @@ public class DrawableField extends DrawableSprite {
 
 	@Override
 	public void draw() {
-
-
 		DisplayValues vals = getDisplayValues();
 
 		displayText(vals.getMsg());
-		this.addLOD(Float.MAX_VALUE, vals.getTexture());
 
-
-		
 		if (this.isHovered()) {
 			setColor(vals.getColor().add(0.2f, 0.2f, 0.2f, 0));
 		} else {
-			setColor(vals.getColor());			
+			setColor(vals.getColor());
 		}
 
 		super.draw();
