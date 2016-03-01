@@ -23,8 +23,8 @@ public class DrawableDroplet extends DrawableSprite {
 	private static Random randnum = null;
 
 	public DrawableCircuit parentCircuit;
-	
-	private Color dropletColor; 
+
+	private Color dropletColor;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
 		super(TextureE.Droplet, parent.parent);
@@ -112,15 +112,16 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 		if (parentCircuit.displayOptions
 				.getOption(BDisplayOptions.FluidNames)) {
-			String fname = this.parentCircuit.data
-					.fluidType(dropID);
-			//System.out.println("fname: " + fname);
-			//System.out.println(this.parentCircuit.data.fluidTypes);
-			if (fname != null) {
-				if (!msg.isEmpty()) {
-					msg += "-";
+			Integer fluidID = parentCircuit.data.fluidID(dropID);
+			if (fluidID != null) {
+				String fname = parentCircuit.data.fluidType(fluidID);
+
+				if (fname != null) {
+					if (!msg.isEmpty()) {
+						msg += "-";
+					}
+					msg += " " + fname;
 				}
-				msg += " " + fname;
 			}
 
 		}
