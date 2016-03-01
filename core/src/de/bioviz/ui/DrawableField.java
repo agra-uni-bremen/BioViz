@@ -200,7 +200,10 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 		else if (option(CellUsageCount)) {
-			fieldHUDMsg = Integer.toString(this.getField().usage);
+			int usage = getField().usage;
+			if (usage > 0) {
+				fieldHUDMsg = Integer.toString(usage);
+			}
 
 		}
 
