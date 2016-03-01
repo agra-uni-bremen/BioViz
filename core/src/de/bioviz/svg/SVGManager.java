@@ -48,7 +48,7 @@ public class SVGManager {
 	int size = 60;
 	int fontSizeIds = 60;
 	Color fColor = Color.BLACK;
-	String fontColor = fColor.toString().substring(0,6);
+	String fontColor = colorToSVG(fColor);
 
 	// hard coded colors
 	Color strokeColor = null; // means don't change svg stroke color
@@ -63,6 +63,19 @@ public class SVGManager {
 
 	public String getScale() {
 		return "scale(" + scaleFactor + " " + scaleFactor + ")";
+	}
+
+	/**
+	 * Converts a libGDX color to a SVG-usable format.
+	 *
+	 * What it basically does is to throw away the last to characters, i.e.
+	 * the alpha channel.
+	 *
+	 * @param c Color to transform
+	 * @return Color in format to be used by SVG
+	 */
+	String colorToSVG(Color c) {
+		return c.toString().substring(0,6);
 	}
 
 	/**
@@ -122,7 +135,7 @@ public class SVGManager {
 		logger.debug("[SVG] Creating all needed colored cores.");
 
 		for(DrawableField f : circ.fields){
-			String key = f.getDisplayValues().getTexture().toString() + "-" + f.getColor().toString().substring(0,6);
+			String key = f.getDisplayValues().getTexture().toString() + "-" + colorToSVG(f.getColor());
 			// don't create the svg core code twice
 			if(!colSvgs.containsKey(key)) {
 				colSvgs.put(key,
@@ -131,7 +144,7 @@ public class SVGManager {
 		}
 		for(DrawableDroplet d : circ.droplets){
 			// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
-			String key = "Droplet" + "-" + d.getColor().toString().substring(0,6);
+			String key = "Droplet" + "-" + colorToSVG(d.getColor());
 			// don't create the svg core code twice
 			if(!colSvgs.containsKey(key)) {
 				colSvgs.put(key,
@@ -140,7 +153,7 @@ public class SVGManager {
 
 			if (d.route != null) {
 				Color routeColor = d.route.getColor();
-				key = "StepMarker"+"-"+routeColor.toString().substring(0,6);
+				key = "StepMarker" + "-" + colorToSVG(routeColor);
 				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
 								svgCoreCreator.getSVGCode(TextureE.StepMarker, routeColor, strokeColor));
@@ -217,8 +230,8 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 
 		String field_svg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-				getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + vals.getColor().toString().substring(0,6) +
-				"\" />\n";
+						   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + colorToSVG(vals.getColor()) +
+						   "\" />\n";
 
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
@@ -249,8 +262,8 @@ public class SVGManager {
 		xCoord = ((int) xCoord) * coordinateMultiplier;
 
 		String route = toSVG(drawableDrop.route);
-		String drop_shape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +	getScaleTransformation()
-				+ " xlink:href=\"#Droplet-" + drawableDrop.getColor().toString().substring(0,6) + "\" />\n";
+		String drop_shape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" + getScaleTransformation()
+							+ " xlink:href=\"#Droplet-" + colorToSVG(drawableDrop.getColor()) + "\" />\n";
 
 		String drop_svg = route + drop_shape;
 
@@ -340,7 +353,7 @@ public class SVGManager {
 					sb.append(widthHeight);
 					sb.append(getTransformation(transFormParams));
 					sb.append(opacity);
-					sb.append("xlink:href=\"#StepMarker-" + routeColor.toString().substring(0,6) +"\"");
+					sb.append("xlink:href=\"#StepMarker-" + colorToSVG(routeColor) + "\"");
 					sb.append(" />\n");
 					logger.debug("[SVG] StepMarker color: {}",routeColor);
 				}
