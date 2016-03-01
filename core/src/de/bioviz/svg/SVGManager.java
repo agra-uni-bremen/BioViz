@@ -8,6 +8,8 @@ import de.bioviz.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.bioviz.svg.SVGCoreCreator.generateID;
+
 import java.util.HashMap;
 
 /**
@@ -43,7 +45,7 @@ public class SVGManager {
 	int size = 60;
 	int fontSizeIds = 60;
 	Color fColor = Color.BLACK;
-	String fontColor = colorToSVG(fColor);
+	String fontColor = SVGCoreCreator.colorToSVG(fColor);
 
 	// hard coded colors
 	Color strokeColor = null; // means don't change svg stroke color
@@ -60,22 +62,10 @@ public class SVGManager {
 		return "scale(" + scaleFactor + " " + scaleFactor + ")";
 	}
 
-	/**
-	 * Converts a libGDX color to a SVG-usable format.
-	 *
-	 * What it basically does is to throw away the last to characters, i.e.
-	 * the alpha channel.
-	 *
-	 * @param c Color to transform
-	 * @return Color in format to be used by SVG
-	 */
-	String colorToSVG(final Color c) {
-		return c.toString().substring(0,6);
-	}
 
-	String generateID(final String baseName,final Color c) {
-		return baseName + "-" + colorToSVG(c);
-	}
+
+
+
 
 
 	/**

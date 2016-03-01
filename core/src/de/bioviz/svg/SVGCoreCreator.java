@@ -47,6 +47,30 @@ public class SVGCoreCreator {
 	public SVGCoreCreator() {
 	}
 
+
+	/**
+	 * Converts a libGDX color to a SVG-usable format.
+	 *
+	 * What it basically does is to throw away the last to characters, i.e.
+	 * the alpha channel.
+	 *
+	 * @param c Color to transform
+	 * @return Color in format to be used by SVG
+	 */
+	public static String colorToSVG(final Color c) {
+		return c.toString().substring(0,6);
+	}
+
+	/**
+	 * Creates an ID consisting of a base part and the given color.
+	 * @param baseName The part of thename in front of the '-'
+	 * @param c The color that will be put after the '-'
+	 * @return "<baseName>-<color>"
+	 */
+	public static String generateID(final String baseName,final Color c) {
+		return baseName + "-" + SVGCoreCreator.colorToSVG(c);
+	}
+
 	/**
 	 * @param folder The name of the folder containing the theme, relative to the assets
 	 *               folder
@@ -118,15 +142,15 @@ public class SVGCoreCreator {
 			}
 
 			if(fillColor != null) {
-				logger.debug("[SVG] Changing fillColor to {}.", fillColor.toString().substring(0, 6));
+				logger.debug("[SVG] Changing fillColor to {}.", colorToSVG(fillColor));
 				// set new id for this node if there is a fillColor
 					if (group.getNodeType() == Node.ELEMENT_NODE) {
 						Element elem = (Element) group;
-						elem.setAttribute("id", type.toString() + "-" + fillColor.toString().substring(0, 6));
+						elem.setAttribute("id", generateID(type.toString(),fillColor));
 					}
 			}
 			if(strokeColor != null) {
-				logger.debug("[SVG] Changing strokeColor to {}.", strokeColor.toString().substring(0, 6));
+				logger.debug("[SVG] Changing strokeColor to {}.", colorToSVG(strokeColor));
 			}
 
 			if(fillColor != null || strokeColor != null) {
@@ -196,9 +220,9 @@ public class SVGCoreCreator {
 				for (String split : style.split(";")) {
 					String styleType = split.split(":")[0];
 					if (styleType.equals("fill") && fillColor != null) {
-						styleAfter += styleType + ":#" + fillColor.toString().substring(0, 6) + ";";
+						styleAfter += styleType + ":#" + colorToSVG(fillColor) + ";";
 					} else if (styleType.equals("stroke") && strokeColor != null) {
-						styleAfter += styleType + ":#" + strokeColor.toString().substring(0, 6) + ";";
+						styleAfter += styleType + ":#" + colorToSVG(strokeColor) + ";";
 					} else {
 						styleAfter += split + ";";
 					}
