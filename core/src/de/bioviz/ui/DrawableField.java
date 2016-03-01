@@ -389,7 +389,12 @@ public class DrawableField extends DrawableSprite {
 		this.addLOD(Float.MAX_VALUE, vals.getTexture());
 
 
-		setColor(vals.getColor());
+		
+		if (this.isHovered()) {
+			setColor(vals.getColor().add(0.2f, 0.2f, 0.2f, 0));
+		} else {
+			setColor(vals.getColor());			
+		}
 
 		super.draw();
 		
