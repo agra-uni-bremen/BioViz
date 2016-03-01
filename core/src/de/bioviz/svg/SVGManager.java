@@ -209,16 +209,21 @@ public class SVGManager {
 
 		DisplayValues vals = field.getDisplayValues();
 
+		String field_svg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
+				getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + vals.getColor().toString().substring(0,6) +
+				"\" />\n";
+
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
-		String msg = "<text text-anchor=\"middle\" x=\"" 	+ (xCoord+ coordinateMultiplier/2)
-				+ "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
-				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"#" + fontColor + "\">"
-				+ (vals.getMsg() == null ||vals.getMsg().isEmpty() ? "" : vals.getMsg()) + "</text>\n";
+		if(vals.getMsg() != null) {
+			String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord + coordinateMultiplier / 2)
+					+ "\" y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +
+					"\" font-family=\"" + font + "\" font-size=\"" + size + "\" fill=\"#" + fontColor + "\">"
+					+ vals.getMsg() + "</text>\n";
+			field_svg += msg;
+		}
 
-		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + vals.getColor().toString().substring(0,6) +
-			   "\" />\n" + msg;
+		return field_svg;
 	}
 
 	/**
@@ -236,21 +241,20 @@ public class SVGManager {
 		yCoord = ((int) yCoord) * coordinateMultiplier;
 		xCoord = ((int) xCoord) * coordinateMultiplier;
 
-		// check if dropletIds should be printed and set the id accordingly
-		String dropletID = drawableDrop.parentCircuit.displayOptions.getOption(BDisplayOptions.DropletIDs)
-				? String.valueOf(drawableDrop.droplet.getID()) : "";
-
-		String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord+ coordinateMultiplier/2)
-				+ "\" y=\"" + (yCoord+coordinateMultiplier/2+(size/2)) +
-				"\" font-family=\"" + font + "\" font-size=\""+ size + "\" fill=\"#" + fontColor + "\">"
-				+ (drawableDrop.getMsg() == null || drawableDrop.getMsg().isEmpty() ? dropletID : drawableDrop.getMsg()) + "</text>\n";
-
 		String route = toSVG(drawableDrop.route);
-		return
-				route
-						+ "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +	getScaleTransformation()
-						+ " xlink:href=\"#Droplet-" + drawableDrop.getColor().toString().substring(0,6) + "\" />\n"
-						+ msg;
+		String drop_shape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +	getScaleTransformation()
+				+ " xlink:href=\"#Droplet-" + drawableDrop.getColor().toString().substring(0,6) + "\" />\n";
+
+		String drop_svg = route + drop_shape;
+
+		if(drawableDrop.getMsg() != null) {
+			String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord + coordinateMultiplier / 2)
+					+ "\" y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +
+					"\" font-family=\"" + font + "\" font-size=\"" + size + "\" fill=\"#" + fontColor + "\">"
+					+ drawableDrop.getMsg() + "</text>\n";
+			drop_svg += msg;
+		}
+		return drop_svg;
 	}
 
 	private String toSVG(DrawableRoute drawableRoute) {
