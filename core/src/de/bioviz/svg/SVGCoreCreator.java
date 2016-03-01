@@ -33,7 +33,7 @@ import java.nio.file.Path;
 public class SVGCoreCreator {
 
 	/** logger */
-	private static Logger logger = LoggerFactory.getLogger(SVGCoreCreator.class);
+	private static final Logger logger = LoggerFactory.getLogger(SVGCoreCreator.class);
 
 	/** path of the svg core folder */
 	private String svgCoreFolder = "";
@@ -66,7 +66,7 @@ public class SVGCoreCreator {
 	 * @param type The type of the core.
 	 * @return
 	 */
-	public String getSVGCode(TextureE type) {
+	private String getSVGCode(TextureE type) {
 		String svgCoreFile = baseFolder + "/" + svgCoreFolder + "/" + type + ".plain.svg";
 
 		logger.debug("[SVG] Loading SVG core for {}", svgCoreFile);
@@ -93,7 +93,7 @@ public class SVGCoreCreator {
 	 */
 	public String getSVGCode(TextureE type, Color fillColor, Color strokeColor) {
 		String uncoloredCore = getSVGCode(type);
-		String coloredCore = "";
+		String coloredCore = uncoloredCore;
 
 		DocumentBuilderFactory factory =	DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
