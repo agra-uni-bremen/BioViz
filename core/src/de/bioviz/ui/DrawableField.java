@@ -151,6 +151,9 @@ public class DrawableField extends DrawableSprite {
 		inconsistant data. For example source/target IDs may interfere with a
 		detector ID. This is a real use case as a detector is a very valid
 		 routing target.
+
+		 There is an execption: the cell usage count overwrites any previous
+		 text. I really dislike this case by case hard coding  :/
 		 */
 		if (this.getField().isSink && option(SinkIcon)) {
 			texture = TextureE.Sink;
@@ -199,12 +202,13 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 		}
-		else if (option(CellUsageCount)) {
+
+		// NOTE the cell usage count *overwrites* any previous text!
+		if (option(CellUsageCount)) {
 			int usage = getField().usage;
 			if (usage > 0) {
 				fieldHUDMsg = Integer.toString(usage);
 			}
-
 		}
 
 
