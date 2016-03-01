@@ -45,6 +45,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
@@ -149,7 +150,6 @@ public class DesktopLauncher extends JFrame {
 	 * The slider to control the length of the displayed droplet routes.
 	 */
 	private JSlider displayRouteLengthSlider;
-
 	/**
 	 * The name that is displayed as the program name in the OS's UI.
 	 */
@@ -300,6 +300,14 @@ public class DesktopLauncher extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+
+
+		// This text was completely useless. I leave the code here as a
+		// reference on how to add labels with some kind
+		// of formatting.
+//		JLabel label = new JLabel("<html><body>Totally classic<br/>UI
+// elements<br/></body></html>");
+
 
 		final int buttonWidth = 112;
 		final int sliderWidth = buttonWidth;
@@ -623,6 +631,7 @@ public class DesktopLauncher extends JFrame {
 			System.out.println("Error setting up logger: "
 							   + je.getStackTrace());
 		}
+		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
 
 	}
 

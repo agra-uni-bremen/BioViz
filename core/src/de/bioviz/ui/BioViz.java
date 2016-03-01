@@ -446,13 +446,19 @@ public class BioViz implements ApplicationListener {
 	}
 
 	public void saveSVG(String path) {
+		spawnSVGManager();
+		logger.debug("[SVG] Within saveSVG(String) method");
+		logger.debug("[SVG] svgManager: {}",svgManager);
+
 		try {
 			String svg = svgManager.toSVG(currentCircuit);
+			logger.debug("[SVG] generated SVG: {}",svg);
 			FileHandle handle = Gdx.files.absolute(path);
+			logger.debug("[SVG] File handle for storing the SVG: {}",handle);
 			handle.writeString(svg, false);
-			logger.info("Stored SVG at {}", handle.path());
+			logger.info("[SVG] Stored SVG at {}", handle.path());
 		} catch (Exception e) {
-			logger.error("Could not store SVG: {}", e.getMessage());
+			logger.error("[SVG] Could not store SVG; exception message: {}", e);
 		}
 	}
 

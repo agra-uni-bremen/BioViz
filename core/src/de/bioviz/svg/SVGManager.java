@@ -1,16 +1,13 @@
 package de.bioviz.svg;
 
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Point;
 import de.bioviz.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 
 /**
@@ -26,7 +23,11 @@ public class SVGManager {
 
 	private static Logger logger = LoggerFactory.getLogger(SVGManager.class);
 
-	private HashMap<SVGE, String> svgs = new HashMap<>();
+	private SVGCoreCreator svgCoreCreator;
+
+	private HashMap<TextureE, String> svgs = new HashMap<>();
+	//private HashMap<ColoredCore, String> colSvgs = new HashMap<>();
+	private HashMap<String, String> colSvgs = new HashMap<>();
 
 
 	private String svgFolder;
@@ -39,9 +40,19 @@ public class SVGManager {
 	Warning: magic numbers ahead
 	 */
 
-	private final double scaleFactor = 0.04;
-	private final int coordinateMultiplier = 224;
+	private final double scaleFactor = 1;
+	private final int coordinateMultiplier = 256;
 
+	// font options
+	String font = "Helvetica";
+	int size = 60;
+	int fontSizeIds = 60;
+	Color fColor = Color.BLACK;
+	String fontColor = fColor.toString().substring(0,6);
+
+	// hard coded colors
+	Color strokeColor = null; // means don't change svg stroke color
+	Color stepMarkerColor = Color.BLACK;
 
 	public String getTransformation(String params) {
 		return " transform=\"" + params + "\" ";
@@ -65,7 +76,9 @@ public class SVGManager {
 	 * @warning The folder name must not begin or end with a slash!
 	 */
 	public SVGManager(String folder) {
-		setFolder(folder);
+		svgCoreCreator = new SVGCoreCreator();
+		svgCoreCreator.setFolder(folder);
+		createCores();
 	}
 
 	/**
@@ -76,9 +89,6 @@ public class SVGManager {
 	}
 
 	/**
-	 * @param folder
-	 * 		The name of the folder containing the theme, relative to the assets
-	 * 		folder
 	 * @brief Tells the manager where to find the svgs (i.e. .svg images).
 	 * <p>
 	 * The location is relative to the assets folder.
@@ -89,73 +99,97 @@ public class SVGManager {
 	 * specified in the TextureE enum
 	 * @warning The folder name must not begin or end with a slash!
 	 */
-	public void setFolder(String folder) {
+	public void createCores() {
 		svgs.clear();
 
-		svgFolder = folder;
-		for (SVGE s : SVGE.values()) {
+		for (TextureE s : TextureE.values()) {
 
 			// TODO Add BlackPixel svg!
-			if (s != SVGE.BlackPixel) {
-				String svgCoreFile = baseFolder + "/" + svgFolder + "/" +
-									 s +
-									 ".core";
-				logger.debug("Loading SVG core for {}", svgCoreFile);
-				Path svgCoreFilePath =
-						Gdx.files.internal(svgCoreFile).file().toPath();
-
-				try {
-					String svgCore =
-							new String(Files.readAllBytes(svgCoreFilePath));
-					svgs.put(s, svgCore);
-				} catch (IOException e) {
-					// TODO log if stuff goes wrong
-					e.printStackTrace();
-				}
-
+			if (s != TextureE.BlackPixel) {
+				svgs.put(s, svgCoreCreator.getSVGCode(s, null, null));
 			}
+
 		}
 	}
 
+	/**
+	 * Export the circuit to svg.
+	 *
+	 * @param circ The circuit to export
+	 * @return svg string representation
+	 */
 	public String toSVG(DrawableCircuit circ) {
+
+		logger.debug("[SVG] Creating all needed colored cores.");
+
+		for(DrawableField f : circ.fields){
+			String key = f.getDisplayValues().getTexture().toString() + "-" + f.getColor().toString().substring(0,6);
+			// don't create the svg core code twice
+			if(!colSvgs.containsKey(key)) {
+				colSvgs.put(key,
+						svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), strokeColor));
+			}
+		}
+		for(DrawableDroplet d : circ.droplets){
+			String key = "Droplet" + "-" + d.getColor().toString().substring(0,6);
+			// don't create the svg core code twice
+			if(!colSvgs.containsKey(key)) {
+				colSvgs.put(key,
+						svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
+			}
+		}
+		// TODO check if this could be done nicer
+		colSvgs.put("StepMarker" + "-" + Color.BLACK.toString().substring(0,6),
+				svgCoreCreator.getSVGCode(TextureE.StepMarker, stepMarkerColor, strokeColor));
+
+		logger.debug("[SVG] Done creating colored cores.");
+
+		logger.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
 
 		Point minCoord = circ.data.getMinCoord();
 		Point maxCoord = circ.data.getMaxCoord();
 
-
-//		sb.append(
-//				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-//				minCoord.fst + " " +
-//				(minCoord.snd - 1) + " " +
-//				(maxCoord.fst + 1) + " " +
-//				(maxCoord.snd + 1) +
-//				"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
-//				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
-
-		sb.append("<svg xmlns=\"http://www.w3.org/2000/svg\" " +
-				  "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
+		sb.append("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+						"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
+						"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
+				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
+						(minCoord.fst) * coordinateMultiplier + " " +
+						(minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1)) * coordinateMultiplier + " " +
+						(minCoord.fst == 0 ? (maxCoord.fst + 1) : maxCoord.fst) * coordinateMultiplier + " " +
+						(minCoord.snd == 0 ? (maxCoord.snd + 1) : maxCoord.snd) * coordinateMultiplier +
+						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
+						"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
+		//logger.debug("svgs: {}",svgs);
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
+		colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
 
 		for (DrawableField field : circ.fields) {
 			sb.append(toSVG(field));
 		}
 		for (DrawableDroplet drop : circ.droplets) {
-			sb.append(toSVG(drop));
+			if(drop.getDisplayColor().a > 0.1f && !circ.hiddenDroplets.contains(drop)) {
+				sb.append(toSVG(drop));
+			}
 		}
 
-
-		sb.append("</g>\n");
+		//sb.append("</g>\n");
 		sb.append("</svg>\n");
 
 		return sb.toString();
 	}
 
+	/**
+	 * Exports a drawableField to svg.
+	 *
+	 * @param field The field to export
+	 * @return svg string representation of a field
+	 */
 	private String toSVG(DrawableField field) {
 		// why would we need to acces " (-this.field.y + BioViz.singleton
 		// .currentCircuit.data.field[0].length - 1)"?
@@ -174,12 +208,30 @@ public class SVGManager {
 		xCoord = xCoord * coordinateMultiplier;
 
 		DisplayValues vals = field.getDisplayValues();
-		logger.debug("Color: {}", vals.getColor());
-		return "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-			   getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() +
-			   "\" />\n";
+
+		String field_svg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
+				getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() + "-" + vals.getColor().toString().substring(0,6) +
+				"\" />\n";
+
+		// create the msg text for the svg
+		// use the text-anchor middle to get a centered position
+		if(vals.getMsg() != null) {
+			String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord + coordinateMultiplier / 2)
+					+ "\" y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +
+					"\" font-family=\"" + font + "\" font-size=\"" + size + "\" fill=\"#" + fontColor + "\">"
+					+ vals.getMsg() + "</text>\n";
+			field_svg += msg;
+		}
+
+		return field_svg;
 	}
 
+	/**
+	 * Export drawableDroplets as svg.
+	 *
+	 * @param drawableDrop The drawableDroplet to export
+	 * @return svg string representation of the drop
+	 */
 	private String toSVG(DrawableDroplet drawableDrop) {
 		float yCoord = -drawableDrop.droplet.smoothY +
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
@@ -189,24 +241,31 @@ public class SVGManager {
 		yCoord = ((int) yCoord) * coordinateMultiplier;
 		xCoord = ((int) xCoord) * coordinateMultiplier;
 
-
 		String route = toSVG(drawableDrop.route);
-		return
-				"<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +
-				getScaleTransformation() + " xlink:href=\"#Droplet\" />\n" +
-				route;
+		String drop_shape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +	getScaleTransformation()
+				+ " xlink:href=\"#Droplet-" + drawableDrop.getColor().toString().substring(0,6) + "\" />\n";
+
+		String drop_svg = route + drop_shape;
+
+		if(drawableDrop.getMsg() != null) {
+			String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord + coordinateMultiplier / 2)
+					+ "\" y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +
+					"\" font-family=\"" + font + "\" font-size=\"" + size + "\" fill=\"#" + fontColor + "\">"
+					+ drawableDrop.getMsg() + "</text>\n";
+			drop_svg += msg;
+		}
+		return drop_svg;
 	}
 
 	private String toSVG(DrawableRoute drawableRoute) {
 		StringBuilder sb = new StringBuilder();
 
-
 		DrawableDroplet droplet = drawableRoute.droplet;
 
-		int currentTime = droplet.parentCircuit.currentTime;
+		int currentTime = droplet.droplet.getSpawnTime();
 		int displayAt;
 
-		int displayLength = drawableRoute.routeDisplayLength;
+		int displayLength = DrawableRoute.routeDisplayLength;
 
 		Biochip circ = droplet.parentCircuit.data;
 
@@ -223,10 +282,8 @@ public class SVGManager {
 
 			logger.debug("i: {}", i);
 
-
 			// TODO possible problem here due to casting
 			float alpha = 1 - (Math.abs((float) i) / ((float) displayLength));
-
 
 			displayAt = currentTime + i;
 
@@ -237,48 +294,46 @@ public class SVGManager {
 
 			logger.debug("p1 {}; p2 {}", p1, p2);
 
-			int x1 = p1.fst*coordinateMultiplier;
-			int x2 = p2.fst*coordinateMultiplier;
-			int y1 = p1.snd*coordinateMultiplier;
-			int y2 = p2.snd*coordinateMultiplier;
+			if(p1!=null && p2!=null) {
+				int x1 = p1.fst * coordinateMultiplier;
+				int x2 = p2.fst * coordinateMultiplier;
+				int y1 = (-p1.snd + circ.getMaxCoord().snd) * coordinateMultiplier;
+				int y2 = (-p2.snd + circ.getMaxCoord().snd) * coordinateMultiplier;
 
-			float targetX = x1 + (0.5f*coordinateMultiplier);
-			float targetY = -y1 + (circ.getMaxCoord().snd - 1)*coordinateMultiplier;
+				float targetX = x1 + (0.5f * coordinateMultiplier);
+				float targetY = y1;
 
-			String position = " x=\"" + targetX + "\" y=\"" + targetY + "\" ";
-			String widthHeight = " width=\"1\" height=\"1\" ";
-			String transFormParams = getScale();
-			String opacity = " opacity=\"" + alpha + "\" ";
-			boolean app = true;
+				String position = " x=\"" + targetX + "\" y=\"" + targetY + "\" ";
+				String widthHeight = " width=\"1\" height=\"1\" ";
+				String transFormParams = getScale();
+				String opacity = " opacity=\"" + alpha + "\" ";
+				boolean app = true;
 
-			if (y1 == y2 && x2 > x1) {
-				// intentionally do nothing here
-			}
-			else if (y1 == y2 && x2 < x1) {
-				transFormParams +=
-						" rotate(180 " + targetX + " " + (targetY + 0.5f) +
-						") ";
-			}
-			else if (x1 == x2 && y2 > y1) {
-				transFormParams +=
-						" rotate(270 " + targetX + " " + (targetY + 0.5f) +
-						") ";
-			}
-			else if (x1 == x2 && y2 < y1) {
-				transFormParams +=
-						"rotate(90 " + targetX + " " + (targetY + 0.5f) + ") ";
-			}
-			else {
-				app = false;
-			}
-			if (app) {
-				sb.append("<use");
-				sb.append(position);
-				sb.append(widthHeight);
-				sb.append(getTransformation(transFormParams));
-				sb.append(opacity);
-				sb.append("xlink:href=\"#StepMarker\"");
-				sb.append(" />\n");
+				if (y1 == y2 && x2 > x1) {
+					// intentionally do nothing here
+				} else if (y1 == y2 && x2 < x1) {
+					transFormParams +=
+							" rotate(180 " + targetX + " " + (targetY + 0.5f * coordinateMultiplier) +
+									") ";
+				} else if (x1 == x2 && y2 > y1) {
+					transFormParams +=
+							" rotate(90 " + targetX + " " + (targetY + 0.5f * coordinateMultiplier) +
+									") ";
+				} else if (x1 == x2 && y2 < y1) {
+					transFormParams +=
+							"rotate(270 " + targetX + " " + (targetY + 0.5f * coordinateMultiplier) + ") ";
+				} else {
+					app = false;
+				}
+				if (app) {
+					sb.append("<use");
+					sb.append(position);
+					sb.append(widthHeight);
+					sb.append(getTransformation(transFormParams));
+					sb.append(opacity);
+					sb.append("xlink:href=\"#StepMarker-" + stepMarkerColor.toString().substring(0,6) +"\"");
+					sb.append(" />\n");
+				}
 			}
 		}
 		return sb.toString();
