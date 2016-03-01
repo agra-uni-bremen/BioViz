@@ -273,7 +273,7 @@ public class DesktopLauncher extends JFrame {
 		BDisplayOptions[] enumValues = BDisplayOptions.values();
 		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
 			public int compare(BDisplayOptions left, BDisplayOptions right){
-		        return left.toString().compareTo(right.toString()); //use your criteria here
+		        return left.description().compareTo(right.description()); //use your criteria here
 		    }
 		});
 		for (BDisplayOptions option : enumValues) {
