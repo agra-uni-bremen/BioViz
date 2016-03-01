@@ -28,7 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * @author Maximilian Luenert
+ * @author malu
  */
 public class SVGCoreCreator {
 

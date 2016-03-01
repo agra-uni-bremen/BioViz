@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 
 /**
- * @author Oliver Keszöcze
+ * @author keszocze
  * @brief Texture cache class.
  * <p>
  * This class manages texture themes. One can specify a folder in which the png
@@ -52,7 +52,6 @@ public class SVGManager {
 
 	// hard coded colors
 	Color strokeColor = null; // means don't change svg stroke color
-	Color stepMarkerColor = Color.BLACK;
 
 	public String getTransformation(String params) {
 		return " transform=\"" + params + "\" ";
@@ -131,16 +130,24 @@ public class SVGManager {
 			}
 		}
 		for(DrawableDroplet d : circ.droplets){
+			// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
 			String key = "Droplet" + "-" + d.getColor().toString().substring(0,6);
 			// don't create the svg core code twice
 			if(!colSvgs.containsKey(key)) {
 				colSvgs.put(key,
 						svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
 			}
+
+			if (d.route != null) {
+				Color routeColor = d.route.getColor();
+				key = "StepMarker"+"-"+routeColor.toString().substring(0,6);
+				if (!colSvgs.containsKey(key)) {
+					colSvgs.put(key,
+								svgCoreCreator.getSVGCode(TextureE.StepMarker, routeColor, strokeColor));
+				}
+			}
 		}
-		// TODO check if this could be done nicer
-		colSvgs.put("StepMarker" + "-" + Color.BLACK.toString().substring(0,6),
-				svgCoreCreator.getSVGCode(TextureE.StepMarker, stepMarkerColor, strokeColor));
+
 
 		logger.debug("[SVG] Done creating colored cores.");
 
@@ -269,6 +276,8 @@ public class SVGManager {
 
 		Biochip circ = droplet.parentCircuit.data;
 
+		Color routeColor = drawableRoute.getColor();
+
 		/*
 		The prevoius code did some weird stuff here. The new rationale is
 		that we go from the currentTime either as long as there actually
@@ -331,8 +340,9 @@ public class SVGManager {
 					sb.append(widthHeight);
 					sb.append(getTransformation(transFormParams));
 					sb.append(opacity);
-					sb.append("xlink:href=\"#StepMarker-" + stepMarkerColor.toString().substring(0,6) +"\"");
+					sb.append("xlink:href=\"#StepMarker-" + routeColor.toString().substring(0,6) +"\"");
 					sb.append(" />\n");
+					logger.debug("[SVG] StepMarker color: {}",routeColor);
 				}
 			}
 		}
