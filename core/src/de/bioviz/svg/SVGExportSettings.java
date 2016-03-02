@@ -5,7 +5,7 @@ package de.bioviz.svg;
  *
  * Stores the export settings for the svg export.
  */
-public class SVGExportSettings {
+public final class SVGExportSettings {
 	/** static svgExportSettings instance. */
 	private static SVGExportSettings instance = null;
 
@@ -17,21 +17,21 @@ public class SVGExportSettings {
 	private boolean exportSeries = false;
 
 	/**
+	 * private constructor.
+	 */
+	private SVGExportSettings() {
+	}
+
+	/**
 	 * Get an instance of the svgExportSettings.
 	 *
 	 * @return the static instance
 	 */
-	public static SVGExportSettings getInstance(){
-		if(instance == null){
+	public static SVGExportSettings getInstance() {
+		if (instance == null) {
 			instance = new SVGExportSettings();
 		}
 		return instance;
-	}
-
-	/**
-	 * private constructor.
-	 */
-	private SVGExportSettings(){
 	}
 
 	/**
@@ -43,10 +43,10 @@ public class SVGExportSettings {
 	}
 
 	/**
-	 * setter for colorFullExport.
-	 * @param colorFullExport new value for colorFullExport
+	 * setter for colorfulExport.
+	 * @param colorfulExport new value for colorfulExport
 	 */
-	public void setColorfulExport(boolean colorfulExport) {
+	public void setColorfulExport(final boolean colorfulExport) {
 		this.colorfulExport = colorfulExport;
 	}
 
@@ -62,7 +62,7 @@ public class SVGExportSettings {
 	 * setter for informationString.
 	 * @param informationString new value for informationString
 	 */
-	public void setInformationString(boolean informationString) {
+	public void setInformationString(final boolean informationString) {
 		this.informationString = informationString;
 	}
 
@@ -78,7 +78,7 @@ public class SVGExportSettings {
 	 * setter for exportSeries.
 	 * @param exportSeries new value for exportSeries
 	 */
-	public void setExportSeries(boolean exportSeries) {
+	public void setExportSeries(final boolean exportSeries) {
 		this.exportSeries = exportSeries;
 	}
 }

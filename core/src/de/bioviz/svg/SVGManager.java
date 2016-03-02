@@ -78,6 +78,29 @@ public class SVGManager {
 	private final Color stepMarkerColor = Color.BLACK;
 
 	/**
+	 * SVGManager loading the default theme.
+	 */
+	public SVGManager() {
+		this("default");
+	}
+
+	/**
+	 * SVGManager loading the theme at the specified location.
+	 *
+	 * @param folder
+	 * 		The name of the folder containing the theme, relative to the assets
+	 * 		folder
+	 * <p>
+	 * The location is relative to the assets folder.
+	 * @warning The folder name must not begin or end with a slash!
+	 */
+	public SVGManager(final String folder) {
+		svgCoreCreator = new SVGCoreCreator();
+		svgCoreCreator.setFolder(folder);
+		createCores();
+	}
+
+	/**
 	 * creates a string for an svg transform.
 	 *
 	 * @param params the transformation params
@@ -102,29 +125,6 @@ public class SVGManager {
 	 */
 	public String getScale() {
 		return "scale(" + scaleFactor + " " + scaleFactor + ")";
-	}
-
-	/**
-	 * SVGManager loading the theme at the specified location.
-	 *
-	 * @param folder
-	 * 		The name of the folder containing the theme, relative to the assets
-	 * 		folder
-	 * <p>
-	 * The location is relative to the assets folder.
-	 * @warning The folder name must not begin or end with a slash!
-	 */
-	public SVGManager(final String folder) {
-		svgCoreCreator = new SVGCoreCreator();
-		svgCoreCreator.setFolder(folder);
-		createCores();
-	}
-
-	/**
-	 * SVGManager loading the default theme.
-	 */
-	public SVGManager() {
-		this("default");
 	}
 
 	/**
@@ -398,14 +398,18 @@ public class SVGManager {
 	}
 
 	/**
+	 * Returns names containing base and color.
 	 *
-	 * @param base
-	 * @param color
-	 * @return
+	 * If the colorfulExport is activated it combines the strings base and
+	 * color with a '-' otherwise the color is ignored
+	 *
+	 * @param base basename
+	 * @param color color
+	 * @return the created name
 	 */
-	private String createColoredName(String base, Color color){
+	private String createColoredName(final String base, final Color color) {
 		if (svgExportSettings.getColorfulExport()) {
-			return base + "-" + color.toString().substring(0,colorDigits);
+			return base + "-" + color.toString().substring(0, colorDigits);
 		} else {
 			return base;
 		}
