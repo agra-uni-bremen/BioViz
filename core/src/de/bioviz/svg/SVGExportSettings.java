@@ -10,7 +10,7 @@ public class SVGExportSettings {
 	private static SVGExportSettings instance = null;
 
 	/** export colored svg. */
-	private boolean colorFullExport = false;
+	private boolean colorfulExport = false;
 	/** export with information string. */
 	private boolean informationString = false;
 	/** export series of images for the entirety of the experiment. */
@@ -35,19 +35,19 @@ public class SVGExportSettings {
 	}
 
 	/**
-	 * getter for colorFullExport.
-	 * @return value of colorFullExport
+	 * getter for colorfulExport.
+	 * @return value of colorfulExport
 	 */
-	public boolean getColorFullExport() {
-		return colorFullExport;
+	public boolean getColorfulExport() {
+		return colorfulExport;
 	}
 
 	/**
 	 * setter for colorFullExport.
 	 * @param colorFullExport new value for colorFullExport
 	 */
-	public void setColorFullExport(boolean colorFullExport) {
-		this.colorFullExport = colorFullExport;
+	public void setColorfulExport(boolean colorfulExport) {
+		this.colorfulExport = colorfulExport;
 	}
 
 	/**

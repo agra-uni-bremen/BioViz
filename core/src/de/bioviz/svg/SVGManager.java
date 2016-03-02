@@ -158,7 +158,7 @@ public class SVGManager {
 	 */
 	public String toSVG(final DrawableCircuit circ) {
 
-		if (svgExportSettings.getColorFullExport()) {
+		if (svgExportSettings.getColorfulExport()) {
 			LOGGER.debug("[SVG] Creating all needed colored cores.");
 
 			for (final DrawableField f : circ.fields) {
@@ -211,7 +211,7 @@ public class SVGManager {
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
-		if (svgExportSettings.getColorFullExport()) {
+		if (svgExportSettings.getColorfulExport()) {
 			colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
 		}
 		sb.append("</defs>\n");
@@ -258,13 +258,8 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 
 		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-				getScaleTransformation() + " xlink:href=\"#" + vals.getTexture();
-
-		if (svgExportSettings.getColorFullExport()) {
-			fieldSvg += "-" + vals.getColor().toString().substring(0,6) + "\" />\n";
-		} else {
-			fieldSvg += "\" />\n";
-		}
+				getScaleTransformation() + " xlink:href=\"#" + createColoredName(vals
+				.getTexture().toString(), field.getColor()) + "\" />\n";
 
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
@@ -297,14 +292,9 @@ public class SVGManager {
 
 		String route = toSVG(drawableDrop.route);
 		String dropShape = "<use x=\"" + xCoord + "\" " + "y=\"" +
-				yCoord + "\"" +	getScaleTransformation() + " xlink:href=\"#Droplet";
-
-		if (svgExportSettings.getColorFullExport()) {
-			dropShape += "-" + drawableDrop.getColor().toString().substring(0, colorDigits) +
-					"\" />\n";
-		} else {
-			dropShape += "\" />\n";
-		}
+				yCoord + "\"" +	getScaleTransformation() + " xlink:href=\"#" +
+				createColoredName("Droplet" , drawableDrop.getDisplayColor()) +
+		"\" />\n";
 
 		String dropSvg = route + dropShape;
 
@@ -398,16 +388,26 @@ public class SVGManager {
 					sb.append(widthHeight);
 					sb.append(getTransformation(transFormParams));
 					sb.append(opacity);
-					sb.append("xlink:href=\"#StepMarker");
-					if(svgExportSettings.getColorFullExport()){
-						sb.append("-" + stepMarkerColor.toString().substring(0,
-								colorDigits));
-					}
-					sb.append("\"");
+					sb.append("xlink:href=\"#" + createColoredName("StepMarker",
+							stepMarkerColor) + "\"");
 					sb.append(" />\n");
 				}
 			}
 		}
 		return sb.toString();
+	}
+
+	/**
+	 *
+	 * @param base
+	 * @param color
+	 * @return
+	 */
+	private String createColoredName(String base, Color color){
+		if (svgExportSettings.getColorfulExport()) {
+			return base + "-" + color.toString().substring(0,colorDigits);
+		} else {
+			return base;
+		}
 	}
 }
