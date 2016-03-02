@@ -4,75 +4,91 @@ package de.bioviz.svg;
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Point;
-import de.bioviz.ui.*;
+import de.bioviz.ui.DisplayValues;
+import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableDroplet;
+import de.bioviz.ui.DrawableField;
+import de.bioviz.ui.DrawableRoute;
+import de.bioviz.ui.TextureE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static de.bioviz.svg.SVGCoreCreator.generateID;
 
 import java.util.HashMap;
 
 /**
  * @author malu, keszocze
+ * Texture cache class.
+ * <p>
+ * This class manages texture themes. One can specify a folder in which the png
+ * files that are loaded as textures are stored. These images are thenn either
+ * loaded on demand or returned from the cache.
  */
 public class SVGManager {
 
+	/** svgExportSettings. */
+	private static SVGExportSettings svgExportSettings = SVGExportSettings
+			.getInstance();
 
-	private static Logger logger = LoggerFactory.getLogger(SVGManager.class);
+	/** logger. */
+	private static final Logger LOGGER = LoggerFactory.getLogger(
+			SVGManager.class);
 
+	/** svgCoreCreator. */
 	private SVGCoreCreator svgCoreCreator;
 
+	/** hashMap for uncolored svg elements. */
 	private HashMap<TextureE, String> svgs = new HashMap<>();
-	//private HashMap<ColoredCore, String> colSvgs = new HashMap<>();
+	/** hashMap for colored svg elements. */
 	private HashMap<String, String> colSvgs = new HashMap<>();
 
-
+	/** folder in which the svgs are. */
 	private String svgFolder;
 
-	// TODO currently unused; use it after Jannis finally accepts some merge
-	// requests
+	/** folder in which all images are. */
 	private final String baseFolder = "images";
 
 	/*
 	Warning: magic numbers ahead
 	 */
-
+	/** scaleFactor. */
 	private final double scaleFactor = 1;
+	/** size of one block in pixels. */
 	private final int coordinateMultiplier = 256;
 
 	// font options
-	String font = "Helvetica";
-	int size = 60;
-	int fontSizeIds = 60;
-	Color fColor = Color.BLACK;
-	String fontColor = SVGCoreCreator.colorToSVG(fColor);
-
-	// hard coded colors
-	Color strokeColor = null; // means don't change svg stroke color
-
-	public String getTransformation(String params) {
-		return " transform=\"" + params + "\" ";
-	}
-
-	public String getScaleTransformation() {
-		return getTransformation(getScale());
-	}
-
-	public String getScale() {
-		return "scale(" + scaleFactor + " " + scaleFactor + ")";
-	}
+	/** the font for the exported texts. */
+	private final String font = "Helvetica";
+	/** the font size for text. */
+	private final int size = 60;
+	/** the font size for ids. */
+	private final int fontSizeIds = 60;
 
 
+	/** the length of the color string without alpha. */
+	private final int colorDigits = 6;
+	/** font color. */
+	private final Color fColor = Color.BLACK;
+	/** color code as string without alpha. */
+	private final String fontColor = fColor.toString().substring(0, colorDigits);
 
-
-
-
+	/** hard coded stroke color. */
+	private final Color strokeColor = null; // means don't change svg stroke color
+	/** color for the stepMarkers. */
+	private final Color stepMarkerColor = Color.BLACK;
 
 	/**
+	 * SVGManager loading the default theme.
+	 */
+	public SVGManager() {
+		this("default");
+	}
+
+	/**
+	 * SVGManager loading the theme at the specified location.
+	 *
 	 * @param folder
 	 * 		The name of the folder containing the theme, relative to the assets
 	 * 		folder
-	 * @brief SVGManager loading the theme at the specified location.
 	 * <p>
 	 * The location is relative to the assets folder.
 	 * @warning The folder name must not begin or end with a slash!
@@ -84,14 +100,34 @@ public class SVGManager {
 	}
 
 	/**
-	 * @brief SVGManager loading the default theme
+	 * creates a string for an svg transform.
+	 *
+	 * @param params the transformation params
+	 * @return a string for an svg transform
 	 */
-	public SVGManager() {
-		this("default");
+	public String getTransformation(final String params) {
+		return " transform=\"" + params + "\" ";
 	}
 
 	/**
-	 * @brief Tells the manager where to find the svgs (i.e. .svg images).
+	 * creates a transformation with the scale factor.
+	 *
+	 * @return a string with a svg scaling transformation
+	 */
+	public String getScaleTransformation() {
+		return getTransformation(getScale());
+	}
+
+	/**
+	 * creates a svg scaling string.
+	 * @return a string for an svg scaling operation
+	 */
+	public String getScale() {
+		return "scale(" + scaleFactor + " " + scaleFactor + ")";
+	}
+
+	/**
+	 * Tells the manager where to find the svgs (i.e. .svg images).
 	 * <p>
 	 * The location is relative to the assets folder.
 	 * <p>
@@ -104,13 +140,26 @@ public class SVGManager {
 	public void createCores() {
 		svgs.clear();
 
-		for (TextureE s : TextureE.values()) {
+		for (final TextureE s : TextureE.values()) {
 
-			// TODO Add BlackPixel svg!
 			if (s != TextureE.BlackPixel) {
 				svgs.put(s, svgCoreCreator.getSVGCode(s, null, null));
 			}
 
+		}
+	}
+
+	/**
+	 * Creates an ID consisting of a base part and the given color.
+	 * @param baseName The part of thename in front of the '-'
+	 * @param c The color that will be put after the '-'
+	 * @return "<baseName>-<color>"
+	 */
+	public static String generateColoredID(final String baseName,final Color c) {
+		if(svgExportSettings.getColorfulExport()) {
+			return baseName + "-" + SVGCoreCreator.colorToSVG(c);
+		} else {
+			return baseName;
 		}
 	}
 
@@ -122,39 +171,42 @@ public class SVGManager {
 	 */
 	public String toSVG(final DrawableCircuit circ) {
 
-		logger.debug("[SVG] Creating all needed colored cores.");
+		if (svgExportSettings.getColorfulExport()) {
+			LOGGER.debug("[SVG] Creating all needed colored cores.");
 
-		for(DrawableField f : circ.fields){
-			String 	key = generateID(f.getDisplayValues().getTexture().toString(),f.getColor());
-			// don't create the svg core code twice
-			if(!colSvgs.containsKey(key)) {
-				colSvgs.put(key,
-						svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), strokeColor));
-			}
-		}
-		for(DrawableDroplet d : circ.droplets){
-			// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
-			String key = generateID("Droplet",d.getColor());
-			// don't create the svg core code twice
-			if(!colSvgs.containsKey(key)) {
-				colSvgs.put(key,
-						svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
-			}
-
-			if (d.route != null) {
-				Color routeColor = d.route.getColor();
-				key = generateID("StepMarker",routeColor);
+			for(final DrawableField f : circ.fields){
+				String 	key = generateColoredID(f.getDisplayValues().getTexture()
+						.toString(),f.getColor());
+				// don't create the svg core code twice
 				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
-								svgCoreCreator.getSVGCode(TextureE.StepMarker, routeColor, strokeColor));
+							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), strokeColor));
 				}
 			}
+			for(final DrawableDroplet d : circ.droplets){
+				// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
+				String key = generateColoredID("Droplet",d.getColor());
+				// don't create the svg core code twice
+				if (!colSvgs.containsKey(key)) {
+					colSvgs.put(key,
+							svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
+				}
+
+				if (d.route != null) {
+					Color routeColor = d.route.getColor();
+					key = generateColoredID("StepMarker",routeColor);
+					if (!colSvgs.containsKey(key)) {
+						colSvgs.put(key,
+									svgCoreCreator.getSVGCode(TextureE.StepMarker, routeColor, strokeColor));
+					}
+				}
+			}
+
+
+			LOGGER.debug("[SVG] Done creating colored cores.");
 		}
 
-
-		logger.debug("[SVG] Done creating colored cores.");
-
-		logger.debug("[SVG] Starting to create SVG String");
+		LOGGER.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
 
 		Point minCoord = circ.data.getMinCoord();
@@ -174,16 +226,18 @@ public class SVGManager {
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
-		//logger.debug("svgs: {}",svgs);
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
-		colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
+		if (svgExportSettings.getColorfulExport()) {
+			colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
+		}
 		sb.append("</defs>\n");
 
-		for (DrawableField field : circ.fields) {
+		for (final DrawableField field : circ.fields) {
 			sb.append(toSVG(field));
 		}
-		for (DrawableDroplet drop : circ.droplets) {
-			if(drop.getDisplayColor().a > 0.1f && !circ.hiddenDroplets.contains(drop)) {
+		for (final DrawableDroplet drop : circ.droplets) {
+			if (drop.getDisplayColor().a > 0.1f &&
+					!circ.hiddenDroplets.contains(drop)) {
 				sb.append(toSVG(drop));
 			}
 		}
@@ -219,22 +273,25 @@ public class SVGManager {
 
 		DisplayValues vals = field.getDisplayValues();
 
-		String fieldID = generateID(vals.getTexture().toString(),vals.getColor());
-		String field_svg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
+
+		String fieldID = generateColoredID(vals.getTexture().toString(),vals
+				.getColor());
+		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
 						   "\" />\n";
 
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
-		if(vals.getMsg() != null) {
-			String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord + coordinateMultiplier / 2)
-					+ "\" y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +
-					"\" font-family=\"" + font + "\" font-size=\"" + size + "\" fill=\"#" + fontColor + "\">"
-					+ vals.getMsg() + "</text>\n";
-			field_svg += msg;
+		if (vals.getMsg() != null) {
+			String msg = "<text text-anchor=\"middle\" x=\"" +
+					(xCoord + coordinateMultiplier / 2)	+ "\" y=\"" +
+					(yCoord + coordinateMultiplier / 2 + (size / 2)) +
+					"\" font-family=\"" + font + "\" font-size=\"" + size +
+					"\" fill=\"#" + fontColor + "\">"	+ vals.getMsg() + "</text>\n";
+			fieldSvg += msg;
 		}
 
-		return field_svg;
+		return fieldSvg;
 	}
 
 	/**
@@ -248,25 +305,27 @@ public class SVGManager {
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
 		float xCoord = drawableDrop.droplet.smoothX;
 
-		logger.debug("(x,y) = ({},{})", yCoord, xCoord);
+		LOGGER.debug("(x,y) = ({},{})", yCoord, xCoord);
 		yCoord = ((int) yCoord) * coordinateMultiplier;
 		xCoord = ((int) xCoord) * coordinateMultiplier;
 
 		String route = toSVG(drawableDrop.route);
-		String dropletID = generateID("Droplet",drawableDrop.getColor());
-		String drop_shape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" + getScaleTransformation()
+
+		String dropletID = generateColoredID("Droplet",drawableDrop.getColor());
+		String dropShape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\""
+				+ getScaleTransformation()
 							+ " xlink:href=\"#" + dropletID + "\" />\n";
 
-		String drop_svg = route + drop_shape;
+		String dropSvg = route + dropShape;
 
-		if(drawableDrop.getMsg() != null) {
+		if (drawableDrop.getMsg() != null) {
 			String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord + coordinateMultiplier / 2)
 					+ "\" y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +
 					"\" font-family=\"" + font + "\" font-size=\"" + size + "\" fill=\"#" + fontColor + "\">"
 					+ drawableDrop.getMsg() + "</text>\n";
-			drop_svg += msg;
+			dropSvg += msg;
 		}
-		return drop_svg;
+		return dropSvg;
 	}
 
 	/**
@@ -300,25 +359,25 @@ public class SVGManager {
 		route, whatever happens first.
 		 */
 		int nSteps = Math.min(displayLength, circ.getMaxT()) - 1;
-		logger.debug("nSteps: {}", nSteps);
+		LOGGER.debug("nSteps: {}", nSteps);
 
-		for (int i = 0; i < nSteps; i++) {
+		for (int i = 0; i < nSteps; ++i) {
 
-			logger.debug("i: {}", i);
+			LOGGER.debug("i: {}", i);
 
 			// TODO possible problem here due to casting
 			float alpha = 1 - (Math.abs((float) i) / ((float) displayLength));
 
 			displayAt = currentTime + i;
 
-			logger.debug("displayAt {}", displayAt);
+			LOGGER.debug("displayAt {}", displayAt);
 
 			Point p1 = droplet.droplet.getPositionAt(displayAt);
 			Point p2 = droplet.droplet.getPositionAt(displayAt + 1);
 
-			logger.debug("p1 {}; p2 {}", p1, p2);
+			LOGGER.debug("p1 {}; p2 {}", p1, p2);
 
-			if(p1!=null && p2!=null) {
+			if (p1 != null && p2 != null) {
 				int x1 = p1.fst * coordinateMultiplier;
 				int x2 = p2.fst * coordinateMultiplier;
 				int y1 = (-p1.snd + circ.getMaxCoord().snd) * coordinateMultiplier;
@@ -333,24 +392,25 @@ public class SVGManager {
 				String opacity = " opacity=\"" + alpha + "\" ";
 				boolean app = true;
 
-				if (y1 == y2 && x2 > x1) {
-					// intentionally do nothing here
+				if (x1 < x2 && y1 == y2){
+					//intentionally do nothing here
 				} else if (y1 == y2 && x2 < x1) {
 					transFormParams +=
-							" rotate(180 " + targetX + " " + (targetY + 0.5f * coordinateMultiplier) +
-									") ";
+							" rotate(180 " + targetX + " " +
+									(targetY + 0.5f * coordinateMultiplier) +	") ";
 				} else if (x1 == x2 && y2 > y1) {
 					transFormParams +=
-							" rotate(90 " + targetX + " " + (targetY + 0.5f * coordinateMultiplier) +
-									") ";
+							" rotate(90 " + targetX + " " +
+									(targetY + 0.5f * coordinateMultiplier) +	") ";
 				} else if (x1 == x2 && y2 < y1) {
 					transFormParams +=
-							"rotate(270 " + targetX + " " + (targetY + 0.5f * coordinateMultiplier) + ") ";
+							"rotate(270 " + targetX + " " +
+									(targetY + 0.5f * coordinateMultiplier) + ") ";
 				} else {
 					app = false;
 				}
 				if (app) {
-					String routeID = generateID("StepMarker",routeColor);
+					String routeID = generateColoredID("StepMarker", routeColor);
 					sb.append("<use");
 					sb.append(position);
 					sb.append(widthHeight);
@@ -358,7 +418,7 @@ public class SVGManager {
 					sb.append(opacity);
 					sb.append("xlink:href=\"#" + routeID + "\"");
 					sb.append(" />\n");
-					logger.debug("[SVG] StepMarker color: {}",routeColor);
+					LOGGER.debug("[SVG] StepMarker color: {}", routeColor);
 				}
 			}
 		}
