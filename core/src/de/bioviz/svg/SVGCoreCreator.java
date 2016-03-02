@@ -33,7 +33,7 @@ import java.nio.file.Path;
 public class SVGCoreCreator {
 
 	/** logger. */
-	private static final Logger logger =
+	private static final Logger LOGGER =
 			LoggerFactory.getLogger(SVGCoreCreator.class);
 
 	/** path of the svg core folder. */
@@ -42,8 +42,8 @@ public class SVGCoreCreator {
 	/** path of the image folder. */
 	private String baseFolder = "images";
 
-	/** the length of the color string without alpha */
-	private final int COLOR_DIGITS = 6;
+	/** the length of the color string without alpha. */
+	private final int colorDigits = 6;
 
 	/**
 	 * Creates a new SVGCoreCreator.
@@ -74,7 +74,7 @@ public class SVGCoreCreator {
 		String svgCoreFile =
 				baseFolder + "/" + svgCoreFolder + "/" + type + ".plain.svg";
 
-		logger.debug("[SVG] Loading SVG core for {}", svgCoreFile);
+		LOGGER.debug("[SVG] Loading SVG core for {}", svgCoreFile);
 
 		Path svgCoreFilePath = Gdx.files.internal(svgCoreFile).file().toPath();
 		String svgCore = "";
@@ -119,23 +119,23 @@ public class SVGCoreCreator {
 			if (gList.getLength() > 0) {
 				group = gList.item(0);
 			} else {
-				logger.debug("[SVG] There was no group in the svg code.");
+				LOGGER.debug("[SVG] There was no group in the svg code.");
 				return "";
 			}
 
 			if (fillColor != null) {
-				logger.debug("[SVG] Changing fillColor to {}.",
-						fillColor.toString().substring(0, COLOR_DIGITS));
+				LOGGER.debug("[SVG] Changing fillColor to {}.",
+						fillColor.toString().substring(0, colorDigits));
 				// set new id for this node if there is a fillColor
 					if (group.getNodeType() == Node.ELEMENT_NODE) {
 						Element elem = (Element) group;
 						elem.setAttribute("id", type.toString() + "-" +
-								fillColor.toString().substring(0, COLOR_DIGITS));
+								fillColor.toString().substring(0, colorDigits));
 					}
 			}
 			if (strokeColor != null) {
-				logger.debug("[SVG] Changing strokeColor to {}.",
-						strokeColor.toString().substring(0, COLOR_DIGITS));
+				LOGGER.debug("[SVG] Changing strokeColor to {}.",
+						strokeColor.toString().substring(0, colorDigits));
 			}
 
 			if (fillColor != null || strokeColor != null) {
@@ -179,17 +179,17 @@ public class SVGCoreCreator {
 			coloredCore = getGroupFromDocument(doc);
 
 		} catch (final UnsupportedEncodingException e) {
-			logger.error("[SVG] XML uses unknown encoding.");
-			logger.error(e.getMessage());
+			LOGGER.error("[SVG] XML uses unknown encoding.");
+			LOGGER.error(e.getMessage());
 		} catch (final IOException e) {
-			logger.error("[SVG] Could not read the xml.");
-			logger.error(e.getMessage());
+			LOGGER.error("[SVG] Could not read the xml.");
+			LOGGER.error(e.getMessage());
 		} catch (final SAXException e) {
-			logger.error("[SVG] Error while parsing xml.");
-			logger.error(e.getMessage());
+			LOGGER.error("[SVG] Error while parsing xml.");
+			LOGGER.error(e.getMessage());
 		} catch (final ParserConfigurationException e) {
-			logger.error("[SVG] Error in xml parser configuration.");
-			logger.error(e.getMessage());
+			LOGGER.error("[SVG] Error in xml parser configuration.");
+			LOGGER.error(e.getMessage());
 		}
 
 		return coloredCore;
@@ -217,10 +217,10 @@ public class SVGCoreCreator {
 					String styleType = split.split(":")[0];
 					if ("fill".equals(styleType) && fillColor != null) {
 						styleAfter +=	styleType + ":#" +
-								fillColor.toString().substring(0, COLOR_DIGITS) + ";";
+								fillColor.toString().substring(0, colorDigits) + ";";
 					} else if ("stroke".equals(styleType) && strokeColor != null) {
 						styleAfter += styleType + ":#" +
-								strokeColor.toString().substring(0, COLOR_DIGITS) + ";";
+								strokeColor.toString().substring(0, colorDigits) + ";";
 					} else {
 						styleAfter += split + ";";
 					}
@@ -254,7 +254,7 @@ public class SVGCoreCreator {
 			StreamResult result = new StreamResult(writer);
 			transformer.transform(source, result);
 		} catch (final TransformerException e) {
-			logger.error("[SVG] Creating string from XML failed.");
+			LOGGER.error("[SVG] Creating string from XML failed.");
 			return null;
 		}
 
