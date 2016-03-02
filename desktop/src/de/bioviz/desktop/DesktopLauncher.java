@@ -591,8 +591,8 @@ public class DesktopLauncher extends JFrame {
 			choice = fileDialog.showSaveDialog(null);
 
 			svgExportSettings.setColorfulExport(exportColors.isSelected());
-			svgExportSettings.setExportSeries(exportInfoString.isSelected());
-			svgExportSettings.setInformationString(exportSeries.isSelected());
+			svgExportSettings.setExportSeries(exportSeries.isSelected());
+			svgExportSettings.setInformationString(exportInfoString.isSelected());
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
