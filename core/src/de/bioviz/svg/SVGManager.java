@@ -13,8 +13,6 @@ import de.bioviz.ui.TextureE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static de.bioviz.svg.SVGCoreCreator.generateID;
-
 import java.util.HashMap;
 
 /**
@@ -152,6 +150,20 @@ public class SVGManager {
 	}
 
 	/**
+	 * Creates an ID consisting of a base part and the given color.
+	 * @param baseName The part of thename in front of the '-'
+	 * @param c The color that will be put after the '-'
+	 * @return "<baseName>-<color>"
+	 */
+	public static String generateColoredID(final String baseName,final Color c) {
+		if(svgExportSettings.getColorfulExport()) {
+			return baseName + "-" + SVGCoreCreator.colorToSVG(c);
+		} else {
+			return baseName;
+		}
+	}
+
+	/**
 	 * Export the circuit to svg.
 	 *
 	 * @param circ The circuit to export
@@ -162,26 +174,27 @@ public class SVGManager {
 		if (svgExportSettings.getColorfulExport()) {
 			LOGGER.debug("[SVG] Creating all needed colored cores.");
 
-			for(DrawableField f : circ.fields){
-				String 	key = generateID(f.getDisplayValues().getTexture().toString(),f.getColor());
+			for(final DrawableField f : circ.fields){
+				String 	key = generateColoredID(f.getDisplayValues().getTexture()
+						.toString(),f.getColor());
 				// don't create the svg core code twice
-				if(!colSvgs.containsKey(key)) {
+				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
 							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), strokeColor));
 				}
 			}
-			for(DrawableDroplet d : circ.droplets){
+			for(final DrawableDroplet d : circ.droplets){
 				// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
-				String key = generateID("Droplet",d.getColor());
+				String key = generateColoredID("Droplet",d.getColor());
 				// don't create the svg core code twice
-				if(!colSvgs.containsKey(key)) {
+				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
 							svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
 				}
 
 				if (d.route != null) {
 					Color routeColor = d.route.getColor();
-					key = generateID("StepMarker",routeColor);
+					key = generateColoredID("StepMarker",routeColor);
 					if (!colSvgs.containsKey(key)) {
 						colSvgs.put(key,
 									svgCoreCreator.getSVGCode(TextureE.StepMarker, routeColor, strokeColor));
@@ -261,7 +274,8 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 
 
-		String fieldID = generateID(vals.getTexture().toString(),vals.getColor());
+		String fieldID = generateColoredID(vals.getTexture().toString(),vals
+				.getColor());
 		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
 						   "\" />\n";
@@ -297,14 +311,14 @@ public class SVGManager {
 
 		String route = toSVG(drawableDrop.route);
 
-		String dropletID = generateID("Droplet",drawableDrop.getColor());
+		String dropletID = generateColoredID("Droplet",drawableDrop.getColor());
 		String dropShape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\""
 				+ getScaleTransformation()
 							+ " xlink:href=\"#" + dropletID + "\" />\n";
 
 		String dropSvg = route + dropShape;
 
-		if(drawableDrop.getMsg() != null) {
+		if (drawableDrop.getMsg() != null) {
 			String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord + coordinateMultiplier / 2)
 					+ "\" y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +
 					"\" font-family=\"" + font + "\" font-size=\"" + size + "\" fill=\"#" + fontColor + "\">"
@@ -396,7 +410,7 @@ public class SVGManager {
 					app = false;
 				}
 				if (app) {
-					String routeID = generateID("StepMarker",routeColor);
+					String routeID = generateColoredID("StepMarker", routeColor);
 					sb.append("<use");
 					sb.append(position);
 					sb.append(widthHeight);
@@ -404,7 +418,7 @@ public class SVGManager {
 					sb.append(opacity);
 					sb.append("xlink:href=\"#" + routeID + "\"");
 					sb.append(" />\n");
-					LOGGER.debug("[SVG] StepMarker color: {}",routeColor);
+					LOGGER.debug("[SVG] StepMarker color: {}", routeColor);
 				}
 			}
 		}
