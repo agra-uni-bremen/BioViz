@@ -452,7 +452,7 @@ public class BioViz implements ApplicationListener {
 
 		try {
 			String svg = svgManager.toSVG(currentCircuit);
-			logger.debug("[SVG] generated SVG: {}",svg);
+			//logger.debug("[SVG] generated SVG: {}",svg);
 			FileHandle handle = Gdx.files.absolute(path);
 			logger.debug("[SVG] File handle for storing the SVG: {}",handle);
 			handle.writeString(svg, false);

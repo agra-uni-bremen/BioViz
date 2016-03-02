@@ -26,6 +26,23 @@ public class DrawableRoute extends DrawableSprite {
 		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 	}
 
+	/**
+	 * Returns the color used for drawingf the route.
+	 *
+	 * The color depends on the {@link BDisplayOptions} option ColorfulRoutes.
+	 * If it is set to true, the droplet's color is used instead of black.
+	 *
+	 * @return The color of the route
+	 */
+	public Color getColor() {
+		Color c = this.baseColor.cpy();
+		if (droplet.parentCircuit.displayOptions.getOption(
+				BDisplayOptions.ColorfulRoutes)) {
+			c = this.droplet.getColor().cpy();
+		}
+		return c;
+	}
+
 	@Override
 	public void draw() {
 		int currentTime = droplet.parentCircuit.currentTime;
@@ -42,11 +59,7 @@ public class DrawableRoute extends DrawableSprite {
 
 		for (int i = -stepsToUse; i < stepsToUse; i++) {
 
-			Color c = this.baseColor.cpy();
-			if (droplet.parentCircuit.displayOptions.getOption(
-					BDisplayOptions.ColorfulRoutes)) {
-				c = this.droplet.getColor().cpy();
-			}
+			Color c = getColor();
 
 			if (i >= 0) {
 				c.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));

@@ -28,7 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * @author Maximilian Luenert
+ * @author malu
  */
 public class SVGCoreCreator {
 
@@ -51,6 +51,30 @@ public class SVGCoreCreator {
 	public SVGCoreCreator() {
 	}
 
+
+	/**
+	 * Converts a libGDX color to a SVG-usable format.
+	 *
+	 * What it basically does is to throw away the last to characters, i.e.
+	 * the alpha channel.
+	 *
+	 * @param c Color to transform
+	 * @return Color in format to be used by SVG
+	 */
+	public static String colorToSVG(final Color c) {
+		return c.toString().substring(0,6);
+	}
+
+	/**
+	 * Creates an ID consisting of a base part and the given color.
+	 * @param baseName The part of thename in front of the '-'
+	 * @param c The color that will be put after the '-'
+	 * @return "<baseName>-<color>"
+	 */
+	public static String generateID(final String baseName,final Color c) {
+		return baseName + "-" + SVGCoreCreator.colorToSVG(c);
+	}
+
 	/**
 	 * @param folder The name of the folder containing the theme,
 	 *               relative to the assets folder
@@ -71,8 +95,10 @@ public class SVGCoreCreator {
 	 * @return the svg code for the given type as a string
 	 */
 	private String getSVGCode(final TextureE type) {
+
 		String svgCoreFile =
 				baseFolder + "/" + svgCoreFolder + "/" + type + ".plain.svg";
+
 
 		LOGGER.debug("[SVG] Loading SVG core for {}", svgCoreFile);
 
@@ -96,8 +122,7 @@ public class SVGCoreCreator {
 	 * @return String containing svg core data.
 	 */
 	public String getSVGCode(final TextureE type, final Color fillColor,
-													 final Color
-			strokeColor) {
+													 final Color strokeColor) {
 		String uncoloredCore = getSVGCode(type);
 		String coloredCore = uncoloredCore;
 
@@ -125,17 +150,16 @@ public class SVGCoreCreator {
 
 			if (fillColor != null) {
 				LOGGER.debug("[SVG] Changing fillColor to {}.",
-						fillColor.toString().substring(0, colorDigits));
+						colorToSVG(fillColor));
 				// set new id for this node if there is a fillColor
 					if (group.getNodeType() == Node.ELEMENT_NODE) {
 						Element elem = (Element) group;
-						elem.setAttribute("id", type.toString() + "-" +
-								fillColor.toString().substring(0, colorDigits));
+						elem.setAttribute("id", generateID(type.toString(),fillColor));
 					}
 			}
 			if (strokeColor != null) {
 				LOGGER.debug("[SVG] Changing strokeColor to {}.",
-						strokeColor.toString().substring(0, colorDigits));
+						colorToSVG(strokeColor));
 			}
 
 			if (fillColor != null || strokeColor != null) {
@@ -196,7 +220,7 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * Sets the style tag for the first tag occurence.
+	 * Sets the style tag for the first tag occurrence.
 	 *
 	 * @param element xml top node
 	 * @param tagName the name of the tag to modify
@@ -206,6 +230,7 @@ public class SVGCoreCreator {
 	private void setStyleForElement(final Element element,
 																	final String tagName, final Color fillColor,
 																	final Color strokeColor) {
+
 		NodeList elements = element.getElementsByTagName(tagName);
 		if (elements.getLength() > 0) {
 			Node node = elements.item(0);
@@ -221,6 +246,7 @@ public class SVGCoreCreator {
 					} else if ("stroke".equals(styleType) && strokeColor != null) {
 						styleAfter += styleType + ":#" +
 								strokeColor.toString().substring(0, colorDigits) + ";";
+
 					} else {
 						styleAfter += split + ";";
 					}

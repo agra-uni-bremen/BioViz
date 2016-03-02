@@ -23,8 +23,8 @@ public class DrawableDroplet extends DrawableSprite {
 	private static Random randnum = null;
 
 	public DrawableCircuit parentCircuit;
-	
-	private Color dropletColor; 
+
+	private Color dropletColor;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
 		super(TextureE.Droplet, parent.parent);
@@ -92,14 +92,16 @@ public class DrawableDroplet extends DrawableSprite {
 	public String getMsg() {
 		String msg = "";
 
+		int dropID = droplet.getID();
+
 		if (parentCircuit.displayOptions.getOption(
 				BDisplayOptions.DropletIDs)) {
-			msg = Integer.toString(droplet.getID()) + " ";
+			msg = Integer.toString(dropID) + " ";
 
 		}
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
-			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
+			Integer fluidID = parentCircuit.data.fluidID(dropID);
 			if (fluidID != null) {
 				if (!msg.isEmpty()) {
 					msg += "-";
@@ -110,15 +112,16 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 		if (parentCircuit.displayOptions
 				.getOption(BDisplayOptions.FluidNames)) {
-			String fname = this.parentCircuit.data
-					.fluidType(this.droplet.getID());
-			//System.out.println("fname: " + fname);
-			//System.out.println(this.parentCircuit.data.fluidTypes);
-			if (fname != null) {
-				if (!msg.isEmpty()) {
-					msg += "-";
+			Integer fluidID = parentCircuit.data.fluidID(dropID);
+			if (fluidID != null) {
+				String fname = parentCircuit.data.fluidType(fluidID);
+
+				if (fname != null) {
+					if (!msg.isEmpty()) {
+						msg += "-";
+					}
+					msg += " " + fname;
 				}
-				msg += " " + fname;
 			}
 
 		}
