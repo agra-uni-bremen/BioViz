@@ -1,13 +1,6 @@
 package de.bioviz.desktop;
 
-import java.awt.BorderLayout;
-import java.awt.CheckboxMenuItem;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -20,23 +13,7 @@ import java.util.HashMap;
 import java.util.prefs.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JColorChooser;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.JLabel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -49,6 +26,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
+import de.bioviz.svg.SVGExportSettings;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.BioViz;
 import de.bioviz.ui.BioVizEvent;
@@ -83,6 +61,8 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private static Logger logger =
 			LoggerFactory.getLogger(DesktopLauncher.class);
+
+	private static SVGExportSettings svgExportSettings = SVGExportSettings.getInstance();
 
 	/**
 	 * The label to display the current simulation time.
@@ -592,7 +572,27 @@ public class DesktopLauncher extends JFrame {
 			choice = fileDialog.showOpenDialog(null);
 		}
 		else {
+			// add the svg export options as an accessory to the fileChooser
+			JPanel accessory = new JPanel(new BorderLayout());
+
+			JCheckBox exportColors = new JCheckBox("Export colors");
+			JCheckBox exportInfoString = new JCheckBox("Export info tag");
+			JCheckBox exportSeries = new JCheckBox("Export series");
+
+			JPanel checkBoxes = new JPanel(new GridLayout(0,1));
+			checkBoxes.add(exportColors);
+			checkBoxes.add(exportInfoString);
+			checkBoxes.add(exportSeries);
+
+			accessory.add(checkBoxes);
+
+			fileDialog.setAccessory(accessory);
+
 			choice = fileDialog.showSaveDialog(null);
+
+			svgExportSettings.setColorFullExport(exportColors.isSelected());
+			svgExportSettings.setExportSeries(exportInfoString.isSelected());
+			svgExportSettings.setInformationString(exportSeries.isSelected());
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {

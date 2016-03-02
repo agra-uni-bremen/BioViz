@@ -26,6 +26,10 @@ import java.util.HashMap;
  */
 public class SVGManager {
 
+	/** svgExportSettings. */
+	private static SVGExportSettings svgExportSettings = SVGExportSettings
+			.getInstance();
+
 	/** logger. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(
 			SVGManager.class);
@@ -154,35 +158,37 @@ public class SVGManager {
 	 */
 	public String toSVG(final DrawableCircuit circ) {
 
-		LOGGER.debug("[SVG] Creating all needed colored cores.");
+		if (svgExportSettings.getColorFullExport()) {
+			LOGGER.debug("[SVG] Creating all needed colored cores.");
 
-		for (final DrawableField f : circ.fields) {
-			String key = f.getDisplayValues().getTexture().toString() + "-" +
-					f.getColor().toString().substring(0, colorDigits);
-			// don't create the svg core code twice
-			if (!colSvgs.containsKey(key)) {
-				colSvgs.put(key,
-						svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
-								f.getColor(), strokeColor));
+			for (final DrawableField f : circ.fields) {
+				String key = f.getDisplayValues().getTexture().toString() + "-" +
+						f.getColor().toString().substring(0, colorDigits);
+				// don't create the svg core code twice
+				if (!colSvgs.containsKey(key)) {
+					colSvgs.put(key,
+							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
+									f.getColor(), strokeColor));
+				}
 			}
-		}
-		for (final DrawableDroplet d : circ.droplets) {
-			String key = "Droplet" + "-" +
-					d.getColor().toString().substring(0, colorDigits);
-			// don't create the svg core code twice
-			if (!colSvgs.containsKey(key)) {
-				colSvgs.put(key,
-						svgCoreCreator.getSVGCode(
-								TextureE.Droplet, d.getColor(), strokeColor));
+			for (final DrawableDroplet d : circ.droplets) {
+				String key = "Droplet" + "-" +
+						d.getColor().toString().substring(0, colorDigits);
+				// don't create the svg core code twice
+				if (!colSvgs.containsKey(key)) {
+					colSvgs.put(key,
+							svgCoreCreator.getSVGCode(
+									TextureE.Droplet, d.getColor(), strokeColor));
+				}
 			}
-		}
-		// TODO check if this could be done nicer
-		colSvgs.put("StepMarker" + "-" +
-				Color.BLACK.toString().substring(0, colorDigits),
-				svgCoreCreator.getSVGCode(TextureE.StepMarker,
-						stepMarkerColor, strokeColor));
+				// TODO check if this could be done nicer
+				colSvgs.put("StepMarker" + "-" +
+								Color.BLACK.toString().substring(0, colorDigits),
+						svgCoreCreator.getSVGCode(TextureE.StepMarker,
+								stepMarkerColor, strokeColor));
 
-		LOGGER.debug("[SVG] Done creating colored cores.");
+			LOGGER.debug("[SVG] Done creating colored cores.");
+		}
 
 		LOGGER.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
@@ -205,7 +211,9 @@ public class SVGManager {
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
-		colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
+		if (svgExportSettings.getColorFullExport()) {
+			colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
+		}
 		sb.append("</defs>\n");
 
 		for (final DrawableField field : circ.fields) {
@@ -250,9 +258,13 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 
 		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-				getScaleTransformation() + " xlink:href=\"#" + vals.getTexture() +
-				"-" + vals.getColor().toString().substring(0, colorDigits) +
-				"\" />\n";
+				getScaleTransformation() + " xlink:href=\"#" + vals.getTexture();
+
+		if (svgExportSettings.getColorFullExport()) {
+			fieldSvg += "-" + vals.getColor().toString().substring(0,6) + "\" />\n";
+		} else {
+			fieldSvg += "\" />\n";
+		}
 
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
@@ -285,9 +297,14 @@ public class SVGManager {
 
 		String route = toSVG(drawableDrop.route);
 		String dropShape = "<use x=\"" + xCoord + "\" " + "y=\"" +
-				yCoord + "\"" +	getScaleTransformation() + " xlink:href=\"#Droplet-" +
-				drawableDrop.getColor().toString().substring(0, colorDigits) +
-				"\" />\n";
+				yCoord + "\"" +	getScaleTransformation() + " xlink:href=\"#Droplet";
+
+		if (svgExportSettings.getColorFullExport()) {
+			dropShape += "-" + drawableDrop.getColor().toString().substring(0, colorDigits) +
+					"\" />\n";
+		} else {
+			dropShape += "\" />\n";
+		}
 
 		String dropSvg = route + dropShape;
 
@@ -381,8 +398,12 @@ public class SVGManager {
 					sb.append(widthHeight);
 					sb.append(getTransformation(transFormParams));
 					sb.append(opacity);
-					sb.append("xlink:href=\"#StepMarker-" +
-							stepMarkerColor.toString().substring(0, colorDigits) + "\"");
+					sb.append("xlink:href=\"#StepMarker");
+					if(svgExportSettings.getColorFullExport()){
+						sb.append("-" + stepMarkerColor.toString().substring(0,
+								colorDigits));
+					}
+					sb.append("\"");
 					sb.append(" />\n");
 				}
 			}
