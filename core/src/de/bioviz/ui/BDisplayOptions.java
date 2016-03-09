@@ -89,6 +89,13 @@ public enum BDisplayOptions {
 	DetectorIcon("Show detector icons"),
 
 	/**
+	 * Will draw solid paths for the droplets.
+	 *
+	 * This basically disables the fancy fading.
+	 */
+	SolidPaths("Draw solid paths"),
+
+	/**
 	 * Option for displaying a net's colour on all its corresponding droplets 
 	 */
 	NetColorOnDroplets("Color droplets within net"),
