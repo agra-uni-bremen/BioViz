@@ -190,9 +190,13 @@ public class SVGManager {
 	 * Export the circuit to svg.
 	 *
 	 * @param circ The circuit to export
+	 * @param timeStep The timeStep for the export
 	 * @return svg string representation
 	 */
-	public String toSVG(final DrawableCircuit circ) {
+	public String toSVG(final DrawableCircuit circ, int timeStep) {
+
+		// set the export timeStep
+		circ.setCurrentTime(timeStep);
 
 		if (svgExportSettings.getColorfulExport()) {
 			LOGGER.debug("[SVG] Creating all needed colored cores.");
@@ -329,9 +333,11 @@ public class SVGManager {
 	 * @return svg string representation of the drop
 	 */
 	private String toSVG(final DrawableDroplet drawableDrop) {
-		float yCoord = -drawableDrop.droplet.smoothY +
+		float yCoord = -drawableDrop.droplet.getPositionAt(drawableDrop
+				.parentCircuit.currentTime).snd +
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
-		float xCoord = drawableDrop.droplet.smoothX;
+		float xCoord = drawableDrop.droplet.getPositionAt(drawableDrop
+				.parentCircuit.currentTime).fst;
 
 		LOGGER.debug("(x,y) = ({},{})", yCoord, xCoord);
 		yCoord = ((int) yCoord) * coordinateMultiplier;
@@ -374,6 +380,7 @@ public class SVGManager {
 		DrawableDroplet droplet = drawableRoute.droplet;
 
 		int currentTime = droplet.droplet.getSpawnTime();
+		//int currentTime = droplet.parentCircuit.currentTime;
 		int displayAt;
 
 		int displayLength = DrawableRoute.routeDisplayLength;
@@ -469,10 +476,8 @@ public class SVGManager {
 		String circName = circ.parent.getFileName();
 		String timeStep = String.valueOf(circ.currentTime);
 
-		return "<text " + coordinates +	"fill=\"black\" " +
-				"font-family=\"Arial\" " + "font-size=\"" + size + "\">" +
-				"Filename: " + circName +
-				" Timestep: " + timeStep +
-				"</text>\n";
+		return "<text " + coordinates +	"fill=\"" + fontColor + "\" " +
+				"font-family=\"" + font + "\" " + "font-size=\"" + size + "\">" +
+				"Filename: " + circName +	" Timestep: " + timeStep + "</text>\n";
 	}
 }
