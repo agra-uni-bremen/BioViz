@@ -8,28 +8,73 @@ import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Class responsible for drawing the routes that droplets may follow.
+ *
+ *
+ * Note that there is no corresponding class in the structure package. The
+ * path's positions are computed by queyring the positions of the parent
+ * droplet for each time step.
+ */
 public class DrawableRoute extends DrawableSprite {
-
+	/**
+	 * Class-wide logging facility.
+	 */
 	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
 																   .class);
 
+	/**
+	 * What length of the route will be displayed.
+	 */
 	public static int routeDisplayLength = 0;
-	public static int hoverTimesteps = 2 * routeDisplayLength + 8;
 
-	public static float noTransparency = 1;
 
+	/**
+	 * What length of the route will be displayed when hovering over a droplet.
+	 */
+	private static int hoverTimesteps = 2 * routeDisplayLength + 8;
+
+
+	/**
+	 * Non magic number version for turning off transparency.
+	 */
+	private static float noTransparency = 1;
+
+
+	/**
+	 * The droplet this route belongs to.
+	 */
 	public DrawableDroplet droplet;
 
-	public Color baseColor = Color.BLACK.cpy();
 
 
-	public DrawableRoute(DrawableDroplet droplet) {
+
+	/**
+	 * The color the route is drawn in of not superseeded by another option.
+	 *
+	 * Currently that color is black.
+	 */
+	private Color baseColor = Color.BLACK.cpy();
+
+
+	/**
+	 * Creates a route for a given droplet.
+	 * @param droplet The droplet this route belongs to.
+	 */
+	public DrawableRoute(final DrawableDroplet droplet) {
 		super(TextureE.StepMarker, droplet.viz);
 		this.droplet = droplet;
 		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 	}
 
 	@Override
+	/**
+	 * Actually draws the route on the canvas.
+	 *
+	 * This includes computing the length of the route to show (i.e. how many
+	 * steps in time you go backwards and/or forward), the color of the route
+	 * and the transparency.
+	 */
 	public void draw() {
 		int currentTime = droplet.parentCircuit.currentTime;
 		int displayAt;
