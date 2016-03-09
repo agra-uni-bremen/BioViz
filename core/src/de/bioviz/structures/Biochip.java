@@ -284,7 +284,7 @@ public class Biochip {
 	 * Calculates the last timestamp at which a droplet is moved
 	 *
 	 * @return the last timestamp of the currently loaded simulation
-	 * @author Oliver Keszöcze
+	 * @author keszocze
 	 */
 	public int getMaxT() {
 		if (maxT != -1) {

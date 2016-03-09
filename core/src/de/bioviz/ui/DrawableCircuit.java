@@ -184,10 +184,14 @@ public class DrawableCircuit implements Drawable {
 		// displayed at the edge of the viewport (if the grid boundaries are
 		// beyond the viewport boundaries) or at the edge of the grid (if they
 		// are within)
-		int minX = Integer.MAX_VALUE,
-			minY = Integer.MAX_VALUE,
-			maxX = Integer.MIN_VALUE,
-			maxY = Integer.MIN_VALUE;
+
+		Point maxPos = data.getMaxCoord();
+		Point minPos = data.getMinCoord();
+
+		int minX = minPos.fst;
+		int	minY = minPos.snd;
+		int	maxX = maxPos.fst;
+		int maxY = maxPos.snd;
 
 		for (DrawableField f : this.fields) {
 			if (minX > f.getField().x()) {
