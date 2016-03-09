@@ -76,10 +76,10 @@ public class SVGManager {
 	/** color for the stepMarkers. */
 	private final Color stepMarkerColor = Color.BLACK;
 
-	/** min coordinate for the exported svg */
-	Point topLeftCoord;
-	/** max coordinate for the exported svg */
-	Point bottomRightCoord;
+	/** min coordinate for the exported svg. */
+	private Point topLeftCoord;
+	/** max coordinate for the exported svg. */
+	private Point bottomRightCoord;
 
 	/**
 	 * SVGManager loading the default theme.
@@ -160,8 +160,8 @@ public class SVGManager {
 	 * @param c The color that will be put after the '-'
 	 * @return "<baseName>-<color>"
 	 */
-	public static String generateColoredID(final String baseName,final Color c) {
-		if(svgExportSettings.getColorfulExport()) {
+	public static String generateColoredID(final String baseName, final Color c) {
+		if (svgExportSettings.getColorfulExport()) {
 			return baseName + "-" + SVGCoreCreator.colorToSVG(c);
 		} else {
 			return baseName;
@@ -169,18 +169,18 @@ public class SVGManager {
 	}
 
 	/**
-	 * Calculates min and max values for the resulting svg viewbox
+	 * Calculates min and max values for the resulting svg viewbox.
 	 *
 	 * @param circ The underlying DrawableCircuit.
 	 */
-	private void calculateViewboxDimensions(DrawableCircuit circ){
+	private void calculateViewboxDimensions(final DrawableCircuit circ) {
 		Point minCoord = circ.data.getMinCoord();
 		Point maxCoord = circ.data.getMaxCoord();
 
-		int minX = (minCoord.fst);
-		int minY = (minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1));
-		int maxX = (minCoord.fst == 0 ? (maxCoord.fst + 1) : maxCoord.fst);
-		int maxY = (minCoord.snd == 0 ? (maxCoord.snd + 1) : maxCoord.snd);
+		int minX = minCoord.fst;
+		int minY = minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1);
+		int maxX = minCoord.fst == 0 ? (maxCoord.fst + 1) : maxCoord.fst;
+		int maxY = minCoord.snd == 0 ? (maxCoord.snd + 1) : maxCoord.snd;
 
 		topLeftCoord = new Point(minX, minY);
 		bottomRightCoord = new Point(maxX, maxY);
@@ -197,30 +197,33 @@ public class SVGManager {
 		if (svgExportSettings.getColorfulExport()) {
 			LOGGER.debug("[SVG] Creating all needed colored cores.");
 
-			for(final DrawableField f : circ.fields){
+			for (final DrawableField f : circ.fields) {
 				String 	key = generateColoredID(f.getDisplayValues().getTexture()
-						.toString(),f.getColor());
+						.toString(), f.getColor());
 				// don't create the svg core code twice
 				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
-							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(), f.getColor(), strokeColor));
+							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
+									f.getColor(), strokeColor));
 				}
 			}
-			for(final DrawableDroplet d : circ.droplets){
+			for (final DrawableDroplet d : circ.droplets) {
 				// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
-				String key = generateColoredID("Droplet",d.getColor());
+				String key = generateColoredID("Droplet", d.getColor());
 				// don't create the svg core code twice
 				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
-							svgCoreCreator.getSVGCode(TextureE.Droplet, d.getColor(), strokeColor));
+							svgCoreCreator.getSVGCode(TextureE.Droplet,
+									d.getColor(), strokeColor));
 				}
 
 				if (d.route != null) {
 					Color routeColor = d.route.getColor();
-					key = generateColoredID("StepMarker",routeColor);
+					key = generateColoredID("StepMarker", routeColor);
 					if (!colSvgs.containsKey(key)) {
 						colSvgs.put(key,
-									svgCoreCreator.getSVGCode(TextureE.StepMarker, routeColor, strokeColor));
+									svgCoreCreator.getSVGCode(TextureE.StepMarker,
+											routeColor, strokeColor));
 					}
 				}
 			}
@@ -299,8 +302,8 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 
 
-		String fieldID = generateColoredID(vals.getTexture().toString(),vals
-				.getColor());
+		String fieldID = generateColoredID(vals.getTexture().toString(),
+				vals.getColor());
 		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
 						   "\" />\n";
@@ -320,7 +323,7 @@ public class SVGManager {
 	}
 
 	/**
-	 * Export drawableDroplets as svg.
+	 * Exports drawableDroplets as svg.
 	 *
 	 * @param drawableDrop The drawableDroplet to export
 	 * @return svg string representation of the drop
@@ -336,7 +339,7 @@ public class SVGManager {
 
 		String route = toSVG(drawableDrop.route);
 
-		String dropletID = generateColoredID("Droplet",drawableDrop.getColor());
+		String dropletID = generateColoredID("Droplet", drawableDrop.getColor());
 		String dropShape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\""
 				+ getScaleTransformation()
 							+ " xlink:href=\"#" + dropletID + "\" />\n";
@@ -344,10 +347,12 @@ public class SVGManager {
 		String dropSvg = route + dropShape;
 
 		if (drawableDrop.getMsg() != null) {
-			String msg = "<text text-anchor=\"middle\" x=\"" + (xCoord + coordinateMultiplier / 2)
-					+ "\" y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +
-					"\" font-family=\"" + font + "\" font-size=\"" + size + "\" fill=\"#" + fontColor + "\">"
-					+ drawableDrop.getMsg() + "</text>\n";
+			String msg = "<text text-anchor=\"middle\" " +
+					"x=\"" + (xCoord + coordinateMultiplier / 2) + "\" " +
+					"y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +	"\" " +
+					"font-family=\"" + font + "\" font-size=\"" + size + "\" " +
+					"fill=\"#" + fontColor + "\">" +
+					drawableDrop.getMsg() + "</text>\n";
 			dropSvg += msg;
 		}
 		return dropSvg;
@@ -417,7 +422,7 @@ public class SVGManager {
 				String opacity = " opacity=\"" + alpha + "\" ";
 				boolean app = true;
 
-				if (x1 < x2 && y1 == y2){
+				if (x1 < x2 && y1 == y2) {
 					//intentionally do nothing here
 				} else if (y1 == y2 && x2 < x1) {
 					transFormParams +=
@@ -451,11 +456,11 @@ public class SVGManager {
 	}
 
 	/**
-	 * Create a string with informations about this svg.
+	 * Creates a string with informations about this svg.
 	 *
 	 * @return information string
 	 */
-	private String infoString(DrawableCircuit circ){
+	private String infoString(final DrawableCircuit circ) {
 
 		String coordinates =
 				"x=\"" + (topLeftCoord.fst * coordinateMultiplier) + "\" " +
@@ -466,8 +471,8 @@ public class SVGManager {
 
 		return "<text " + coordinates +	"fill=\"black\" " +
 				"font-family=\"Arial\" " + "font-size=\"" + size + "\">" +
-				"Filename:" + circName +
-				"   Timestep: " + timeStep +
+				"Filename: " + circName +
+				" Timestep: " + timeStep +
 				"</text>\n";
 	}
 }
