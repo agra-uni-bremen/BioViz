@@ -576,8 +576,11 @@ public class DesktopLauncher extends JFrame {
 			JPanel accessory = new JPanel(new BorderLayout());
 
 			JCheckBox exportColors = new JCheckBox("Export colors");
+			exportColors.setSelected(true);
 			JCheckBox exportInfoString = new JCheckBox("Export info tag");
+			exportInfoString.setSelected(true);
 			JCheckBox exportSeries = new JCheckBox("Export series");
+			exportSeries.setSelected(false);
 
 			JPanel checkBoxes = new JPanel(new GridLayout(0,1));
 			checkBoxes.add(exportColors);
