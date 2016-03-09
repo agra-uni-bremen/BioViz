@@ -486,25 +486,25 @@ public class SVGManager {
 	private String createCoordinates(DrawableCircuit circ){
 		StringBuilder coords = new StringBuilder();
 		int coordSize = 80;
-		for (int i = topLeftCoord.fst; i <= bottomRightCoord.fst; i++) {
+		for (int x_coord = topLeftCoord.fst; x_coord <= bottomRightCoord.fst; x_coord++) {
 			coords.append("<text text-anchor=\"middle\" ");
-			coords.append("x=\"" + (i * coordinateMultiplier + 0.5 *
+			coords.append("x=\"" + (x_coord * coordinateMultiplier + 0.5 *
 					coordinateMultiplier) +	"\" ");
 			coords.append("y=\"" + (topLeftCoord.snd * coordinateMultiplier - coordSize) + "\" ");
 			coords.append("font-family=\"" + font + "\" font-size=\"" + coordSize +
 					"\">");
-			coords.append(i);
+			coords.append(x_coord);
 			coords.append("</text>\n");
 		}
 
-		for (int i = topLeftCoord.snd+1; i <= bottomRightCoord.snd; i++) {
+		for (int y_coord = topLeftCoord.snd+1; y_coord <= bottomRightCoord.snd; y_coord++) {
 			coords.append("<text text-anchor=\"middle\" ");
-			coords.append("y=\"" + ((i-1) * coordinateMultiplier + 0.5 * coordSize +
+			coords.append("y=\"" + ((y_coord-1) * coordinateMultiplier + 0.5 * coordSize +
 					0.5 * coordinateMultiplier) +	"\" ");
 			coords.append("x=\"" + (topLeftCoord.fst * coordinateMultiplier - coordSize) + "\" ");
 			coords.append("font-family=\"" + font + "\" font-size=\"" + coordSize +
 					"\">");
-			coords.append(bottomRightCoord.snd - i);
+			coords.append(bottomRightCoord.snd - y_coord);
 			coords.append("</text>\n");
 		}
 		return coords.toString();
