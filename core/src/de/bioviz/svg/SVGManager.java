@@ -504,7 +504,11 @@ public class SVGManager {
 			coords.append("x=\"" + (topLeftCoord.fst * coordinateMultiplier - coordSize) + "\" ");
 			coords.append("font-family=\"" + font + "\" font-size=\"" + coordSize +
 					"\">");
-			coords.append(bottomRightCoord.snd - y_coord);
+			// FIXME the call to getMinCoord() is computing the stuff again
+			// that is unnecessary but I was too stupid to fastly figure out
+			// what you do with the stuff before you fill the bottomRightCoord
+			// and topLeftCoord variables.
+			coords.append(bottomRightCoord.snd - y_coord + circ.data.getMinCoord().snd);
 			coords.append("</text>\n");
 		}
 		return coords.toString();
