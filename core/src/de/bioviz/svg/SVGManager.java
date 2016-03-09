@@ -264,7 +264,10 @@ public class SVGManager {
 			}
 		}
 
-		//sb.append("</g>\n");
+		if (svgExportSettings.getInformationString()) {
+			sb.append(infoString(circ));
+		}
+
 		sb.append("</svg>\n");
 
 		return sb.toString();
@@ -445,5 +448,26 @@ public class SVGManager {
 			}
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Create a string with informations about this svg.
+	 *
+	 * @return information string
+	 */
+	private String infoString(DrawableCircuit circ){
+
+		String coordinates =
+				"x=\"" + (topLeftCoord.fst * coordinateMultiplier) + "\" " +
+				"y=\"" + (bottomRightCoord.snd * coordinateMultiplier + size) + "\" ";
+
+		String circName = circ.parent.getFileName();
+		String timeStep = String.valueOf(circ.currentTime);
+
+		return "<text " + coordinates +	"fill=\"black\" " +
+				"font-family=\"Arial\" " + "font-size=\"" + size + "\">" +
+				"Filename:" + circName +
+				"   Timestep: " + timeStep +
+				"</text>\n";
 	}
 }
