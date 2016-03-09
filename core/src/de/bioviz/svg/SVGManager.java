@@ -76,6 +76,11 @@ public class SVGManager {
 	/** color for the stepMarkers. */
 	private final Color stepMarkerColor = Color.BLACK;
 
+	/** min coordinate for the exported svg */
+	Point topLeftCoord;
+	/** max coordinate for the exported svg */
+	Point bottomRightCoord;
+
 	/**
 	 * SVGManager loading the default theme.
 	 */
@@ -164,6 +169,24 @@ public class SVGManager {
 	}
 
 	/**
+	 * Calculates min and max values for the resulting svg viewbox
+	 *
+	 * @param circ The underlying DrawableCircuit.
+	 */
+	private void calculateViewboxDimensions(DrawableCircuit circ){
+		Point minCoord = circ.data.getMinCoord();
+		Point maxCoord = circ.data.getMaxCoord();
+
+		int minX = (minCoord.fst);
+		int minY = (minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1));
+		int maxX = (minCoord.fst == 0 ? (maxCoord.fst + 1) : maxCoord.fst);
+		int maxY = (minCoord.snd == 0 ? (maxCoord.snd + 1) : maxCoord.snd);
+
+		topLeftCoord = new Point(minX, minY);
+		bottomRightCoord = new Point(maxX, maxY);
+	}
+
+	/**
 	 * Export the circuit to svg.
 	 *
 	 * @param circ The circuit to export
@@ -206,20 +229,19 @@ public class SVGManager {
 			LOGGER.debug("[SVG] Done creating colored cores.");
 		}
 
+		calculateViewboxDimensions(circ);
+
 		LOGGER.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
-
-		Point minCoord = circ.data.getMinCoord();
-		Point maxCoord = circ.data.getMaxCoord();
 
 		sb.append("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
 						"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
 						"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
 				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-						(minCoord.fst) * coordinateMultiplier + " " +
-						(minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1)) * coordinateMultiplier + " " +
-						(minCoord.fst == 0 ? (maxCoord.fst + 1) : maxCoord.fst) * coordinateMultiplier + " " +
-						(minCoord.snd == 0 ? (maxCoord.snd + 1) : maxCoord.snd) * coordinateMultiplier +
+						topLeftCoord.fst * coordinateMultiplier + " " +
+						topLeftCoord.snd * coordinateMultiplier + " " +
+						bottomRightCoord.fst * coordinateMultiplier + " " +
+						bottomRightCoord.snd * coordinateMultiplier +
 						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
 						"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
