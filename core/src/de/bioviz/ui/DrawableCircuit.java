@@ -54,6 +54,12 @@ public class DrawableCircuit implements Drawable {
 
 	public DisplayOptions displayOptions = new DisplayOptions();
 
+	/**
+	 * The field that is currently hovered by the mouse.
+	 * May be null, so be careful.
+	 */
+	private DrawableField hoveredField = null;
+
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 	
 	public BioViz parent;
@@ -162,6 +168,9 @@ public class DrawableCircuit implements Drawable {
 		}
 
 		for (DrawableField f : this.fields) {
+			if (f.isHovered()) {
+				this.hoveredField = f;
+			}
 			f.draw();
 		}
 
@@ -454,9 +463,6 @@ public class DrawableCircuit implements Drawable {
 		this.offsetY = targetOffsetY;
 	}
 
-	private int busDrawn = 0;
-
-
 	/**
 	 * Resets the zoom to 1 px per element
 	 */
@@ -523,5 +529,13 @@ public class DrawableCircuit implements Drawable {
 		for (BiochipField biochipField : f) {
 
 		}
+	}
+
+	/**
+	 * Retrieves the field that is currently being hovered.
+	 * @return the currently hovered field.
+	 */
+	public DrawableField getHoveredField() {
+		return this.hoveredField;
 	}
 }
