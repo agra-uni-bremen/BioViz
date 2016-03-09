@@ -10,10 +10,13 @@ import org.slf4j.LoggerFactory;
 
 public class DrawableRoute extends DrawableSprite {
 
-	private static Logger logger = LoggerFactory.getLogger(DrawableRoute.class);
+	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
+																   .class);
 
 	public static int routeDisplayLength = 0;
 	public static int hoverTimesteps = 2 * routeDisplayLength + 8;
+
+	public static float noTransparency = 1;
 
 	public DrawableDroplet droplet;
 
@@ -48,11 +51,21 @@ public class DrawableRoute extends DrawableSprite {
 				c = this.droplet.getColor().cpy();
 			}
 
-			if (i >= 0) {
-				c.a = 1 - (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
-			} else {
-				c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+
+			if (droplet.parentCircuit.displayOptions.getOption(
+					BDisplayOptions.SolidPaths)) {
+				c.a = noTransparency;
 			}
+			else {
+				if (i >= 0) {
+					c.a = 1 -
+						  (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
+				}
+				else {
+					c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+				}
+			}
+
 			this.setColorImmediately(c);
 
 
@@ -75,19 +88,23 @@ public class DrawableRoute extends DrawableSprite {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
 				this.setRotation(0);
-			} else if (y1 == y2 && x2 < x1) {
+			}
+			else if (y1 == y2 && x2 < x1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 - 0.5f);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
 				this.setRotation(180);
-			} else if (x1 == x2 && y2 > y1) {
+			}
+			else if (x1 == x2 && y2 > y1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 + 0.5f);
 				this.setRotation(90);
-			} else if (x1 == x2 && y2 < y1) {
+			}
+			else if (x1 == x2 && y2 < y1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 - 0.5f);
 				this.setRotation(270);
-			} else {
+			}
+			else {
 				continue;
 			}
 
@@ -98,25 +115,29 @@ public class DrawableRoute extends DrawableSprite {
 
 			super.draw();
 		}
-		
+
 		boolean dropletLongIndicator = droplet.parentCircuit.displayOptions
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
 		if (dropletLongIndicator) {
 			this.setForcedLOD(1f);
-			Pair<Float, Float> target = new Pair<Float, Float> (
+			Pair<Float, Float> target = new Pair<Float, Float>(
 					this.droplet.droplet.getNet().getTarget().fst.floatValue(),
-					this.droplet.droplet.getNet().getTarget().snd.floatValue());
-			Pair<Float, Float> source = new Pair<Float, Float> (
+					this.droplet.droplet.getNet().getTarget().snd.floatValue
+							());
+			Pair<Float, Float> source = new Pair<Float, Float>(
 					this.droplet.droplet.getFirstPosition().fst.floatValue(),
 					this.droplet.droplet.getFirstPosition().snd.floatValue());
 			Pair<Float, Float> current = new Pair<Float, Float>
-			(this.droplet.droplet.smoothX, this.droplet.droplet.smoothY);
+					(this.droplet.droplet.smoothX,
+					 this.droplet.droplet.smoothY);
 
 			// draw to target
 			DrawableLine.draw(target, current,
-					this.droplet.getColor().cpy().add(0.2f, 0.2f, 0.2f, 0));
+							  this.droplet.getColor().cpy().add(0.2f, 0.2f,
+																0.2f, 0));
 			DrawableLine.draw(source, current,
-					this.droplet.getColor().cpy().sub(0.2f, 0.2f, 0.2f, 0));
+							  this.droplet.getColor().cpy().sub(0.2f, 0.2f,
+																0.2f, 0));
 		}
 	}
 }
