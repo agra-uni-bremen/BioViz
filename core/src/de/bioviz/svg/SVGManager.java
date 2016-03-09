@@ -4,12 +4,7 @@ package de.bioviz.svg;
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Point;
-import de.bioviz.ui.DisplayValues;
-import de.bioviz.ui.DrawableCircuit;
-import de.bioviz.ui.DrawableDroplet;
-import de.bioviz.ui.DrawableField;
-import de.bioviz.ui.DrawableRoute;
-import de.bioviz.ui.TextureE;
+import de.bioviz.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -275,6 +270,8 @@ public class SVGManager {
 			sb.append(infoString(circ));
 		}
 
+		sb.append(createCoordinates(circ));
+
 		sb.append("</svg>\n");
 
 		return sb.toString();
@@ -477,7 +474,39 @@ public class SVGManager {
 		String timeStep = String.valueOf(circ.currentTime);
 
 		return "<text " + coordinates +	"fill=\"" + fontColor + "\" " +
-				"font-family=\"" + font + "\" " + "font-size=\"" + size + "\">" +
+				"font-family=\"" + font + "\" font-size=\"" + size + "\">" +
 				"Filename: " + circName +	" Timestep: " + timeStep + "</text>\n";
+	}
+
+	/**
+	 * Creates coordinates around the grid.
+	 *
+	 * @return String containing the svg code for the coordinates
+	 */
+	private String createCoordinates(DrawableCircuit circ){
+		StringBuilder coords = new StringBuilder();
+		int coordSize = 80;
+		for (int i = topLeftCoord.fst; i <= bottomRightCoord.fst; i++) {
+			coords.append("<text text-anchor=\"middle\" ");
+			coords.append("x=\"" + (i * coordinateMultiplier + 0.5 *
+					coordinateMultiplier) +	"\" ");
+			coords.append("y=\"" + (topLeftCoord.snd * coordinateMultiplier - coordSize) + "\" ");
+			coords.append("font-family=\"" + font + "\" font-size=\"" + coordSize +
+					"\">");
+			coords.append(i);
+			coords.append("</text>\n");
+		}
+
+		for (int i = topLeftCoord.snd+1; i <= bottomRightCoord.snd; i++) {
+			coords.append("<text text-anchor=\"middle\" ");
+			coords.append("y=\"" + ((i-1) * coordinateMultiplier + 0.5 * coordSize +
+					0.5 * coordinateMultiplier) +	"\" ");
+			coords.append("x=\"" + (topLeftCoord.fst * coordinateMultiplier - coordSize) + "\" ");
+			coords.append("font-family=\"" + font + "\" font-size=\"" + coordSize +
+					"\">");
+			coords.append(bottomRightCoord.snd - i);
+			coords.append("</text>\n");
+		}
+		return coords.toString();
 	}
 }
