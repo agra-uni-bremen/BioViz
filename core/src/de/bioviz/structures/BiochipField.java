@@ -42,6 +42,31 @@ public class BiochipField {
 		return detector;
 	}
 
+	/**
+	 * Checks whether this field is the destination of a net.
+	 * @return true if the field is the destination of a net.
+	 */
+	public boolean isTarget() {
+		return !target_ids.isEmpty();
+	}
+
+	/**
+	 * Checks whether this field is the source of a net.
+	 * @return true if the field is the source of a net.
+	 */
+	public boolean isSource() {
+		return !source_ids.isEmpty();
+	}
+
+	/**
+	 * Checks whether this field has any mixers.
+	 *
+	 * @return true if the field has mixers.
+	 */
+	public boolean hasMixers() {
+		return !mixers.isEmpty();
+	}
+
 
 	// ############################################################################################################
 	// TODO put Information about sink/dispenser in
@@ -107,14 +132,14 @@ public class BiochipField {
 		return !(blockage == null);
 	}
 
-	public void setSink(Direction removeTo) {
+	public void setSink(final Direction removeTo) {
 		isDispenser = false;
 		isSink = true;
 		fluidID = 0;
 		direction = removeTo;
 	}
 
-	public void setDispenser(int fluidID, Direction dispenseFrom) {
+	public void setDispenser(final int fluidID, final Direction dispenseFrom) {
 		isSink = false;
 		isDispenser = true;
 		this.fluidID = fluidID;
