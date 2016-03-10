@@ -361,7 +361,7 @@ public class DrawableField extends DrawableSprite {
 				colorOverlayCount++;
 			}
 
-			if (!field.mixers.isEmpty()) {
+			if (field.hasMixers()) {
 
 				for (final Mixer m : field.mixers) {
 					if (m.timing.inRange(t)) {
