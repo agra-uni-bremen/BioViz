@@ -96,7 +96,7 @@ public enum BDisplayOptions {
 	/**
 	 * Option for displaying a net's colour on all its corresponding fields 
 	 */
-	NetColorOnFields("Show bunding boxes for nets"),
+	NetColorOnFields("Show bounding boxes for nets"),
 
 	/**
 	 * Option for displaying a droplet's source and target via single, long
