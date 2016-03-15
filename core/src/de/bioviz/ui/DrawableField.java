@@ -397,6 +397,9 @@ public class DrawableField extends DrawableSprite {
 		displayText(vals.getMsg());
 		setColor(vals.getColor());
 
+		// this call is actually necessary to draw any textures at all!
+		this.addLOD(Float.MAX_VALUE, vals.getTexture());
+
 		super.draw();
 		
 		if (parentCircuit.displayOptions
