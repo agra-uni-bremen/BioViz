@@ -38,6 +38,7 @@ public class DrawableCircuit implements Drawable {
 	protected float smoothOffsetY = 0;
 
 	private float scalingDelay = 4f;
+	private int autoloop_OvertimeCounter = 0;
 
 	public int currentTime = 1;
 
@@ -167,7 +168,11 @@ public class DrawableCircuit implements Drawable {
 				if (currentTime >= data.getMaxT() &&
 						this.displayOptions.getOption(
 								BDisplayOptions.LoopAutoplay)) {
-					setCurrentTime(1);
+					++autoloop_OvertimeCounter;
+					if (autoloop_OvertimeCounter > 5) {
+						setCurrentTime(1);
+						autoloop_OvertimeCounter = 0;
+					}
 				}
 			}
 		}
