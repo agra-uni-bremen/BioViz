@@ -169,7 +169,7 @@ public class DrawableCircuit implements Drawable {
 						this.displayOptions.getOption(
 								BDisplayOptions.LoopAutoplay)) {
 					++autoloop_OvertimeCounter;
-					if (autoloop_OvertimeCounter > 5) {
+					if (autoloop_OvertimeCounter > 5) { //todo magic number
 						setCurrentTime(1);
 						autoloop_OvertimeCounter = 0;
 					}
