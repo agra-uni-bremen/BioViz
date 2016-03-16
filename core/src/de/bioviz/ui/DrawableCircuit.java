@@ -164,6 +164,11 @@ public class DrawableCircuit implements Drawable {
 
 				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);
 				setCurrentTime(currentTime +1);
+				if (currentTime >= data.getMaxT() &&
+						this.displayOptions.getOption(
+								BDisplayOptions.LoopAutoplay)) {
+					setCurrentTime(1);
+				}
 			}
 		}
 

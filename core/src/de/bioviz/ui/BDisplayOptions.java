@@ -121,7 +121,12 @@ public enum BDisplayOptions {
 	 * Whether or not interference regions should "linger" behind, i.e.
 	 * encompass all fields that are adjacent at t *and* t-1.
 	 */
-	LingeringInterferenceRegions("Show dynamic interference region");
+	LingeringInterferenceRegions("Show dynamic interference region"),
+
+	/**
+	 * When using autoplay, restart it after it has finished.
+	 */
+	LoopAutoplay("Loop the autoplayed animation");
 
 	private final String description;
 
