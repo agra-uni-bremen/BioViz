@@ -104,9 +104,20 @@ public class BioVizInputProcessor implements InputProcessor {
 			if (ctrl) {
 				parentViz.callSaveFileListeners();
 			}
-			if (shift) {
+			else if (shift) {
 				parentViz.currentCircuit.displayOptions.toggleOption(
 						BDisplayOptions.SinkIcon);
+			}
+			else {
+				parentViz.currentCircuit.shrinkToSquareAlignment();
+			}
+		}
+		else if (keycode == Keys.Z)  {
+			if (shift) {
+				parentViz.currentCircuit.zoomExtents();
+			}
+			else {
+				parentViz.currentCircuit.zoomTo1Px();
 			}
 		}
 		return false;
@@ -114,20 +125,6 @@ public class BioVizInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean keyTyped (char character) {
-		DrawableCircuit dc; 
-		switch (character) {
-		case 's':
-			parentViz.currentCircuit.shrinkToSquareAlignment();
-			break;
-		case 'z':
-			parentViz.currentCircuit.zoomTo1Px();
-			break;
-		case 'Z':
-			parentViz.currentCircuit.zoomExtents();
-			break;
-		default:
-			break;
-		}
 		return false;
 	}
 
