@@ -1,7 +1,7 @@
 package de.bioviz.ui;
 
 /**
- * @author Oliver Keszöcze
+ * @author keszocze
  *         <p>
  *         This enum stores all the options available when displaying a biochip.
  *         All options are on/off only.
@@ -129,10 +129,28 @@ public enum BDisplayOptions {
 	LoopAutoplay("Loop the autoplayed animation");
 
 	private final String description;
+	private Integer keycode=null;
+	private boolean ctrl=false;
+	private boolean shift=false;
+	private boolean alt=false;
 
 	BDisplayOptions(String desc) {
-		this.description=desc;
+		description=desc;
 	}
+
+	BDisplayOptions(String desc,Integer keycode) {
+		this(desc);
+		this.keycode=keycode;
+	}
+
+	BDisplayOptions(String desc, Integer keycode, boolean ctrl, boolean shift, boolean alt) {
+		this(desc,keycode);
+		this.ctrl=ctrl;
+		this.shift=shift;
+		this.alt=alt;
+	}
+
+
 
 	public String description() {
 		return description;
