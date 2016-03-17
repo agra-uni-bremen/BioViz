@@ -8,7 +8,9 @@ import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.util.ColorCalculator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -137,6 +139,11 @@ public class DrawableCircuit implements Drawable {
 		}
 
 		logger.debug("Droplets set up.");
+		
+		int num = 0;
+		for (Net n : data.getNets()) {
+			n.setColor(ColorCalculator.calculateColor(num++, data.getNets().size()));
+		}
 
 		logger.debug("Drawable initialization successfully done.");
 	}

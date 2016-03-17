@@ -60,6 +60,10 @@ public class Biochip {
 	public void addNets(Collection<Net> nets) {
 		this.nets.addAll(nets);
 	}
+
+	public Set<Net> getNets() {
+		return new HashSet<Net>(this.nets);
+	}
 	
 	/**
 	 * Returns all nets that a field belongs to

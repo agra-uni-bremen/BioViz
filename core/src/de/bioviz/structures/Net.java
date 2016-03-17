@@ -1,8 +1,9 @@
 package de.bioviz.structures;
 
 import java.util.ArrayList;
-
 import java.util.Random;
+
+import de.bioviz.ui.Color;
 
 /**
  * Created by keszocze on 27.07.15.
@@ -18,7 +19,7 @@ public final class Net {
 	 * It is used when the option to color all droplets within a net with the
 	 * same color is chosen.
 	 */
-	private final int color;
+	private Color color = new Color();
 
 
 	/**
@@ -51,15 +52,19 @@ public final class Net {
 
 		// TODO be more sophisticated here ^^
 		rnd.setSeed(target.fst + target.snd);
-		color = rnd.nextInt();
+		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(), 1f);
 	}
 
 
 	/**
 	 * @return The net's color
 	 */
-	public int getColor() {
+	public Color getColor() {
 		return color;
+	}
+
+	public void setColor(Color c) {
+		this.color = c;
 	}
 
 	/**
