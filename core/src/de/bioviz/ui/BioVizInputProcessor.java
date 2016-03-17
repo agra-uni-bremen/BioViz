@@ -48,18 +48,18 @@ public class BioVizInputProcessor implements InputProcessor {
 			alt = false;
 		} else if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
 			shift = false;
-		} else if (keycode == Keys.O) {
-			if (ctrl) {
-				parentViz.callLoadFileListeners();
-			}
-		} else if (keycode == Keys.S) {
-			if (ctrl) {
-				parentViz.callSaveFileListeners();
-			}
-			if (shift) {
-				parentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.SinkIcon);
-			}
+		}
+		else if (keycode == Keys.RIGHT || keycode == Keys.UP) {
+			parentViz.currentCircuit.nextStep();
+		}
+		else if (keycode == Keys.LEFT || keycode == Keys.DOWN) {
+			parentViz.currentCircuit.prevStep();
+		}
+		else if (keycode == Keys.PLUS && ctrl) {
+			parentViz.messageCenter.incScales();
+		}
+		else if (keycode == Keys.MINUS && ctrl) {
+			parentViz.messageCenter.decScales();
 		}
 		else if (keycode == Keys.A) {
 			if (ctrl) {
@@ -72,6 +72,11 @@ public class BioVizInputProcessor implements InputProcessor {
 			}
 
 		}
+		else if (keycode == Keys.C) {
+			if (ctrl) {
+				parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.Coordinates);
+			}
+		}
 		else if (keycode == Keys.D) {
 			if (ctrl) {
 				parentViz.currentCircuit.displayOptions.toggleOption(
@@ -82,33 +87,28 @@ public class BioVizInputProcessor implements InputProcessor {
 						BDisplayOptions.DispenserIcon);
 			}
 		}
-
-		else if (keycode == Keys.RIGHT || keycode == Keys.UP) {
-			parentViz.currentCircuit.nextStep();
-		}
-		else if (keycode == Keys.LEFT || keycode == Keys.DOWN) {
-			parentViz.currentCircuit.prevStep();
-		}
 		else if (keycode == Keys.W) {
 			if (ctrl) {
 				parentViz.callCloseFileListeners();
 			}
 		}
-		else if (keycode == Keys.PLUS && ctrl) {
-			parentViz.messageCenter.incScales();
+		else if (keycode == Keys.O) {
+			if (ctrl) {
+				parentViz.callLoadFileListeners();
+			}
 		}
 		else if (keycode == Keys.R) {
 			parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.ColorfulRoutes);
 		}
-		else if (keycode == Keys.MINUS && ctrl) {
-			parentViz.messageCenter.decScales();
-		}
-		else if (keycode == Keys.C) {
+		else if (keycode == Keys.S) {
 			if (ctrl) {
-				parentViz.currentCircuit.displayOptions.toggleOption(BDisplayOptions.Coordinates);
+				parentViz.callSaveFileListeners();
+			}
+			if (shift) {
+				parentViz.currentCircuit.displayOptions.toggleOption(
+						BDisplayOptions.SinkIcon);
 			}
 		}
-		
 		return false;
 	}
 
