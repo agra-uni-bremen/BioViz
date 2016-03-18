@@ -134,7 +134,10 @@ public enum BDisplayOptions {
 	LoopAutoplay("Loop the autoplayed animation");
 
 	private final String description;
-	private Integer keycode = null;
+
+	// ANY_KEY is the smallest value used by libgdx so this should make sure
+	// that by default no hotkey matches.
+	private int keycode = Input.Keys.ANY_KEY - 1;
 	private boolean ctrl = false;
 	private boolean shift = false;
 	private boolean alt = false;
@@ -160,9 +163,8 @@ public enum BDisplayOptions {
 			ctrl, boolean shift, boolean alt) {
 
 		return Arrays.stream(BDisplayOptions.values()).filter(
-				it -> it.keycode != null && it.keycode == keycode &&
-					  it.ctrl == ctrl && it.shift == shift &&
-					  it.alt == alt).findFirst();
+				it -> it.keycode == keycode && it.ctrl == ctrl &&
+					  it.shift == shift && it.alt == alt).findFirst();
 	}
 
 
