@@ -18,7 +18,7 @@ import java.util.Vector;
 /**
  * This class provides some methods to draw text.
  *
- * @author Jannis Stoppe, Oliver Keszöcze
+ * @author Jannis Stoppe, Oliver Keszocze
  */
 public class MessageCenter {
 

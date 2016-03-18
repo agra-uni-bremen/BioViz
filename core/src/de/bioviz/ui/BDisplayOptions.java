@@ -6,10 +6,11 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * @author keszocze
- *         <p>
  *         This enum stores all the options available when displaying a biochip.
+ *
  *         All options are on/off only.
+ *
+ *          @author Oliver Keszocze
  */
 public enum BDisplayOptions {
 	/**
@@ -21,7 +22,8 @@ public enum BDisplayOptions {
 	 * Option for highlighting used cells that are too close to other used
 	 * cells. See also {@link BDisplayOptions#InterferenceRegion}.
 	 */
-	Adjacency("Show fluidic constraint violations",Input.Keys.A,true,false,false),
+	Adjacency("Show fluidic constraint violations", Input.Keys.A, true, false,
+			  false),
 	/**
 	 * Option for coloring the neighbouring cells of droplets (also known as
 	 * the
@@ -69,7 +71,7 @@ public enum BDisplayOptions {
 	 * Option for displaying coordinates at the upper and left part of the
 	 * canvas.
 	 */
-	Coordinates("Show coordinates",Input.Keys.C,true,false,false),
+	Coordinates("Show coordinates", Input.Keys.C, true, false, false),
 	/**
 	 * Option for coloring the routes' arrows in the color of the droplet
 	 * instead of black.

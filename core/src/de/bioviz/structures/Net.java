@@ -7,7 +7,7 @@ import java.util.Random;
 /**
  * Created by keszocze on 27.07.15.
  *
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 public final class Net {
 
