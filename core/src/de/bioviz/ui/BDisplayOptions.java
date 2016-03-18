@@ -1,5 +1,10 @@
 package de.bioviz.ui;
 
+import com.badlogic.gdx.Input;
+
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * @author keszocze
  *         <p>
@@ -10,7 +15,7 @@ public enum BDisplayOptions {
 	/**
 	 * Option for displaying the amount of cell usage.
 	 */
-	CellUsage("Show cell usage colored"),
+	CellUsage("Show cell usage colored", Input.Keys.U),
 
 	/**
 	 * Option for highlighting used cells that are too close to other used
@@ -46,7 +51,7 @@ public enum BDisplayOptions {
 	Droplets("Show droplets"),
 	/**
 	 * Option for displaying actuations.
-	 *
+	 * <p>
 	 * An cell is actuated when the underlying electrode is turned on. This
 	 * makes a droplet move to that cell.
 	 */
@@ -69,16 +74,16 @@ public enum BDisplayOptions {
 	 * Option for coloring the routes' arrows in the color of the droplet
 	 * instead of black.
 	 */
-	ColorfulRoutes("Color routes"),
+	ColorfulRoutes("Color routes", Input.Keys.R),
 	/**
 	 * Option for displaying the fluid ID dispensed by the given dispenser.
 	 * Please note that this is not the ID of the dispensing unit!
 	 */
-	DispenserID("Show dispenser IDs"),
+	DispenserID("Show dispenser IDs", Input.Keys.D, true, false, false),
 	/**
 	 * Option for displaying the icon of a dispenser.
 	 */
-	DispenserIcon("Show dispenser icons"),
+	DispenserIcon("Show dispenser icons", Input.Keys.D, false, true, false),
 	/**
 	 * Option for displaying the icon of a sink.
 	 */
@@ -90,18 +95,18 @@ public enum BDisplayOptions {
 
 	/**
 	 * Will draw solid paths for the droplets.
-	 *
+	 * <p>
 	 * This basically disables the fancy fading.
 	 */
 	SolidPaths("Draw solid paths"),
 
 	/**
-	 * Option for displaying a net's colour on all its corresponding droplets 
+	 * Option for displaying a net's colour on all its corresponding droplets
 	 */
 	NetColorOnDroplets("Color droplets within net"),
 
 	/**
-	 * Option for displaying a net's colour on all its corresponding fields 
+	 * Option for displaying a net's colour on all its corresponding fields
 	 */
 	NetColorOnFields("Show bounding boxes for nets"),
 
@@ -116,7 +121,7 @@ public enum BDisplayOptions {
 	 * indicators on its fields
 	 */
 	LongNetIndicatorsOnFields("Draw source -> traget lines"),
-	
+
 	/**
 	 * Whether or not interference regions should "linger" behind, i.e.
 	 * encompass all fields that are adjacent at t *and* t-1.
@@ -129,27 +134,36 @@ public enum BDisplayOptions {
 	LoopAutoplay("Loop the autoplayed animation");
 
 	private final String description;
-	private Integer keycode=null;
-	private boolean ctrl=false;
-	private boolean shift=false;
-	private boolean alt=false;
+	private Integer keycode = null;
+	private boolean ctrl = false;
+	private boolean shift = false;
+	private boolean alt = false;
 
 	BDisplayOptions(String desc) {
-		description=desc;
+		description = desc;
 	}
 
-	BDisplayOptions(String desc,Integer keycode) {
+	BDisplayOptions(String desc, int keycode) {
 		this(desc);
-		this.keycode=keycode;
+		this.keycode = keycode;
 	}
 
-	BDisplayOptions(String desc, Integer keycode, boolean ctrl, boolean shift, boolean alt) {
-		this(desc,keycode);
-		this.ctrl=ctrl;
-		this.shift=shift;
-		this.alt=alt;
+	BDisplayOptions(String desc, int keycode, boolean ctrl, boolean shift,
+					boolean alt) {
+		this(desc, keycode);
+		this.ctrl = ctrl;
+		this.shift = shift;
+		this.alt = alt;
 	}
 
+	public static Optional<BDisplayOptions> findOption(int keycode, boolean
+			ctrl, boolean shift, boolean alt) {
+
+		return Arrays.stream(BDisplayOptions.values()).filter(
+				it -> it.keycode != null && it.keycode == keycode &&
+					  it.ctrl == ctrl && it.shift == shift &&
+					  it.alt == alt).findFirst();
+	}
 
 
 	public String description() {
