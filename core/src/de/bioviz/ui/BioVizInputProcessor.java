@@ -63,21 +63,6 @@ public class BioVizInputProcessor implements InputProcessor {
 		else if (keycode == Keys.MINUS && ctrl) {
 			parentViz.messageCenter.decScales();
 		}
-		else if (keycode == Keys.A) {
-			if (ctrl) {
-				parentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.Adjacency);
-			}
-			if (shift) {
-				parentViz.currentCircuit.displayOptions.toggleOption(
-						BDisplayOptions.DetectorIcon);
-			}
-
-		}
-		else if (keycode == Keys.C && ctrl) {
-			parentViz.currentCircuit.displayOptions.toggleOption(
-					BDisplayOptions.Coordinates);
-		}
 		else if (keycode == Keys.W && ctrl) {
 			parentViz.callCloseFileListeners();
 		}

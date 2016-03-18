@@ -21,7 +21,7 @@ public enum BDisplayOptions {
 	 * Option for highlighting used cells that are too close to other used
 	 * cells. See also {@link BDisplayOptions#InterferenceRegion}.
 	 */
-	Adjacency("Show fluidic constraint violations"),
+	Adjacency("Show fluidic constraint violations",Input.Keys.A,true,false,false),
 	/**
 	 * Option for coloring the neighbouring cells of droplets (also known as
 	 * the
@@ -69,7 +69,7 @@ public enum BDisplayOptions {
 	 * Option for displaying coordinates at the upper and left part of the
 	 * canvas.
 	 */
-	Coordinates("Show coordinates"),
+	Coordinates("Show coordinates",Input.Keys.C,true,false,false),
 	/**
 	 * Option for coloring the routes' arrows in the color of the droplet
 	 * instead of black.
