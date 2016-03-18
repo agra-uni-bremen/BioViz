@@ -573,7 +573,7 @@ public class DesktopLauncher extends JFrame {
 	 * 		if true, opens a 'file open dialog', if false opens a 'file store
 	 * 		dialog'
 	 * @return File object pointing to the selected file or null
-	 * @author keszocze
+	 * @author Oliver Keszocze
 	 */
 	private static File askForFile(String pathPrefName, boolean load) {
 		allowHotkeys = false;
