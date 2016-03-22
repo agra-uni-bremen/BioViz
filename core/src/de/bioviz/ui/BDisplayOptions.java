@@ -145,10 +145,10 @@ public enum BDisplayOptions {
 
 	/**
 	 * Stores the hotkey used to toggle the option.
-	 *
-	 * ANY_KEY is the smallest value used by libgdx so this should make sure
-	 * at by default no hotkey matches. Let's hope that they never change this.
-	 *
+	 * <p>
+	 * ANY_KEY is the smallest value used by libgdx so this should make sure at
+	 * by default no hotkey matches. Let's hope that they never change this.
+	 * <p>
 	 * I know that this is kinda hacky @keszocze
 	 */
 	private int keycode = Input.Keys.ANY_KEY - 1;
@@ -219,12 +219,22 @@ public enum BDisplayOptions {
 	}
 
 	/**
+	 * Searches an option that is bound to the given hotkey.
+	 * <p>
+	 * Note that if more than one option is bound to the specified hotkey only
+	 * the first ocurrence ist returned. There is garuantee regarding the order
+	 * of the options. So make sure to know what you are doing.
 	 *
 	 * @param keycode
+	 * 		The key that was typed
 	 * @param ctrl
+	 * 		Whether the Ctrl-key was hold down
 	 * @param shift
+	 * 		Whether the Shift-key was hold down
 	 * @param alt
-	 * @return
+	 * 		Whether the Alt-key was hold down
+	 * @return An optional that might contain an option that matches the given
+	 * hotkey.
 	 */
 	public static Optional<BDisplayOptions> findOption(final int keycode,
 													   final boolean ctrl,
@@ -239,6 +249,7 @@ public enum BDisplayOptions {
 
 	/**
 	 * The textual description of the Option as used in the menus.
+	 *
 	 * @return The textual description of the option
 	 */
 	public String description() {
