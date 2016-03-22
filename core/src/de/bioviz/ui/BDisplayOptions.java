@@ -6,11 +6,11 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- *         This enum stores all the options available when displaying a biochip.
+ * This enum stores all the options available when displaying a biochip.
+ * <p>
+ * All options are on/off only.
  *
- *         All options are on/off only.
- *
- *          @author Oliver Keszocze
+ * @author Oliver Keszocze
  */
 public enum BDisplayOptions {
 	/**
@@ -103,24 +103,24 @@ public enum BDisplayOptions {
 	SolidPaths("Draw solid paths"),
 
 	/**
-	 * Option for displaying a net's colour on all its corresponding droplets
+	 * Option for displaying a net's colour on all its corresponding droplets.
 	 */
 	NetColorOnDroplets("Color droplets within net"),
 
 	/**
-	 * Option for displaying a net's colour on all its corresponding fields
+	 * Option for displaying a net's colour on all its corresponding fields.
 	 */
 	NetColorOnFields("Show bounding boxes for nets"),
 
 	/**
 	 * Option for displaying a droplet's source and target via single, long
-	 * indicators
+	 * indicators.
 	 */
 	LongNetIndicatorsOnDroplets("Draw lines on droplets"),
 
 	/**
 	 * Option for dispalying a net's sources and target via single, long
-	 * indicators on its fields
+	 * indicators on its fields.
 	 */
 	LongNetIndicatorsOnFields("Draw source -> traget lines"),
 
@@ -135,34 +135,101 @@ public enum BDisplayOptions {
 	 */
 	LoopAutoplay("Loop the autoplayed animation");
 
+	/**
+	 * The description that is used in the menus to display this option.
+	 */
 	private final String description;
 
-	// ANY_KEY is the smallest value used by libgdx so this should make sure
-	// that by default no hotkey matches.
+	//
+	// th
+
+	/**
+	 * Stores the hotkey used to toggle the option.
+	 *
+	 * ANY_KEY is the smallest value used by libgdx so this should make sure
+	 * at by default no hotkey matches. Let's hope that they never change this.
+	 *
+	 * I know that this is kinda hacky @keszocze
+	 */
 	private int keycode = Input.Keys.ANY_KEY - 1;
+
+	/**
+	 * Whether the Ctrl-Key is needed to to toggle this option.
+	 */
 	private boolean ctrl = false;
+
+	/**
+	 * Whether the Shift-Key is needed to toggle this option.
+	 */
 	private boolean shift = false;
+
+
+	/**
+	 * Whether the Alt-Key is needed to toggle this option.
+	 */
 	private boolean alt = false;
 
-	BDisplayOptions(String desc) {
+	/**
+	 * Creates an Option without hotkeys.
+	 *
+	 * @param desc
+	 * 		The text used in the menu to describe this option.
+	 */
+	BDisplayOptions(final String desc) {
 		description = desc;
 	}
 
-	BDisplayOptions(String desc, int keycode) {
+	/**
+	 * Creates an option with an unmodified hotkey.
+	 * <p>
+	 * 'Unmodified' in this case means that neither shift, key nor alt is
+	 * pressed.
+	 *
+	 * @param desc
+	 * 		The text used in the menu to describe this option.
+	 * @param keycode
+	 * 		The hotkey that toggles this option.
+	 */
+	BDisplayOptions(final String desc, final int keycode) {
 		this(desc);
 		this.keycode = keycode;
 	}
 
-	BDisplayOptions(String desc, int keycode, boolean ctrl, boolean shift,
-					boolean alt) {
+	/**
+	 * Creates an option with a hotkey.
+	 * <p>
+	 *
+	 * @param desc
+	 * 		The text used in the menu to describe this option.
+	 * @param keycode
+	 * 		The hotkey that toggles this option.
+	 * @param ctrl
+	 * 		if 'true', the Ctrl-key needs to be pressed to toggle this option
+	 * @param shift
+	 * 		if 'true', the Shift-key needs to be pressed to toggle this option
+	 * @param alt
+	 * 		if 'true', the Alt-key needs to be pressed to toggle this option
+	 */
+	BDisplayOptions(final String desc, final int keycode, final boolean ctrl,
+					final boolean shift, final boolean alt) {
 		this(desc, keycode);
 		this.ctrl = ctrl;
 		this.shift = shift;
 		this.alt = alt;
 	}
 
-	public static Optional<BDisplayOptions> findOption(int keycode, boolean
-			ctrl, boolean shift, boolean alt) {
+	/**
+	 *
+	 * @param keycode
+	 * @param ctrl
+	 * @param shift
+	 * @param alt
+	 * @return
+	 */
+	public static Optional<BDisplayOptions> findOption(final int keycode,
+													   final boolean ctrl,
+													   final boolean shift,
+													   final boolean alt) {
 
 		return Arrays.stream(BDisplayOptions.values()).filter(
 				it -> it.keycode == keycode && it.ctrl == ctrl &&
@@ -170,6 +237,10 @@ public enum BDisplayOptions {
 	}
 
 
+	/**
+	 * The textual description of the Option as used in the menus.
+	 * @return The textual description of the option
+	 */
 	public String description() {
 		return description;
 	}
