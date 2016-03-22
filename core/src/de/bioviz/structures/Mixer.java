@@ -1,7 +1,7 @@
 package de.bioviz.structures;
 
 /**
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 public class Mixer {
 

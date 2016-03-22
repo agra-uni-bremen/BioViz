@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 
 /**
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  * @author malu
  * Texture cache class.
  * <p>
