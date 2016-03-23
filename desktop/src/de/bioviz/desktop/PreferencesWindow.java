@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 
 
 /**
@@ -39,7 +40,7 @@ public class PreferencesWindow extends JFrame {
 		final int maxAnimationDuration = 1000;
 		final int defaultAnimationDuration = 500;
 
-		final int rows = 2;
+		final int rows = 3;
 		final int columns = 2;
 		final int horizontalGap = 4;
 		final int verticalGap = 4;
@@ -65,6 +66,12 @@ public class PreferencesWindow extends JFrame {
 		} catch (final Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage());
 		}
+
+
+		JButton closeButton = new JButton("Close");
+		closeButton.addActionListener(e -> this.dispatchEvent(
+				new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
+		this.add(closeButton);
 
 		pack();
 		setVisible(true);
