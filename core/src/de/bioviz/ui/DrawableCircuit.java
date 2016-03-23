@@ -8,7 +8,9 @@ import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.util.ColorCalculator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -19,11 +21,8 @@ import org.slf4j.Logger;
 
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
- * Create a ReversibleCircuit first (e.g. by loading a given .real file), then
- * create a DrawableCircuit instance for the ReversibleCircuit to draw the
- * latter.
  *
- * @author jannis
+ * @author Jannis Stoppe
  */
 public class DrawableCircuit implements Drawable {
 	public Biochip data;
@@ -64,20 +63,20 @@ public class DrawableCircuit implements Drawable {
 	private DrawableField hoveredField = null;
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
-
+	
 	public BioViz parent;
 
 	public void prevStep() {
-		autoAdvance = false;
+		autoAdvance=false;
 		setCurrentTime(currentTime - 1);
 
 	}
 
 	public void nextStep() {
-		autoAdvance = false;
-		setCurrentTime(currentTime + 1);
+		autoAdvance=false;
+		setCurrentTime(currentTime+1);
 	}
-
+	
 	public void toggleAutoAdvance() {
 		this.autoAdvance = !(this.autoAdvance);
 	}
@@ -88,8 +87,7 @@ public class DrawableCircuit implements Drawable {
 				currentTime = timeStep;
 				parent.callTimeChangedListeners();
 			}
-		}
-		else {
+		} else {
 			throw new RuntimeException("circuit parent is null");
 		}
 	}
@@ -98,8 +96,7 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * Creates a drawable entity based on the data given.
 	 *
-	 * @param toDraw
-	 * 		the data to draw
+	 * @param toDraw the data to draw
 	 */
 	public DrawableCircuit(Biochip toDraw, BioViz parent) {
 		logger.debug("Creating new drawable chip based on " + toDraw);
@@ -107,8 +104,7 @@ public class DrawableCircuit implements Drawable {
 		this.parent = parent;
 		this.initializeDrawables();
 		this.displayOptions.addOptionChangedEvent(e -> {
-			if (e.equals(BDisplayOptions.CellUsage) ||
-				e.equals(BDisplayOptions.CellUsageCount)) {
+			if (e.equals(BDisplayOptions.CellUsage)) {
 				boolean doIt = displayOptions.getOption(e);
 				if (doIt) {
 					data.computeCellUsage();
@@ -117,19 +113,15 @@ public class DrawableCircuit implements Drawable {
 		});
 		logger.debug("New DrawableCircuit created successfully.");
 	}
-
 	/**
-	 * Initializes the drawables according to the circuit stored in the data
-	 * field
+	 * Initializes the drawables according to the circuit stored in the data field
 	 */
 	private void initializeDrawables() {
 		// clear remaining old data first, if any
 		this.fields.clear();
 		this.droplets.clear();
 
-		logger.debug("Initializing drawables: {} fields, {} droplets",
-					 data.getAllCoordinates().size(),
-					 data.getDroplets().size());
+		logger.debug("Initializing drawables: {} fields, {} droplets", data.getAllCoordinates().size(), data.getDroplets().size());
 
 		//setup fields
 		data.getAllFields().forEach(fld -> {
@@ -169,13 +161,11 @@ public class DrawableCircuit implements Drawable {
 
 		if (autoAdvance) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) <
-				current) {
+			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
 				lastAutoStepAt = current;
 
-				logger.trace("data.getMaxT: {}\tcurrentTime: {}",
-							 data.getMaxT(), currentTime);
-				setCurrentTime(currentTime + 1);
+				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);
+				setCurrentTime(currentTime +1);
 				if (currentTime >= data.getMaxT() &&
 						this.displayOptions.getOption(
 								BDisplayOptions.LoopAutoplay)) {
@@ -198,7 +188,7 @@ public class DrawableCircuit implements Drawable {
 		for (DrawableDroplet d : this.droplets) {
 			d.draw();
 		}
-
+	
 	}
 
 
@@ -206,8 +196,8 @@ public class DrawableCircuit implements Drawable {
 	 * Draws the coordinates of the grid on top of and to the left of the grid.
 	 * This in fact uses the message center to display the numbers, so the
 	 * actual drawing will be done after the rest has been drawn.
-	 *
-	 * @author jannis
+	 * 
+	 * @author Jannis Stoppe
 	 */
 	private void displayCoordinates() {
 		// calculate current dimensions first so the coordinates can be either
@@ -215,9 +205,9 @@ public class DrawableCircuit implements Drawable {
 		// beyond the viewport boundaries) or at the edge of the grid (if they
 		// are within)
 		int minX = Integer.MAX_VALUE,
-				minY = Integer.MAX_VALUE,
-				maxX = Integer.MIN_VALUE,
-				maxY = Integer.MIN_VALUE;
+			minY = Integer.MAX_VALUE,
+			maxX = Integer.MIN_VALUE,
+			maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.fields) {
 			if (minX > f.getField().x()) {
@@ -233,7 +223,7 @@ public class DrawableCircuit implements Drawable {
 				maxY = f.getField().y();
 			}
 		}
-
+		
 		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
 		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
 			topYCoord = this.yCoordOnScreen(maxY + 1);
@@ -242,59 +232,54 @@ public class DrawableCircuit implements Drawable {
 		if (leftXCoord < this.xCoordOnScreen(minX - 1)) {
 			leftXCoord = this.xCoordOnScreen(minX - 1);
 		}
-
+		
 		// Defines when numbers should start fading and be completely hidden
 		float startFadingAtScale = 32f;
 		float endFadingAtScale = 24f;
-
+		
 		Color col = Color.WHITE.cpy();
 		if (this.smoothScaleX < startFadingAtScale) {
 			if (this.smoothScaleX > endFadingAtScale) {
-				float alpha = 1f - ((startFadingAtScale - smoothScaleX) /
-									(startFadingAtScale - endFadingAtScale));
+				float alpha = 1f - ((startFadingAtScale - smoothScaleX) / (startFadingAtScale - endFadingAtScale));
 				col.a = alpha;
-			}
-			else {
+			} else {
 				// TODO: don't draw!
 				col.a = 0;
 			}
 		}
-
+		
 		// scale text
-		float scale =
-				Math.min(MessageCenter.textRenderResolution, smoothScaleX /
-															 2f);
-
+		float scale = Math.min(MessageCenter.textRenderResolution, smoothScaleX / 2f);
+		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
 			this.parent.messageCenter.addHUDMessage(
-					this.hashCode() + i,    // unique ID for each message
-					Integer.toString(i).trim(),    // message
-					this.xCoordOnScreen(i),    // x
-					topYCoord,                // y
-					col,                    // message color, used for fading
+					this.hashCode() + i,	// unique ID for each message
+					Integer.toString(i).trim(),	// message
+					this.xCoordOnScreen(i),	// x
+					topYCoord, 				// y
+					col,					// message color, used for fading
 					scale);
 		}
-
+		
 		for (int i = minY; i < maxY + 1; i++) {
 			this.parent.messageCenter.addHUDMessage(
 					this.hashCode() + maxX + Math.abs(minY) + 1 + i,
-					// unique ID for each message, starting after the previous
-					// ids
+				// unique ID for each message, starting after the previous ids
 
-					Integer.toString(i).trim(),    // message
-					leftXCoord,                // x
+					Integer.toString(i).trim(),	// message
+					leftXCoord,				// x
 					this.yCoordOnScreen(i), // y
-					col,                    // message color, used for fading
+					col,					// message color, used for fading
 					scale);
 		}
 	}
-
+	
 	private void removeDisplayedCoordinates() {
 		int minX = Integer.MAX_VALUE,
-				minY = Integer.MAX_VALUE,
-				maxX = Integer.MIN_VALUE,
-				maxY = Integer.MIN_VALUE;
+			minY = Integer.MAX_VALUE,
+			maxX = Integer.MIN_VALUE,
+			maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.fields) {
 			if (minX > f.getField().x()) {
@@ -310,7 +295,7 @@ public class DrawableCircuit implements Drawable {
 				maxY = f.getField().y();
 			}
 		}
-
+		
 		// remove all HUD messages
 		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
 			this.parent.messageCenter.removeHUDMessage(this.hashCode() + i);
@@ -320,8 +305,7 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * Calculates the x coordinate of a given cell
 	 *
-	 * @param i
-	 * 		the cell index
+	 * @param i the cell index
 	 * @return the x coordinate on screen
 	 */
 	protected float xCoordOnScreen(int i) {
@@ -329,13 +313,11 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the x coordinate of a given value. Keep in mind that this is
-	 * still in cell-space, so a value of 0 would be at the center of the
-	 * chip's
-	 * first cell.
+	 * Calculates the x coordinate of a given value. Keep in mind that
+	 * this is still in cell-space, so a value of 0 would be at the center
+	 * of the chip's first cell.
 	 *
-	 * @param i
-	 * 		the value to translate
+	 * @param i the value to translate
 	 * @return the x coordinate on screen
 	 */
 	protected float xCoordOnScreen(float i) {
@@ -371,55 +353,17 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * If the two scaling factors aren't equal, this sets the larger scaling
-	 * factor to the smaller one in order to display square elements on screen
+	 * If the two scaling factors aren't equal, this sets the larger scaling factor to
+	 * the smaller one in order to display square elements on screen
 	 */
 	public void shrinkToSquareAlignment() {
 		if (getScaleY() < getScaleX()) {
 			setScaleX(getScaleY());
-		}
-		else {
+		} else {
 			setScaleY(getScaleX());
 		}
 	}
 
-	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in
-	// -java-to-rgb-without-using-java-awt-color-disallowe
-	private static Color hsvToRgb(float hue, final float saturation, final
-	float value) {
-
-		while (hue >= 1) {
-			hue -= 1;
-		}
-		while (hue < 0) {
-			hue += 1;
-		}
-		int h = (int) (hue * 6);
-		float f = hue * 6 - h;
-		float p = value * (1 - saturation);
-		float q = value * (1 - f * saturation);
-		float t = value * (1 - (1 - f) * saturation);
-
-		switch (h) {
-			case 0:
-				return new Color(value, t, p, 1);
-			case 1:
-				return new Color(q, value, p, 1);
-			case 2:
-				return new Color(p, value, t, 1);
-			case 3:
-				return new Color(p, q, value, 1);
-			case 4:
-				return new Color(t, p, value, 1);
-			case 5:
-				return new Color(value, p, q, 1);
-			default:
-				throw new RuntimeException(
-						"Something went wrong when converting from HSV to RGB." +
-						" Input was " +
-						hue + ", " + saturation + ", " + value);
-		}
-	}
 
 	/**
 	 * retrieves the current x scaling factor
@@ -429,15 +373,16 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * sets the current x scaling factor Keep in mind that the value used for
-	 * actually drawing the circuit is successively approaching the given value
-	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
-	 * supposed to skip those inbetween steps.
+	 * sets the current x scaling factor
+	 * Keep in mind that the value used for actually drawing the
+	 * circuit is successively approaching the given value for a
+	 * smooth camera movement. Use setScaleImmediately if the viewport
+	 * is supposed to skip those inbetween steps.
 	 */
 	public void setScaleX(float scaleX) {
 		this.scaleX = scaleX;
 	}
-
+	
 	/**
 	 * Retrieves the current x scaling factor that is used for the smooth
 	 * animated camera.
@@ -454,10 +399,11 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Sets the current y scaling factor. Keep in mind that the value used for
-	 * actually drawing the circuit is successively approaching the given value
-	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
-	 * supposed to skip those inbetween steps.
+	 * Sets the current y scaling factor.
+	 * Keep in mind that the value used for actually drawing the
+	 * circuit is successively approaching the given value for a
+	 * smooth camera movement. Use setScaleImmediately if the viewport
+	 * is supposed to skip those inbetween steps.
 	 */
 	public void setScaleY(final float scaleY) {
 		this.scaleY = scaleY;
@@ -475,16 +421,14 @@ public class DrawableCircuit implements Drawable {
 		float width = Gdx.graphics.getWidth() * (1f / scaleX);
 		float centerY = offsetY;
 		float height = Gdx.graphics.getHeight() * (1f / scaleY);
-		result.set(centerX - (width / 2f), centerY - (height / 2f), width,
-				   height);
+		result.set(centerX - (width / 2f), centerY - (height / 2f), width, height);
 		return result;
 	}
 
 	/**
 	 * Sets the screen bounds
 	 *
-	 * @param bounds
-	 * 		the area the viewport is supposed to show.
+	 * @param bounds the area the viewport is supposed to show.
 	 */
 	public void setViewBounds(final Rectangle bounds) {
 		float targetHeight = Gdx.graphics.getHeight() / bounds.height;
@@ -531,8 +475,8 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Resets the zoom so that the whole circuit is shown without smoothly
-	 * zooming to those settings.
+	 * Resets the zoom so that the whole circuit is shown without
+	 * smoothly zooming to those settings.
 	 */
 	public void zoomExtentsImmediately() {
 		zoomExtents();
@@ -541,8 +485,8 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Sets the zoom to the given values without smoothly approaching those
-	 * target values (instead sets them immediately).
+	 * Sets the zoom to the given values without smoothly approaching
+	 * those target values (instead sets them immediately).
 	 */
 	public void setScaleImmediately(float scaleX, float scaleY) {
 		this.scaleX = scaleX;
@@ -556,8 +500,8 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Re-calculates the adjacency for all blobs and sets the fields' colours
-	 * accordingly.
+	 * Re-calculates the adjacency for all blobs and sets
+	 * the fields' colours accordingly.
 	 */
 	public void updateAdjacencyColours() {
 		Set<BiochipField> f = this.data.getAdjacentActivations();
