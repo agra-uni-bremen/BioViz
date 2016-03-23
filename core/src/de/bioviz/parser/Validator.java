@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * The way this validator works is that every problem found will be added to an
  * error list that will be returned to the caller.
  *
- * @author keszocze
+ * @author Oliver Keszöcze
  */
 public class Validator {
 	/**

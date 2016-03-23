@@ -288,7 +288,7 @@ public class Biochip {
 	 * Calculates the last timestamp at which a droplet is moved
 	 *
 	 * @return the last timestamp of the currently loaded simulation
-	 * @author Oliver Keszöcze
+	 * @author Oliver Keszocze
 	 */
 	public int getMaxT() {
 		if (maxT != -1) {
@@ -317,7 +317,7 @@ public class Biochip {
 
 	/**
 	 * @return Length of the longest route
-	 * @author Oliver Keszöcze
+	 * @author Oliver Keszocze
 	 */
 	public int getMaxRouteLength() {
 		if (maxRouteLength == -1) {
