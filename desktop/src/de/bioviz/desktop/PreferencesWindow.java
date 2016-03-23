@@ -16,7 +16,7 @@ import java.awt.event.WindowEvent;
  * Unintuitively, a larger value means a slower movement as the slider
  * represents the animation duration.
  *
- * @author Jannis Stoppe
+ * @author Jannis Stoppe, Oliver Keszocze
  */
 public class PreferencesWindow extends JFrame {
 
@@ -29,10 +29,12 @@ public class PreferencesWindow extends JFrame {
 			LoggerFactory.getLogger(PreferencesWindow.class);
 
 	/**
+	 * @param viz
+	 * 		Reference to the {@see BioViz} instance that opened the window.
 	 * @throws HeadlessException
-	 * @author Jannis Stoppe
+	 * @author Jannis Stoppe, Oliver Keszocze
 	 */
-	public PreferencesWindow(BioViz viz) throws HeadlessException {
+	public PreferencesWindow(final BioViz viz) throws HeadlessException {
 		super("Preferences");
 
 
@@ -40,7 +42,7 @@ public class PreferencesWindow extends JFrame {
 		final int maxAnimationDuration = 1000;
 		final int defaultAnimationDuration = 500;
 
-		final int rows = 3;
+		final int rows = 5;
 		final int columns = 2;
 		final int horizontalGap = 4;
 		final int verticalGap = 4;
@@ -49,7 +51,7 @@ public class PreferencesWindow extends JFrame {
 				new GridLayout(rows, columns, horizontalGap, verticalGap);
 		this.setLayout(layout);
 
-		this.add(new JLabel("Animation duration in ms:"));
+		this.add(new JLabel("Time between steps in s:"));
 		JSlider animSlider =
 				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,
 							maxAnimationDuration,
@@ -59,6 +61,18 @@ public class PreferencesWindow extends JFrame {
 					BioViz.setAnimationDuration(animSlider.getValue());
 				});
 		this.add(animSlider);
+
+
+		this.add(new JLabel("Animation duration in ms:"));
+		JSlider dropMovementSpeedSlider =
+				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,
+							maxAnimationDuration,
+							defaultAnimationDuration);
+		dropMovementSpeedSlider.addChangeListener(
+				e -> {
+					BioViz.setAnimationDuration(dropMovementSpeedSlider.getValue());
+				});
+		this.add(dropMovementSpeedSlider);
 
 		try {
 			this.setIconImage(
