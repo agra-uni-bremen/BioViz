@@ -1,7 +1,10 @@
 package de.bioviz.desktop;
 
 import de.bioviz.ui.BioViz;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 
@@ -12,16 +15,24 @@ import java.awt.*;
  * Unintuitively, a larger value means a slower movement as the slider
  * represents the animation duration.
  *
- * @author jannis
+ * @author Jannis Stoppe
  */
 public class PreferencesWindow extends JFrame {
 
 	/**
+	 * Used to handle feedback for the user about the program behaviour (and of
+	 * course the developer, too). Anything logged using this instance will
+	 * report as originating from the DesktopLauncher class.
+	 */
+	private static Logger logger =
+			LoggerFactory.getLogger(PreferencesWindow.class);
+
+	/**
 	 *
-	 * @author jannis
+	 * @author Jannis Stoppe
 	 * @throws HeadlessException
 	 */
-	public PreferencesWindow() throws HeadlessException {
+	public PreferencesWindow(BioViz viz) throws HeadlessException {
 		super("Preferences");
 
 
@@ -48,6 +59,13 @@ public class PreferencesWindow extends JFrame {
 					BioViz.setAnimationDuration(animSlider.getValue());
 				});
 		this.add(animSlider);
+
+		try {
+			this.setIconImage(
+					ImageIO.read(viz.getApplicationIcon().file()));
+		} catch (final Exception e) {
+			logger.error("Could not set application icon: " + e.getMessage());
+		}
 
 		pack();
 		setVisible(true);
