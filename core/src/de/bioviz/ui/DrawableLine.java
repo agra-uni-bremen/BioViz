@@ -1,12 +1,10 @@
 package de.bioviz.ui;
 
-import java.util.HashSet;
+import com.badlogic.gdx.graphics.Color;
+import de.bioviz.util.Pair;
+
 import java.util.LinkedList;
 import java.util.Queue;
-
-import com.badlogic.gdx.graphics.Color;
-
-import de.bioviz.util.Pair;
 
 public class DrawableLine extends DrawableSprite {
 

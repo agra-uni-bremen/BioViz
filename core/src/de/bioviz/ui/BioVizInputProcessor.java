@@ -77,6 +77,9 @@ public class BioVizInputProcessor implements InputProcessor {
 				parentViz.currentCircuit.shrinkToSquareAlignment();
 			}
 		}
+		else if (keycode == Keys.T && ctrl) {
+			parentViz.callLoadFileListeners();
+		}
 		else if (keycode == Keys.Z) {
 			if (shift) {
 				parentViz.currentCircuit.zoomExtents();

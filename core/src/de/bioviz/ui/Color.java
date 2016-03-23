@@ -170,4 +170,11 @@ public class Color {
 	public com.badlogic.gdx.graphics.Color buildGdxColor() {
 		return new com.badlogic.gdx.graphics.Color(r, g, b, a);
 	}
+
+	/**
+	 * A string representation of this color
+	 */
+	public String toString() {
+		return "" + r + "/" + g + "/" + b + "/" + a;
+	}
 }
