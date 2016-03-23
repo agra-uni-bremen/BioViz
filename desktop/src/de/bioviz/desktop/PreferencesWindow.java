@@ -28,9 +28,8 @@ public class PreferencesWindow extends JFrame {
 			LoggerFactory.getLogger(PreferencesWindow.class);
 
 	/**
-	 *
-	 * @author Jannis Stoppe
 	 * @throws HeadlessException
+	 * @author Jannis Stoppe
 	 */
 	public PreferencesWindow(BioViz viz) throws HeadlessException {
 		super("Preferences");
@@ -72,6 +71,7 @@ public class PreferencesWindow extends JFrame {
 		final int xSize = 320;
 		final int ySize = 240;
 		setSize(xSize, ySize);
+
 	}
 
 }

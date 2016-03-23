@@ -638,7 +638,6 @@ public class DesktopLauncher extends JFrame {
 	private static void showSettings(BioViz viz) {
 		logger.debug("Opening preferences window...");
 		PreferencesWindow pw = new PreferencesWindow(viz);
-		pw.setVisible(true);
 		logger.debug("Done opening preferences window.");
 	}
 
