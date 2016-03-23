@@ -233,6 +233,26 @@ public class SVGManager {
 
 		calculateViewboxDimensions(circ);
 
+		int viewBox_x = topLeftCoord.fst * coordinateMultiplier;
+		int viewBox_y = topLeftCoord.snd * coordinateMultiplier;
+
+		int viewBox_width = bottomRightCoord.fst * coordinateMultiplier;
+		int viewBox_height = bottomRightCoord.snd * coordinateMultiplier;
+
+		if(circ.displayOptions.getOption(BDisplayOptions.Coordinates)){
+			int coordinateOffsetX = (int) (coordinateMultiplier * 0.75);
+			int coordinateOffsetY = (int) (coordinateMultiplier * 0.75);
+			viewBox_x -= coordinateOffsetX;
+			viewBox_y -= coordinateOffsetY;
+			viewBox_width += coordinateOffsetX;
+			viewBox_height += coordinateOffsetY;
+		}
+
+		if(svgExportSettings.getInformationString()){
+			int infoStringOffset = size * 2;
+			viewBox_height += infoStringOffset;
+		}
+
 		LOGGER.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
 
@@ -240,10 +260,8 @@ public class SVGManager {
 						"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
 						"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
 				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-						topLeftCoord.fst * coordinateMultiplier + " " +
-						topLeftCoord.snd * coordinateMultiplier + " " +
-						bottomRightCoord.fst * coordinateMultiplier + " " +
-						bottomRightCoord.snd * coordinateMultiplier +
+					viewBox_x + " " +	viewBox_y + " " +
+					viewBox_width + " " +	viewBox_height +
 						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
 						"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
@@ -270,7 +288,9 @@ public class SVGManager {
 			sb.append(infoString(circ));
 		}
 
-		sb.append(createCoordinates(circ));
+		if(circ.displayOptions.getOption(BDisplayOptions.Coordinates)) {
+			sb.append(createCoordinates(circ));
+		}
 
 		sb.append("</svg>\n");
 
@@ -468,7 +488,8 @@ public class SVGManager {
 
 		String coordinates =
 				"x=\"" + (topLeftCoord.fst * coordinateMultiplier) + "\" " +
-				"y=\"" + (bottomRightCoord.snd * coordinateMultiplier + size) + "\" ";
+				"y=\"" + (bottomRightCoord.snd * coordinateMultiplier + 1.5 * size) +
+				"\" ";
 
 		String circName = circ.parent.getFileName();
 		String timeStep = String.valueOf(circ.currentTime);
