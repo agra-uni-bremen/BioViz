@@ -29,7 +29,7 @@ public class PreferencesWindow extends JFrame {
 		final int maxAnimationDuration = 1000;
 		final int defaultAnimationDuration = 500;
 
-		final int rows = 0;
+		final int rows = 2;
 		final int columns = 2;
 		final int horizontalGap = 4;
 		final int verticalGap = 4;
@@ -38,7 +38,7 @@ public class PreferencesWindow extends JFrame {
 				new GridLayout(rows, columns, horizontalGap, verticalGap);
 		this.setLayout(layout);
 
-		this.add(new JLabel("Animation duration in ms"));
+		this.add(new JLabel("Animation duration in ms:"));
 		JSlider animSlider =
 				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,
 							maxAnimationDuration,
