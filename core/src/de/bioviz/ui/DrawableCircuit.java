@@ -370,39 +370,6 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
-	private static Color hsvToRgb(float hue, final float saturation, final float value) {
-
-		while (hue >= 1) {
-			hue -= 1;
-		}
-		while (hue < 0) {
-			hue += 1;
-		}
-		int h = (int) (hue * 6);
-		float f = hue * 6 - h;
-		float p = value * (1 - saturation);
-		float q = value * (1 - f * saturation);
-		float t = value * (1 - (1 - f) * saturation);
-
-		switch (h) {
-			case 0:
-				return new Color(value, t, p, 1);
-			case 1:
-				return new Color(q, value, p, 1);
-			case 2:
-				return new Color(p, value, t, 1);
-			case 3:
-				return new Color(p, q, value, 1);
-			case 4:
-				return new Color(t, p, value, 1);
-			case 5:
-				return new Color(value, p, q, 1);
-			default:
-				throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
-		}
-	}
-
 	/**
 	 * retrieves the current x scaling factor
 	 */
