@@ -12,7 +12,7 @@ package de.bioviz.util;
  * @param <V>
  * 		Type for the snd entry of the tuple
  *
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 public class Pair<K, V> {
 

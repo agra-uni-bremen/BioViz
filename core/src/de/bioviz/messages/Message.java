@@ -3,16 +3,12 @@ package de.bioviz.messages;
 import com.badlogic.gdx.graphics.Color;
 
 /**
- * A text message that will be displayed for some time at the top of the screen.
+ * A text message that will be displayed for some time at the top of the
+ * screen.
  *
  * @author jannis
  */
-public class Message {
-
-	/**
-	 * The messages that will be displayed on the top of the screen.
-	 */
-	public String message;
+public class Message extends MessageBase {
 
 	/**
 	 * The time the message will be displayed in milliseconds.
@@ -21,27 +17,29 @@ public class Message {
 
 	/**
 	 * The time when the message was created.
-	 *
+	 * <p>
 	 * The variable will be used to check whether the message is still to be
 	 * displayed.
 	 */
 	public long createdOn;
 
 	/**
-	 * The color used for displaying the message.
-	 *
-	 * TODO this value is never set, i.e. is always null.
-	 * This is, obviously, useless. The MessageCenter even checks whether it
-	 * is null or not before chosing a color on its own.
-	 */
-	public Color color;
-
-	/**
-	 *
-	 * @param msg The message that will be displayed.
+	 * @param msg
+	 * 		The message that will be displayed.
 	 */
 	public Message(final String msg) {
+		super(msg);
 		this.createdOn = System.currentTimeMillis();
-		this.message = msg;
+	}
+
+	/**
+	 * Computes whether the messages has expired.
+	 *
+	 * @return true if the messages has epxired, false otherwise
+	 */
+	public boolean expired() {
+		long currentTime = System.currentTimeMillis();
+
+		return createdOn + displayTime <= currentTime;
 	}
 }

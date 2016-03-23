@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  *         <p>
  *         Class storing the current display options/settings.
  *         <p>

@@ -39,6 +39,7 @@ public class DrawableCircuit implements Drawable {
 	protected float smoothOffsetY = 0;
 
 	private float scalingDelay = 4f;
+	private int autoloop_OvertimeCounter = 0;
 
 	public int currentTime = 1;
 
@@ -55,6 +56,12 @@ public class DrawableCircuit implements Drawable {
 	public Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
 
 	public DisplayOptions displayOptions = new DisplayOptions();
+
+	/**
+	 * The field that is currently hovered by the mouse.
+	 * May be null, so be careful.
+	 */
+	private DrawableField hoveredField = null;
 
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
 
@@ -169,10 +176,22 @@ public class DrawableCircuit implements Drawable {
 				logger.trace("data.getMaxT: {}\tcurrentTime: {}",
 							 data.getMaxT(), currentTime);
 				setCurrentTime(currentTime + 1);
+				if (currentTime >= data.getMaxT() &&
+						this.displayOptions.getOption(
+								BDisplayOptions.LoopAutoplay)) {
+					++autoloop_OvertimeCounter;
+					if (autoloop_OvertimeCounter > 5) { //todo magic number
+						setCurrentTime(1);
+						autoloop_OvertimeCounter = 0;
+					}
+				}
 			}
 		}
 
 		for (DrawableField f : this.fields) {
+			if (f.isHovered()) {
+				this.hoveredField = f;
+			}
 			f.draw();
 		}
 
@@ -479,9 +498,6 @@ public class DrawableCircuit implements Drawable {
 		this.offsetY = targetOffsetY;
 	}
 
-	private int busDrawn = 0;
-
-
 	/**
 	 * Resets the zoom to 1 px per element
 	 */
@@ -548,5 +564,13 @@ public class DrawableCircuit implements Drawable {
 		for (BiochipField biochipField : f) {
 
 		}
+	}
+
+	/**
+	 * Retrieves the field that is currently being hovered.
+	 * @return the currently hovered field.
+	 */
+	public DrawableField getHoveredField() {
+		return this.hoveredField;
 	}
 }

@@ -8,7 +8,7 @@ package de.bioviz.structures;
  * <p>
  * Created by keszocze on 30.07.15.
  *
- * @author keszocze
+ * @author Oliver Keszocze
  */
 public class Detector {
 	/**

@@ -238,7 +238,7 @@ public class DrawableField extends DrawableSprite {
 		 and thus can not be modified.
 		If that value is unchangeable, the cells all stay white
 		 */
-		Color result = new Color(Colors.FIELD_EMPTY_COLOR);
+		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
 
 		if (getField().isBlocked(getParentCircuit().currentTime)) {
 			result.add(BLOCKED_COLOR);
@@ -264,6 +264,13 @@ public class DrawableField extends DrawableSprite {
 			}
 			for (final Net n : this.getParentCircuit().data.
 					getNetsOf(this.getField())) {
+				de.bioviz.ui.Color netCol =
+						new de.bioviz.ui.Color(new Color(n.getColor()));
+				if (this.getParentCircuit().data.getNetsOf
+						(this.getParentCircuit().getHoveredField().field).
+						contains(n)) {
+					netCol.add(0.5f, 0.5f, 0.5f, 0);
+				}
 				Point top = new Point(
 						this.getField().x(), this.getField().y() + 1);
 				Point bottom = new Point(
@@ -278,30 +285,28 @@ public class DrawableField extends DrawableSprite {
 				final int topright = 2;
 				final int bottomright = 3;
 				if (!getParentCircuit().data.hasFieldAt(top) ||
-					!n.containsField(getParentCircuit().data.getFieldAt(top)
-					)) {
-					this.cornerColors[topleft].add(new Color(n.getColor()));
-					this.cornerColors[topright].add(new Color(n.getColor()));
+						!n.containsField(
+								getParentCircuit().data.getFieldAt(top))) {
+					this.cornerColors[topleft].add(netCol.buildGdxColor());
+					this.cornerColors[topright].add(netCol.buildGdxColor());
 				}
 				if (!getParentCircuit().data.hasFieldAt(bottom) ||
-					!n.containsField(
-							getParentCircuit().data.getFieldAt(bottom))) {
-					this.cornerColors[bottomleft].add(new Color(n.getColor()));
-					this.cornerColors[bottomright].add(new Color(n.getColor
-							()));
+						!n.containsField(
+								getParentCircuit().data.getFieldAt(bottom))) {
+					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
+					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
 				if (!getParentCircuit().data.hasFieldAt(left) ||
-					!n.containsField(
-							getParentCircuit().data.getFieldAt(left))) {
-					this.cornerColors[bottomleft].add(new Color(n.getColor()));
-					this.cornerColors[topleft].add(new Color(n.getColor()));
+						!n.containsField(
+								getParentCircuit().data.getFieldAt(left))) {
+					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
+					this.cornerColors[topleft].add(netCol.buildGdxColor());
 				}
 				if (!getParentCircuit().data.hasFieldAt(right) ||
-					!n.containsField(
-							getParentCircuit().data.getFieldAt(right))) {
-					this.cornerColors[topright].add(new Color(n.getColor()));
-					this.cornerColors[bottomright].add(new Color(n.getColor
-							()));
+						!n.containsField(
+								getParentCircuit().data.getFieldAt(right))) {
+					this.cornerColors[topright].add(netCol.buildGdxColor());
+					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
 			}
 			for (int i = 0; i < cornerColors.length; i++) {
@@ -317,7 +322,7 @@ public class DrawableField extends DrawableSprite {
 		if (option(CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
-			float scalingFactor = 2f;
+			float scalingFactor = this.parentCircuit.data.getMaxUsage();
 			result.add(new Color(
 					this.getField().usage / scalingFactor,
 					this.getField().usage / scalingFactor,
@@ -328,12 +333,28 @@ public class DrawableField extends DrawableSprite {
 
 		/** Colours the interference region **/
 		if (option(InterferenceRegion)) {
-			boolean hasNeighbouringDroplet = false;
+			int amountOfInterferenceRegions = 0;
 			for (final Droplet d : getParentCircuit().data.getDroplets()) {
-				Point p = d.getPositionAt(getParentCircuit().currentTime);
-				if (p != null && p.adjacent(this.getField().pos)) {
-					result.add(Colors.INTERFERENCE_REGION_COLOR);
+				if (isPartOfInterferenceRegion(d)) {
+					boolean interferenceViolation = false;
+					for (DrawableDroplet d2 : parentCircuit.droplets) {
+						if (d2.droplet.getPositionAt(this.parentCircuit.currentTime) != null &&
+								d2.droplet.getNet() != d.getNet() &&
+								d2.droplet.getPositionAt(this.parentCircuit.currentTime).equals(this.field.pos)) {
+							result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
+							++colorOverlayCount;
+							interferenceViolation = true;
+						}
+					}
+					if (!interferenceViolation) {
+						++amountOfInterferenceRegions;
+					}
 				}
+			}
+			
+			if (amountOfInterferenceRegions > 0) {
+				result.add(new de.bioviz.ui.Color(Colors.INTERFERENCE_REGION_COLOR).mul((float)Math.sqrt(amountOfInterferenceRegions)));
+				++colorOverlayCount;
 			}
 		}
 
@@ -378,24 +399,30 @@ public class DrawableField extends DrawableSprite {
 					this.getField())) {
 			result.add(ADJACENT_ACTIVATION_COLOR);
 		}
+		
+		if (colorOverlayCount > 0) {
+			result.mul(1f / ((float) colorOverlayCount));
+			result.clamp();
+		} else {
+			result = new de.bioviz.ui.Color(Colors.FIELD_COLOR);
+		}
+		
+		if (this.isHovered()) {
+			result.add(0.2f, 0.2f, 0.2f, 0);
+		}
 
-		result.mul(1f / (float) colorOverlayCount);
-		result.clamp();
-
-		return result;
+		return result.buildGdxColor();
 	}
 
 	@Override
 	public void draw() {
-
-
 		DisplayValues vals = getDisplayValues();
 
 		displayText(vals.getMsg());
-		this.addLOD(Float.MAX_VALUE, vals.getTexture());
-
-
 		setColor(vals.getColor());
+
+		// this call is actually necessary to draw any textures at all!
+		this.addLOD(Float.MAX_VALUE, vals.getTexture());
 
 		super.draw();
 
@@ -419,6 +446,27 @@ public class DrawableField extends DrawableSprite {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Calculates whether or not this field is part of a droplet's interference
+	 * region.
+	 * @param d the droplet to calculate it for
+	 * @return whether or not this field is part of its interference region
+	 */
+	private boolean isPartOfInterferenceRegion(Droplet d) {
+		Point cur_pos = d.getPositionAt(getParentCircuit().currentTime);
+		Point prev_pos = d.getPositionAt(getParentCircuit().currentTime-1);
+		if(parentCircuit.displayOptions
+				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
+			return 	(cur_pos != null &&
+					cur_pos.adjacent(this.getField().pos)) ||
+					(prev_pos != null &&
+					prev_pos.adjacent(this.getField().pos));
+		} else {
+			return 	(cur_pos != null &&
+					cur_pos.adjacent(this.getField().pos));
 		}
 	}
 

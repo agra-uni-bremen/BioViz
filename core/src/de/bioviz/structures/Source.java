@@ -12,7 +12,7 @@ package de.bioviz.structures;
  * Please note that this 'source' has nothing to do with releasing a droplet
  * from a dispenser onto a chip!
  *
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 public class Source {
 

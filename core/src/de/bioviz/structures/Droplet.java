@@ -12,7 +12,7 @@ import java.util.Vector;
  * This includes basic facts such as a unique ID as well as information about
  * the movement on the chip.
  *
- * @author keszocze
+ * @author Oliver Keszocze
  */
 public class Droplet {
 

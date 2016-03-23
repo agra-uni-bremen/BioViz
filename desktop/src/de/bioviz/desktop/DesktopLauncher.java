@@ -14,6 +14,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.prefs.*;
 
@@ -43,6 +45,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
@@ -147,7 +150,6 @@ public class DesktopLauncher extends JFrame {
 	 * The slider to control the length of the displayed droplet routes.
 	 */
 	private JSlider displayRouteLengthSlider;
-
 	/**
 	 * The name that is displayed as the program name in the OS's UI.
 	 */
@@ -268,9 +270,15 @@ public class DesktopLauncher extends JFrame {
 		        "This menu triggers all kinds of display options.");
 		result.add(menu);
 		
-		for (BDisplayOptions option : BDisplayOptions.values()) {
+		BDisplayOptions[] enumValues = BDisplayOptions.values();
+		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
+			public int compare(BDisplayOptions left, BDisplayOptions right){
+		        return left.description().compareTo(right.description()); //use your criteria here
+		    }
+		});
+		for (BDisplayOptions option : enumValues) {
 			BioCheckboxMenuItem menuItem =
-					new BioCheckboxMenuItem(option.toString(), option);
+					new BioCheckboxMenuItem(option.description(), option);
 			menu.add(menuItem);
 			currentViz.addLoadedFileListener(() -> {menuItem.updateState(); return;});
 		}
@@ -292,6 +300,14 @@ public class DesktopLauncher extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+
+
+		// This text was completely useless. I leave the code here as a
+		// reference on how to add labels with some kind
+		// of formatting.
+//		JLabel label = new JLabel("<html><body>Totally classic<br/>UI
+// elements<br/></body></html>");
+
 
 		final int buttonWidth = 112;
 		final int sliderWidth = buttonWidth;
@@ -557,7 +573,7 @@ public class DesktopLauncher extends JFrame {
 	 * 		if true, opens a 'file open dialog', if false opens a 'file store
 	 * 		dialog'
 	 * @return File object pointing to the selected file or null
-	 * @author keszocze
+	 * @author Oliver Keszocze
 	 */
 	private static File askForFile(String pathPrefName, boolean load) {
 		allowHotkeys = false;
@@ -615,6 +631,7 @@ public class DesktopLauncher extends JFrame {
 			System.out.println("Error setting up logger: "
 							   + je.getStackTrace());
 		}
+		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
 
 	}
 

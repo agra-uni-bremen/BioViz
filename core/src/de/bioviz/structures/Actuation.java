@@ -5,7 +5,7 @@ package de.bioviz.structures;
  * <p>
  * Created by keszocze on 14.10.15.
  *
- * @author keszocze
+ * @author Oliver Keszocze
  */
 public enum Actuation {
 	/**
