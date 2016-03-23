@@ -326,6 +326,7 @@ public class DesktopLauncher extends JFrame {
 														  ().height));
 		loadCB = new LoadFileCallback();
 		openButton.addActionListener(e -> loadCB.bioVizEvent());
+		bioViz.addLoadFileListener(loadCB);
 
 		JButton preferencesButton = new JButton("Preferences");
 		preferencesButton.setPreferredSize(new Dimension(buttonWidth,
