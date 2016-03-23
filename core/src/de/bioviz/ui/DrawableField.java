@@ -243,10 +243,12 @@ public class DrawableField extends DrawableSprite {
 					getNetsOf(this.getField())) {
 				de.bioviz.ui.Color netCol =
 						new de.bioviz.ui.Color(n.getColor().buildGdxColor());
-				if (this.getParentCircuit().data.getNetsOf
-						(this.getParentCircuit().getHoveredField().field).
-						contains(n)) {
-					netCol.add(0.5f, 0.5f, 0.5f, 0);
+				if (this.parentCircuit.getHoveredField() != null) {
+					if (this.getParentCircuit().data.getNetsOf
+							(this.getParentCircuit().getHoveredField().field).
+							contains(n)) {
+						netCol.add(0.5f, 0.5f, 0.5f, 0);
+					}
 				}
 				Point top = new Point(
 						this.getField().x(), this.getField().y() + 1);
