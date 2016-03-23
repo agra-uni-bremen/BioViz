@@ -3,7 +3,7 @@ package de.bioviz.structures;
 import java.util.ArrayList;
 
 /**
- * @author keszocze
+ * @author Oliver Keszocze
  * @brief Created by keszocze on 22.07.15.
  */
 public class Rectangle {

@@ -241,6 +241,13 @@ public class DrawableField extends DrawableSprite {
 			}
 			for (final Net n : this.getParentCircuit().data.
 					getNetsOf(this.getField())) {
+				de.bioviz.ui.Color netCol =
+						new de.bioviz.ui.Color(new Color(n.getColor()));
+				if (this.getParentCircuit().data.getNetsOf
+						(this.getParentCircuit().getHoveredField().field).
+						contains(n)) {
+					netCol.add(0.5f, 0.5f, 0.5f, 0);
+				}
 				Point top = new Point(
 						this.getField().x(), this.getField().y() + 1);
 				Point bottom = new Point(
@@ -256,23 +263,23 @@ public class DrawableField extends DrawableSprite {
 				final int bottomright = 3;
 				if (!getParentCircuit().data.hasFieldAt(top) ||
 						!n.containsField(getParentCircuit().data.getFieldAt(top))) {
-					this.cornerColors[topleft].add(new Color(n.getColor()));
-					this.cornerColors[topright].add(new Color(n.getColor()));
+					this.cornerColors[topleft].add(netCol.buildGdxColor());
+					this.cornerColors[topright].add(netCol.buildGdxColor());
 				}
 				if (!getParentCircuit().data.hasFieldAt(bottom) ||
 						!n.containsField(getParentCircuit().data.getFieldAt(bottom))) {
-					this.cornerColors[bottomleft].add(new Color(n.getColor()));
-					this.cornerColors[bottomright].add(new Color(n.getColor()));
+					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
+					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
 				if (!getParentCircuit().data.hasFieldAt(left) ||
 						!n.containsField(getParentCircuit().data.getFieldAt(left))) {
-					this.cornerColors[bottomleft].add(new Color(n.getColor()));
-					this.cornerColors[topleft].add(new Color(n.getColor()));
+					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
+					this.cornerColors[topleft].add(netCol.buildGdxColor());
 				}
 				if (!getParentCircuit().data.hasFieldAt(right) ||
 						!n.containsField(getParentCircuit().data.getFieldAt(right))) {
-					this.cornerColors[topright].add(new Color(n.getColor()));
-					this.cornerColors[bottomright].add(new Color(n.getColor()));
+					this.cornerColors[topright].add(netCol.buildGdxColor());
+					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
 			}
 			for (int i = 0; i < cornerColors.length; i++) {
@@ -375,21 +382,23 @@ public class DrawableField extends DrawableSprite {
 		} else {
 			result = new de.bioviz.ui.Color(Colors.FIELD_COLOR);
 		}
+		
+		if (this.isHovered()) {
+			result.add(0.2f, 0.2f, 0.2f, 0);
+		}
 
 		return result.buildGdxColor();
 	}
 
 	@Override
 	public void draw() {
-
-
 		DisplayValues vals = getDisplayValues();
 
 		displayText(vals.getMsg());
-		this.addLOD(Float.MAX_VALUE, vals.getTexture());
-
-
 		setColor(vals.getColor());
+
+		// this call is actually necessary to draw any textures at all!
+		this.addLOD(Float.MAX_VALUE, vals.getTexture());
 
 		super.draw();
 		

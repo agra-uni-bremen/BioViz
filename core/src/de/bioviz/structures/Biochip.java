@@ -313,7 +313,7 @@ public class Biochip {
 
 	/**
 	 * @return Length of the longest route
-	 * @author Oliver Keszöcze
+	 * @author Oliver Keszocze
 	 */
 	public int getMaxRouteLength() {
 		if (maxRouteLength == -1) {

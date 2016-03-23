@@ -3,6 +3,6 @@
  *
  * These classes do not really fit into another package
  *
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 package de.bioviz.util;

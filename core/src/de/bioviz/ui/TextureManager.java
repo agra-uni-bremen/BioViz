@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  *         <p>
  *         This class manages texture themes. One can specify a folder in which
  *         the png files that are loaded as textures are stored. These images

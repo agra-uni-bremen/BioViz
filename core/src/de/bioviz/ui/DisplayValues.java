@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
  *
  * Class for storing the information about how a drawable should be drawn.
  *
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 public class DisplayValues {
 

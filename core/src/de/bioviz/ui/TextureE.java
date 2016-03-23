@@ -1,7 +1,7 @@
 package de.bioviz.ui;
 
 /**
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  *
  * This class stores what kind of textues can be used
  */

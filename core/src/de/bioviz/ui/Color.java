@@ -111,6 +111,24 @@ public class Color {
 	 * Adds another color to this color.
 	 * Notice that this *happens in place*, i.e. this instance is being altered
 	 * by this method. The return value is used to be able to chain operations.
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * @param a alpha
+	 * @return this color for chaining operations
+	 */
+	public Color add(float r, float g, float b, float a) {
+		this.a += a;
+		this.r += r;
+		this.g += g;
+		this.b += b;
+		return this;
+	}
+
+	/**
+	 * Adds another color to this color.
+	 * Notice that this *happens in place*, i.e. this instance is being altered
+	 * by this method. The return value is used to be able to chain operations.
 	 * @param c the libgdx color instance to add to this color
 	 * @return this color for chaining operations.
 	 */

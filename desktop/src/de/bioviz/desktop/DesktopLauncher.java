@@ -253,12 +253,12 @@ public class DesktopLauncher extends JFrame {
 		BDisplayOptions[] enumValues = BDisplayOptions.values();
 		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
 			public int compare(BDisplayOptions left, BDisplayOptions right){
-		        return left.toString().compareTo(right.toString()); //use your criteria here
+		        return left.description().compareTo(right.description()); //use your criteria here
 		    }
 		});
 		for (BDisplayOptions option : enumValues) {
 			BioCheckboxMenuItem menuItem =
-					new BioCheckboxMenuItem(option.toString(), option);
+					new BioCheckboxMenuItem(option.description(), option);
 			menu.add(menuItem);
 			currentViz.addLoadedFileListener(() -> {menuItem.updateState(); return;});
 		}
@@ -553,7 +553,7 @@ public class DesktopLauncher extends JFrame {
 	 * 		if true, opens a 'file open dialog', if false opens a 'file store
 	 * 		dialog'
 	 * @return File object pointing to the selected file or null
-	 * @author keszocze
+	 * @author Oliver Keszocze
 	 */
 	private static File askForFile(String pathPrefName, boolean load) {
 		allowHotkeys = false;
