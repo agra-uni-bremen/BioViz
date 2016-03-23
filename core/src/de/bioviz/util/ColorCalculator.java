@@ -1,16 +1,13 @@
 package de.bioviz.util;
 
-import java.util.Random;
-
 import de.bioviz.ui.Color;
 
 /**
- * Some utility methods for colors.
- * The constructor is private as the idea is to simply provide some static
- * methods that help people with color calculation stuff.
+ * Some utility methods for colors. The constructor is private as the idea is to
+ * simply provide some static methods that help people with color calculation
+ * stuff.
  *
  * @author jannis
- *
  */
 public final class ColorCalculator {
 
@@ -21,8 +18,11 @@ public final class ColorCalculator {
 
 	/**
 	 * Calculates the num-th distinct color in a set of total colors.
-	 * @param num the number of the color to be calculated, should be < total
-	 * @param total the total amount of colors
+	 *
+	 * @param num
+	 * 		the number of the color to be calculated, should be < total
+	 * @param total
+	 * 		the total amount of colors
 	 * @return the num-th distinct color
 	 */
 	public static Color calculateColor(final int num, final int total) {
@@ -36,7 +36,7 @@ public final class ColorCalculator {
 		result.r = vals[0];
 		result.g = vals[1];
 		result.b = vals[2];
-		
+
 		System.out.println("calCol: " + result.toString());
 
 		return result;
@@ -44,9 +44,13 @@ public final class ColorCalculator {
 
 	/**
 	 * Converts rgb values to a float[3] hsl array.
-	 * @param r red
-	 * @param g green
-	 * @param b blue
+	 *
+	 * @param r
+	 * 		red
+	 * @param g
+	 * 		green
+	 * @param b
+	 * 		blue
 	 * @return the hsl array, float[3].
 	 */
 	public static float[] rgbToHsl(
@@ -65,24 +69,30 @@ public final class ColorCalculator {
 		if (max == min) {
 			h = 0;
 			s = 0; // achromatic
-		} else {
+		}
+		else {
 			float d = max - min;
 			if (l > 0.5f) {
 				s = d / (2 - max - min);
-			} else {
+			}
+			else {
 				s = d / (max + min);
 			}
 			if (max == r) {
 				if (g < b) {
 					h = (g - b) / d + 6;
-				} else {
+				}
+				else {
 					h = (g - b) / d + 0;
 				}
-			} else if (max == g) {
+			}
+			else if (max == g) {
 				h = (b - r) / d + 2;
-			} else if (max == b) {
+			}
+			else if (max == b) {
 				h = (r - g) / d + 4;
-			} else {
+			}
+			else {
 				throw new RuntimeException(
 						"max is not one of the original values");
 			}
@@ -92,7 +102,8 @@ public final class ColorCalculator {
 		return new float[]{h, s, l};
 	}
 
-	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
+	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in
+	// -java-to-rgb-without-using-java-awt-color-disallowe
 	private static float[] hslToRgb(
 			float hue,
 			final float saturation,
@@ -111,20 +122,23 @@ public final class ColorCalculator {
 		float t = value * (1 - (1 - f) * saturation);
 
 		switch (h) {
-		case 0:
-			return new float[] {value, t, p, 1};
-		case 1:
-			return new float[] {q, value, p, 1};
-		case 2:
-			return new float[] {p, value, t, 1};
-		case 3:
-			return new float[] {p, q, value, 1};
-		case 4:
-			return new float[] {t, p, value, 1};
-		case 5:
-			return new float[] {value, p, q, 1};
-		default:
-			throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
+			case 0:
+				return new float[]{value, t, p, 1};
+			case 1:
+				return new float[]{q, value, p, 1};
+			case 2:
+				return new float[]{p, value, t, 1};
+			case 3:
+				return new float[]{p, q, value, 1};
+			case 4:
+				return new float[]{t, p, value, 1};
+			case 5:
+				return new float[]{value, p, q, 1};
+			default:
+				throw new RuntimeException(
+						"Something went wrong when converting from HSV to RGB." +
+						" Input was " +
+						hue + ", " + saturation + ", " + value);
 		}
 	}
 }

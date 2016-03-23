@@ -1,23 +1,19 @@
 package de.bioviz.ui;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.Vector;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
 import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
-import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
-import de.bioviz.util.ColorCalculator;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Rectangle;
-
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.Set;
+import java.util.Vector;
 
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
