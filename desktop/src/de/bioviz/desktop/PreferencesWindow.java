@@ -42,37 +42,11 @@ public class PreferencesWindow extends JFrame {
 		final int maxAnimationDuration = 1000;
 		final int defaultAnimationDuration = 500;
 
-		final int rows = 5;
-		final int columns = 2;
-		final int horizontalGap = 4;
-		final int verticalGap = 4;
+		final int minDurationBetweenSteps = 1 * 1000;
+		final int maxDurationBetweenSteps = 10 * 1000;
+		final int defaultDurationBetweenSteps =
+				Math.round(viz.currentCircuit.autoSpeed * 1000);
 
-		GridLayout layout =
-				new GridLayout(rows, columns, horizontalGap, verticalGap);
-		this.setLayout(layout);
-
-		this.add(new JLabel("Time between steps in s:"));
-		JSlider animSlider =
-				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,
-							maxAnimationDuration,
-							defaultAnimationDuration);
-		animSlider.addChangeListener(
-				e -> {
-					BioViz.setAnimationDuration(animSlider.getValue());
-				});
-		this.add(animSlider);
-
-
-		this.add(new JLabel("Animation duration in ms:"));
-		JSlider dropMovementSpeedSlider =
-				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,
-							maxAnimationDuration,
-							defaultAnimationDuration);
-		dropMovementSpeedSlider.addChangeListener(
-				e -> {
-					BioViz.setAnimationDuration(dropMovementSpeedSlider.getValue());
-				});
-		this.add(dropMovementSpeedSlider);
 
 		try {
 			this.setIconImage(
@@ -81,11 +55,74 @@ public class PreferencesWindow extends JFrame {
 			logger.error("Could not set application icon: " + e.getMessage());
 		}
 
+		GridBagLayout layout = new GridBagLayout();
+		this.setLayout(layout);
+
+		GridBagConstraints c = new GridBagConstraints();
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		this.add(new JLabel("Time between steps in s:"), c);
+
+
+		c.gridx=1;
+		c.gridy=0;
+		JLabel timestepLabel = new JLabel("a");
+		this.add(timestepLabel,c);
+
+		JSlider animSlider =
+				new JSlider(SwingConstants.HORIZONTAL, minDurationBetweenSteps,
+							maxDurationBetweenSteps,
+							defaultDurationBetweenSteps);
+		animSlider.addChangeListener(
+				e -> {
+					logger.info("Current speed: {}",
+								viz.currentCircuit.autoSpeed);
+					int sliderVal = animSlider.getValue();
+					float newSpeed = sliderVal / 1000f;
+					logger.info("sliderVal: {}, newSpeed: {}",sliderVal,newSpeed);
+					viz.currentCircuit.autoSpeed = newSpeed;
+					;
+				});
+
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth=2;
+		this.add(animSlider, c);
+
+
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth=1;
+		this.add(new JLabel("Animation duration in ms:"), c);
+
+		c.gridx=1;
+		c.gridy=2;
+		JLabel animLabel = new JLabel("b");
+		this.add(animLabel,c);
+		JSlider dropMovementSpeedSlider =
+				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,
+							maxAnimationDuration,
+							defaultAnimationDuration);
+		dropMovementSpeedSlider.addChangeListener(
+				e -> {
+					BioViz.setAnimationDuration(
+							dropMovementSpeedSlider.getValue());
+				});
+
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth=2;
+		this.add(dropMovementSpeedSlider, c);
 
 		JButton closeButton = new JButton("Close");
 		closeButton.addActionListener(e -> this.dispatchEvent(
 				new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
-		this.add(closeButton);
+		c.gridx = 0;
+		c.gridy = 5;
+		c.insets = new Insets(10,0,0,0);
+		this.add(closeButton, c);
 
 		pack();
 		setVisible(true);
