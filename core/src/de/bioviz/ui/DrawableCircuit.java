@@ -43,6 +43,10 @@ public class DrawableCircuit implements Drawable {
 	public int currentTime = 1;
 
 	public boolean autoAdvance = false;
+
+	/**
+	 * The time between to time steps in seconds.
+	 */
 	public float autoSpeed = 2f;
 	private long lastAutoStepAt = new Date().getTime();
 
