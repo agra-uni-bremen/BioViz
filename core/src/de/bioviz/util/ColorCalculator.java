@@ -28,17 +28,16 @@ public final class ColorCalculator {
 	public static Color calculateColor(final int num, final int total) {
 		Color result = new Color();
 
-		Random calcRnd = new Random(num);
 		float hue = (float) num / (float) total;
-
-
-		float saturation = calcRnd.nextFloat() / 2f + 0.5f;
-		float lightness = calcRnd.nextFloat() / 2f + 0.5f;
+		float saturation = 1f;
+		float lightness = 1f;
 
 		float[] vals = hslToRgb(hue, saturation, lightness);
 		result.r = vals[0];
 		result.g = vals[1];
 		result.b = vals[2];
+		
+		System.out.println("calCol: " + result.toString());
 
 		return result;
 	}
@@ -93,65 +92,39 @@ public final class ColorCalculator {
 		return new float[]{h, s, l};
 	}
 
-	/**
-	 * Converts hsl values to rgb values.
-	 * @param h hue
-	 * @param s saturation
-	 * @param l lightness
-	 * @return a float[3] containing rgb values.
-	 */
-	public static float[] hslToRgb(
-			final float h,
-			final float s,
-			final float l) {
-		float r;
-		float g;
-		float b;
+	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
+	private static float[] hslToRgb(
+			float hue,
+			final float saturation,
+			final float value) {
 
-		if (s == 0) {
-			r = l;
-			g = l;
-			b = l; // achromatic
-		} else {
-			float q;
-			if (l < 0.5f) {
-				q = l * (1 + s);
-			} else {
-				q = l + s - l * s;
-			}
-			float p = 2 * l - q;
-			r = hue2rgb(p, q, h + 1f / 3f);
-			g = hue2rgb(p, q, h);
-			b = hue2rgb(p, q, h - 1f / 3f);
+		while (hue >= 1) {
+			hue -= 1;
 		}
+		while (hue < 0) {
+			hue += 1;
+		}
+		int h = (int) (hue * 6);
+		float f = hue * 6 - h;
+		float p = value * (1 - saturation);
+		float q = value * (1 - f * saturation);
+		float t = value * (1 - (1 - f) * saturation);
 
-		return new float[] {r, g, b};
-	}
-
-	/**
-	 * Converts hue values to rgb.
-	 * @param p p
-	 * @param q q
-	 * @param t t
-	 * @return the rgb value
-	 */
-	private static float hue2rgb(final float p, final float q, final float t) {
-		float t2 = t;
-		if (t2 < 0f) {
-			t2 += 1;
-		}
-		if (t2 > 1f) {
-			t2 -= 1;
-		}
-		if (t2 < 1f / 6f) {
-			return p + (q - p) * 6 * t2;
-		} else if (t2 < 1f / 2f) {
-			return q;
-		} else if (t2 < 2f / 3f) {
-			return p + (q - p) * (2 / 3 - t2) * 6;
-		} else {
-			return p;
+		switch (h) {
+		case 0:
+			return new float[] {value, t, p, 1};
+		case 1:
+			return new float[] {q, value, p, 1};
+		case 2:
+			return new float[] {p, value, t, 1};
+		case 3:
+			return new float[] {p, q, value, 1};
+		case 4:
+			return new float[] {t, p, value, 1};
+		case 5:
+			return new float[] {value, p, q, 1};
+		default:
+			throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
 		}
 	}
-
 }
