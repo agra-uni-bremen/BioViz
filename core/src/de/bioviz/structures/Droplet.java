@@ -17,6 +17,9 @@ import java.util.Vector;
 public class Droplet {
 
 
+	/**
+	 * Time needed for a droplet to move a distance of one field in ms.
+	 */
 	public static int movementTransitionDuration = 500;
 	static Logger logger = LoggerFactory.getLogger(Droplet.class);
 
