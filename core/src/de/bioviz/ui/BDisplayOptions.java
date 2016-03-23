@@ -19,6 +19,11 @@ public enum BDisplayOptions {
 	CellUsage("Show cell usage colored", Input.Keys.U),
 
 	/**
+	 * Option for displaying the amount of actuations of a given cell
+	 */
+	CellUsageCount("Cell usage count"),
+
+	/**
 	 * Option for highlighting used cells that are too close to other used
 	 * cells. See also {@link BDisplayOptions#InterferenceRegion}.
 	 */
@@ -96,14 +101,22 @@ public enum BDisplayOptions {
 	DetectorIcon("Show detector icons"),
 
 	/**
+<<<<<<< HEAD
+	 * Option for displaying a net's colour on all its corresponding droplets
+=======
 	 * Will draw solid paths for the droplets.
 	 * <p>
 	 * This basically disables the fancy fading.
+>>>>>>> master
 	 */
 	SolidPaths("Draw solid paths"),
 
 	/**
+<<<<<<< HEAD
+	 * Option for displaying a net's colour on all its corresponding fields
+=======
 	 * Option for displaying a net's colour on all its corresponding droplets.
+>>>>>>> master
 	 */
 	NetColorOnDroplets("Color droplets within net"),
 
