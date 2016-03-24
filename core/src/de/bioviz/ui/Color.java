@@ -5,8 +5,8 @@ package de.bioviz.ui;
  * the most pressing point was that libgdx autoclamps values after all
  * operations, limiting values at all times to the range of 0 to 1 (which is
  * kind of a bummer if you want to calculate something like an average color).
- * @author jannis
  *
+ * @author Jannis Stoppe
  */
 public class Color {
 
@@ -29,22 +29,30 @@ public class Color {
 	 * The blue channel.
 	 */
 	public float b;
-	
+
 	/**
 	 * Creates an empty color, all values set to 0.
 	 */
 	public Color() {
-		// TODO Auto-generated constructor stub
+		r = 0;
+		g = 0;
+		g = 0;
+		a = 0;
 	}
 
 	/**
 	 * Creates a new color based on the values being passed on.
-	 * @param r red
-	 * @param g green
-	 * @param b blue
-	 * @param a alpha
+	 *
+	 * @param r
+	 * 		red
+	 * @param g
+	 * 		green
+	 * @param b
+	 * 		blue
+	 * @param a
+	 * 		alpha
 	 */
-	public Color(float r, float g, float b, float a) {
+	public Color(final float r, final float g, final float b, final float a) {
 		this.r = r;
 		this.g = g;
 		this.b = b;
@@ -53,9 +61,11 @@ public class Color {
 
 	/**
 	 * Creates a new color based on the libgdx color instance.
-	 * @param c the color to create a new color from
+	 *
+	 * @param c
+	 * 		the color to create a new color from
 	 */
-	public Color(com.badlogic.gdx.graphics.Color c) {
+	public Color(final com.badlogic.gdx.graphics.Color c) {
 		this.r = c.r;
 		this.g = c.r;
 		this.b = c.b;
@@ -63,13 +73,15 @@ public class Color {
 	}
 
 	/**
-	 * Multiplies a color with another color (by channel).
-	 * Notice that this *happens in place*, i.e. this instance is being altered
-	 * by this method. The return value is used to be able to chain operations.
-	 * @param c the color to multiply this color with.
+	 * Multiplies a color with another color (by channel). Notice that this
+	 * *happens in place*, i.e. this instance is being altered by this method.
+	 * The return value is used to be able to chain operations.
+	 *
+	 * @param c
+	 * 		the color to multiply this color with.
 	 * @return this instance for chaining operations.
 	 */
-	public Color mul(Color c) {
+	public Color mul(final Color c) {
 		this.a *= c.a;
 		this.r *= c.r;
 		this.g *= c.g;
@@ -78,13 +90,15 @@ public class Color {
 	}
 
 	/**
-	 * Multiplies this color by a given factor.
-	 * Notice that this *happens in place*, i.e. this instance is being altered
-	 * by this method. The return value is used to be able to chain operations.
-	 * @param f the scalar
+	 * Multiplies this color by a given factor. Notice that this *happens in
+	 * place*, i.e. this instance is being altered by this method. The return
+	 * value is used to be able to chain operations.
+	 *
+	 * @param f
+	 * 		the scalar
 	 * @return this color for chaining operations
 	 */
-	public Color mul(Float f) {
+	public Color mul(final Float f) {
 		this.a *= f;
 		this.r *= f;
 		this.g *= f;
@@ -93,13 +107,15 @@ public class Color {
 	}
 
 	/**
-	 * Adds another color to this color.
-	 * Notice that this *happens in place*, i.e. this instance is being altered
-	 * by this method. The return value is used to be able to chain operations.
-	 * @param c the color to add to this color
+	 * Adds another color to this color. Notice that this *happens in place*,
+	 * i.e. this instance is being altered by this method. The return value is
+	 * used to be able to chain operations.
+	 *
+	 * @param c
+	 * 		the color to add to this color
 	 * @return this color for chaining operations
 	 */
-	public Color add(Color c) {
+	public Color add(final Color c) {
 		this.a += c.a;
 		this.r += c.r;
 		this.g += c.g;
@@ -108,16 +124,22 @@ public class Color {
 	}
 
 	/**
-	 * Adds another color to this color.
-	 * Notice that this *happens in place*, i.e. this instance is being altered
-	 * by this method. The return value is used to be able to chain operations.
-	 * @param r red
-	 * @param g green
-	 * @param b blue
-	 * @param a alpha
+	 * Adds another color to this color. Notice that this *happens in place*,
+	 * i.e. this instance is being altered by this method. The return value is
+	 * used to be able to chain operations.
+	 *
+	 * @param r
+	 * 		red
+	 * @param g
+	 * 		green
+	 * @param b
+	 * 		blue
+	 * @param a
+	 * 		alpha
 	 * @return this color for chaining operations
 	 */
-	public Color add(float r, float g, float b, float a) {
+	public Color add(final float r, final float g, final float b, final float
+			a) {
 		this.a += a;
 		this.r += r;
 		this.g += g;
@@ -126,13 +148,15 @@ public class Color {
 	}
 
 	/**
-	 * Adds another color to this color.
-	 * Notice that this *happens in place*, i.e. this instance is being altered
-	 * by this method. The return value is used to be able to chain operations.
-	 * @param c the libgdx color instance to add to this color
+	 * Adds another color to this color. Notice that this *happens in place*,
+	 * i.e. this instance is being altered by this method. The return value is
+	 * used to be able to chain operations.
+	 *
+	 * @param c
+	 * 		the libgdx color instance to add to this color
 	 * @return this color for chaining operations.
 	 */
-	public Color add(com.badlogic.gdx.graphics.Color c) {
+	public Color add(final com.badlogic.gdx.graphics.Color c) {
 		this.a += c.a;
 		this.r += c.r;
 		this.g += c.g;
@@ -141,9 +165,10 @@ public class Color {
 	}
 
 	/**
-	 * Clamps a color to values between 0 and 1.
-	 * Notice that this *happens in place*, i.e. this instance is being altered
-	 * by this method. The return value is used to be able to chain operations.
+	 * Clamps a color to values between 0 and 1. Notice that this *happens in
+	 * place*, i.e. this instance is being altered by this method. The return
+	 * value is used to be able to chain operations.
+	 *
 	 * @return this color for chaining operations
 	 */
 	public Color clamp() {
@@ -156,6 +181,7 @@ public class Color {
 
 	/**
 	 * Creates a new copy of this color.
+	 *
 	 * @return a new color with the same values as this one.
 	 */
 	public Color cpy() {
@@ -164,7 +190,9 @@ public class Color {
 
 	/**
 	 * Creates a new libgdx color instance from the values being present in
-	 * this color.
+	 * this
+	 * color.
+	 *
 	 * @return the new libgdx color instance
 	 */
 	public com.badlogic.gdx.graphics.Color buildGdxColor() {
@@ -172,7 +200,9 @@ public class Color {
 	}
 
 	/**
-	 * A string representation of this color
+	 * A string representation of this color.
+	 *
+	 * @return String representation of the color in the form $r/$g/$b/$a
 	 */
 	public String toString() {
 		return "" + r + "/" + g + "/" + b + "/" + a;
