@@ -10,6 +10,8 @@ import de.bioviz.structures.Point;
 import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
 
+import static de.bioviz.ui.BDisplayOptions.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,30 +150,27 @@ public class DrawableField extends DrawableSprite {
 		 There is an execption: the cell usage count overwrites any previous
 		 text. I really dislike this case by case hard coding  :/
 		 */
-		if (this.getField().isSink && option(SinkIcon)) {
+		if (field.isSink && getOption(SinkIcon)) {
 			texture = TextureE.Sink;
-		}
-		else if (this.getField().isDispenser) {
-			if (option(DispenserIcon)) {
+		} else if (field.isDispenser) {
+			if (getOption(DispenserIcon)) {
 				texture = TextureE.Dispenser;
 			}
-			if (option(DispenserID)) {
+			if (getOption(DispenserID)) {
 				fieldHUDMsg = Integer.toString(getField().fluidID);
 			}
-		}
-		else if (this.getField().isPotentiallyBlocked()) {
+		} else if (field.isPotentiallyBlocked()) {
 			texture = TextureE.Blockage;
-		}
-		else if (this.getField().getDetector() != null &&
-				 option(DetectorIcon)) {
+		} else if (field.getDetector() != null &&
+				   getOption(DetectorIcon)) {
 			texture = TextureE.Detector;
 		} else if (field.isSource()) {
-			if (option(SourceTargetIcons)) {
+			if (getOption(SourceTargetIcons)) {
 				texture = TextureE.Start;
 			}
 
-			if (option(SourceTargetIDs)) {
-				ArrayList<Integer> sources = this.getField().source_ids;
+			if (getOption(SourceTargetIDs)) {
+				ArrayList<Integer> sources = field.source_ids;
 				fieldHUDMsg = sources.get(0).toString();
 				if (sources.size() > 1) {
 					for (int i = 2; i < sources.size(); i++) {
@@ -180,11 +179,11 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 		} else if (field.isTarget()) {
-			if (option(SourceTargetIcons)) {
+			if (getOption(SourceTargetIcons)) {
 				texture = TextureE.Target;
 			}
-			if (option(SourceTargetIDs)) {
-				ArrayList<Integer> targets = this.getField().target_ids;
+			if (getOption(SourceTargetIDs)) {
+				ArrayList<Integer> targets = field.target_ids;
 				fieldHUDMsg = targets.get(0).toString();
 				if (targets.size() > 1) {
 					for (int i = 1; i < targets.size(); i++) {
@@ -199,8 +198,8 @@ public class DrawableField extends DrawableSprite {
 		// TODO we really need some kind of mechanism of deciding when to show
 		// what
 		if (circ.displayOptions.getOption(BDisplayOptions.Pins)) {
-			if (this.getField().pin != null) {
-				fieldHUDMsg = Integer.toString(this.getField().pin.pinID);
+			if (field.pin != null) {
+				fieldHUDMsg = Integer.toString(field.pin.pinID);
 			}
 		}
 
@@ -235,7 +234,7 @@ public class DrawableField extends DrawableSprite {
 		 * array is checked for existence and if it isn't null, each none-black
 		 * color *completely overrides* the given field color at this corner.
 		 */
-		if (option(NetColorOnFields)) {
+		if (getOption(NetColorOnFields)) {
 			if (cornerColors == null) {
 				cornerColors = new Color[4];	// one color for each corner
 			}
@@ -244,7 +243,7 @@ public class DrawableField extends DrawableSprite {
 				cornerColors[i] = Color.BLACK.cpy();
 			}
 			for (final Net n : this.getParentCircuit().data.
-					getNetsOf(this.getField())) {
+					getNetsOf(field)) {
 				de.bioviz.ui.Color netCol = n.getColor().cpy();
 
 				// Increase brightness for hovered nets
@@ -256,13 +255,13 @@ public class DrawableField extends DrawableSprite {
 					}
 				}
 				Point top = new Point(
-						this.getField().x(), this.getField().y() + 1);
+						field.x(), field.y() + 1);
 				Point bottom = new Point(
-						this.getField().x(), this.getField().y() - 1);
+						field.x(), field.y() - 1);
 				Point left = new Point(
-						this.getField().x() - 1, this.getField().y());
+						field.x() - 1, field.y());
 				Point right = new Point(
-						this.getField().x() + 1, this.getField().y());
+						field.x() + 1, field.y());
 
 				final int bottomleft = 0;
 				final int topleft = 1;
@@ -298,20 +297,20 @@ public class DrawableField extends DrawableSprite {
 			cornerColors = null;
 		}
 
-		if (option(CellUsage)) {
+		if (getOption(CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
 			float scalingFactor = this.parentCircuit.data.getMaxUsage();
 			result.add(new Color(
-					this.getField().usage / scalingFactor,
-					this.getField().usage / scalingFactor,
-					this.getField().usage / scalingFactor,
+					field.usage / scalingFactor,
+					field.usage / scalingFactor,
+					field.usage / scalingFactor,
 					0));
 			++colorOverlayCount;
 		}
 
 		/** Colours the interference region **/
-		if (option(InterferenceRegion)) {
+		if (getOption(InterferenceRegion)) {
 			int amountOfInterferenceRegions = 0;
 
 			for (final Droplet d: getParentCircuit().data.getDroplets()) {
@@ -339,7 +338,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		int t = getParentCircuit().currentTime;
-		if (option(Actuations)) {
+		if (getOption(Actuations)) {
 			if (getField().isActuated(t)) {
 				result.add(Colors.ACTAUTED_COLOR);
 				++colorOverlayCount;
@@ -351,10 +350,10 @@ public class DrawableField extends DrawableSprite {
 		// nope it seems that the cell usage is supposed to override the other
 		// overlays
 		if (colorOverlayCount == 0) {
-			if (this.getField().isSink) {
+			if (field.isSink) {
 				result.add(SINK_DEFAULT_COLOR);
 				colorOverlayCount++;
-			} else if (this.getField().isDispenser) {
+			} else if (field.isDispenser) {
 				result.add(SOURCE_DEFAULT_COLOR);
 				colorOverlayCount++;
 			} else {
@@ -362,9 +361,9 @@ public class DrawableField extends DrawableSprite {
 				colorOverlayCount++;
 			}
 
-			if (!this.getField().mixers.isEmpty()) {
+			if (!field.mixers.isEmpty()) {
 
-				for (final Mixer m : this.getField().mixers) {
+				for (final Mixer m : field.mixers) {
 					if (m.timing.inRange(t)) {
 						result.add(MIXER_DEFAULT_COLOR);
 					}
@@ -372,9 +371,9 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		if (option(Adjacency) &&
+		if (getOption(Adjacency) &&
 			getParentCircuit().data.getAdjacentActivations().contains(
-					this.getField())) {
+					field)) {
 			result.add(ADJACENT_ACTIVATION_COLOR);
 		}
 		
@@ -404,7 +403,7 @@ public class DrawableField extends DrawableSprite {
 
 		super.draw();
 
-		if (option(LongNetIndicatorsOnFields)) {
+		if (getOption(LongNetIndicatorsOnFields)) {
 			for (Net net : this.parentCircuit.data.getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
@@ -438,12 +437,12 @@ public class DrawableField extends DrawableSprite {
 		if(parentCircuit.displayOptions
 				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
 			return 	(cur_pos != null &&
-					cur_pos.adjacent(this.getField().pos)) ||
+					cur_pos.adjacent(field.pos)) ||
 					(prev_pos != null &&
-					prev_pos.adjacent(this.getField().pos));
+					prev_pos.adjacent(field.pos));
 		} else {
 			return 	(cur_pos != null &&
-					cur_pos.adjacent(this.getField().pos));
+					cur_pos.adjacent(field.pos));
 		}
 	}
 
@@ -482,5 +481,16 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public void setParentCircuit(final DrawableCircuit parentCircuit) {
 		this.parentCircuit = parentCircuit;
+	}
+
+	/**
+	 * Convenience method for checking options.
+	 *
+	 * @param optn
+	 * 		Option to check
+	 * @return true if optn is true
+	 */
+	private boolean getOption(final BDisplayOptions optn) {
+		return parentCircuit.displayOptions.getOption(optn);
 	}
 }
