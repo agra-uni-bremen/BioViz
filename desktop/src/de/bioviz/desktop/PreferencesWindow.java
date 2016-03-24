@@ -97,7 +97,7 @@ public class PreferencesWindow extends JFrame {
 
 		c.gridx = 0;
 		c.gridy = 1;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		c.anchor = GridBagConstraints.CENTER;
 		this.add(animSlider, c);
 
@@ -136,7 +136,7 @@ public class PreferencesWindow extends JFrame {
 
 		c.gridx = 0;
 		c.gridy = 3;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		c.anchor = GridBagConstraints.CENTER;
 		this.add(dropMovementSpeedSlider, c);
 
