@@ -15,18 +15,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
-import static de.bioviz.ui.BDisplayOptions.*;
 
 /**
  * <p> The {@link DrawableField} class implements the element that draws its
- * corresponding {@link BiochipField} structure.</p> <p>The core element in this
- * case is the {@link BiochipField} variable called {@link DrawableField}'s
- * field variable, which links back to the original structural object. The
- * {@link DrawableField} then contains the additional information that is needed
- * to draw the field, which currently merely means some color information and
- * some drawing-related methods.</p>
+ * corresponding {@link BiochipField} structure.</p>
+ * <p>The core element in this case is the {@link BiochipField} variable called
+ * {@link DrawableField}'s field variable, which links back to the original
+ * structural object. The {@link DrawableField} then contains the additional
+ * information that is needed to draw the field, which currently merely means
+ * some color information and some drawing-related methods.</p>
  *
- * @author jannis
+ * @author Jannis Stoppe
+ *
  */
 public class DrawableField extends DrawableSprite {
 
@@ -70,8 +70,7 @@ public class DrawableField extends DrawableSprite {
 	/**
 	 * Used to log anything related to the {@link DrawableField} activities.
 	 */
-	private static Logger logger = LoggerFactory.getLogger(DrawableField
-																   .class);
+	private static Logger logger = LoggerFactory.getLogger(DrawableField.class);
 
 	/**
 	 * The circuit this field is a part of. This again links to the drawable
@@ -89,19 +88,15 @@ public class DrawableField extends DrawableSprite {
 	/**
 	 * <p>Creates an object that draws a given field for a biochip.</p>
 	 * <p>Notice that we separate the structure from the drawing, hence the
-	 * separation of Drawable-something vs structural classes. This class needs
-	 * the structural information what it's supposed to draw (given via the
-	 * field parameter) and the drawable parent circuit instance that it
-	 * belongs
-	 * to (via the parent parameter). We currently silently assume that the
-	 * structures are consistent (i.e. that the given field's parent circuit is
-	 * the one that is drawn via this instance's drawable parent) but do not
+	 * separation of Drawable-something vs structural classes. This class
+	 * needs the structural information what it's supposed to draw (given via
+	 * the field parameter) and the drawable parent circuit instance that it
+	 * belongs to (via the parent parameter). We currently silently assume that
+	 * the structures are consistent (i.e. that the given field's parent circuit
+	 * is the one that is drawn via this instance's drawable parent) but do not
 	 * enforce any checks in this way, so don't break it.</p>
-	 *
-	 * @param field
-	 * 		the field that is supposed to be drawn by this instance
-	 * @param parent
-	 * 		this field's drawable parent
+	 * @param field the field that is supposed to be drawn by this instance
+	 * @param parent this field's drawable parent
 	 */
 	public DrawableField(
 			final BiochipField field, final DrawableCircuit parent) {
@@ -114,9 +109,8 @@ public class DrawableField extends DrawableSprite {
 
 	/**
 	 * Retrieves information about this field: the color, the message being
-	 * displayed on top and the texture. All contained in a {@link
-	 * DisplayValues} instance.
-	 *
+	 * displayed on top and the texture. All contained in a
+	 * {@link DisplayValues} instance.
 	 * @return the current color, message and texture
 	 */
 	public DisplayValues getDisplayValues() {
@@ -127,7 +121,6 @@ public class DrawableField extends DrawableSprite {
 
 	/**
 	 * Retrieves this field's texture and the message being displayed on top.
-	 *
 	 * @return a {@link Pair} of message and texture.
 	 */
 	public Pair<String, TextureE> getMsgTexture() {
@@ -172,8 +165,7 @@ public class DrawableField extends DrawableSprite {
 		else if (this.getField().getDetector() != null &&
 				 option(DetectorIcon)) {
 			texture = TextureE.Detector;
-		}
-		else if (!this.getField().source_ids.isEmpty()) {
+		} else if (field.isSource()) {
 			if (option(SourceTargetIcons)) {
 				texture = TextureE.Start;
 			}
@@ -187,8 +179,7 @@ public class DrawableField extends DrawableSprite {
 					}
 				}
 			}
-		}
-		else if (!this.getField().target_ids.isEmpty()) {
+		} else if (field.isTarget()) {
 			if (option(SourceTargetIcons)) {
 				texture = TextureE.Target;
 			}
@@ -203,19 +194,11 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		// NOTE the cell usage count *overwrites* any previous text!
-		if (option(CellUsageCount)) {
-			int usage = getField().usage;
-			if (usage > 0) {
-				fieldHUDMsg = Integer.toString(usage);
-			}
-		}
-
 
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show
 		// what
-		if (option(Pins)) {
+		if (circ.displayOptions.getOption(BDisplayOptions.Pins)) {
 			if (this.getField().pin != null) {
 				fieldHUDMsg = Integer.toString(this.getField().pin.pinID);
 			}
@@ -227,14 +210,12 @@ public class DrawableField extends DrawableSprite {
 	/**
 	 * Calculates the current color based on the parent circuit's
 	 * displayOptions.
-	 *
 	 * @return the field's color.
 	 */
 	public Color getColor() {
 		int colorOverlayCount = 0;
 		/*
-		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
-		final
+		We need to create a copy of the FIELD_EMPTY_COLOR as that value is final
 		 and thus can not be modified.
 		If that value is unchangeable, the cells all stay white
 		 */
@@ -256,7 +237,7 @@ public class DrawableField extends DrawableSprite {
 		 */
 		if (option(NetColorOnFields)) {
 			if (cornerColors == null) {
-				cornerColors = new Color[4];    // one color for each corner
+				cornerColors = new Color[4];	// one color for each corner
 			}
 			for (int i = 0; i < cornerColors.length; i++) {
 				// Create non-null array contents
@@ -288,26 +269,22 @@ public class DrawableField extends DrawableSprite {
 				final int topright = 2;
 				final int bottomright = 3;
 				if (!getParentCircuit().data.hasFieldAt(top) ||
-						!n.containsField(
-								getParentCircuit().data.getFieldAt(top))) {
+						!n.containsField(getParentCircuit().data.getFieldAt(top))) {
 					this.cornerColors[topleft].add(netCol.buildGdxColor());
 					this.cornerColors[topright].add(netCol.buildGdxColor());
 				}
 				if (!getParentCircuit().data.hasFieldAt(bottom) ||
-						!n.containsField(
-								getParentCircuit().data.getFieldAt(bottom))) {
+						!n.containsField(getParentCircuit().data.getFieldAt(bottom))) {
 					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
 					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
 				if (!getParentCircuit().data.hasFieldAt(left) ||
-						!n.containsField(
-								getParentCircuit().data.getFieldAt(left))) {
+						!n.containsField(getParentCircuit().data.getFieldAt(left))) {
 					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
 					this.cornerColors[topleft].add(netCol.buildGdxColor());
 				}
 				if (!getParentCircuit().data.hasFieldAt(right) ||
-						!n.containsField(
-								getParentCircuit().data.getFieldAt(right))) {
+						!n.containsField(getParentCircuit().data.getFieldAt(right))) {
 					this.cornerColors[topright].add(netCol.buildGdxColor());
 					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
@@ -317,8 +294,7 @@ public class DrawableField extends DrawableSprite {
 					cornerColors[i] = super.getColor();
 				}
 			}
-		}
-		else {
+		} else {
 			cornerColors = null;
 		}
 
@@ -337,7 +313,8 @@ public class DrawableField extends DrawableSprite {
 		/** Colours the interference region **/
 		if (option(InterferenceRegion)) {
 			int amountOfInterferenceRegions = 0;
-			for (final Droplet d : getParentCircuit().data.getDroplets()) {
+
+			for (final Droplet d: getParentCircuit().data.getDroplets()) {
 				if (isPartOfInterferenceRegion(d)) {
 					boolean interferenceViolation = false;
 					for (DrawableDroplet d2 : parentCircuit.droplets) {
@@ -377,12 +354,10 @@ public class DrawableField extends DrawableSprite {
 			if (this.getField().isSink) {
 				result.add(SINK_DEFAULT_COLOR);
 				colorOverlayCount++;
-			}
-			else if (this.getField().isDispenser) {
+			} else if (this.getField().isDispenser) {
 				result.add(SOURCE_DEFAULT_COLOR);
 				colorOverlayCount++;
-			}
-			else {
+			} else {
 				result.add(FIELD_DEFAULT_COLOR);
 				colorOverlayCount++;
 			}
@@ -433,18 +408,17 @@ public class DrawableField extends DrawableSprite {
 			for (Net net : this.parentCircuit.data.getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
-						Pair<Float, Float> target = new Pair<Float, Float>(
+						Pair<Float, Float> target = new Pair<Float, Float> (
 								net.getTarget().fst.floatValue(),
 								net.getTarget().snd.floatValue());
 
-						Pair<Float, Float> source = new Pair<Float, Float>(
+						Pair<Float, Float> source = new Pair<Float, Float> (
 								s.startPosition.fst.floatValue(),
 								s.startPosition.snd.floatValue());
 
-
+						
 						// draw to target
-						DrawableLine.draw(
-								source, target,
+						DrawableLine.draw(source, target,
 								Color.BLACK.cpy().sub(0, 0, 0, 0.5f));
 					}
 				}
@@ -475,9 +449,8 @@ public class DrawableField extends DrawableSprite {
 
 
 	/**
-	 * Retrieves the *structural* field that is drawn by this {@link
-	 * DrawableField}.
-	 *
+	 * Retrieves the *structural* field that is drawn by this
+	 * {@link DrawableField}.
 	 * @return the field that is drawn by this {@link DrawableField}
 	 */
 	public BiochipField getField() {
@@ -488,9 +461,7 @@ public class DrawableField extends DrawableSprite {
 	 * Sets the field that is drawn by this {@link DrawableField}. This
 	 * shouldn't really be used at any point after the {@link DrawableCircuit}
 	 * has been fully initialized.
-	 *
-	 * @param field
-	 * 		the field that should be drawn by this {@link DrawableField}
+	 * @param field the field that should be drawn by this {@link DrawableField}
 	 */
 	public void setField(final BiochipField field) {
 		this.field = field;
@@ -498,7 +469,6 @@ public class DrawableField extends DrawableSprite {
 
 	/**
 	 * Retrieves the parent circuit of this field.
-	 *
 	 * @return the circuit that contains this field
 	 */
 	public DrawableCircuit getParentCircuit() {
@@ -508,26 +478,9 @@ public class DrawableField extends DrawableSprite {
 	/**
 	 * Sets the parent circuit of this field. This shouldn't really be used
 	 * after the whole circuit has been initialized.
-	 *
-	 * @param parentCircuit
-	 * 		the circuit that contains this field.
+	 * @param parentCircuit the circuit that contains this field.
 	 */
 	public void setParentCircuit(final DrawableCircuit parentCircuit) {
 		this.parentCircuit = parentCircuit;
-	}
-
-	/**
-	 * Convenience function for checking options.
-	 * <p>
-	 * It basically is syntactic sugar to make the huge amount of checking
-	 * above
-	 * easier to read.
-	 *
-	 * @param opt
-	 * 		The option to check
-	 * @return whether the option is set
-	 */
-	private boolean option(BDisplayOptions opt) {
-		return getParentCircuit().displayOptions.getOption(opt);
 	}
 }
