@@ -60,7 +60,7 @@ public abstract class Colors {
 	 */
 	public static final Color INTERFERENCE_REGION_COLOR
 			= new Color(0.75f, 0.75f, 0.5f, 1);
-	
+
 	/**
 	 * Base color for an interference region overlap. This color is used before
 	 * any modifications are applied.
