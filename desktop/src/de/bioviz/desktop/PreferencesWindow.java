@@ -47,7 +47,6 @@ public class PreferencesWindow extends JFrame {
 		final int defaultDurationBetweenSteps =
 				Math.round(viz.currentCircuit.autoSpeed * 1000);
 
-
 		try {
 			this.setIconImage(
 					ImageIO.read(viz.getApplicationIcon().file()));
@@ -70,7 +69,7 @@ public class PreferencesWindow extends JFrame {
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.LINE_END;
 		JLabel timestepLabel =
-				new JLabel(Float.toString(defaultDurationBetweenSteps));
+				new JLabel(Float.toString(defaultDurationBetweenSteps/1000f));
 		this.add(timestepLabel, c);
 
 		JSlider animSlider =
@@ -86,6 +85,7 @@ public class PreferencesWindow extends JFrame {
 					logger.info("sliderVal: {}, newSpeed: {}", sliderVal,
 								newSpeed);
 					viz.currentCircuit.autoSpeed = newSpeed;
+					timestepLabel.setText(Float.toString(newSpeed));
 					;
 				});
 
