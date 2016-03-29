@@ -191,7 +191,8 @@ public class MessageCenter {
 	 * @param y
 	 * 		the y coordinate to show the message at
 	 */
-	public void addHUDMessage(final int key, final String message, final float x, final float y) {
+	public void addHUDMessage(final int key, final String message, final float
+			x, final float y) {
 		addHUDMessage(key, message, x, y, null, -1f);
 	}
 
