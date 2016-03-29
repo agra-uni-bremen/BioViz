@@ -60,7 +60,7 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
 
 	/**
 	 * Sets the reference to the {@link BioViz} that is supposed to show the
-	 * messages.
+	 *+ messages.
 	 *
 	 * @param bioViz
 	 * 		The {@link BioViz} that is supposed to show the messages.
