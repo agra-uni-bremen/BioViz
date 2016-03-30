@@ -24,11 +24,29 @@ public class MessageCenter {
 
 
 	private Vector<Message> messages;
+
+	/**
+	 * The font that is used to display infos on top of fields and droplets.
+	 */
 	private BitmapFont font;
+
+
+	/**
+	 * The font that is used to display logging messages.
+	 */
 	private BitmapFont messageFont;
+
+	/**
+	 * Whether messages are to be displayed.
+	 */
 	public boolean hidden = false;
 
+
+	/**
+	 * The maximal amount of messages that are displayed at once.
+	 */
 	public static final int MAX_MESSAGES_IN_UI = 32;
+
 
 	private float scaleHUD = 1f / 4f;
 	private float scaleMsg = 1f / 8f;
@@ -36,15 +54,33 @@ public class MessageCenter {
 
 	public static final int textRenderResolution = 16;
 
+
+	/**
+	 * The central logging device for this class.
+	 */
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
 	BioViz parent;
 
+
+	/**
+	 * Creates a new message center that will pass messages to a BioViz
+	 * instance.
+	 *
+	 * @param parent
+	 * 		the {@link BioViz} this MessageCenter is attached to.
+	 */
 	public MessageCenter(final BioViz parent) {
 		this.parent = parent;
 		messages = new Vector<Message>();
 	}
 
+	/**
+	 * Retrives the font that is used to display stuff on top of
+	 * droplets/fields.
+	 *
+	 * @return The font that is used to display stuff on top of droplets/fields
+	 */
 	public BitmapFont getFont() {
 		if (font == null) {
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
@@ -76,6 +112,10 @@ public class MessageCenter {
 	private HashMap<Integer, HUDMessage> HUDMessages =
 			new HashMap<Integer, HUDMessage>();
 
+	/**
+	 *
+	 * @return true if mess
+	 */
 	public boolean isHidden() {
 		return hidden;
 	}
