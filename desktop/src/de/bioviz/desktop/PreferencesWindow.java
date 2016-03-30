@@ -47,7 +47,6 @@ public class PreferencesWindow extends JFrame {
 		final int defaultDurationBetweenSteps =
 				Math.round(viz.currentCircuit.autoSpeed * 1000);
 
-
 		try {
 			this.setIconImage(
 					ImageIO.read(viz.getApplicationIcon().file()));
@@ -63,15 +62,21 @@ public class PreferencesWindow extends JFrame {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 0;
-		this.add(new JLabel("Time between steps in s:"), c);
+		this.add(new JLabel("Time between steps:"), c);
 
 
 		c.gridx = 1;
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.LINE_END;
 		JLabel timestepLabel =
-				new JLabel(Float.toString(defaultDurationBetweenSteps));
+				new JLabel(Float.toString(defaultDurationBetweenSteps/1000f));
 		this.add(timestepLabel, c);
+
+
+		c.gridx = 2;
+		c.gridy = 0;
+		c.anchor =GridBagConstraints.LINE_START;
+		this.add(new JLabel("s"),c);
 
 		JSlider animSlider =
 				new JSlider(SwingConstants.HORIZONTAL, minDurationBetweenSteps,
@@ -86,12 +91,13 @@ public class PreferencesWindow extends JFrame {
 					logger.info("sliderVal: {}, newSpeed: {}", sliderVal,
 								newSpeed);
 					viz.currentCircuit.autoSpeed = newSpeed;
+					timestepLabel.setText(Float.toString(newSpeed));
 					;
 				});
 
 		c.gridx = 0;
 		c.gridy = 1;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		c.anchor = GridBagConstraints.CENTER;
 		this.add(animSlider, c);
 
@@ -99,7 +105,10 @@ public class PreferencesWindow extends JFrame {
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		this.add(new JLabel("Animation duration in ms:"), c);
+		this.add(new JLabel("Animation duration:"), c);
+
+
+
 
 		c.gridx = 1;
 		c.gridy = 2;
@@ -107,6 +116,13 @@ public class PreferencesWindow extends JFrame {
 		JLabel animLabel =
 				new JLabel(Integer.toString(defaultAnimationDuration));
 		this.add(animLabel, c);
+
+
+		c.gridx = 2;
+		c.gridy = 2;
+		c.anchor = GridBagConstraints.LINE_START;
+		this.add(new JLabel("ms"),c);
+
 		JSlider dropMovementSpeedSlider =
 				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,
 							maxAnimationDuration,
@@ -120,7 +136,7 @@ public class PreferencesWindow extends JFrame {
 
 		c.gridx = 0;
 		c.gridy = 3;
-		c.gridwidth = 2;
+		c.gridwidth = 3;
 		c.anchor = GridBagConstraints.CENTER;
 		this.add(dropMovementSpeedSlider, c);
 
