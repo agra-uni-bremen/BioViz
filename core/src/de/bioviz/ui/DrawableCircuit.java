@@ -42,7 +42,7 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * The time between to time steps in seconds.
 	 */
-	public float autoSpeed = 2f;
+	public float autoDelay = 2f;
 	private long lastAutoStepAt = new Date().getTime();
 
 	private Vector<BioVizEvent> timeChangedListeners =
@@ -160,7 +160,7 @@ public class DrawableCircuit implements Drawable {
 
 		if (autoAdvance) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long) (this.autoSpeed * 1000) < current) {
+			if (lastAutoStepAt + (long) (this.autoDelay * 1000) < current) {
 				lastAutoStepAt = current;
 
 				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);

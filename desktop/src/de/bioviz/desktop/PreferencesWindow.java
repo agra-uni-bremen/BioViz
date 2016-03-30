@@ -45,7 +45,7 @@ public class PreferencesWindow extends JFrame {
 		final int minDurationBetweenSteps = 1 * 1000;
 		final int maxDurationBetweenSteps = 10 * 1000;
 		final int defaultDurationBetweenSteps =
-				Math.round(viz.currentCircuit.autoSpeed * 1000);
+				Math.round(viz.currentCircuit.autoDelay * 1000);
 
 		try {
 			this.setIconImage(
@@ -85,12 +85,12 @@ public class PreferencesWindow extends JFrame {
 		animSlider.addChangeListener(
 				e -> {
 					logger.info("Current speed: {}",
-								viz.currentCircuit.autoSpeed);
+								viz.currentCircuit.autoDelay);
 					int sliderVal = animSlider.getValue();
 					float newSpeed = sliderVal / 1000f;
 					logger.info("sliderVal: {}, newSpeed: {}", sliderVal,
 								newSpeed);
-					viz.currentCircuit.autoSpeed = newSpeed;
+					viz.currentCircuit.autoDelay = newSpeed;
 					timestepLabel.setText(Float.toString(newSpeed));
 					;
 				});
