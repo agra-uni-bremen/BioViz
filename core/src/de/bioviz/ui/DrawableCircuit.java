@@ -22,7 +22,7 @@ import org.slf4j.Logger;
  * Create a ReversibleCircuit first (e.g. by loading a given .real file), then
  * create a DrawableCircuit instance for the ReversibleCircuit to draw the latter.
  *
- * @author jannis
+ * @author Jannis Stoppe
  */
 public class DrawableCircuit implements Drawable {
 	public Biochip data;
@@ -46,7 +46,8 @@ public class DrawableCircuit implements Drawable {
 	public float autoSpeed = 2f;
 	private long lastAutoStepAt = new Date().getTime();
 
-	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
+	private Vector<BioVizEvent> timeChangedListeners =
+			new Vector<BioVizEvent>();
 
 
 	public Vector<DrawableField> fields = new Vector<>();
@@ -196,7 +197,7 @@ public class DrawableCircuit implements Drawable {
 	 * This in fact uses the message center to display the numbers, so the
 	 * actual drawing will be done after the rest has been drawn.
 	 * 
-	 * @author jannis
+	 * @author Jannis Stoppe
 	 */
 	private void displayCoordinates() {
 		// calculate current dimensions first so the coordinates can be either
@@ -367,38 +368,6 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
-	private static Color hsvToRgb(float hue, final float saturation, final float value) {
-
-		while (hue >= 1) {
-			hue -= 1;
-		}
-		while (hue < 0) {
-			hue += 1;
-		}
-		int h = (int) (hue * 6);
-		float f = hue * 6 - h;
-		float p = value * (1 - saturation);
-		float q = value * (1 - f * saturation);
-		float t = value * (1 - (1 - f) * saturation);
-
-		switch (h) {
-			case 0:
-				return new Color(value, t, p, 1);
-			case 1:
-				return new Color(q, value, p, 1);
-			case 2:
-				return new Color(p, value, t, 1);
-			case 3:
-				return new Color(p, q, value, 1);
-			case 4:
-				return new Color(t, p, value, 1);
-			case 5:
-				return new Color(value, p, q, 1);
-			default:
-				throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
-		}
-	}
 
 	/**
 	 * retrieves the current x scaling factor

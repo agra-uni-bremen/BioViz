@@ -390,7 +390,7 @@ public class BioViz implements ApplicationListener {
 	}
 
 	void callLoadFileListeners() {
-		logger.trace("Calling " + this.loadedFileListeners.size() +
+		logger.trace("Calling " + this.loadFileListeners.size() +
 					 " listeners for load");
 		for (BioVizEvent listener : this.loadFileListeners) {
 			listener.bioVizEvent();

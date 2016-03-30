@@ -58,7 +58,7 @@ public class DrawableDroplet extends DrawableSprite {
 		if (net != null &&
 			parentCircuit.displayOptions.getOption(
 					BDisplayOptions.NetColorOnDroplets)) {
-			color = new Color(net.getColor());
+			color = net.getColor().buildGdxColor();
 		}
 
 
