@@ -327,7 +327,7 @@ public class DesktopLauncher extends JFrame {
 														 openButton
 																 .getPreferredSize().height));
 		preferencesButton.addActionListener(e -> {
-			showSettings();
+			showSettings(bioViz);
 		});
 
 		JButton saveButton = new JButton("Save SVG");
@@ -630,10 +630,9 @@ public class DesktopLauncher extends JFrame {
 
 	}
 
-	private static void showSettings() {
+	private static void showSettings(BioViz viz) {
 		logger.debug("Opening preferences window...");
-		PreferencesWindow pw = new PreferencesWindow();
-		pw.setVisible(true);
+		PreferencesWindow pw = new PreferencesWindow(viz);
 		logger.debug("Done opening preferences window.");
 	}
 
