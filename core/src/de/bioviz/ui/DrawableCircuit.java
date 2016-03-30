@@ -160,7 +160,7 @@ public class DrawableCircuit implements Drawable {
 
 		if (autoAdvance) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
+			if (lastAutoStepAt + (long) (this.autoSpeed * 1000) < current) {
 				lastAutoStepAt = current;
 
 				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);
