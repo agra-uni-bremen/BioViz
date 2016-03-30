@@ -120,7 +120,11 @@ public class DesktopLauncher extends JFrame {
 	LwjglAWTInput input;
 
 	/**
-	 * The visualization that is used to actually display the DMFBs.
+	 * The visualization instance. From the DesktopLauncher, this field is usd
+	 * to get access to any properties of the currently running visualization.
+	 * Notice that despite the application seemingly opening several files at
+	 * once in tabs, there is still only one visualization which then displays
+	 * several different circuits.
 	 */
 	BioViz currentViz;
 
@@ -166,15 +170,6 @@ public class DesktopLauncher extends JFrame {
 	private JMenuBar menubar;
 
 	/**
-	 * The visualization instance. From the DesktopLauncher, this field is usd
-	 * to get access to any properties of the currently running visualization.
-	 * Notice that despite the application seemingly opening several files at
-	 * once in tabs, there is still only one visualization which then displays
-	 * several different circuits.
-	 */
-	private BioViz bioViz;
-
-	/**
 	 * Creates a desktop launcher.
 	 */
 	public DesktopLauncher() {
@@ -193,13 +188,12 @@ public class DesktopLauncher extends JFrame {
 		tabsToFilenames = new HashMap<Object, File>();
 
 		if (file == null) {
-			bioViz = new BioViz();
+			currentViz = new BioViz();
 		}
 		else {
-			bioViz = new BioViz(file);
+			currentViz = new BioViz(file);
 		}
-		currentViz = bioViz;
-		canvas = new LwjglAWTCanvas(bioViz);
+		canvas = new LwjglAWTCanvas(currentViz);
 
 		currentViz.addCloseFileListener(new CloseFileCallback());
 
@@ -326,7 +320,7 @@ public class DesktopLauncher extends JFrame {
 														  ().height));
 		loadCB = new LoadFileCallback();
 		openButton.addActionListener(e -> loadCB.bioVizEvent());
-		bioViz.addLoadFileListener(loadCB);
+		currentViz.addLoadFileListener(loadCB);
 
 		JButton preferencesButton = new JButton("Preferences");
 		preferencesButton.setPreferredSize(new Dimension(buttonWidth,
@@ -431,7 +425,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		visualizationTabs.addChangeListener(
-				l -> bioViz.loadNewFile(
+				l -> currentViz.loadNewFile(
 						tabsToFilenames.get(
 								((JTabbedPane) l.getSource())
 										.getSelectedComponent())));
@@ -494,7 +488,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() -
 										   1);
 		tabsToFilenames.put(dummyPanel, file);
-		this.bioViz.loadNewFile(file);
+		this.currentViz.loadNewFile(file);
 	}
 
 	/**
@@ -507,7 +501,7 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private void closeTab(final int index) {
 		logger.info("Closing file (" + index + ")");
-		bioViz.unloadFile(
+		currentViz.unloadFile(
 				tabsToFilenames.get(visualizationTabs.getSelectedComponent()));
 		tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
 		visualizationTabs.removeTabAt(index);
@@ -1110,7 +1104,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
-				d.setTitle(d.bioViz.getFileName() + " - " + d.programName);
+				d.setTitle(d.currentViz.getFileName() + " - " + d.programName);
 			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
@@ -1198,7 +1192,7 @@ public class DesktopLauncher extends JFrame {
 			}
 
 			if (input.getInputProcessor() == null) {
-				input.setInputProcessor(bioViz.getInputProcessor());
+				input.setInputProcessor(currentViz.getInputProcessor());
 			}
 			//Additional check to avoid having events fire twice (once from
 			// here and once from libgdx)
@@ -1206,17 +1200,17 @@ public class DesktopLauncher extends JFrame {
 				!= DesktopLauncher.singleton.canvas.getCanvas()) {
 
 				if (e.getID() == KeyEvent.KEY_PRESSED) {
-					bioViz.getInputProcessor().keyDown(
+					currentViz.getInputProcessor().keyDown(
 							translateKeyCode(e.getKeyCode()));
 				}
 				else if (e.getID() == KeyEvent.KEY_RELEASED) {
-					bioViz.getInputProcessor().keyUp(
+					currentViz.getInputProcessor().keyUp(
 							translateKeyCode(e.getKeyCode()));
 				}
 				else if (e.getID() == KeyEvent.KEY_TYPED) {
 					// That thing might not have been initiliazed yet
-					if (bioViz.getInputProcessor() != null) {
-						bioViz.getInputProcessor().keyTyped(e.getKeyChar());
+					if (currentViz.getInputProcessor() != null) {
+						currentViz.getInputProcessor().keyTyped(e.getKeyChar());
 					}
 				}
 			}
