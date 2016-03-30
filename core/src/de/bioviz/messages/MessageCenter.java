@@ -112,13 +112,7 @@ public class MessageCenter {
 	private HashMap<Integer, HUDMessage> HUDMessages =
 			new HashMap<Integer, HUDMessage>();
 
-	/**
-	 *
-	 * @return true if mess
-	 */
-	public boolean isHidden() {
-		return hidden;
-	}
+
 
 
 	/**
