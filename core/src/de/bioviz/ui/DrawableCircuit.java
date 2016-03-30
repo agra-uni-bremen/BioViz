@@ -8,7 +8,9 @@ import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.util.ColorCalculator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -43,7 +45,11 @@ public class DrawableCircuit implements Drawable {
 	public int currentTime = 1;
 
 	public boolean autoAdvance = false;
-	public float autoSpeed = 2f;
+
+	/**
+	 * The time between to time steps in seconds.
+	 */
+	public float autoDelay = 2f;
 	private long lastAutoStepAt = new Date().getTime();
 
 	private Vector<BioVizEvent> timeChangedListeners =
@@ -161,7 +167,7 @@ public class DrawableCircuit implements Drawable {
 
 		if (autoAdvance) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
+			if (lastAutoStepAt + (long) (this.autoDelay * 1000) < current) {
 				lastAutoStepAt = current;
 
 				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);
@@ -204,14 +210,10 @@ public class DrawableCircuit implements Drawable {
 		// displayed at the edge of the viewport (if the grid boundaries are
 		// beyond the viewport boundaries) or at the edge of the grid (if they
 		// are within)
-
-		Point maxPos = data.getMaxCoord();
-		Point minPos = data.getMinCoord();
-
-		int minX = minPos.fst;
-		int	minY = minPos.snd;
-		int	maxX = maxPos.fst;
-		int maxY = maxPos.snd;
+		int minX = Integer.MAX_VALUE,
+			minY = Integer.MAX_VALUE,
+			maxX = Integer.MIN_VALUE,
+			maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.fields) {
 			if (minX > f.getField().x()) {

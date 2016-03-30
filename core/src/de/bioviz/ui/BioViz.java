@@ -44,6 +44,14 @@ public class BioViz implements ApplicationListener {
 		DrawableSprite.setColorTransitionDuration(value);
 	}
 
+	/**
+	 * Returns the duration of intermediate animations in ms.
+	 * @return Duration of intermediate animations in ms.
+	 */
+	public static int getAnimationDuration() {
+		return Droplet.movementTransitionDuration;
+	}
+
 
 	public DrawableCircuit currentCircuit;
 	private HashMap<String, DrawableCircuit> loadedCircuits;
