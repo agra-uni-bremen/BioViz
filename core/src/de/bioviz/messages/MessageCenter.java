@@ -265,12 +265,19 @@ public class MessageCenter {
 		hm.size = size;
 	}
 
+	/**
+	 *  Removes a message from the HUD message queue.
+	 * @param key ID of the message to be removed.
+	 */
 	public void removeHUDMessage(final int key) {
 		if (this.HUDMessages.containsKey(key)) {
 			this.HUDMessages.remove(key);
 		}
 	}
 
+	/**
+	 * Clears all HUD messages.
+	 */
 	public void clearHUDMessages() {
 		this.HUDMessages.clear();
 	}
