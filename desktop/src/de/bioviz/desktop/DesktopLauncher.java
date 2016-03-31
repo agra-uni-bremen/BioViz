@@ -327,7 +327,7 @@ public class DesktopLauncher extends JFrame {
 														 openButton
 																 .getPreferredSize().height));
 		preferencesButton.addActionListener(e -> {
-			showSettings(bioViz);
+			showSettings(currentViz);
 		});
 
 		JButton saveButton = new JButton("Save SVG");
