@@ -3,12 +3,14 @@ package de.bioviz.svg;
 
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @author malu, keszocze
@@ -219,6 +221,17 @@ public class SVGManager {
 					colSvgs.put(key,
 							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
 									f.getColor(), strokeColor));
+				}
+				Set<Net> nets = circ.data.getNetsOf(f.getField());
+				for (final Net n : nets){
+					for (GradDir dir : GradDir.values()){
+						String id = "grad-" + dir.toString() + "-" +
+								n.getColor().buildGdxColor();
+						if(!colSvgs.containsKey(id)) {
+							colSvgs.put(id, svgCoreCreator
+									.getSVGLinearGradient(id, dir, n.getColor().buildGdxColor()));
+						}
+					}
 				}
 			}
 			for (final DrawableDroplet d : circ.droplets) {
