@@ -76,6 +76,15 @@ public class SVGManager {
 	/** max coordinate for the exported svg. */
 	private Point bottomRightCoord;
 
+	/** ViewBox X coordinate. */
+	private int viewBox_x;
+	/** ViewBox Y coordinate. */
+	private int viewBox_y;
+	/** ViewBox width. */
+	private int viewBox_width;
+	/** ViewBox height. */
+	private int viewBox_height;
+
 	/**
 	 * SVGManager loading the default theme.
 	 */
@@ -179,6 +188,12 @@ public class SVGManager {
 
 		topLeftCoord = new Point(minX, minY);
 		bottomRightCoord = new Point(maxX, maxY);
+
+		viewBox_x = topLeftCoord.fst * coordinateMultiplier;
+		viewBox_y = topLeftCoord.snd * coordinateMultiplier;
+
+		viewBox_width = bottomRightCoord.fst * coordinateMultiplier;
+		viewBox_height = bottomRightCoord.snd * coordinateMultiplier;
 	}
 
 	/**
@@ -232,12 +247,6 @@ public class SVGManager {
 		}
 
 		calculateViewboxDimensions(circ);
-
-		int viewBox_x = topLeftCoord.fst * coordinateMultiplier;
-		int viewBox_y = topLeftCoord.snd * coordinateMultiplier;
-
-		int viewBox_width = bottomRightCoord.fst * coordinateMultiplier;
-		int viewBox_height = bottomRightCoord.snd * coordinateMultiplier;
 
 		if(circ.displayOptions.getOption(BDisplayOptions.Coordinates)){
 			int coordinateOffsetX = (int) (coordinateMultiplier * 0.75);
