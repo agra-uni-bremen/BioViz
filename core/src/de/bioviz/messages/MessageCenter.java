@@ -35,6 +35,8 @@ public class MessageCenter {
 	private final float SCALEINCSTEP = 0.125f;
 
 	public static final int textRenderResolution = 16;
+	
+	private boolean fontInvalidated = true;
 
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
@@ -46,7 +48,8 @@ public class MessageCenter {
 	}
 
 	public BitmapFont getFont() {
-		if (font == null) {
+		if (fontInvalidated) {
+			fontInvalidated = false;
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
 					Gdx.files.internal("images/FreeUniversal-Regular.ttf"));
 			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
