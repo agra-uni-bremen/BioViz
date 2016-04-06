@@ -220,6 +220,38 @@ public class SVGCoreCreator {
 	}
 
 	/**
+	 * Returns a string representing a linear gradient definition with the
+	 * given id, direction and colors.
+	 *
+	 * @param id of the resulting gradient
+	 * @param dir direction of the resulting gradient
+	 * @param color first color of the resulting gradient
+	 * @return a string
+	 */
+	public String getSVGLinearGradient(String id, GradDir dir, Color color){
+		int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+		if (dir == GradDir.LEFTRIGHT){
+			x2 = 1;
+		}else if(dir == GradDir.RIGHTLEFT){
+			x1 = 1;
+		}else if(dir == GradDir.TOPBOTTOM){
+			y2 = 1;
+		}else if(dir == GradDir.BOTTOMTOP){
+			y1 = 1;
+		}
+		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
+				"y1=\"" + y1 + "\" x2=\"" + x2 +"\" y2=\"" + y2 + "\" >\n";
+		String offset1 = "<stop offset=\"30%\" " +	"style=\"stop-color:rgb(" +
+				color.r * 255 + "," + color.g * 255 + "," + color.b * 255 + ");" +
+				"stop-opacity:0\" />\n";
+		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
+				color.r * 255 + "," + color.g * 255 + "," + color.b * 255 + ");" +
+				"stop-opacity:0.7\" />\n";
+		String end = "</linearGradient>\n";
+		return begin + offset1 + offset2 + end;
+	}
+
+	/**
 	 * Sets the style tag for the first tag occurrence.
 	 *
 	 * @param element xml top node
@@ -287,5 +319,5 @@ public class SVGCoreCreator {
 		return writer.toString();
 	}
 
-
 }
+
