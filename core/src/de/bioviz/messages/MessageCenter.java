@@ -32,10 +32,26 @@ public class MessageCenter {
 
 	private float scaleHUD = 1f / 4f;
 	private float scaleMsg = 1f / 8f;
-	private final float SCALEINCSTEP = 0.125f;
+	private final float SCALEINCSTEP = 2f;
 
-	public static final int textRenderResolution = 16;
-	
+	private float textRenderResolution = 16;
+	public float getTextRenderResolution() {return textRenderResolution;}
+	public void setTextRenderResolution(float value) {
+		this.textRenderResolution = value;
+		fontInvalidated = true;
+		logger.debug("setting HUD font size to " +
+				this.textRenderResolution);
+	}
+
+	private float msgTextRenderResolution = 8;
+	public float getmsgTextRenderResolution() {return msgTextRenderResolution;}
+	public void setmsgTextRenderResolution(float value) {
+		this.msgTextRenderResolution = value;
+		fontInvalidated = true;
+		logger.debug("setting message font size to " +
+				this.msgTextRenderResolution);
+	}
+
 	private boolean fontInvalidated = true;
 
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
@@ -53,7 +69,7 @@ public class MessageCenter {
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
 					Gdx.files.internal("images/FreeUniversal-Regular.ttf"));
 			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-			parameter.size = textRenderResolution;
+			parameter.size = (int)textRenderResolution;
 			parameter.color = Color.WHITE.cpy();
 			parameter.borderWidth = 2;
 			parameter.borderColor = Color.BLACK.cpy();
@@ -66,9 +82,10 @@ public class MessageCenter {
 			generator = new FreeTypeFontGenerator(
 					Gdx.files.internal("images/Anonymous_Pro.ttf"));
 			parameter = new FreeTypeFontParameter();
-			parameter.size = 8;
+			parameter.size = (int)msgTextRenderResolution;
 			parameter.color = Color.BLACK.cpy();
 			this.messageFont = generator.generateFont(parameter);
+			generator.dispose();
 			logger.debug("set up font");
 
 			font = font12;//new BitmapFont();
@@ -111,7 +128,7 @@ public class MessageCenter {
 
 	public void render() {
 		if (!hidden) {
-			if (font == null) {
+			if (font == null || fontInvalidated) {
 				getFont();
 			}
 
@@ -249,11 +266,11 @@ public class MessageCenter {
 	}
 
 	public void resetMsgScale() {
-		scaleMsg = 1f;
+		setmsgTextRenderResolution(8f);
 	}
 
 	public void resetHUDScale() {
-		scaleHUD = 1f;
+		setTextRenderResolution(16f);
 	}
 
 	public void incScales() {
@@ -262,11 +279,11 @@ public class MessageCenter {
 	}
 
 	public void incScaleHUD() {
-		scaleHUD = scaleMsg + SCALEINCSTEP;
+		setTextRenderResolution(getTextRenderResolution() + SCALEINCSTEP);
 	}
 
 	public void incScaleMsg() {
-		scaleMsg = scaleMsg + SCALEINCSTEP;
+		setmsgTextRenderResolution(getmsgTextRenderResolution() + SCALEINCSTEP);
 	}
 
 	public void decScales() {
