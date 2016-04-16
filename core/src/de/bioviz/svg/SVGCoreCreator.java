@@ -229,8 +229,9 @@ public class SVGCoreCreator {
 	public String getArrowHead(final String id, final Color color){
 		return "<marker id=\"" + id + "\" " +
 				"markerWidth=\"10\" " +	"markerHeight=\"10\" " +
-				"refx=\"7\" " +	"refy=\"3\"	" +
-				"orient=\"auto\">\n\t<path d=\"M0,0 L0,6 L9,3 z\" " +
+				"refX=\"7\" " +	"refY=\"3\"	" +
+				"orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path d=\"M0,0 L0,6 " +
+				"L9,3 z\" " +
 				"fill=\"#" + colorToSVG(color) + "\" />\n</marker>\n";
 	}
 
