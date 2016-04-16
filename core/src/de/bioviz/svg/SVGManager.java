@@ -94,6 +94,9 @@ public class SVGManager {
 	/** ViewBox height. */
 	private int viewBoxHeight;
 
+	/** Reference to the drawableCircuit */
+	private DrawableCircuit circuit;
+
 	/**
 	 * SVGManager loading the default theme.
 	 */
@@ -183,12 +186,10 @@ public class SVGManager {
 
 	/**
 	 * Calculates min and max values for the resulting svg viewbox.
-	 *
-	 * @param circ The underlying DrawableCircuit.
 	 */
-	private void calculateViewboxDimensions(final DrawableCircuit circ) {
-		Point minCoord = circ.data.getMinCoord();
-		Point maxCoord = circ.data.getMaxCoord();
+	private void calculateViewboxDimensions() {
+		Point minCoord = circuit.data.getMinCoord();
+		Point maxCoord = circuit.data.getMaxCoord();
 
 		int minX = minCoord.fst;
 		int minY = minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1);
@@ -214,13 +215,15 @@ public class SVGManager {
 	 */
 	public String toSVG(final DrawableCircuit circ, final int timeStep) {
 
+		circuit = circ;
+
 		// set the export timeStep
-		circ.setCurrentTime(timeStep);
+		circuit.setCurrentTime(timeStep);
 
 		if (svgExportSettings.getColorfulExport()) {
 			LOGGER.debug("[SVG] Creating all needed colored cores.");
 
-			for (final DrawableField f : circ.fields) {
+			for (final DrawableField f : circuit.fields) {
 				String 	key = generateColoredID(f.getDisplayValues().getTexture()
 						.toString(), f.getColor());
 				// don't create the svg core code twice
@@ -229,7 +232,7 @@ public class SVGManager {
 							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
 									f.getColor(), strokeColor));
 				}
-				Set<Net> nets = circ.data.getNetsOf(f.getField());
+				Set<Net> nets = circuit.data.getNetsOf(f.getField());
 				for (final Net n : nets) {
 					for (final GradDir dir : GradDir.values()) {
 						String id = generateColoredID("grad-" + dir.toString(),
@@ -241,7 +244,7 @@ public class SVGManager {
 					}
 				}
 			}
-			for (final DrawableDroplet d : circ.droplets) {
+			for (final DrawableDroplet d : circuit.droplets) {
 				// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
 				String key = generateColoredID("Droplet", d.getColor());
 				// don't create the svg core code twice
@@ -252,9 +255,9 @@ public class SVGManager {
 				}
 
 				// Added it here in case we need it in each droplet color
-				if (circ.displayOptions.getOption(BDisplayOptions
+				if (circuit.displayOptions.getOption(BDisplayOptions
 						.LongNetIndicatorsOnDroplets) ||
-						circ.displayOptions.getOption(BDisplayOptions
+						circuit.displayOptions.getOption(BDisplayOptions
 								.LongNetIndicatorsOnFields)) {
 					key = generateColoredID("ArrowHead", Color.BLACK);
 					if (!colSvgs.containsKey(key)) {
@@ -278,9 +281,9 @@ public class SVGManager {
 			LOGGER.debug("[SVG] Done creating colored cores.");
 		}
 
-		calculateViewboxDimensions(circ);
+		calculateViewboxDimensions();
 
-		if (circ.displayOptions.getOption(BDisplayOptions.Coordinates)) {
+		if (circuit.displayOptions.getOption(BDisplayOptions.Coordinates)) {
 			int coordinateOffsetX = (int) (coordinateMultiplier * 0.75);
 			int coordinateOffsetY = (int) (coordinateMultiplier * 0.75);
 			viewBoxX -= coordinateOffsetX;
@@ -315,27 +318,27 @@ public class SVGManager {
 		}
 		sb.append("</defs>\n");
 
-		for (final DrawableField field : circ.fields) {
+		for (final DrawableField field : circuit.fields) {
 			sb.append(toSVG(field));
 		}
-		for (final DrawableDroplet drop : circ.droplets) {
+		for (final DrawableDroplet drop : circuit.droplets) {
 			if (drop.getDisplayColor().a > 0.1f &&
-					!circ.hiddenDroplets.contains(drop)) {
+					!circuit.hiddenDroplets.contains(drop)) {
 				sb.append(toSVG(drop));
 			}
 		}
 		// run over each droplet again and draw the arrows
 		// otherwise arrows can get under droplets
-		for (final DrawableDroplet drop : circ.droplets) {
+		for (final DrawableDroplet drop : circuit.droplets) {
 			sb.append(exportArrows(drop));
 		}
 
 		if (svgExportSettings.getInformationString()) {
-			sb.append(infoString(circ));
+			sb.append(infoString());
 		}
 
-		if (circ.displayOptions.getOption(BDisplayOptions.Coordinates)) {
-			sb.append(createCoordinates(circ));
+		if (circuit.displayOptions.getOption(BDisplayOptions.Coordinates)) {
+			sb.append(createCoordinates());
 		}
 
 		sb.append("</svg>\n");
@@ -360,7 +363,6 @@ public class SVGManager {
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
 
-		DrawableCircuit circuit = field.getParentCircuit();
 		int yCoord =
 				-field.getField().y() + circuit.data.getMaxCoord().snd;
 		int xCoord = field.getField().x();
@@ -414,7 +416,6 @@ public class SVGManager {
 	 * @return svg string representation of the drop
 	 */
 	private String toSVG(final DrawableDroplet drawableDrop) {
-		DrawableCircuit circuit = drawableDrop.parentCircuit;
 		float yCoord = -drawableDrop.droplet.getPositionAt(circuit.currentTime).snd +
 				circuit.data.getMaxCoord().snd;
 		float xCoord = drawableDrop.droplet.getPositionAt(circuit.currentTime).fst;
@@ -464,7 +465,7 @@ public class SVGManager {
 
 		int displayLength = DrawableRoute.routeDisplayLength;
 
-		Biochip circ = droplet.parentCircuit.data;
+		Biochip biochip = circuit.data;
 
 		Color routeColor = drawableRoute.getColor();
 
@@ -474,7 +475,7 @@ public class SVGManager {
 		is time or until we reached the end of the display length of the
 		route, whatever happens first.
 		 */
-		int nSteps = Math.min(displayLength, circ.getMaxT()) - 1;
+		int nSteps = Math.min(displayLength, biochip.getMaxT()) - 1;
 		LOGGER.debug("nSteps: {}", nSteps);
 
 		for (int i = 0; i < nSteps; ++i) {
@@ -496,8 +497,8 @@ public class SVGManager {
 			if (p1 != null && p2 != null) {
 				int x1 = p1.fst * coordinateMultiplier;
 				int x2 = p2.fst * coordinateMultiplier;
-				int y1 = (-p1.snd + circ.getMaxCoord().snd) * coordinateMultiplier;
-				int y2 = (-p2.snd + circ.getMaxCoord().snd) * coordinateMultiplier;
+				int y1 = (-p1.snd + biochip.getMaxCoord().snd) * coordinateMultiplier;
+				int y2 = (-p2.snd + biochip.getMaxCoord().snd) * coordinateMultiplier;
 
 				float targetX = x1 + (0.5f * coordinateMultiplier);
 				float targetY = y1;
@@ -549,7 +550,6 @@ public class SVGManager {
 	 */
 	private String exportArrows(final DrawableDroplet drawableDrop) {
 
-		DrawableCircuit circuit = drawableDrop.parentCircuit;
 		int time = circuit.currentTime;
 		Point startPoint = drawableDrop.droplet.getFirstPosition();
 		Point endPoint = drawableDrop.droplet.getLastPosition();
@@ -590,7 +590,6 @@ public class SVGManager {
 	 */
 	private GradDir getGradientDirection(final DrawableField field, final Net
 			net) {
-		DrawableCircuit circuit = field.getParentCircuit();
 		Point fieldPos = field.getField().pos;
 
 		for (final GradDir dir : GradDir.values()) {
@@ -613,11 +612,9 @@ public class SVGManager {
 	 *
 	 * @param startPoint the startpoint for the arrow
 	 * @param endPoint the endpoint for the arrow
-	 * @param circuit the circuit
 	 * @return svg string of an arrow
 	 */
-	private String createSVGArrow(final Point startPoint, final Point endPoint,
-															final	DrawableCircuit circuit) {
+	private String createSVGArrow(final Point startPoint, final Point endPoint) {
 
 		int x1 = startPoint.fst * coordinateMultiplier;
 		int y1 = (-startPoint.snd + circuit.data.getMaxCoord().snd) *
@@ -661,18 +658,17 @@ public class SVGManager {
 	/**
 	 * Creates a string with informations about this svg.
 	 *
-	 * @param circ the circuit
 	 * @return information string
 	 */
-	private String infoString(final DrawableCircuit circ) {
+	private String infoString() {
 
 		String coordinates =
 				"x=\"" + (topLeftCoord.fst * coordinateMultiplier) + "\" " +
 				"y=\"" + (bottomRightCoord.snd * coordinateMultiplier + 1.5 * size) +
 				"\" ";
 
-		String circName = circ.parent.getFileName();
-		String timeStep = String.valueOf(circ.currentTime);
+		String circName = circuit.parent.getFileName();
+		String timeStep = String.valueOf(circuit.currentTime);
 
 		return "<text " + coordinates +	"fill=\"" + fontColor + "\" " +
 				"font-family=\"" + font + "\" font-size=\"" + size + "\">" +
@@ -682,10 +678,9 @@ public class SVGManager {
 	/**
 	 * Creates coordinates around the grid.
 	 *
-	 * @param circ the circuit
 	 * @return String containing the svg code for the coordinates
 	 */
-	private String createCoordinates(final DrawableCircuit circ) {
+	private String createCoordinates() {
 		StringBuilder coords = new StringBuilder();
 		int coordSize = 80;
 		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
@@ -715,7 +710,7 @@ public class SVGManager {
 			// what you do with the stuff before you fill the bottomRightCoord
 			// and topLeftCoord variables.
 			coords.append(bottomRightCoord.snd - yCoord +
-					circ.data.getMinCoord().snd);
+					circuit.data.getMinCoord().snd);
 			coords.append("</text>\n");
 		}
 		return coords.toString();
