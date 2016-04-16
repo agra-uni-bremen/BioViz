@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -394,7 +395,7 @@ public class SVGManager {
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
 		float xCoord = drawableDrop.droplet.getPositionAt(drawableDrop
 				.parentCircuit.currentTime).fst;
-
+		
 		LOGGER.debug("(x,y) = ({},{})", yCoord, xCoord);
 		yCoord = ((int) yCoord) * coordinateMultiplier;
 		xCoord = ((int) xCoord) * coordinateMultiplier;
@@ -527,48 +528,18 @@ public class SVGManager {
 		DrawableCircuit circuit = field.getParentCircuit();
 		Point fieldPos = field.getField().pos;
 
-		Point top = fieldPos.add(Point.NORTH);
-		Point bottom = fieldPos.add(Point.SOUTH);
-		Point left = fieldPos.add(Point.WEST);
-		Point right = fieldPos.add(Point.EAST);
-
-		GradDir gradientDirection = null;
-
-		if ((!circuit.data.hasFieldAt(top) ||
-				!net.containsField(circuit.data.getFieldAt(top)))	&&
-				(!circuit.data.hasFieldAt(left) ||
-						!net.containsField(circuit.data.getFieldAt(left)))){
-			gradientDirection = GradDir.TOPLEFT;
-		} else if ((!circuit.data.hasFieldAt(bottom) ||
-				!net.containsField(circuit.data.getFieldAt(bottom))) &&
-				(!circuit.data.hasFieldAt(left)	||
-						!net.containsField(circuit.data.getFieldAt(left)))){
-			gradientDirection = GradDir.BOTTOMLEFT;
-		} else if ((!circuit.data.hasFieldAt(bottom) ||
-				!net.containsField(circuit.data.getFieldAt(bottom))) &&
-				(!circuit.data.hasFieldAt(right)||
-						!net.containsField(circuit.data.getFieldAt(right)))){
-			gradientDirection = GradDir.BOTTOMRIGHT;
-		} else if ((!circuit.data.hasFieldAt(top) ||
-				!net.containsField(circuit.data.getFieldAt(top))) &&
-				(!circuit.data.hasFieldAt(right) ||
-						!net.containsField(circuit.data.getFieldAt(right)))){
-			gradientDirection = GradDir.TOPRIGHT;
-		} else if(!circuit.data.hasFieldAt(top) || !net.containsField(circuit.data
-				.getFieldAt(top))){
-			gradientDirection = GradDir.BOTTOMTOP;
-		} else if(!circuit.data.hasFieldAt(left) || !net.containsField(circuit.data
-				.getFieldAt(left))){
-			gradientDirection = GradDir.RIGHTLEFT;
-		} else if(!circuit.data.hasFieldAt(bottom) || !net.containsField(circuit.data
-				.getFieldAt(bottom))){
-			gradientDirection = GradDir.TOPBOTTOM;
-		}	else if(!circuit.data.hasFieldAt(right) || !net.containsField(circuit.data
-				.getFieldAt(right))){
-			gradientDirection = GradDir.LEFTRIGHT;
+		for (GradDir dir : GradDir.values()){
+			List<Point> dirs = dir.getDirs();
+			boolean dirMatch = true;
+			for (Point p : dirs){
+				dirMatch &= (!circuit.data.hasFieldAt(fieldPos.add(p)) ||
+						!net.containsField(circuit.data.getFieldAt(fieldPos.add(p))));
+			}
+			if(dirMatch)
+				return dir;
 		}
 
-		return gradientDirection;
+		return null;
 	}
 
 	/**
