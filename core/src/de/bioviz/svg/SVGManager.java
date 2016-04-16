@@ -559,19 +559,22 @@ public class SVGManager {
 
 		if (circuit.displayOptions.getOption(BDisplayOptions
 				.LongNetIndicatorsOnFields)) {
-			if (startPoint != null && endPoint != null) {
-				arrows += createSVGArrow(startPoint, endPoint, circuit);
+			if (startPoint != null && endPoint != null &&
+					!startPoint.equals(endPoint)) {
+				arrows += createSVGArrow(startPoint, endPoint);
 			}
 		}
 
 		if (circuit.displayOptions.getOption(BDisplayOptions
 				.LongNetIndicatorsOnDroplets)) {
-			if (startPoint != null && dropletPos != null) {
-				arrows += createSVGArrow(startPoint, dropletPos, circuit);
+			if (startPoint != null && dropletPos != null &&
+					!startPoint.equals(dropletPos))  {
+				arrows += createSVGArrow(startPoint, dropletPos);
 			}
 
-			if (dropletPos != null && endPoint != null) {
-				arrows += createSVGArrow(dropletPos, endPoint, circuit);
+			if (dropletPos != null && endPoint != null &&
+					!dropletPos.equals(endPoint)) {
+				arrows += createSVGArrow(dropletPos, endPoint);
 			}
 		}
 		return arrows;
