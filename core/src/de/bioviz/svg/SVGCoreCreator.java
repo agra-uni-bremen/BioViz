@@ -221,6 +221,20 @@ public class SVGCoreCreator {
 	}
 
 	/**
+	 * Get the svg code for an arrowhead with the specified color.
+	 *
+	 * @param color the color for the arrowhead
+	 * @return a svg marker string
+	 */
+	public String getArrowHead(final String id, final Color color){
+		return "<marker id=\"" + id + "\" " +
+				"markerWidth=\"10\" " +	"markerHeight=\"10\" " +
+				"refx=\"7\" " +	"refy=\"3\"	" +
+				"orient=\"auto\">\n\t<path d=\"M0,0 L0,6 L9,3 z\" " +
+				"fill=\"#" + colorToSVG(color) + "\" />\n</marker>\n";
+	}
+
+	/**
 	 * Returns a string representing a linear gradient definition with the
 	 * given id, direction and colors.
 	 *

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Source;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.DisplayValues;
 import de.bioviz.ui.DrawableCircuit;
@@ -232,8 +233,7 @@ public class SVGManager {
 				Set<Net> nets = circ.data.getNetsOf(f.getField());
 				for (final Net n : nets) {
 					for (final GradDir dir : GradDir.values()) {
-						String id = "grad-" + dir.toString() + "-" +
-								n.getColor().buildGdxColor();
+						String id = generateColoredID("grad", n.getColor().buildGdxColor());
 						if (!colSvgs.containsKey(id)) {
 							colSvgs.put(id, svgCoreCreator
 									.getSVGLinearGradient(id, dir, n.getColor().buildGdxColor()));
@@ -249,6 +249,18 @@ public class SVGManager {
 					colSvgs.put(key,
 							svgCoreCreator.getSVGCode(TextureE.Droplet,
 									d.getColor(), strokeColor));
+				}
+
+				// Added it here in case we need it in each droplet color
+				if (circ.displayOptions.getOption(BDisplayOptions
+						.LongNetIndicatorsOnDroplets) ||
+						circ.displayOptions.getOption(BDisplayOptions
+								.LongNetIndicatorsOnFields)) {
+					key = generateColoredID("ArrowHead", Color.BLACK);
+					if (!colSvgs.containsKey(key)) {
+						colSvgs.put(key,
+								svgCoreCreator.getArrowHead(key, Color.BLACK));
+					}
 				}
 
 				if (d.route != null) {
@@ -397,11 +409,10 @@ public class SVGManager {
 	 * @return svg string representation of the drop
 	 */
 	private String toSVG(final DrawableDroplet drawableDrop) {
-		float yCoord = -drawableDrop.droplet.getPositionAt(drawableDrop
-				.parentCircuit.currentTime).snd +
-					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
-		float xCoord = drawableDrop.droplet.getPositionAt(drawableDrop
-				.parentCircuit.currentTime).fst;
+		DrawableCircuit circuit = drawableDrop.parentCircuit;
+		float yCoord = -drawableDrop.droplet.getPositionAt(circuit.currentTime).snd +
+				circuit.data.getMaxCoord().snd;
+		float xCoord = drawableDrop.droplet.getPositionAt(circuit.currentTime).fst;
 
 		LOGGER.debug("(x,y) = ({},{})", yCoord, xCoord);
 		yCoord = ((int) yCoord) * coordinateMultiplier;
@@ -414,6 +425,24 @@ public class SVGManager {
 				getScaleTransformation() + " xlink:href=\"#" + dropletID + "\" />\n";
 
 		String dropSvg = route + dropShape;
+
+		if (circuit.displayOptions.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets)){
+			int time = circuit.currentTime;
+			Set<Net> nets = circuit.data.getNetsOf(circuit.data.getFieldAt
+					(drawableDrop.droplet.getPositionAt(time)));
+			Point startingPoint;
+			Point endPoint;
+			for (final Net n : nets) {
+				for ( Source s : n.getSources()){
+					if (s.dropletID != drawableDrop.droplet.getID()) {
+						continue;
+					}
+					startingPoint = s.startPosition;
+					endPoint = n.getTarget();
+				}
+			}
+
+		}
 
 		if (drawableDrop.getMsg() != null) {
 			String msg = "<text text-anchor=\"middle\" " +
