@@ -233,7 +233,9 @@ public class SVGManager {
 				Set<Net> nets = circ.data.getNetsOf(f.getField());
 				for (final Net n : nets) {
 					for (final GradDir dir : GradDir.values()) {
-						String id = generateColoredID("grad", n.getColor().buildGdxColor());
+						String id = generateColoredID("grad-" + dir.toString(), n.getColor()
+								.buildGdxColor
+								());
 						if (!colSvgs.containsKey(id)) {
 							colSvgs.put(id, svgCoreCreator
 									.getSVGLinearGradient(id, dir, n.getColor().buildGdxColor()));
@@ -380,8 +382,8 @@ public class SVGManager {
 					String gradient = "<rect x=\"" + (xCoord + 24) + "\" " +
 							"y=\"" + (yCoord + 24) + "\" rx=\"24\" ry=\"24\" " +
 							"height=\"208\" width=\"208\" fill=\"url(#grad-" +
-							dir.toString() + "-" + n
-							.getColor().buildGdxColor() +	")\" />\n";
+							dir.toString() + "-" + SVGCoreCreator.colorToSVG(n
+							.getColor().buildGdxColor()) +	")\" />\n";
 
 					fieldSvg += gradient;
 				}
