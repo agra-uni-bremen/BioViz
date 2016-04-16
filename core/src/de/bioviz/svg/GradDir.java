@@ -38,7 +38,7 @@ public enum GradDir {
 	 *
 	 * @param orientation the orientations of this gradDir
 	 */
-	GradDir(Point... orientation) {
+	GradDir(final Point... orientation) {
 		for (final Point p : orientation) {
 			orientations.add(p);
 		}

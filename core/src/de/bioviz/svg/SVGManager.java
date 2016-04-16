@@ -232,9 +232,8 @@ public class SVGManager {
 				Set<Net> nets = circ.data.getNetsOf(f.getField());
 				for (final Net n : nets) {
 					for (final GradDir dir : GradDir.values()) {
-						String id = generateColoredID("grad-" + dir.toString(), n.getColor()
-								.buildGdxColor
-								());
+						String id = generateColoredID("grad-" + dir.toString(),
+								n.getColor().buildGdxColor());
 						if (!colSvgs.containsKey(id)) {
 							colSvgs.put(id, svgCoreCreator
 									.getSVGLinearGradient(id, dir, n.getColor().buildGdxColor()));
@@ -542,7 +541,14 @@ public class SVGManager {
 		return sb.toString();
 	}
 
-	private String exportArrows(DrawableDroplet drawableDrop){
+	/**
+	 * Creates the svg string for the longNetIndicator arrows.
+	 *
+	 * @param drawableDrop the drop
+	 * @return svg string
+	 */
+	private String exportArrows(final DrawableDroplet drawableDrop) {
+
 		DrawableCircuit circuit = drawableDrop.parentCircuit;
 		int time = circuit.currentTime;
 		Point startPoint = drawableDrop.droplet.getFirstPosition();
@@ -599,47 +605,52 @@ public class SVGManager {
 		return null;
 	}
 
+	/**
+	 * Creates an svgArrow with the given start and endpoint.
+	 *
+	 * @param startPoint the startpoint for the arrow
+	 * @param endPoint the endpoint for the arrow
+	 * @param circuit the circuit
+	 * @return svg string of an arrow
+	 */
 	private String createSVGArrow(final Point startPoint, final Point endPoint,
-															final
-													DrawableCircuit circuit){
-		String line = "";
+															final	DrawableCircuit circuit) {
 
-			int x1 = startPoint.fst * coordinateMultiplier;
-			int y1 = (-startPoint.snd + circuit.data
-					.getMaxCoord().snd) * coordinateMultiplier;
+		int x1 = startPoint.fst * coordinateMultiplier;
+		int y1 = (-startPoint.snd + circuit.data.getMaxCoord().snd) *
+				coordinateMultiplier;
 
-			int x2 = endPoint.fst * coordinateMultiplier;
-			int y2 = (-endPoint.snd + circuit.data
-					.getMaxCoord().snd) * coordinateMultiplier;
+		int x2 = endPoint.fst * coordinateMultiplier;
+		int y2 = (-endPoint.snd + circuit.data.getMaxCoord().snd) *
+				coordinateMultiplier;
 
-			// move startingPoint to the center of the field
-			x1 += coordinateMultiplier/2;
-			y1 += coordinateMultiplier/2;
-			// move endPoint to the center of the field
-			x2 += coordinateMultiplier/2;
-			y2 += coordinateMultiplier/2;
+		// move startingPoint to the center of the field
+		x1 += coordinateMultiplier / 2;
+		y1 += coordinateMultiplier / 2;
+		// move endPoint to the center of the field
+		x2 += coordinateMultiplier / 2;
+		y2 += coordinateMultiplier / 2;
 
-			double length = Math.sqrt(Math.pow((x2-x1), 2) + Math.pow((y2-y1), 2));
-			double angle = Math.asin((double) (y2-y1) / length);
+		double length = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+		double angle = Math.asin((double) (y2 - y1) / length);
 
-			// move endPoint a bit back on the arrow so the arrowHead won't reach
-			// over the center of the field
+		// move endPoint a bit back on the arrow so the arrowHead won't reach
+		// over the center of the field
+		double xDiff = 25 * Math.cos(angle);
+		double yDiff = 25 * Math.sin(angle);
 
-			double xDiff = 25 * Math.cos(angle);
-			double yDiff = 25 * Math.sin(angle);
+		if (x2 > x1) {
+			x2 -= xDiff;
+		} else if (x2 < x1) {
+			x2 += xDiff;
+		}
+		y2 -= yDiff;
 
-			if (x2 > x1) {
-				x2 -= xDiff;
-			} else if (x2 < x1) {
-				x2 += xDiff;
-			}
-			y2 -= yDiff;
-
-			line = "<line x1=\"" + x1 +	"\" y1=\"" + y1 +
-					"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-					"\" stroke=\"#" +	SVGCoreCreator.colorToSVG(Color.BLACK) +
-					"\" stroke-width=\"10\" marker-end=\"url(#" + generateColoredID
-					("ArrowHead", Color.BLACK) + ")\" />\n";
+		String line = "<line x1=\"" + x1 +	"\" y1=\"" + y1 +
+				"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
+				"\" stroke=\"#" +	SVGCoreCreator.colorToSVG(Color.BLACK) +
+				"\" stroke-width=\"10\" marker-end=\"url(#" +
+				generateColoredID("ArrowHead", Color.BLACK) + ")\" />\n";
 
 		return line;
 	}

@@ -224,9 +224,10 @@ public class SVGCoreCreator {
 	 * Get the svg code for an arrowhead with the specified color.
 	 *
 	 * @param color the color for the arrowhead
+	 * @param id the id for the arrowHead
 	 * @return a svg marker string
 	 */
-	public String getArrowHead(final String id, final Color color){
+	public String getArrowHead(final String id, final Color color) {
 		return "<marker id=\"" + id + "\" " +
 				"markerWidth=\"10\" " +	"markerHeight=\"10\" " +
 				"refX=\"7\" " +	"refY=\"3\"	" +
