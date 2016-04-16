@@ -5,7 +5,13 @@ import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
-import de.bioviz.ui.*;
+import de.bioviz.ui.BDisplayOptions;
+import de.bioviz.ui.DisplayValues;
+import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableDroplet;
+import de.bioviz.ui.DrawableField;
+import de.bioviz.ui.DrawableRoute;
+import de.bioviz.ui.TextureE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,13 +86,13 @@ public class SVGManager {
 	private Point bottomRightCoord;
 
 	/** ViewBox X coordinate. */
-	private int viewBox_x;
+	private int viewBoxX;
 	/** ViewBox Y coordinate. */
-	private int viewBox_y;
+	private int viewBoxY;
 	/** ViewBox width. */
-	private int viewBox_width;
+	private int viewBoxWidth;
 	/** ViewBox height. */
-	private int viewBox_height;
+	private int viewBoxHeight;
 
 	/**
 	 * SVGManager loading the default theme.
@@ -192,11 +198,11 @@ public class SVGManager {
 		topLeftCoord = new Point(minX, minY);
 		bottomRightCoord = new Point(maxX, maxY);
 
-		viewBox_x = topLeftCoord.fst * coordinateMultiplier;
-		viewBox_y = topLeftCoord.snd * coordinateMultiplier;
+		viewBoxX = topLeftCoord.fst * coordinateMultiplier;
+		viewBoxY = topLeftCoord.snd * coordinateMultiplier;
 
-		viewBox_width = bottomRightCoord.fst * coordinateMultiplier;
-		viewBox_height = bottomRightCoord.snd * coordinateMultiplier;
+		viewBoxWidth = bottomRightCoord.fst * coordinateMultiplier;
+		viewBoxHeight = bottomRightCoord.snd * coordinateMultiplier;
 	}
 
 	/**
@@ -206,7 +212,7 @@ public class SVGManager {
 	 * @param timeStep The timeStep for the export
 	 * @return svg string representation
 	 */
-	public String toSVG(final DrawableCircuit circ, int timeStep) {
+	public String toSVG(final DrawableCircuit circ, final int timeStep) {
 
 		// set the export timeStep
 		circ.setCurrentTime(timeStep);
@@ -224,11 +230,11 @@ public class SVGManager {
 									f.getColor(), strokeColor));
 				}
 				Set<Net> nets = circ.data.getNetsOf(f.getField());
-				for (final Net n : nets){
-					for (GradDir dir : GradDir.values()){
+				for (final Net n : nets) {
+					for (final GradDir dir : GradDir.values()) {
 						String id = "grad-" + dir.toString() + "-" +
 								n.getColor().buildGdxColor();
-						if(!colSvgs.containsKey(id)) {
+						if (!colSvgs.containsKey(id)) {
 							colSvgs.put(id, svgCoreCreator
 									.getSVGLinearGradient(id, dir, n.getColor().buildGdxColor()));
 						}
@@ -262,18 +268,18 @@ public class SVGManager {
 
 		calculateViewboxDimensions(circ);
 
-		if(circ.displayOptions.getOption(BDisplayOptions.Coordinates)){
+		if (circ.displayOptions.getOption(BDisplayOptions.Coordinates)) {
 			int coordinateOffsetX = (int) (coordinateMultiplier * 0.75);
 			int coordinateOffsetY = (int) (coordinateMultiplier * 0.75);
-			viewBox_x -= coordinateOffsetX;
-			viewBox_y -= coordinateOffsetY;
-			viewBox_width += coordinateOffsetX;
-			viewBox_height += coordinateOffsetY;
+			viewBoxX -= coordinateOffsetX;
+			viewBoxY -= coordinateOffsetY;
+			viewBoxWidth += coordinateOffsetX;
+			viewBoxHeight += coordinateOffsetY;
 		}
 
-		if(svgExportSettings.getInformationString()){
+		if (svgExportSettings.getInformationString()) {
 			int infoStringOffset = size * 2;
-			viewBox_height += infoStringOffset;
+			viewBoxHeight += infoStringOffset;
 		}
 
 		LOGGER.debug("[SVG] Starting to create SVG String");
@@ -283,8 +289,8 @@ public class SVGManager {
 						"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
 						"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
 				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-					viewBox_x + " " +	viewBox_y + " " +
-					viewBox_width + " " +	viewBox_height +
+				viewBoxX + " " + viewBoxY + " " +
+				viewBoxWidth + " " + viewBoxHeight +
 						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
 						"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
@@ -311,7 +317,7 @@ public class SVGManager {
 			sb.append(infoString(circ));
 		}
 
-		if(circ.displayOptions.getOption(BDisplayOptions.Coordinates)) {
+		if (circ.displayOptions.getOption(BDisplayOptions.Coordinates)) {
 			sb.append(createCoordinates(circ));
 		}
 
@@ -337,8 +343,9 @@ public class SVGManager {
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
 
+		DrawableCircuit circuit = field.getParentCircuit();
 		int yCoord =
-				-field.getField().y() + field.getParentCircuit().data.getMaxCoord().snd;
+				-field.getField().y() + circuit.data.getMaxCoord().snd;
 		int xCoord = field.getField().x();
 		yCoord = yCoord * coordinateMultiplier;
 		xCoord = xCoord * coordinateMultiplier;
@@ -352,12 +359,12 @@ public class SVGManager {
 						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
 						   "\" />\n";
 
-		if (field.getParentCircuit().displayOptions.getOption(
-				BDisplayOptions.NetColorOnFields)){
-			for (final Net n : field.getParentCircuit().data.getNetsOf(field.getField())) {
-				GradDir dir = checkAdjacentFieldNet(field,n);
+		if (circuit.displayOptions.getOption(
+				BDisplayOptions.NetColorOnFields)) {
+			for (final Net n : circuit.data.getNetsOf(field.getField())) {
+				GradDir dir = getGradientDirection(field, n);
 
-				if(dir != null){
+				if (dir != null) {
 					String gradient = "<rect x=\"" + (xCoord + 24) + "\" " +
 							"y=\"" + (yCoord + 24) + "\" rx=\"24\" ry=\"24\" " +
 							"height=\"208\" width=\"208\" fill=\"url(#grad-" +
@@ -395,7 +402,7 @@ public class SVGManager {
 					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
 		float xCoord = drawableDrop.droplet.getPositionAt(drawableDrop
 				.parentCircuit.currentTime).fst;
-		
+
 		LOGGER.debug("(x,y) = ({},{})", yCoord, xCoord);
 		yCoord = ((int) yCoord) * coordinateMultiplier;
 		xCoord = ((int) xCoord) * coordinateMultiplier;
@@ -403,9 +410,8 @@ public class SVGManager {
 		String route = toSVG(drawableDrop.route);
 
 		String dropletID = generateColoredID("Droplet", drawableDrop.getColor());
-		String dropShape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\""
-				+ getScaleTransformation()
-							+ " xlink:href=\"#" + dropletID + "\" />\n";
+		String dropShape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +
+				getScaleTransformation() + " xlink:href=\"#" + dropletID + "\" />\n";
 
 		String dropSvg = route + dropShape;
 
@@ -520,23 +526,28 @@ public class SVGManager {
 	}
 
 	/**
+	 * Checks if the given field is on the edge of the given net and returns
+	 * the gradient direction.
 	 *
-	 * @param field
-	 * @return
+	 * @param field the field to check
+	 * @param net the net to which the field belongs
+	 * @return the gradient direction
 	 */
-	private GradDir checkAdjacentFieldNet(DrawableField field, Net net){
+	private GradDir getGradientDirection(final DrawableField field, final Net
+			net) {
 		DrawableCircuit circuit = field.getParentCircuit();
 		Point fieldPos = field.getField().pos;
 
-		for (GradDir dir : GradDir.values()){
-			List<Point> dirs = dir.getDirs();
+		for (final GradDir dir : GradDir.values()) {
+			List<Point> dirs = dir.getOrientation();
 			boolean dirMatch = true;
-			for (Point p : dirs){
-				dirMatch &= (!circuit.data.hasFieldAt(fieldPos.add(p)) ||
-						!net.containsField(circuit.data.getFieldAt(fieldPos.add(p))));
+			for (final Point p : dirs) {
+				dirMatch &= !circuit.data.hasFieldAt(fieldPos.add(p)) ||
+						!net.containsField(circuit.data.getFieldAt(fieldPos.add(p)));
 			}
-			if(dirMatch)
+			if (dirMatch) {
 				return dir;
+			}
 		}
 
 		return null;
@@ -545,6 +556,7 @@ public class SVGManager {
 	/**
 	 * Creates a string with informations about this svg.
 	 *
+	 * @param circ the circuit
 	 * @return information string
 	 */
 	private String infoString(final DrawableCircuit circ) {
@@ -565,34 +577,40 @@ public class SVGManager {
 	/**
 	 * Creates coordinates around the grid.
 	 *
+	 * @param circ the circuit
 	 * @return String containing the svg code for the coordinates
 	 */
-	private String createCoordinates(DrawableCircuit circ){
+	private String createCoordinates(final DrawableCircuit circ) {
 		StringBuilder coords = new StringBuilder();
 		int coordSize = 80;
-		for (int x_coord = topLeftCoord.fst; x_coord <= bottomRightCoord.fst; x_coord++) {
+		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
+				 ++xCoord) {
 			coords.append("<text text-anchor=\"middle\" ");
-			coords.append("x=\"" + (x_coord * coordinateMultiplier + 0.5 *
-					coordinateMultiplier) +	"\" ");
-			coords.append("y=\"" + (topLeftCoord.snd * coordinateMultiplier - coordSize) + "\" ");
+			coords.append("x=\"" + (xCoord * coordinateMultiplier +
+					0.5 * coordinateMultiplier) +	"\" ");
+			coords.append("y=\"" + (topLeftCoord.snd *
+					coordinateMultiplier - coordSize) + "\" ");
 			coords.append("font-family=\"" + font + "\" font-size=\"" + coordSize +
 					"\">");
-			coords.append(x_coord);
+			coords.append(xCoord);
 			coords.append("</text>\n");
 		}
 
-		for (int y_coord = topLeftCoord.snd+1; y_coord <= bottomRightCoord.snd; y_coord++) {
+		for (int yCoord = topLeftCoord.snd + 1; yCoord <= bottomRightCoord.snd;
+				 ++yCoord) {
 			coords.append("<text text-anchor=\"middle\" ");
-			coords.append("y=\"" + ((y_coord-1) * coordinateMultiplier + 0.5 * coordSize +
-					0.5 * coordinateMultiplier) +	"\" ");
-			coords.append("x=\"" + (topLeftCoord.fst * coordinateMultiplier - coordSize) + "\" ");
+			coords.append("y=\"" + ((yCoord - 1) * coordinateMultiplier +
+					0.5 * coordSize +	0.5 * coordinateMultiplier) +	"\" ");
+			coords.append("x=\"" + (topLeftCoord.fst * coordinateMultiplier -
+					coordSize) + "\" ");
 			coords.append("font-family=\"" + font + "\" font-size=\"" + coordSize +
 					"\">");
 			// FIXME the call to getMinCoord() is computing the stuff again
 			// that is unnecessary but I was too stupid to fastly figure out
 			// what you do with the stuff before you fill the bottomRightCoord
 			// and topLeftCoord variables.
-			coords.append(bottomRightCoord.snd - y_coord + circ.data.getMinCoord().snd);
+			coords.append(bottomRightCoord.snd - yCoord +
+					circ.data.getMinCoord().snd);
 			coords.append("</text>\n");
 		}
 		return coords.toString();

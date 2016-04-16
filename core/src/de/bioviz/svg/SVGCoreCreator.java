@@ -2,6 +2,7 @@ package de.bioviz.svg;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.Point;
 import de.bioviz.ui.TextureE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class SVGCoreCreator {
 	 * @return Color in format to be used by SVG
 	 */
 	public static String colorToSVG(final Color c) {
-		return c.toString().substring(0,6);
+		return c.toString().substring(0, 6);
 	}
 
 	/**
@@ -71,7 +72,7 @@ public class SVGCoreCreator {
 	 * @param c The color that will be put after the '-'
 	 * @return "<baseName>-<color>"
 	 */
-	public static String generateID(final String baseName,final Color c) {
+	public static String generateID(final String baseName, final Color c) {
 		return baseName + "-" + SVGCoreCreator.colorToSVG(c);
 	}
 
@@ -154,7 +155,7 @@ public class SVGCoreCreator {
 				// set new id for this node if there is a fillColor
 					if (group.getNodeType() == Node.ELEMENT_NODE) {
 						Element elem = (Element) group;
-						elem.setAttribute("id", generateID(type.toString(),fillColor));
+						elem.setAttribute("id", generateID(type.toString(), fillColor));
 					}
 			}
 			if (strokeColor != null) {
@@ -228,31 +229,16 @@ public class SVGCoreCreator {
 	 * @param color first color of the resulting gradient
 	 * @return a string
 	 */
-	public String getSVGLinearGradient(String id, GradDir dir, Color color){
-		int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-		if (dir == GradDir.LEFTRIGHT){
-			x2 = 1;
-		}else if(dir == GradDir.RIGHTLEFT){
-			x1 = 1;
-		}else if(dir == GradDir.TOPBOTTOM){
-			y2 = 1;
-		}else if(dir == GradDir.BOTTOMTOP){
-			y1 = 1;
-		}else if(dir == GradDir.TOPLEFT){
-			x1 = 1;
-			y1 = 1;
-		}else if(dir == GradDir.TOPRIGHT){
-			x2 = 1;
-			y1 = 1;
-		}else if(dir == GradDir.BOTTOMLEFT){
-			x1 = 1;
-			y2 = 1;
-		}else if(dir == GradDir.BOTTOMRIGHT){
-			x2 = 1;
-			y2 = 1;
-		}
+	public String getSVGLinearGradient(final String id, final GradDir dir,
+																		 final Color color) {
+		int x1 = dir.hasOrientation(Point.WEST) ? 1 : 0;
+		int x2 = dir.hasOrientation(Point.EAST) ? 1 : 0;
+
+		int y1 = dir.hasOrientation(Point.NORTH) ? 1 : 0;
+		int y2 = dir.hasOrientation(Point.SOUTH) ? 1 : 0;
+
 		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
-				"y1=\"" + y1 + "\" x2=\"" + x2 +"\" y2=\"" + y2 + "\" >\n";
+				"y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" >\n";
 		String offset1 = "<stop offset=\"0%\" " +	"style=\"stop-color:rgb(" +
 				color.r * 255 + "," + color.g * 255 + "," + color.b * 255 + ");" +
 				"stop-opacity:0\" />\n";
