@@ -238,15 +238,27 @@ public class SVGCoreCreator {
 			y2 = 1;
 		}else if(dir == GradDir.BOTTOMTOP){
 			y1 = 1;
+		}else if(dir == GradDir.TOPLEFT){
+			x1 = 1;
+			y1 = 1;
+		}else if(dir == GradDir.TOPRIGHT){
+			x2 = 1;
+			y1 = 1;
+		}else if(dir == GradDir.BOTTOMLEFT){
+			x1 = 1;
+			y2 = 1;
+		}else if(dir == GradDir.BOTTOMRIGHT){
+			x2 = 1;
+			y2 = 1;
 		}
 		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
 				"y1=\"" + y1 + "\" x2=\"" + x2 +"\" y2=\"" + y2 + "\" >\n";
-		String offset1 = "<stop offset=\"30%\" " +	"style=\"stop-color:rgb(" +
+		String offset1 = "<stop offset=\"0%\" " +	"style=\"stop-color:rgb(" +
 				color.r * 255 + "," + color.g * 255 + "," + color.b * 255 + ");" +
 				"stop-opacity:0\" />\n";
 		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
 				color.r * 255 + "," + color.g * 255 + "," + color.b * 255 + ");" +
-				"stop-opacity:0.7\" />\n";
+				"stop-opacity:0.8\" />\n";
 		String end = "</linearGradient>\n";
 		return begin + offset1 + offset2 + end;
 	}
