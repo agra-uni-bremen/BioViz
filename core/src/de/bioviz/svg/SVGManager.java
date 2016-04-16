@@ -351,6 +351,23 @@ public class SVGManager {
 						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
 						   "\" />\n";
 
+		if (field.getParentCircuit().displayOptions.getOption(
+				BDisplayOptions.NetColorOnFields)){
+			for (final Net n : field.getParentCircuit().data.getNetsOf(field.getField())) {
+				GradDir dir = checkAdjacentFieldNet(field,n);
+
+				if(dir != null){
+					String gradient = "<rect x=\"" + (xCoord + 24) + "\" " +
+							"y=\"" + (yCoord + 24) + "\" rx=\"24\" ry=\"24\" " +
+							"height=\"208\" width=\"208\" fill=\"url(#grad-" +
+							dir.toString() + "-" + n
+							.getColor().buildGdxColor() +	")\" />\n";
+
+					fieldSvg += gradient;
+				}
+			}
+		}
+
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
 		if (vals.getMsg() != null) {
@@ -499,6 +516,59 @@ public class SVGManager {
 			}
 		}
 		return sb.toString();
+	}
+
+	/**
+	 *
+	 * @param field
+	 * @return
+	 */
+	private GradDir checkAdjacentFieldNet(DrawableField field, Net net){
+		DrawableCircuit circuit = field.getParentCircuit();
+		Point fieldPos = field.getField().pos;
+
+		Point top = fieldPos.add(Point.NORTH);
+		Point bottom = fieldPos.add(Point.SOUTH);
+		Point left = fieldPos.add(Point.WEST);
+		Point right = fieldPos.add(Point.EAST);
+
+		GradDir gradientDirection = null;
+
+		if ((!circuit.data.hasFieldAt(top) ||
+				!net.containsField(circuit.data.getFieldAt(top)))	&&
+				(!circuit.data.hasFieldAt(left) ||
+						!net.containsField(circuit.data.getFieldAt(left)))){
+			gradientDirection = GradDir.TOPLEFT;
+		} else if ((!circuit.data.hasFieldAt(bottom) ||
+				!net.containsField(circuit.data.getFieldAt(bottom))) &&
+				(!circuit.data.hasFieldAt(left)	||
+						!net.containsField(circuit.data.getFieldAt(left)))){
+			gradientDirection = GradDir.BOTTOMLEFT;
+		} else if ((!circuit.data.hasFieldAt(bottom) ||
+				!net.containsField(circuit.data.getFieldAt(bottom))) &&
+				(!circuit.data.hasFieldAt(right)||
+						!net.containsField(circuit.data.getFieldAt(right)))){
+			gradientDirection = GradDir.BOTTOMRIGHT;
+		} else if ((!circuit.data.hasFieldAt(top) ||
+				!net.containsField(circuit.data.getFieldAt(top))) &&
+				(!circuit.data.hasFieldAt(right) ||
+						!net.containsField(circuit.data.getFieldAt(right)))){
+			gradientDirection = GradDir.TOPRIGHT;
+		} else if(!circuit.data.hasFieldAt(top) || !net.containsField(circuit.data
+				.getFieldAt(top))){
+			gradientDirection = GradDir.BOTTOMTOP;
+		} else if(!circuit.data.hasFieldAt(left) || !net.containsField(circuit.data
+				.getFieldAt(left))){
+			gradientDirection = GradDir.RIGHTLEFT;
+		} else if(!circuit.data.hasFieldAt(bottom) || !net.containsField(circuit.data
+				.getFieldAt(bottom))){
+			gradientDirection = GradDir.TOPBOTTOM;
+		}	else if(!circuit.data.hasFieldAt(right) || !net.containsField(circuit.data
+				.getFieldAt(right))){
+			gradientDirection = GradDir.LEFTRIGHT;
+		}
+
+		return gradientDirection;
 	}
 
 	/**
