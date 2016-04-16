@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
-import de.bioviz.structures.Source;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.DisplayValues;
 import de.bioviz.ui.DrawableCircuit;
@@ -326,6 +325,11 @@ public class SVGManager {
 				sb.append(toSVG(drop));
 			}
 		}
+		// run over each droplet again and draw the arrows
+		// otherwise arrows can get under droplets
+		for (final DrawableDroplet drop : circ.droplets) {
+			sb.append(exportArrows(drop));
+		}
 
 		if (svgExportSettings.getInformationString()) {
 			sb.append(infoString(circ));
@@ -427,24 +431,6 @@ public class SVGManager {
 				getScaleTransformation() + " xlink:href=\"#" + dropletID + "\" />\n";
 
 		String dropSvg = route + dropShape;
-
-		if (circuit.displayOptions.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets)){
-			int time = circuit.currentTime;
-			Set<Net> nets = circuit.data.getNetsOf(circuit.data.getFieldAt
-					(drawableDrop.droplet.getPositionAt(time)));
-			Point startingPoint;
-			Point endPoint;
-			for (final Net n : nets) {
-				for ( Source s : n.getSources()){
-					if (s.dropletID != drawableDrop.droplet.getID()) {
-						continue;
-					}
-					startingPoint = s.startPosition;
-					endPoint = n.getTarget();
-				}
-			}
-
-		}
 
 		if (drawableDrop.getMsg() != null) {
 			String msg = "<text text-anchor=\"middle\" " +
@@ -556,6 +542,35 @@ public class SVGManager {
 		return sb.toString();
 	}
 
+	private String exportArrows(DrawableDroplet drawableDrop){
+		DrawableCircuit circuit = drawableDrop.parentCircuit;
+		int time = circuit.currentTime;
+		Point startPoint = drawableDrop.droplet.getFirstPosition();
+		Point endPoint = drawableDrop.droplet.getLastPosition();
+		Point dropletPos = drawableDrop.droplet.getPositionAt(time);
+
+		String arrows = "";
+
+		if (circuit.displayOptions.getOption(BDisplayOptions
+				.LongNetIndicatorsOnFields)) {
+			if (startPoint != null && endPoint != null) {
+				arrows += createSVGArrow(startPoint, endPoint, circuit);
+			}
+		}
+
+		if (circuit.displayOptions.getOption(BDisplayOptions
+				.LongNetIndicatorsOnDroplets)) {
+			if (startPoint != null && dropletPos != null) {
+				arrows += createSVGArrow(startPoint, dropletPos, circuit);
+			}
+
+			if (dropletPos != null && endPoint != null) {
+				arrows += createSVGArrow(dropletPos, endPoint, circuit);
+			}
+		}
+		return arrows;
+	}
+
 	/**
 	 * Checks if the given field is on the edge of the given net and returns
 	 * the gradient direction.
@@ -582,6 +597,51 @@ public class SVGManager {
 		}
 
 		return null;
+	}
+
+	private String createSVGArrow(final Point startPoint, final Point endPoint,
+															final
+													DrawableCircuit circuit){
+		String line = "";
+
+			int x1 = startPoint.fst * coordinateMultiplier;
+			int y1 = (-startPoint.snd + circuit.data
+					.getMaxCoord().snd) * coordinateMultiplier;
+
+			int x2 = endPoint.fst * coordinateMultiplier;
+			int y2 = (-endPoint.snd + circuit.data
+					.getMaxCoord().snd) * coordinateMultiplier;
+
+			// move startingPoint to the center of the field
+			x1 += coordinateMultiplier/2;
+			y1 += coordinateMultiplier/2;
+			// move endPoint to the center of the field
+			x2 += coordinateMultiplier/2;
+			y2 += coordinateMultiplier/2;
+
+			double length = Math.sqrt(Math.pow((x2-x1), 2) + Math.pow((y2-y1), 2));
+			double angle = Math.asin((double) (y2-y1) / length);
+
+			// move endPoint a bit back on the arrow so the arrowHead won't reach
+			// over the center of the field
+
+			double xDiff = 25 * Math.cos(angle);
+			double yDiff = 25 * Math.sin(angle);
+
+			if (x2 > x1) {
+				x2 -= xDiff;
+			} else if (x2 < x1) {
+				x2 += xDiff;
+			}
+			y2 -= yDiff;
+
+			line = "<line x1=\"" + x1 +	"\" y1=\"" + y1 +
+					"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
+					"\" stroke=\"#" +	SVGCoreCreator.colorToSVG(Color.BLACK) +
+					"\" stroke-width=\"10\" marker-end=\"url(#" + generateColoredID
+					("ArrowHead", Color.BLACK) + ")\" />\n";
+
+		return line;
 	}
 
 	/**
