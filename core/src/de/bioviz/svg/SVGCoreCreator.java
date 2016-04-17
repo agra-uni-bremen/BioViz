@@ -231,8 +231,8 @@ public class SVGCoreCreator {
 		return "<marker id=\"" + id + "\" " +
 				"markerWidth=\"10\" " +	"markerHeight=\"10\" " +
 				"refX=\"7\" " +	"refY=\"3\"	" +
-				"orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path d=\"M0,0 L0,6 " +
-				"L9,3 z\" " +
+				"orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path d=\"M0,0 C 1,1" +
+				" 1,5 0,6 L9,3  z\" " +
 				"fill=\"#" + colorToSVG(color) + "\" />\n</marker>\n";
 	}
 
