@@ -505,15 +505,6 @@ public class SVGManager {
 		Color dropColor = drawableDrop.getColor();
 
 		if (circuit.displayOptions.getOption(BDisplayOptions
-				.LongNetIndicatorsOnFields)) {
-			if (startPoint != null && endPoint != null &&
-					!startPoint.equals(endPoint)) {
-				Color arrowColor = Color.BLACK;
-				arrows += createSVGArrow(startPoint, endPoint, arrowColor);
-			}
-		}
-
-		if (circuit.displayOptions.getOption(BDisplayOptions
 				.LongNetIndicatorsOnDroplets)) {
 			if (startPoint != null && dropletPos != null &&
 					!startPoint.equals(dropletPos))  {
@@ -527,6 +518,16 @@ public class SVGManager {
 				arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
 			}
 		}
+
+		if (circuit.displayOptions.getOption(BDisplayOptions
+				.LongNetIndicatorsOnFields)) {
+			if (startPoint != null && endPoint != null &&
+					!startPoint.equals(endPoint)) {
+				Color arrowColor = Color.BLACK;
+				arrows += createSVGArrow(startPoint, endPoint, arrowColor);
+			}
+		}
+
 		return arrows;
 	}
 
