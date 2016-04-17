@@ -15,6 +15,7 @@ import de.bioviz.ui.TextureE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -94,7 +95,7 @@ public class SVGManager {
 	/** ViewBox height. */
 	private int viewBoxHeight;
 
-	/** Reference to the drawableCircuit */
+	/** Reference to the drawableCircuit. */
 	private DrawableCircuit circuit;
 
 	/**
@@ -220,67 +221,6 @@ public class SVGManager {
 		// set the export timeStep
 		circuit.setCurrentTime(timeStep);
 
-		if (svgExportSettings.getColorfulExport()) {
-			LOGGER.debug("[SVG] Creating all needed colored cores.");
-
-			for (final DrawableField f : circuit.fields) {
-				String 	key = generateColoredID(f.getDisplayValues().getTexture()
-						.toString(), f.getColor());
-				// don't create the svg core code twice
-				if (!colSvgs.containsKey(key)) {
-					colSvgs.put(key,
-							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
-									f.getColor(), strokeColor));
-				}
-				Set<Net> nets = circuit.data.getNetsOf(f.getField());
-				for (final Net n : nets) {
-					for (final GradDir dir : GradDir.values()) {
-						String id = generateColoredID("grad-" + dir.toString(),
-								n.getColor().buildGdxColor());
-						if (!colSvgs.containsKey(id)) {
-							colSvgs.put(id, svgCoreCreator
-									.getSVGLinearGradient(id, dir, n.getColor().buildGdxColor()));
-						}
-					}
-				}
-			}
-			for (final DrawableDroplet d : circuit.droplets) {
-				// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
-				String key = generateColoredID("Droplet", d.getColor());
-				// don't create the svg core code twice
-				if (!colSvgs.containsKey(key)) {
-					colSvgs.put(key,
-							svgCoreCreator.getSVGCode(TextureE.Droplet,
-									d.getColor(), strokeColor));
-				}
-
-				// Added it here in case we need it in each droplet color
-				if (circuit.displayOptions.getOption(BDisplayOptions
-						.LongNetIndicatorsOnDroplets) ||
-						circuit.displayOptions.getOption(BDisplayOptions
-								.LongNetIndicatorsOnFields)) {
-					key = generateColoredID("ArrowHead", Color.BLACK);
-					if (!colSvgs.containsKey(key)) {
-						colSvgs.put(key,
-								svgCoreCreator.getArrowHead(key, Color.BLACK));
-					}
-				}
-
-				if (d.route != null) {
-					Color routeColor = d.route.getColor();
-					key = generateColoredID("StepMarker", routeColor);
-					if (!colSvgs.containsKey(key)) {
-						colSvgs.put(key,
-									svgCoreCreator.getSVGCode(TextureE.StepMarker,
-											routeColor, strokeColor));
-					}
-				}
-			}
-
-
-			LOGGER.debug("[SVG] Done creating colored cores.");
-		}
-
 		calculateViewboxDimensions();
 
 		if (circuit.displayOptions.getOption(BDisplayOptions.Coordinates)) {
@@ -312,6 +252,11 @@ public class SVGManager {
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
+
+		// create all def strings and save them in colSvgs
+		createDefCores();
+
+		// append all colored cores to the svg string
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
 		if (svgExportSettings.getColorfulExport()) {
 			colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
@@ -553,15 +498,18 @@ public class SVGManager {
 		int time = circuit.currentTime;
 		Point startPoint = drawableDrop.droplet.getFirstPosition();
 		Point endPoint = drawableDrop.droplet.getLastPosition();
+		//Point endPoint = drawableDrop.droplet.getNet().getTarget();
 		Point dropletPos = drawableDrop.droplet.getPositionAt(time);
 
 		String arrows = "";
+		Color dropColor = drawableDrop.getColor();
 
 		if (circuit.displayOptions.getOption(BDisplayOptions
 				.LongNetIndicatorsOnFields)) {
 			if (startPoint != null && endPoint != null &&
 					!startPoint.equals(endPoint)) {
-				arrows += createSVGArrow(startPoint, endPoint);
+				Color arrowColor = Color.BLACK;
+				arrows += createSVGArrow(startPoint, endPoint, arrowColor);
 			}
 		}
 
@@ -569,12 +517,14 @@ public class SVGManager {
 				.LongNetIndicatorsOnDroplets)) {
 			if (startPoint != null && dropletPos != null &&
 					!startPoint.equals(dropletPos))  {
-				arrows += createSVGArrow(startPoint, dropletPos);
+				Color arrowColor = dropColor.cpy().sub(0.2f, 0.2f, 0.2f, 0);
+				arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
 			}
 
 			if (dropletPos != null && endPoint != null &&
 					!dropletPos.equals(endPoint)) {
-				arrows += createSVGArrow(dropletPos, endPoint);
+				Color arrowColor = dropColor.cpy().add(0.2f, 0.2f, 0.2f, 0);
+				arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
 			}
 		}
 		return arrows;
@@ -612,9 +562,11 @@ public class SVGManager {
 	 *
 	 * @param startPoint the startpoint for the arrow
 	 * @param endPoint the endpoint for the arrow
+	 * @param color the color for the arrow
 	 * @return svg string of an arrow
 	 */
-	private String createSVGArrow(final Point startPoint, final Point endPoint) {
+	private String createSVGArrow(final Point startPoint, final Point endPoint,
+																final Color color) {
 
 		int x1 = startPoint.fst * coordinateMultiplier;
 		int y1 = (-startPoint.snd + circuit.data.getMaxCoord().snd) *
@@ -648,9 +600,9 @@ public class SVGManager {
 
 		String line = "<line x1=\"" + x1 +	"\" y1=\"" + y1 +
 				"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-				"\" stroke=\"#" +	SVGCoreCreator.colorToSVG(Color.BLACK) +
+				"\" stroke=\"#" +	SVGCoreCreator.colorToSVG(color) +
 				"\" stroke-width=\"10\" marker-end=\"url(#" +
-				generateColoredID("ArrowHead", Color.BLACK) + ")\" />\n";
+				generateColoredID("ArrowHead", color) + ")\" />\n";
 
 		return line;
 	}
@@ -714,5 +666,79 @@ public class SVGManager {
 			coords.append("</text>\n");
 		}
 		return coords.toString();
+	}
+
+	/**
+	 * Creates all colored core strings and saves them into colSvgs.
+	 */
+	private void createDefCores() {
+		if (svgExportSettings.getColorfulExport()) {
+			LOGGER.debug("[SVG] Creating all needed colored cores.");
+
+			for (final DrawableField f : circuit.fields) {
+				String 	key = generateColoredID(f.getDisplayValues().getTexture()
+						.toString(), f.getColor());
+				// don't create the svg core code twice
+				if (!colSvgs.containsKey(key)) {
+					colSvgs.put(key,
+							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
+									f.getColor(), strokeColor));
+				}
+				Set<Net> nets = circuit.data.getNetsOf(f.getField());
+				for (final Net n : nets) {
+					for (final GradDir dir : GradDir.values()) {
+						String id = generateColoredID("grad-" + dir.toString(),
+								n.getColor().buildGdxColor());
+						if (!colSvgs.containsKey(id)) {
+							colSvgs.put(id, svgCoreCreator
+									.getSVGLinearGradient(id, dir, n.getColor().buildGdxColor()));
+						}
+					}
+				}
+			}
+			for (final DrawableDroplet d : circuit.droplets) {
+				// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
+				String key = generateColoredID("Droplet", d.getColor());
+				// don't create the svg core code twice
+				if (!colSvgs.containsKey(key)) {
+					colSvgs.put(key,
+							svgCoreCreator.getSVGCode(TextureE.Droplet,
+									d.getColor(), strokeColor));
+				}
+
+				// Add every needed color for the arrowheads
+				if (circuit.displayOptions.getOption(BDisplayOptions
+						.LongNetIndicatorsOnDroplets) ||
+						circuit.displayOptions.getOption(BDisplayOptions
+								.LongNetIndicatorsOnFields)) {
+					List<Color> colors = new ArrayList<>();
+					Color diffColor = new Color(0.2f, 0.2f, 0.2f, 0);
+					colors.add(d.getColor().cpy().add(diffColor));
+					colors.add(d.getColor().cpy().sub(diffColor));
+					colors.add(Color.BLACK);
+
+					for (final Color color : colors) {
+						key = generateColoredID("ArrowHead", color);
+						if (!colSvgs.containsKey(key)) {
+							colSvgs.put(key,
+									svgCoreCreator.getArrowHead(key, color));
+						}
+					}
+				}
+
+				if (d.route != null) {
+					Color routeColor = d.route.getColor();
+					key = generateColoredID("StepMarker", routeColor);
+					if (!colSvgs.containsKey(key)) {
+						colSvgs.put(key,
+								svgCoreCreator.getSVGCode(TextureE.StepMarker,
+										routeColor, strokeColor));
+					}
+				}
+			}
+
+
+			LOGGER.debug("[SVG] Done creating colored cores.");
+		}
 	}
 }
