@@ -187,8 +187,8 @@ public class SVGManager {
 		LOGGER.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
 
-		Point minCoord = circ.data.getMinCoord();
-		Point maxCoord = circ.data.getMaxCoord();
+		Point minCoord = circ.getData().getMinCoord();
+		Point maxCoord = circ.getData().getMaxCoord();
 
 		sb.append("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
 						"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
@@ -242,7 +242,7 @@ public class SVGManager {
 		//		on the canvas.
 
 		int yCoord =
-				-field.getField().y() + field.getParentCircuit().data.getMaxCoord().snd;
+				-field.getField().y() + field.getParentCircuit().getData().getMaxCoord().snd;
 		int xCoord = field.getField().x();
 		yCoord = yCoord * coordinateMultiplier;
 		xCoord = xCoord * coordinateMultiplier;
@@ -276,7 +276,7 @@ public class SVGManager {
 	 */
 	private String toSVG(final DrawableDroplet drawableDrop) {
 		float yCoord = -drawableDrop.droplet.smoothY +
-					   drawableDrop.parentCircuit.data.getMaxCoord().snd;
+					   drawableDrop.parentCircuit.getData().getMaxCoord().snd;
 		float xCoord = drawableDrop.droplet.smoothX;
 
 		LOGGER.debug("(x,y) = ({},{})", yCoord, xCoord);
@@ -318,7 +318,7 @@ public class SVGManager {
 
 		int displayLength = DrawableRoute.routeDisplayLength;
 
-		Biochip circ = droplet.parentCircuit.data;
+		Biochip circ = droplet.parentCircuit.getData();
 
 		/*
 		The prevoius code did some weird stuff here. The new rationale is

@@ -335,7 +335,7 @@ public class BioViz implements ApplicationListener {
 				logger.debug("drawable created, replacing old elements...");
 				drawables.add(currentCircuit);
 				logger.debug("Initializing circuit");
-				currentCircuit.data.recalculateAdjacency = true;
+				currentCircuit.getData().recalculateAdjacency = true;
 				if (bioFile == null) {
 					logger.info("Done loading default file");
 				}

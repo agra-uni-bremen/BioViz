@@ -101,7 +101,7 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
-			Integer fluidID = parentCircuit.data.fluidID(dropID);
+			Integer fluidID = parentCircuit.getData().fluidID(dropID);
 			if (fluidID != null) {
 				if (!msg.isEmpty()) {
 					msg += "-";
@@ -112,9 +112,9 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 		if (parentCircuit.displayOptions
 				.getOption(BDisplayOptions.FluidNames)) {
-			Integer fluidID = parentCircuit.data.fluidID(dropID);
+			Integer fluidID = parentCircuit.getData().fluidID(dropID);
 			if (fluidID != null) {
-				String fname = parentCircuit.data.fluidType(fluidID);
+				String fname = parentCircuit.getData().fluidType(fluidID);
 
 				if (fname != null) {
 					if (!msg.isEmpty()) {

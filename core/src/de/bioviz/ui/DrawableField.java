@@ -262,13 +262,13 @@ public class DrawableField extends DrawableSprite {
 				// Create non-null array contents
 				cornerColors[i] = Color.BLACK.cpy();
 			}
-			for (final Net n : this.getParentCircuit().data.
+			for (final Net n : this.getParentCircuit().getData().
 					getNetsOf(this.getField())) {
 				de.bioviz.ui.Color netCol = n.getColor().cpy();
 
 				// Increase brightness for hovered nets
 				if (this.parentCircuit.getHoveredField() != null) {
-					if (this.getParentCircuit().data.getNetsOf
+					if (this.getParentCircuit().getData().getNetsOf
 							(this.getParentCircuit().getHoveredField().field).
 							contains(n)) {
 						netCol.add(0.5f, 0.5f, 0.5f, 0);
@@ -287,27 +287,27 @@ public class DrawableField extends DrawableSprite {
 				final int topleft = 1;
 				final int topright = 2;
 				final int bottomright = 3;
-				if (!getParentCircuit().data.hasFieldAt(top) ||
+				if (!getParentCircuit().getData().hasFieldAt(top) ||
 						!n.containsField(
-								getParentCircuit().data.getFieldAt(top))) {
+								getParentCircuit().getData().getFieldAt(top))) {
 					this.cornerColors[topleft].add(netCol.buildGdxColor());
 					this.cornerColors[topright].add(netCol.buildGdxColor());
 				}
-				if (!getParentCircuit().data.hasFieldAt(bottom) ||
+				if (!getParentCircuit().getData().hasFieldAt(bottom) ||
 						!n.containsField(
-								getParentCircuit().data.getFieldAt(bottom))) {
+								getParentCircuit().getData().getFieldAt(bottom))) {
 					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
 					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
-				if (!getParentCircuit().data.hasFieldAt(left) ||
+				if (!getParentCircuit().getData().hasFieldAt(left) ||
 						!n.containsField(
-								getParentCircuit().data.getFieldAt(left))) {
+								getParentCircuit().getData().getFieldAt(left))) {
 					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
 					this.cornerColors[topleft].add(netCol.buildGdxColor());
 				}
-				if (!getParentCircuit().data.hasFieldAt(right) ||
+				if (!getParentCircuit().getData().hasFieldAt(right) ||
 						!n.containsField(
-								getParentCircuit().data.getFieldAt(right))) {
+								getParentCircuit().getData().getFieldAt(right))) {
 					this.cornerColors[topright].add(netCol.buildGdxColor());
 					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
@@ -325,7 +325,7 @@ public class DrawableField extends DrawableSprite {
 		if (option(CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
-			float scalingFactor = this.parentCircuit.data.getMaxUsage();
+			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
 			result.add(new Color(
 					this.getField().usage / scalingFactor,
 					this.getField().usage / scalingFactor,
@@ -337,7 +337,7 @@ public class DrawableField extends DrawableSprite {
 		/** Colours the interference region **/
 		if (option(InterferenceRegion)) {
 			int amountOfInterferenceRegions = 0;
-			for (final Droplet d : getParentCircuit().data.getDroplets()) {
+			for (final Droplet d : getParentCircuit().getData().getDroplets()) {
 				if (isPartOfInterferenceRegion(d)) {
 					boolean interferenceViolation = false;
 					for (DrawableDroplet d2 : parentCircuit.droplets) {
@@ -398,7 +398,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		if (option(Adjacency) &&
-			getParentCircuit().data.getAdjacentActivations().contains(
+			getParentCircuit().getData().getAdjacentActivations().contains(
 					this.getField())) {
 			result.add(ADJACENT_ACTIVATION_COLOR);
 		}
@@ -430,7 +430,7 @@ public class DrawableField extends DrawableSprite {
 		super.draw();
 
 		if (option(LongNetIndicatorsOnFields)) {
-			for (Net net : this.parentCircuit.data.getNetsOf(this.field)) {
+			for (Net net : this.parentCircuit.getData().getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
 						Pair<Float, Float> target = new Pair<Float, Float>(

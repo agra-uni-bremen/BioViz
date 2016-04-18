@@ -1099,14 +1099,14 @@ public class DesktopLauncher extends JFrame {
 				// but although this is a little ugly, it doesn't seem to have
 				// any problematic effect.
 				d.timeSlider.setMaximum(
-						currentViz.currentCircuit.data.getMaxT());
+						currentViz.currentCircuit.getData().getMaxT());
 				d.timeSlider.setMinimum(1);
 				logger.trace("setting time slider to "
 						+ oldTime);
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
-						currentViz.currentCircuit.data.getMaxRouteLength());
+						currentViz.currentCircuit.getData().getMaxRouteLength());
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 

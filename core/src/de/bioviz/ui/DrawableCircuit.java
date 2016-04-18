@@ -29,7 +29,7 @@ public class DrawableCircuit implements Drawable {
 	 * This represents the actual biochip structure that is drawn by this
 	 * DrawableCircuit.
 	 */
-	public Biochip data;
+	private Biochip data;
 
 	/**
 	 * The current UI scaling factor.
@@ -185,7 +185,7 @@ public class DrawableCircuit implements Drawable {
 
 	public void setCurrentTime(int timeStep) {
 		if (parent != null) {
-			if (timeStep >= 1 && timeStep <= data.getMaxT()) {
+			if (timeStep >= 1 && timeStep <= getData().getMaxT()) {
 				currentTime = timeStep;
 				parent.callTimeChangedListeners();
 			}
@@ -202,14 +202,14 @@ public class DrawableCircuit implements Drawable {
 	 */
 	public DrawableCircuit(Biochip toDraw, BioViz parent) {
 		logger.debug("Creating new drawable chip based on " + toDraw);
-		this.data = toDraw;
+		this.setData(toDraw);
 		this.parent = parent;
 		this.initializeDrawables();
 		this.displayOptions.addOptionChangedEvent(e -> {
 			if (e.equals(BDisplayOptions.CellUsage)) {
 				boolean doIt = displayOptions.getOption(e);
 				if (doIt) {
-					data.computeCellUsage();
+					getData().computeCellUsage();
 				}
 			}
 		});
@@ -223,10 +223,10 @@ public class DrawableCircuit implements Drawable {
 		this.fields.clear();
 		this.droplets.clear();
 
-		logger.debug("Initializing drawables: {} fields, {} droplets", data.getAllCoordinates().size(), data.getDroplets().size());
+		logger.debug("Initializing drawables: {} fields, {} droplets", getData().getAllCoordinates().size(), getData().getDroplets().size());
 
 		//setup fields
-		data.getAllFields().forEach(fld -> {
+		getData().getAllFields().forEach(fld -> {
 			DrawableField f = new DrawableField(fld, this);
 			this.fields.add(f);
 		});
@@ -234,7 +234,7 @@ public class DrawableCircuit implements Drawable {
 		logger.debug("Fields set up.");
 
 		//setup droplets
-		for (Droplet d : data.getDroplets()) {
+		for (Droplet d : getData().getDroplets()) {
 			DrawableDroplet dd = new DrawableDroplet(d, this);
 			this.droplets.add(dd);
 		}
@@ -266,9 +266,9 @@ public class DrawableCircuit implements Drawable {
 			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
 				lastAutoStepAt = current;
 
-				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);
+				logger.trace("data.getMaxT: {}\tcurrentTime: {}",getData().getMaxT(), currentTime);
 				setCurrentTime(currentTime +1);
-				if (currentTime >= data.getMaxT() &&
+				if (currentTime >= getData().getMaxT() &&
 						this.displayOptions.getOption(
 								BDisplayOptions.LoopAutoplay)) {
 					++autoloop_OvertimeCounter;
@@ -558,8 +558,8 @@ public class DrawableCircuit implements Drawable {
 	 */
 	public void zoomExtents() {
 		// FIXME Does not properly handle non-0 minimum coordinates yet
-		Point max = this.data.getMaxCoord();
-		Point min = this.data.getMinCoord();
+		Point max = this.getData().getMaxCoord();
+		Point min = this.getData().getMinCoord();
 		logger.debug("Auto zoom around " + min + " <--/--> " + max);
 
 		float x = (1f / (max.fst - min.fst + 2));
@@ -606,7 +606,7 @@ public class DrawableCircuit implements Drawable {
 	 * the fields' colours accordingly.
 	 */
 	public void updateAdjacencyColours() {
-		Set<BiochipField> f = this.data.getAdjacentActivations();
+		Set<BiochipField> f = this.getData().getAdjacentActivations();
 		for (BiochipField biochipField : f) {
 
 		}
@@ -618,5 +618,13 @@ public class DrawableCircuit implements Drawable {
 	 */
 	public DrawableField getHoveredField() {
 		return this.hoveredField;
+	}
+
+	public Biochip getData() {
+		return data;
+	}
+
+	public void setData(Biochip data) {
+		this.data = data;
 	}
 }
