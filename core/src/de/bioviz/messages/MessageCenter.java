@@ -158,8 +158,8 @@ public class MessageCenter {
 			for (HUDMessage s : this.HUDMessages.values()) {
 				Color targetColor = s.color.cpy();
 
-				float hideAt = (1f / scaleHUD) * 4f;
-				float showAt = (1f / scaleHUD) * 8f;
+				float hideAt = textRenderResolution;
+				float showAt = (textRenderResolution * 2);
 				if (s.hideWhenZoomedOut) {
 					// Hide when zoomed out
 					if (this.parent.currentCircuit.getScaleX() < hideAt) {
@@ -292,20 +292,11 @@ public class MessageCenter {
 	}
 
 	public void decScaleHUD() {
-
-		// only decrease size if not going below zero
-		float res = scaleHUD - SCALEINCSTEP;
-		if (res > 0) {
-			scaleHUD = scaleHUD - SCALEINCSTEP;
-		}
+		setTextRenderResolution(getTextRenderResolution() - SCALEINCSTEP);
 	}
 
 	public void decScaleMsg() {
-		// only decrease size if not going below zero
-		float res = scaleMsg - SCALEINCSTEP;
-		if (res > 0) {
-			scaleMsg = scaleMsg - SCALEINCSTEP;
-		}
+		setmsgTextRenderResolution(getmsgTextRenderResolution() - SCALEINCSTEP);
 	}
 
 	public void setScales(final float scale) {
@@ -314,10 +305,10 @@ public class MessageCenter {
 	}
 
 	public void setScaleHUD(final float scaleHUD) {
-		this.scaleHUD = scaleHUD;
+		setTextRenderResolution(scaleHUD);
 	}
 
 	public void setScaleMsg(final float scaleMsg) {
-		this.scaleMsg = scaleMsg;
+		setmsgTextRenderResolution(scaleMsg);
 	}
 }
