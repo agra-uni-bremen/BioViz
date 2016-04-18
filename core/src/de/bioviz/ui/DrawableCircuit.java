@@ -8,9 +8,7 @@ import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
-import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
-import de.bioviz.util.ColorCalculator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -39,7 +37,7 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * The current UI x offset (used for camera movement etc.).
 	 */
-	public float offsetX = 0;
+	private float offsetX = 0;
 
 	/**
 	 * The current UI scaling factor.
@@ -49,7 +47,7 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * The current UI y offset (used for camera movement etc.).
 	 */
-	public float offsetY = 0;
+	private float offsetY = 0;
 
 	/**
 	 * The "smooth" scaling factor. Unlike the scale values, this does not
@@ -248,8 +246,8 @@ public class DrawableCircuit implements Drawable {
 	public void draw() {
 		smoothScaleX += (getScaleX() - smoothScaleX) / scalingDelay;
 		smoothScaleY += (getScaleY() - smoothScaleY) / scalingDelay;
-		smoothOffsetX += (offsetX - smoothOffsetX) / scalingDelay;
-		smoothOffsetY += (offsetY - smoothOffsetY) / scalingDelay;
+		smoothOffsetX += (getOffsetX() - smoothOffsetX) / scalingDelay;
+		smoothOffsetY += (getOffsetY() - smoothOffsetY) / scalingDelay;
 
 		if (displayOptions.getOption(BDisplayOptions.Coordinates)) {
 			displayCoordinates();
@@ -519,9 +517,9 @@ public class DrawableCircuit implements Drawable {
 	public Rectangle getViewBounds() {
 		Rectangle result = new Rectangle();
 
-		float centerX = -offsetX;
+		float centerX = -getOffsetX();
 		float width = Gdx.graphics.getWidth() * (1f / scaleX);
-		float centerY = offsetY;
+		float centerY = getOffsetY();
 		float height = Gdx.graphics.getHeight() * (1f / scaleY);
 		result.set(centerX - (width / 2f), centerY - (height / 2f), width, height);
 		return result;
@@ -540,8 +538,8 @@ public class DrawableCircuit implements Drawable {
 
 		setScaleX(targetWidth);
 		setScaleY(targetHeight);
-		this.offsetX = -targetOffsetX;
-		this.offsetY = targetOffsetY;
+		this.setOffsetX(-targetOffsetX);
+		this.setOffsetY(targetOffsetY);
 	}
 
 	/**
@@ -569,11 +567,11 @@ public class DrawableCircuit implements Drawable {
 		float maxScale = Math.min(x * xFactor, y * yFactor);
 		this.scaleX = maxScale;
 		this.scaleY = maxScale;
-		this.offsetX = (max.fst) / -2f + min.fst / -2f;
-		this.offsetY = (max.snd) / -2f + min.snd / -2f;
+		this.setOffsetX((max.fst) / -2f + min.fst / -2f);
+		this.setOffsetY((max.snd) / -2f + min.snd / -2f);
 
 
-		logger.debug("Offset now at " + this.offsetX + "/" + this.offsetY);
+		logger.debug("Offset now at " + this.getOffsetX() + "/" + this.getOffsetY());
 	}
 
 	/**
@@ -626,5 +624,21 @@ public class DrawableCircuit implements Drawable {
 
 	public void setData(Biochip data) {
 		this.data = data;
+	}
+
+	public float getOffsetX() {
+		return offsetX;
+	}
+
+	public void setOffsetX(float offsetX) {
+		this.offsetX = offsetX;
+	}
+
+	public float getOffsetY() {
+		return offsetY;
+	}
+
+	public void setOffsetY(float offsetY) {
+		this.offsetY = offsetY;
 	}
 }

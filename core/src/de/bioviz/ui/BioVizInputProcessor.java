@@ -152,10 +152,8 @@ public class BioVizInputProcessor implements InputProcessor {
 	@Override
 	public boolean touchDragged(int x, int y, int pointer) {
 		if (isMoving) {
-			parentViz.currentCircuit.offsetX +=
-					(x - oldX) / parentViz.currentCircuit.getScaleX();
-			parentViz.currentCircuit.offsetY -=
-					(y - oldY) / parentViz.currentCircuit.getScaleY();
+			parentViz.currentCircuit.setOffsetX(parentViz.currentCircuit.getOffsetX() + (x - oldX) / parentViz.currentCircuit.getScaleX());
+			parentViz.currentCircuit.setOffsetY(parentViz.currentCircuit.getOffsetY() - (y - oldY) / parentViz.currentCircuit.getScaleY());
 			oldX = x;
 			oldY = y;
 		}
