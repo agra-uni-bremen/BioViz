@@ -57,7 +57,7 @@ public class DrawableCircuit implements Drawable {
 	 * smoothScale value is then over the duration of several frames slowly
 	 * adjusted to the scale value in order to have a smoother cam movement.
 	 */
-	protected float smoothScale = 1;
+	private float smoothScale = 1;
 
 	/**
 	 * The "smooth" offset. Unlike the offset values, this does not
@@ -67,7 +67,7 @@ public class DrawableCircuit implements Drawable {
 	 * smoothOffset value is then over the duration of several frames slowly
 	 * adjusted to the offset value in order to have a smoother cam movement.
 	 */
-	protected float smoothOffsetX = 0;
+	private float smoothOffsetX = 0;
 
 	/**
 	 * The "smooth" offset. Unlike the offset values, this does not
@@ -77,7 +77,7 @@ public class DrawableCircuit implements Drawable {
 	 * smoothOffset value is then over the duration of several frames slowly
 	 * adjusted to the offset value in order to have a smoother cam movement.
 	 */
-	protected float smoothOffsetY = 0;
+	private float smoothOffsetY = 0;
 
 	/**
 	 * The delay that is applied to the smooth cam movement.
@@ -234,9 +234,9 @@ public class DrawableCircuit implements Drawable {
 
 	@Override
 	public void draw() {
-		smoothScale += (getScaleX() - smoothScale) / scalingDelay;
-		smoothOffsetX += (getOffsetX() - smoothOffsetX) / scalingDelay;
-		smoothOffsetY += (getOffsetY() - smoothOffsetY) / scalingDelay;
+		setSmoothScale(getSmoothScale() + (getScaleX() - getSmoothScale()) / scalingDelay);
+		setSmoothOffsetX(getSmoothOffsetX() + (getOffsetX() - getSmoothOffsetX()) / scalingDelay);
+		setSmoothOffsetY(getSmoothOffsetY() + (getOffsetY() - getSmoothOffsetY()) / scalingDelay);
 
 		if (displayOptions.getOption(BDisplayOptions.Coordinates)) {
 			displayCoordinates();
@@ -327,9 +327,9 @@ public class DrawableCircuit implements Drawable {
 		float endFadingAtScale = 24f;
 		
 		Color col = Color.WHITE.cpy();
-		if (this.smoothScale < startFadingAtScale) {
-			if (this.smoothScale > endFadingAtScale) {
-				float alpha = 1f - ((startFadingAtScale - smoothScale) / (startFadingAtScale - endFadingAtScale));
+		if (this.getSmoothScale() < startFadingAtScale) {
+			if (this.getSmoothScale() > endFadingAtScale) {
+				float alpha = 1f - ((startFadingAtScale - getSmoothScale()) / (startFadingAtScale - endFadingAtScale));
 				col.a = alpha;
 			} else {
 				// TODO: don't draw!
@@ -338,7 +338,7 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		// scale text
-		float scale = Math.min(MessageCenter.textRenderResolution, smoothScale / 2f);
+		float scale = Math.min(MessageCenter.textRenderResolution, getSmoothScale() / 2f);
 		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
@@ -411,8 +411,8 @@ public class DrawableCircuit implements Drawable {
 	 */
 	protected float xCoordOnScreen(float i) {
 		float xCoord = i;
-		xCoord += smoothOffsetX;
-		xCoord *= smoothScale;
+		xCoord += getSmoothOffsetX();
+		xCoord *= getSmoothScale();
 		return xCoord;
 	}
 
@@ -422,22 +422,22 @@ public class DrawableCircuit implements Drawable {
 
 	protected float yCoordOnScreen(float i) {
 		float yCoord = i;
-		yCoord += smoothOffsetY;
-		yCoord *= smoothScale;
+		yCoord += getSmoothOffsetY();
+		yCoord *= getSmoothScale();
 		return yCoord;
 	}
 
 	protected float yCoordInCells(float i) {
 		float yCoord = i;
-		yCoord /= smoothScale;
-		yCoord -= smoothOffsetY;
+		yCoord /= getSmoothScale();
+		yCoord -= getSmoothOffsetY();
 		return yCoord;
 	}
 
 	protected float xCoordInCells(float i) {
 		float xCoord = i;
-		xCoord /= smoothScale;
-		xCoord -= smoothOffsetX;
+		xCoord /= getSmoothScale();
+		xCoord -= getSmoothOffsetX();
 		return xCoord;
 	}
 
@@ -477,7 +477,7 @@ public class DrawableCircuit implements Drawable {
 	 * animated camera.
 	 */
 	public float getSmoothScaleX() {
-		return smoothScale;
+		return getSmoothScale();
 	}
 
 	/**
@@ -569,7 +569,7 @@ public class DrawableCircuit implements Drawable {
 	 */
 	public void zoomExtentsImmediately() {
 		zoomExtents();
-		this.smoothScale = scale;
+		this.setSmoothScale(scale);
 	}
 
 	/**
@@ -578,7 +578,7 @@ public class DrawableCircuit implements Drawable {
 	 */
 	public void setScaleImmediately(float scale) {
 		this.scale = scale;
-		this.smoothScale = scale;
+		this.setSmoothScale(scale);
 	}
 
 	public void addTimeChangedListener(final BioVizEvent listener) {
@@ -626,5 +626,29 @@ public class DrawableCircuit implements Drawable {
 
 	public void setOffsetY(float offsetY) {
 		this.offsetY = offsetY;
+	}
+
+	protected float getSmoothScale() {
+		return smoothScale;
+	}
+
+	protected void setSmoothScale(float smoothScale) {
+		this.smoothScale = smoothScale;
+	}
+
+	protected float getSmoothOffsetX() {
+		return smoothOffsetX;
+	}
+
+	protected void setSmoothOffsetX(float smoothOffsetX) {
+		this.smoothOffsetX = smoothOffsetX;
+	}
+
+	protected float getSmoothOffsetY() {
+		return smoothOffsetY;
+	}
+
+	protected void setSmoothOffsetY(float smoothOffsetY) {
+		this.smoothOffsetY = smoothOffsetY;
 	}
 }
