@@ -65,17 +65,15 @@ public class SVGManager {
 	/** the font for the exported texts. */
 	private final String font = "Helvetica";
 	/** the font size for text. */
-	private final int size = 60;
-	/** the font size for ids. */
-	private final int fontSizeIds = 60;
+	private final int fontSize = 90;
+	/** the font size for the info string. */
+	private final int fontSizeInfoString = 100;
 
-
-	/** the length of the color string without alpha. */
-	private final int colorDigits = 6;
 	/** font color. */
-	private final Color fColor = Color.BLACK;
-	/** color code as string without alpha. */
-	private final String fontColor = fColor.toString().substring(0, colorDigits);
+	private final String fontColor = SVGCoreCreator.colorToSVG(Color.WHITE);
+	/** font color for the info String. */
+	private final String fontColorInfoString = SVGCoreCreator.colorToSVG(Color
+			.BLACK);
 
 	/** hard coded stroke color. */
 	private final Color strokeColor = null; // means don't change svg stroke color
@@ -128,7 +126,7 @@ public class SVGManager {
 	 * @param params the transformation params
 	 * @return a string for an svg transform
 	 */
-	public String getTransformation(final String params) {
+	private String getTransformation(final String params) {
 		return " transform=\"" + params + "\" ";
 	}
 
@@ -137,7 +135,7 @@ public class SVGManager {
 	 *
 	 * @return a string with a svg scaling transformation
 	 */
-	public String getScaleTransformation() {
+	private String getScaleTransformation() {
 		return getTransformation(getScale());
 	}
 
@@ -160,7 +158,7 @@ public class SVGManager {
 	 * specified in the TextureE enum
 	 * @warning The folder name must not begin or end with a slash!
 	 */
-	public void createCores() {
+	private void createCores() {
 		svgs.clear();
 
 		for (final TextureE s : TextureE.values()) {
@@ -178,7 +176,8 @@ public class SVGManager {
 	 * @param c The color that will be put after the '-'
 	 * @return "<baseName>-<color>"
 	 */
-	public static String generateColoredID(final String baseName, final Color c) {
+	private static String generateColoredID(final String baseName, final Color
+			c) {
 		if (svgExportSettings.getColorfulExport()) {
 			return baseName + "-" + SVGCoreCreator.colorToSVG(c);
 		} else {
@@ -234,7 +233,7 @@ public class SVGManager {
 		}
 
 		if (svgExportSettings.getInformationString()) {
-			int infoStringOffset = size * 2;
+			int infoStringOffset = fontSizeInfoString * 2;
 			viewBoxHeight += infoStringOffset;
 		}
 
@@ -278,18 +277,23 @@ public class SVGManager {
 		if (circuit.displayOptions.getOption(BDisplayOptions
 				.LongNetIndicatorsOnDroplets)) {
 			for (final DrawableDroplet drop : circuit.droplets) {
-				sb.append(exportDropletArrows(drop));
+				sb.append(createDropletArrows(drop));
 			}
 		}
 
 		// append longNetIndicatorsOnFields when needed
 		if (circuit.displayOptions.getOption(BDisplayOptions
 				.LongNetIndicatorsOnFields)) {
-			sb.append(exportStartEndArrows());
+			sb.append(createStartEndArrows());
+		}
+
+		// export msg strings for droplets
+		for (final DrawableDroplet drop : circuit.droplets) {
+			sb.append(createDropletMsg(drop, fontSize));
 		}
 
 		if (svgExportSettings.getInformationString()) {
-			sb.append(infoString());
+			sb.append(createInfoString());
 		}
 
 		if (circuit.displayOptions.getOption(BDisplayOptions.Coordinates)) {
@@ -318,14 +322,11 @@ public class SVGManager {
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
 
-		int yCoord =
-				-field.getField().y() + circuit.data.getMaxCoord().snd;
-		int xCoord = field.getField().x();
-		yCoord = yCoord * coordinateMultiplier;
-		xCoord = xCoord * coordinateMultiplier;
+		Point pos = getFieldPosInSVGCoords(field);
+		int yCoord = pos.snd;
+		int xCoord = pos.fst;
 
 		DisplayValues vals = field.getDisplayValues();
-
 
 		String fieldID = generateColoredID(vals.getTexture().toString(),
 				vals.getColor());
@@ -355,8 +356,8 @@ public class SVGManager {
 		if (vals.getMsg() != null) {
 			String msg = "<text text-anchor=\"middle\" x=\"" +
 					(xCoord + coordinateMultiplier / 2)	+ "\" y=\"" +
-					(yCoord + coordinateMultiplier / 2 + (size / 2)) +
-					"\" font-family=\"" + font + "\" font-size=\"" + size +
+					(yCoord + coordinateMultiplier / 2 + (fontSize / 2)) +
+					"\" font-family=\"" + font + "\" font-size=\"" + fontSize +
 					"\" fill=\"#" + fontColor + "\">"	+ vals.getMsg() + "</text>\n";
 			fieldSvg += msg;
 		}
@@ -372,7 +373,7 @@ public class SVGManager {
 	 */
 	private String toSVG(final DrawableDroplet drawableDrop) {
 
-		Point dropletPos = getDropletPosition(drawableDrop);
+		Point dropletPos = getDropletPosInSVGCoords(drawableDrop);
 		String route = toSVG(drawableDrop.route);
 
 		String dropletID = generateColoredID("Droplet", drawableDrop.getColor());
@@ -380,11 +381,7 @@ public class SVGManager {
 				dropletPos.snd + "\"" +
 				getScaleTransformation() + " xlink:href=\"#" + dropletID + "\" />\n";
 
-		String dropSvg = route + dropShape;
-
-		dropSvg += exportDropletMsg(drawableDrop);
-
-		return dropSvg;
+		return route + dropShape;
 	}
 
 	/**
@@ -490,7 +487,7 @@ public class SVGManager {
 	 *
 	 * @return svg string containing all start end arrows
 	 */
-	private String exportStartEndArrows() {
+	private String createStartEndArrows() {
 
 		Set<Net> nets = circuit.data.getNets();
 		String arrows = "";
@@ -515,7 +512,7 @@ public class SVGManager {
 	 * @param drawableDrop the drop
 	 * @return svg string
 	 */
-	private String exportDropletArrows(final DrawableDroplet drawableDrop) {
+	private String createDropletArrows(final DrawableDroplet drawableDrop) {
 
 		int time = circuit.currentTime;
 		Point startPoint = drawableDrop.droplet.getFirstPosition();
@@ -542,24 +539,23 @@ public class SVGManager {
 	}
 
 	/**
-	 *
-	 * @param drawableDrop
-	 * @return
+	 * This creates the message element for a droplet.
+	 * @param drawableDrop The droplet
+	 * @return Svg text element
 	 */
-	private String exportDropletMsg(DrawableDroplet drawableDrop){
-		Point dropPos = getDropletPosition(drawableDrop);
-
+	private String createDropletMsg(final DrawableDroplet drawableDrop,
+																	final int size) {
+		Point dropPos = getDropletPosInSVGCoords(drawableDrop);
+		String msg = "";
 		if (drawableDrop.getMsg() != null) {
-			String msg = "<text text-anchor=\"middle\" " +
+			msg += "<text text-anchor=\"middle\" " +
 					"x=\"" + (dropPos.fst + coordinateMultiplier / 2) + "\" " +
 					"y=\"" + (dropPos.snd + coordinateMultiplier / 2 + (size / 2)) +
 					"\" " +
 					"font-family=\"" + font + "\" font-size=\"" + size + "\" " +
-					"fill=\"#" + fontColor + "\">" +
-					drawableDrop.getMsg() + "</text>\n";
-			return msg;
+					"fill=\"#" + fontColor + "\">" + drawableDrop.getMsg() + "</text>\n";
 		}
-		return "";
+		return msg;
 	}
 
 	/**
@@ -600,13 +596,13 @@ public class SVGManager {
 	private String createSVGArrow(final Point startPoint, final Point endPoint,
 																final Color color) {
 
-		int x1 = startPoint.fst * coordinateMultiplier;
-		int y1 = (-startPoint.snd + circuit.data.getMaxCoord().snd) *
-				coordinateMultiplier;
+		Point start = toSVGCoords(startPoint);
+		Point end = toSVGCoords(endPoint);
+		int x1 = start.fst;
+		int y1 = start.snd;
 
-		int x2 = endPoint.fst * coordinateMultiplier;
-		int y2 = (-endPoint.snd + circuit.data.getMaxCoord().snd) *
-				coordinateMultiplier;
+		int x2 = end.fst;
+		int y2 = end.snd;
 
 		// move startingPoint to the center of the field
 		x1 += coordinateMultiplier / 2;
@@ -644,18 +640,19 @@ public class SVGManager {
 	 *
 	 * @return information string
 	 */
-	private String infoString() {
+	private String createInfoString() {
 
 		String coordinates =
 				"x=\"" + (topLeftCoord.fst * coordinateMultiplier) + "\" " +
-				"y=\"" + (bottomRightCoord.snd * coordinateMultiplier + 1.5 * size) +
-				"\" ";
+				"y=\"" + (bottomRightCoord.snd * coordinateMultiplier + 1.5 *
+						fontSizeInfoString) +	"\" ";
 
 		String circName = circuit.parent.getFileName();
 		String timeStep = String.valueOf(circuit.currentTime);
 
-		return "<text " + coordinates +	"fill=\"" + fontColor + "\" " +
-				"font-family=\"" + font + "\" font-size=\"" + size + "\">" +
+		return "<text " + coordinates +	"fill=\"" + fontColorInfoString + "\" " +
+				"font-family=\"" + font + "\" font-size=\"" + fontSizeInfoString +
+				"\">" +
 				"Filename: " + circName +	" Timestep: " + timeStep + "</text>\n";
 	}
 
@@ -666,7 +663,7 @@ public class SVGManager {
 	 */
 	private String createCoordinates() {
 		StringBuilder coords = new StringBuilder();
-		int coordSize = 80;
+		int coordSize = fontSizeInfoString;
 		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
 				 ++xCoord) {
 			coords.append("<text text-anchor=\"middle\" ");
@@ -789,16 +786,41 @@ public class SVGManager {
 		}
 	}
 
-	private Point getDropletPosition(final DrawableDroplet drawableDrop) {
+	/**
+	 * Gets the position of a field in svg coordinates.
+	 *
+	 * @param drawableField the drawableField
+	 * @return A Point with the position.
+	 */
+	private Point getFieldPosInSVGCoords(final DrawableField drawableField) {
+		return toSVGCoords(drawableField.getField().pos);
+	}
 
-		float yCoord = -drawableDrop.droplet.getPositionAt(circuit.currentTime).snd +
-				circuit.data.getMaxCoord().snd;
-		float xCoord = drawableDrop.droplet.getPositionAt(circuit.currentTime).fst;
+	/**
+	 * Gets the position for a droplet in svg coordinates.
+	 *
+	 * @param drawableDrop the droplet
+	 * @return A Point with the position
+	 */
+	private Point getDropletPosInSVGCoords(final DrawableDroplet
+																								drawableDrop) {
+		return toSVGCoords(drawableDrop.droplet.getPositionAt(circuit
+				.currentTime));
+	}
 
-		LOGGER.debug("(x,y) = ({},{})", yCoord, xCoord);
-		yCoord = ((int) yCoord) * coordinateMultiplier;
-		xCoord = ((int) xCoord) * coordinateMultiplier;
+	/**
+	 * Transforms a point to svgCoordinates.
+	 *
+	 * @param point the point to transform
+	 * @return Point with SVG coordinates
+	 */
+	private Point toSVGCoords(Point point) {
+		int yCoord = -point.snd + circuit.data.getMaxCoord().snd;
+		int xCoord = point.fst;
 
-		return new Point((int) xCoord, (int) yCoord);
+		xCoord *= coordinateMultiplier;
+		yCoord *= coordinateMultiplier;
+
+		return new Point(xCoord, yCoord);
 	}
 }
