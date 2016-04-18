@@ -30,6 +30,12 @@ public class DrawableCircuit implements Drawable {
 	private static final float DEFAULT_SCALING_DELAY = 4f;
 
 	/**
+	 * The logger for this instance.
+	 */
+	private static final Logger LOGGER =
+			LoggerFactory.getLogger(DrawableCircuit.class);
+
+	/**
 	 * This represents the actual biochip structure that is drawn by this
 	 * DrawableCircuit.
 	 */
@@ -145,16 +151,17 @@ public class DrawableCircuit implements Drawable {
 	private DisplayOptions displayOptions = new DisplayOptions();
 
 	/**
-	 * The logger for this instance.
-	 */
-	private final static Logger LOGGER = LoggerFactory.getLogger(DrawableCircuit.class);
-
-	/**
 	 * The visualization this circuit is drawn in.
 	 */
 	private BioViz parent;
 
-	private int autoloop_OvertimeCounter = 0;
+	/**
+	 * This is a helper member that is incremented as soon as the time of the
+	 * circuit advances beyond the maximum time. This value can then be compared
+	 * to an arbitrary value and the whole circuit be reset to time 0 after a
+	 * certain grace period of being already past its final timestamp.
+	 */
+	private int autoloopOvertimeCounter = 0;
 
 	/**
 	 * The field that is currently hovered by the mouse.
@@ -264,10 +271,10 @@ public class DrawableCircuit implements Drawable {
 				if (getCurrentTime() >= getData().getMaxT() &&
 						this.getDisplayOptions().getOption(
 								BDisplayOptions.LoopAutoplay)) {
-					++autoloop_OvertimeCounter;
-					if (autoloop_OvertimeCounter > 5) { //todo magic number
+					++autoloopOvertimeCounter;
+					if (autoloopOvertimeCounter > 5) { //todo magic number
 						setCurrentTime(1);
-						autoloop_OvertimeCounter = 0;
+						autoloopOvertimeCounter = 0;
 					}
 				}
 			}
