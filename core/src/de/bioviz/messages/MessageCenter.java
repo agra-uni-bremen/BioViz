@@ -141,7 +141,7 @@ public class MessageCenter {
 											   Gdx.graphics.getHeight());
 			parent.batch.setProjectionMatrix(normalProjection);
 
-			int spacing = 10;
+			int spacing = 2 + (int)getmsgTextRenderResolution();
 			int yCoord = Gdx.graphics.getHeight() - spacing;
 			for (Message m : this.messages) {
 				if (m.color != null) {
