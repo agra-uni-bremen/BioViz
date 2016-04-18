@@ -371,31 +371,19 @@ public class SVGManager {
 	 * @return svg string representation of the drop
 	 */
 	private String toSVG(final DrawableDroplet drawableDrop) {
-		float yCoord = -drawableDrop.droplet.getPositionAt(circuit.currentTime).snd +
-				circuit.data.getMaxCoord().snd;
-		float xCoord = drawableDrop.droplet.getPositionAt(circuit.currentTime).fst;
 
-		LOGGER.debug("(x,y) = ({},{})", yCoord, xCoord);
-		yCoord = ((int) yCoord) * coordinateMultiplier;
-		xCoord = ((int) xCoord) * coordinateMultiplier;
-
+		Point dropletPos = getDropletPosition(drawableDrop);
 		String route = toSVG(drawableDrop.route);
 
 		String dropletID = generateColoredID("Droplet", drawableDrop.getColor());
-		String dropShape = "<use x=\"" + xCoord + "\" " + "y=\"" + yCoord + "\"" +
+		String dropShape = "<use x=\"" + dropletPos.fst + "\" " + "y=\"" +
+				dropletPos.snd + "\"" +
 				getScaleTransformation() + " xlink:href=\"#" + dropletID + "\" />\n";
 
 		String dropSvg = route + dropShape;
 
-		if (drawableDrop.getMsg() != null) {
-			String msg = "<text text-anchor=\"middle\" " +
-					"x=\"" + (xCoord + coordinateMultiplier / 2) + "\" " +
-					"y=\"" + (yCoord + coordinateMultiplier / 2 + (size / 2)) +	"\" " +
-					"font-family=\"" + font + "\" font-size=\"" + size + "\" " +
-					"fill=\"#" + fontColor + "\">" +
-					drawableDrop.getMsg() + "</text>\n";
-			dropSvg += msg;
-		}
+		dropSvg += exportDropletMsg(drawableDrop);
+
 		return dropSvg;
 	}
 
@@ -551,6 +539,27 @@ public class SVGManager {
 		}
 
 		return arrows;
+	}
+
+	/**
+	 *
+	 * @param drawableDrop
+	 * @return
+	 */
+	private String exportDropletMsg(DrawableDroplet drawableDrop){
+		Point dropPos = getDropletPosition(drawableDrop);
+
+		if (drawableDrop.getMsg() != null) {
+			String msg = "<text text-anchor=\"middle\" " +
+					"x=\"" + (dropPos.fst + coordinateMultiplier / 2) + "\" " +
+					"y=\"" + (dropPos.snd + coordinateMultiplier / 2 + (size / 2)) +
+					"\" " +
+					"font-family=\"" + font + "\" font-size=\"" + size + "\" " +
+					"fill=\"#" + fontColor + "\">" +
+					drawableDrop.getMsg() + "</text>\n";
+			return msg;
+		}
+		return "";
 	}
 
 	/**
@@ -778,5 +787,18 @@ public class SVGManager {
 
 			LOGGER.debug("[SVG] Done creating colored cores.");
 		}
+	}
+
+	private Point getDropletPosition(final DrawableDroplet drawableDrop) {
+
+		float yCoord = -drawableDrop.droplet.getPositionAt(circuit.currentTime).snd +
+				circuit.data.getMaxCoord().snd;
+		float xCoord = drawableDrop.droplet.getPositionAt(circuit.currentTime).fst;
+
+		LOGGER.debug("(x,y) = ({},{})", yCoord, xCoord);
+		yCoord = ((int) yCoord) * coordinateMultiplier;
+		xCoord = ((int) xCoord) * coordinateMultiplier;
+
+		return new Point((int) xCoord, (int) yCoord);
 	}
 }
