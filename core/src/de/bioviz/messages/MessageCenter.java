@@ -30,23 +30,27 @@ public class MessageCenter {
 
 	public static final int MAX_MESSAGES_IN_UI = 32;
 
-	private float scaleHUD = 1f / 4f;
-	private float scaleMsg = 1f / 8f;
 	private final float SCALEINCSTEP = 2f;
 
 	private float textRenderResolution = 16;
+	private float textRenderResolutionMinimum = 4f;
 	public float getTextRenderResolution() {return textRenderResolution;}
 	public void setTextRenderResolution(float value) {
-		this.textRenderResolution = value;
+		this.textRenderResolution = Math.max(
+				textRenderResolutionMinimum,
+				value);
 		fontInvalidated = true;
 		logger.debug("setting HUD font size to " +
 				this.textRenderResolution);
 	}
 
-	private float msgTextRenderResolution = 8;
+	private float msgTextRenderResolution = 8f;
+	private float msgTextRenderResolutionMinimum = 4f;
 	public float getmsgTextRenderResolution() {return msgTextRenderResolution;}
 	public void setmsgTextRenderResolution(float value) {
-		this.msgTextRenderResolution = value;
+		this.msgTextRenderResolution = Math.max(
+				msgTextRenderResolutionMinimum,
+				value);
 		fontInvalidated = true;
 		logger.debug("setting message font size to " +
 				this.msgTextRenderResolution);
