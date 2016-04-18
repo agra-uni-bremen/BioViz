@@ -287,10 +287,15 @@ public class SVGManager {
 			sb.append(createStartEndArrows());
 		}
 
+		// export msg strings for fields
+		for (final DrawableField field : circuit.fields) {
+			sb.append(createFieldMsg(field));
+		}
 		// export msg strings for droplets
 		for (final DrawableDroplet drop : circuit.droplets) {
-			sb.append(createDropletMsg(drop, fontSize));
+			sb.append(createDropletMsg(drop));
 		}
+
 
 		if (svgExportSettings.getInformationString()) {
 			sb.append(createInfoString());
@@ -334,33 +339,7 @@ public class SVGManager {
 						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
 						   "\" />\n";
 
-		if (circuit.displayOptions.getOption(
-				BDisplayOptions.NetColorOnFields)) {
-			for (final Net n : circuit.data.getNetsOf(field.getField())) {
-				GradDir dir = getGradientDirection(field, n);
-
-				if (dir != null) {
-					String gradient = "<rect x=\"" + (xCoord + 24) + "\" " +
-							"y=\"" + (yCoord + 24) + "\" rx=\"24\" ry=\"24\" " +
-							"height=\"208\" width=\"208\" fill=\"url(#grad-" +
-							dir.toString() + "-" + SVGCoreCreator.colorToSVG(n
-							.getColor().buildGdxColor()) +	")\" />\n";
-
-					fieldSvg += gradient;
-				}
-			}
-		}
-
-		// create the msg text for the svg
-		// use the text-anchor middle to get a centered position
-		if (vals.getMsg() != null) {
-			String msg = "<text text-anchor=\"middle\" x=\"" +
-					(xCoord + coordinateMultiplier / 2)	+ "\" y=\"" +
-					(yCoord + coordinateMultiplier / 2 + (fontSize / 2)) +
-					"\" font-family=\"" + font + "\" font-size=\"" + fontSize +
-					"\" fill=\"#" + fontColor + "\">"	+ vals.getMsg() + "</text>\n";
-			fieldSvg += msg;
-		}
+		fieldSvg += createGradient(field);
 
 		return fieldSvg;
 	}
@@ -543,19 +522,64 @@ public class SVGManager {
 	 * @param drawableDrop The droplet
 	 * @return Svg text element
 	 */
-	private String createDropletMsg(final DrawableDroplet drawableDrop,
-																	final int size) {
+	private String createDropletMsg(final DrawableDroplet drawableDrop) {
 		Point dropPos = getDropletPosInSVGCoords(drawableDrop);
 		String msg = "";
 		if (drawableDrop.getMsg() != null) {
 			msg += "<text text-anchor=\"middle\" " +
 					"x=\"" + (dropPos.fst + coordinateMultiplier / 2) + "\" " +
-					"y=\"" + (dropPos.snd + coordinateMultiplier / 2 + (size / 2)) +
+					"y=\"" + (dropPos.snd + coordinateMultiplier / 2 + (fontSize / 2)) +
 					"\" " +
-					"font-family=\"" + font + "\" font-size=\"" + size + "\" " +
+					"font-family=\"" + font + "\" font-size=\"" + fontSize + "\" " +
 					"fill=\"#" + fontColor + "\">" + drawableDrop.getMsg() + "</text>\n";
 		}
 		return msg;
+	}
+
+	/**
+	 * Creates an svg text field with the displayValues for a Field.
+	 * @param field the field
+	 * @return svg text element
+	 */
+	private String createFieldMsg(final DrawableField field) {
+		Point fieldPos = getFieldPosInSVGCoords(field);
+
+		DisplayValues vals = field.getDisplayValues();
+		// create the msg text for the svg
+		// use the text-anchor middle to get a centered position
+		String fieldSvg = "";
+		if (vals.getMsg() != null) {
+			fieldSvg += "<text text-anchor=\"middle\" x=\"" +
+					(fieldPos.fst + coordinateMultiplier / 2)	+ "\" y=\"" +
+					(fieldPos.snd + coordinateMultiplier / 2 + (fontSize / 2)) +
+					"\" font-family=\"" + font + "\" font-size=\"" + fontSize +
+					"\" fill=\"#" + fontColor + "\">"	+ vals.getMsg() + "</text>\n";
+		}
+		return fieldSvg;
+	}
+
+	/**
+	 * Create the svg rect for a gradient for a given field.
+	 * @param field the field
+	 * @return an svg rect string
+	 */
+	private String createGradient(final DrawableField field) {
+		String gradientSvg = "";
+		if (circuit.displayOptions.getOption(BDisplayOptions.NetColorOnFields)) {
+			for (final Net n : circuit.data.getNetsOf(field.getField())) {
+				GradDir dir = getGradientDirection(field, n);
+				Point fieldPos = getFieldPosInSVGCoords(field);
+				if (dir != null) {
+					gradientSvg += "<rect x=\"" + (fieldPos.fst + 24) + "\" " +
+							"y=\"" + (fieldPos.snd + 24) + "\" rx=\"24\" ry=\"24\" " +
+							"height=\"208\" width=\"208\" fill=\"url(#grad-" +
+							dir.toString() + "-" + SVGCoreCreator.colorToSVG(n
+							.getColor().buildGdxColor()) + ")\" />\n";
+
+				}
+			}
+		}
+		return gradientSvg;
 	}
 
 	/**
@@ -814,7 +838,7 @@ public class SVGManager {
 	 * @param point the point to transform
 	 * @return Point with SVG coordinates
 	 */
-	private Point toSVGCoords(Point point) {
+	private Point toSVGCoords(final Point point) {
 		int yCoord = -point.snd + circuit.data.getMaxCoord().snd;
 		int xCoord = point.fst;
 
