@@ -20,42 +20,145 @@ import org.slf4j.Logger;
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
  * Create a ReversibleCircuit first (e.g. by loading a given .real file), then
- * create a DrawableCircuit instance for the ReversibleCircuit to draw the latter.
+ * create a DrawableCircuit instance for the ReversibleCircuit to draw the
+ * latter.
  *
  * @author jannis
  */
 public class DrawableCircuit implements Drawable {
+	/**
+	 * This represents the actual biochip structure that is drawn by this
+	 * DrawableCircuit.
+	 */
 	public Biochip data;
 
+	/**
+	 * The current UI scaling factor.
+	 */
 	private float scaleX = 1;
+
+	/**
+	 * The current UI x offset (used for camera movement etc.).
+	 */
 	public float offsetX = 0;
+
+	/**
+	 * The current UI scaling factor.
+	 */
 	private float scaleY = 1;
+
+	/**
+	 * The current UI y offset (used for camera movement etc.).
+	 */
 	public float offsetY = 0;
 
+	/**
+	 * The "smooth" scaling factor. Unlike the scale values, this does not
+	 * represent the scale value that the user has last set but the one that
+	 * is actually drawn. This is used for a smooth camera zoom, e.g. the user
+	 * zooms in, which sets the scale value to a specific value and the
+	 * smoothScale value is then over the duration of several frames slowly
+	 * adjusted to the scale value in order to have a smoother cam movement.
+	 */
 	protected float smoothScaleX = 1;
+
+	/**
+	 * The "smooth" scaling factor. Unlike the scale values, this does not
+	 * represent the scale value that the user has last set but the one that
+	 * is actually drawn. This is used for a smooth camera zoom, e.g. the user
+	 * zooms in, which sets the scale value to a specific value and the
+	 * smoothScale value is then over the duration of several frames slowly
+	 * adjusted to the scale value in order to have a smoother cam movement.
+	 */
 	protected float smoothScaleY = 1;
+
+	/**
+	 * The "smooth" offset. Unlike the offset values, this does not
+	 * represent the offset value that the user has last set but the one that
+	 * is actually drawn. This is used for a smooth camera movement, e.g. the
+	 * user pans, which sets the offset value to a specific value and the
+	 * smoothOffset value is then over the duration of several frames slowly
+	 * adjusted to the offset value in order to have a smoother cam movement.
+	 */
 	protected float smoothOffsetX = 0;
+
+	/**
+	 * The "smooth" offset. Unlike the offset values, this does not
+	 * represent the offset value that the user has last set but the one that
+	 * is actually drawn. This is used for a smooth camera movement, e.g. the
+	 * user pans, which sets the offset value to a specific value and the
+	 * smoothOffset value is then over the duration of several frames slowly
+	 * adjusted to the offset value in order to have a smoother cam movement.
+	 */
 	protected float smoothOffsetY = 0;
 
+	/**
+	 * The delay that is applied to the smooth cam movement.
+	 * The value is altered every frame by a value of
+	 * (offset - smoothOffset) / scalingDelay (respectively scale), so
+	 * <b>increasing</b> this value results in <b>slower movement</b> of the
+	 * camera.
+	 */
 	private float scalingDelay = 4f;
 
+	/**
+	 * The timestep of the data field that is currently being drawn.
+	 */
 	public int currentTime = 1;
 
+	/**
+	 * A flag that specifies whether or not the display automatically advances
+	 * in time.
+	 */
 	public boolean autoAdvance = false;
+
+	/**
+	 * The speed at which the dispaly advances through time <b>if</b> the
+	 * autoAdvance field is set.
+	 */
 	public float autoSpeed = 2f;
+
+	/**
+	 * The last timestep at which time was automatically advanced.
+	 */
 	private long lastAutoStepAt = new Date().getTime();
 
-	private Vector<BioVizEvent> timeChangedListeners = new Vector<BioVizEvent>();
+	/**
+	 * This contains instances that need to be notified as soon as the
+	 * currentTime value is altered.
+	 */
+	private Vector<BioVizEvent> timeChangedListeners =
+			new Vector<BioVizEvent>();
 
-
+	/**
+	 * The fields that are present on this circuit.
+	 */
 	public Vector<DrawableField> fields = new Vector<>();
+
+	/**
+	 * The droplets that are present on this circuit.
+	 */
 	public Vector<DrawableDroplet> droplets = new Vector<>();
+
+	/**
+	 * The droplets that are present on this circuit but should not be drawn
+	 * at this moment.
+	 */
 	public Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
 
+	/**
+	 * The current displayOptions that determine drawing parameters.
+	 */
 	public DisplayOptions displayOptions = new DisplayOptions();
 
+	/**
+	 * The logger for this instance.
+	 */
 	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
-	
+
+	/**
+	 * The visualization this circuit is drawn in.
+	 */
 	public BioViz parent;
 
 	public void prevStep() {
