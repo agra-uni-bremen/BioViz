@@ -47,7 +47,7 @@ public class BioParserListener extends BioBaseListener {
 	private int maxY = 0;
 	private int nGrids = 0;
 
-	private Biochip chip;
+
 	private HashMap<Integer, String> fluidTypes = new HashMap<>();
 	private ArrayList<Net> nets = new ArrayList<>();
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
@@ -61,6 +61,15 @@ public class BioParserListener extends BioBaseListener {
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
+
+
+	private Biochip chip;
+
+	private ArrayList<String> errors;
+
+	public ArrayList<String> getErrors() {
+		return errors;
+	}
 
 	public Biochip getBiochip() {
 		return chip;
@@ -368,7 +377,7 @@ public class BioParserListener extends BioBaseListener {
 	public void exitBio(BioContext ctx) {
 
 		chip = new Biochip();
-		ArrayList<String> errors = new ArrayList<String>();
+		errors = new ArrayList<String>();
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {
