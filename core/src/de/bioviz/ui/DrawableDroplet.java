@@ -27,7 +27,7 @@ public class DrawableDroplet extends DrawableSprite {
 	private Color dropletColor;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
-		super(TextureE.Droplet, parent.parent);
+		super(TextureE.Droplet, parent.getParent());
 		this.parentCircuit = parent;
 		if (randnum == null) {
 			randnum = new Random();
@@ -56,13 +56,13 @@ public class DrawableDroplet extends DrawableSprite {
 
 		Net net = droplet.getNet();
 		if (net != null &&
-			parentCircuit.displayOptions.getOption(
+			parentCircuit.getDisplayOptions().getOption(
 					BDisplayOptions.NetColorOnDroplets)) {
 			color = net.getColor().buildGdxColor();
 		}
 
 
-		Point p = droplet.getPositionAt(circ.currentTime);
+		Point p = droplet.getPositionAt(circ.getCurrentTime());
 
 		// if the droplet is currently not present, make it 'invisible' by
 		// making it totally transparent
@@ -71,7 +71,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 		}
 		else {
-			if (parentCircuit.hiddenDroplets.contains(this)) {
+			if (parentCircuit.getHiddenDroplets().contains(this)) {
 				color.a = 0.25f;
 			}
 			else {
@@ -94,12 +94,12 @@ public class DrawableDroplet extends DrawableSprite {
 
 		int dropID = droplet.getID();
 
-		if (parentCircuit.displayOptions.getOption(
+		if (parentCircuit.getDisplayOptions().getOption(
 				BDisplayOptions.DropletIDs)) {
 			msg = Integer.toString(dropID) + " ";
 
 		}
-		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
+		if (parentCircuit.getDisplayOptions().getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
 			Integer fluidID = parentCircuit.getData().fluidID(dropID);
 			if (fluidID != null) {
@@ -110,7 +110,7 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 
 		}
-		if (parentCircuit.displayOptions
+		if (parentCircuit.getDisplayOptions()
 				.getOption(BDisplayOptions.FluidNames)) {
 			Integer fluidID = parentCircuit.getData().fluidID(dropID);
 			if (fluidID != null) {
@@ -134,15 +134,15 @@ public class DrawableDroplet extends DrawableSprite {
 
 		DrawableCircuit circ = parentCircuit;
 
-		Point p = droplet.getPositionAt(circ.currentTime);
+		Point p = droplet.getPositionAt(circ.getCurrentTime());
 		boolean withinTimeRange = false;
 
 		if (p == null) {
 
-			if (circ.currentTime < droplet.getSpawnTime()) {
+			if (circ.getCurrentTime() < droplet.getSpawnTime()) {
 				p = droplet.getFirstPosition();
 			}
-			else if (circ.currentTime > droplet.getMaxTime()) {
+			else if (circ.getCurrentTime() > droplet.getMaxTime()) {
 				p = droplet.getLastPosition();
 			}
 		}
@@ -157,7 +157,7 @@ public class DrawableDroplet extends DrawableSprite {
 			droplet.update();
 			route.draw();
 
-			if (isVisible() && viz.currentCircuit.displayOptions.
+			if (isVisible() && viz.currentCircuit.getDisplayOptions().
 					getOption(BDisplayOptions.Droplets)) {
 
 				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
@@ -168,7 +168,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 				// if hidden, place below grid
 				int invisibleIndex =
-						this.parentCircuit.hiddenDroplets.indexOf(this);
+						this.parentCircuit.getHiddenDroplets().indexOf(this);
 				if (invisibleIndex >= 0) {
 
 					this.setScaleX(32f);
@@ -197,11 +197,11 @@ public class DrawableDroplet extends DrawableSprite {
 	}
 
 	public void toggleGridVisibility() {
-		if (parentCircuit.hiddenDroplets.contains(this)) {
-			parentCircuit.hiddenDroplets.remove(this);
+		if (parentCircuit.getHiddenDroplets().contains(this)) {
+			parentCircuit.getHiddenDroplets().remove(this);
 		}
 		else {
-			parentCircuit.hiddenDroplets.add(this);
+			parentCircuit.getHiddenDroplets().add(this);
 		}
 	}
 

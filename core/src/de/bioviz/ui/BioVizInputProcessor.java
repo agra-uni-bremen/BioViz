@@ -96,7 +96,7 @@ public class BioVizInputProcessor implements InputProcessor {
 
 	void toggleOptions(int keycode) {
 		BDisplayOptions.findOption(keycode, ctrl, shift, alt).ifPresent(
-				it -> parentViz.currentCircuit.displayOptions.toggleOption
+				it -> parentViz.currentCircuit.getDisplayOptions().toggleOption
 						(it));
 	}
 
@@ -131,7 +131,7 @@ public class BioVizInputProcessor implements InputProcessor {
 			multiTouchZoom = false;
 		}
 
-		for (DrawableDroplet d : parentViz.currentCircuit.droplets) {
+		for (DrawableDroplet d : parentViz.currentCircuit.getDroplets()) {
 			if (d.isHovered()) {
 				if (button == Buttons.LEFT) {
 					d.toggleGridVisibility();

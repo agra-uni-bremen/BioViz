@@ -105,7 +105,7 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public DrawableField(
 			final BiochipField field, final DrawableCircuit parent) {
-		super(TextureE.GridMarker, parent.parent);
+		super(TextureE.GridMarker, parent.getParent());
 		this.setParentCircuit(parent);
 		this.setField(field);
 		super.addLOD(PIXELIZED_ZOOM_LEVEL, TextureE.BlackPixel);
@@ -134,7 +134,7 @@ public class DrawableField extends DrawableSprite {
 
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = getParentCircuit();
-		int t = circ.currentTime;
+		int t = circ.getCurrentTime();
 		float xCoord = circ.xCoordOnScreen(getField().x());
 		float yCoord = circ.yCoordOnScreen(getField().y());
 		TextureE texture = TextureE.GridMarker;
@@ -240,7 +240,7 @@ public class DrawableField extends DrawableSprite {
 		 */
 		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
 
-		if (getField().isBlocked(getParentCircuit().currentTime)) {
+		if (getField().isBlocked(getParentCircuit().getCurrentTime())) {
 			result.add(BLOCKED_COLOR);
 			colorOverlayCount++;
 		}
@@ -340,10 +340,10 @@ public class DrawableField extends DrawableSprite {
 			for (final Droplet d : getParentCircuit().getData().getDroplets()) {
 				if (isPartOfInterferenceRegion(d)) {
 					boolean interferenceViolation = false;
-					for (DrawableDroplet d2 : parentCircuit.droplets) {
-						if (d2.droplet.getPositionAt(this.parentCircuit.currentTime) != null &&
+					for (DrawableDroplet d2 : parentCircuit.getDroplets()) {
+						if (d2.droplet.getPositionAt(this.parentCircuit.getCurrentTime()) != null &&
 								d2.droplet.getNet() != d.getNet() &&
-								d2.droplet.getPositionAt(this.parentCircuit.currentTime).equals(this.field.pos)) {
+								d2.droplet.getPositionAt(this.parentCircuit.getCurrentTime()).equals(this.field.pos)) {
 							result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 							++colorOverlayCount;
 							interferenceViolation = true;
@@ -361,7 +361,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		int t = getParentCircuit().currentTime;
+		int t = getParentCircuit().getCurrentTime();
 		if (option(Actuations)) {
 			if (getField().isActuated(t)) {
 				result.add(Colors.ACTAUTED_COLOR);
@@ -459,9 +459,9 @@ public class DrawableField extends DrawableSprite {
 	 * @return whether or not this field is part of its interference region
 	 */
 	private boolean isPartOfInterferenceRegion(Droplet d) {
-		Point cur_pos = d.getPositionAt(getParentCircuit().currentTime);
-		Point prev_pos = d.getPositionAt(getParentCircuit().currentTime-1);
-		if(parentCircuit.displayOptions
+		Point cur_pos = d.getPositionAt(getParentCircuit().getCurrentTime());
+		Point prev_pos = d.getPositionAt(getParentCircuit().getCurrentTime()-1);
+		if(parentCircuit.getDisplayOptions()
 				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
 			return 	(cur_pos != null &&
 					cur_pos.adjacent(this.getField().pos)) ||
@@ -528,6 +528,6 @@ public class DrawableField extends DrawableSprite {
 	 * @return whether the option is set
 	 */
 	private boolean option(BDisplayOptions opt) {
-		return getParentCircuit().displayOptions.getOption(opt);
+		return getParentCircuit().getDisplayOptions().getOption(opt);
 	}
 }

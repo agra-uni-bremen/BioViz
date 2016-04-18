@@ -964,10 +964,10 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.trace("Received timer event ("
-					+ currentViz.currentCircuit.currentTime + ")");
-			this.time.setValue(currentViz.currentCircuit.currentTime);
+					+ currentViz.currentCircuit.getCurrentTime() + ")");
+			this.time.setValue(currentViz.currentCircuit.getCurrentTime());
 			this.timeInfo.setText(
-					Integer.toString(currentViz.currentCircuit.currentTime));
+					Integer.toString(currentViz.currentCircuit.getCurrentTime()));
 
 		}
 	}
@@ -1085,7 +1085,7 @@ public class DesktopLauncher extends JFrame {
 			if (currentViz.currentCircuit != null) {
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
-				int oldTime = currentViz.currentCircuit.currentTime;
+				int oldTime = currentViz.currentCircuit.getCurrentTime();
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
@@ -1231,14 +1231,14 @@ public class DesktopLauncher extends JFrame {
 			this.option = option;
 
 			this.addActionListener(l -> {
-					currentViz.currentCircuit.displayOptions.toggleOption(option);
-					setState(currentViz.currentCircuit.displayOptions.getOption(option));
+					currentViz.currentCircuit.getDisplayOptions().toggleOption(option);
+					setState(currentViz.currentCircuit.getDisplayOptions().getOption(option));
 				});
 		}
 		
 		public void updateState() {
 			setState(currentViz.currentCircuit.
-					displayOptions.getOption(option));
+					getDisplayOptions().getOption(option));
 		}
 	}
 }

@@ -23,6 +23,12 @@ import org.slf4j.Logger;
  * @author Jannis Stoppe
  */
 public class DrawableCircuit implements Drawable {
+
+	/**
+	 * The default value for the scalingDelay field.
+	 */
+	private static final float DEFAULT_SCALING_DELAY = 4f;
+
 	/**
 	 * This represents the actual biochip structure that is drawn by this
 	 * DrawableCircuit.
@@ -86,24 +92,24 @@ public class DrawableCircuit implements Drawable {
 	 * <b>increasing</b> this value results in <b>slower movement</b> of the
 	 * camera.
 	 */
-	private float scalingDelay = 4f;
+	private float scalingDelay = DEFAULT_SCALING_DELAY;
 
 	/**
 	 * The timestep of the data field that is currently being drawn.
 	 */
-	public int currentTime = 1;
+	private int currentTime = 1;
 
 	/**
 	 * A flag that specifies whether or not the display automatically advances
 	 * in time.
 	 */
-	public boolean autoAdvance = false;
+	private boolean autoAdvance = false;
 
 	/**
 	 * The speed at which the dispaly advances through time <b>if</b> the
 	 * autoAdvance field is set.
 	 */
-	public float autoSpeed = 2f;
+	private float autoSpeed = 2f;
 
 	/**
 	 * The last timestep at which time was automatically advanced.
@@ -120,33 +126,33 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * The fields that are present on this circuit.
 	 */
-	public Vector<DrawableField> fields = new Vector<>();
+	private Vector<DrawableField> fields = new Vector<>();
 
 	/**
 	 * The droplets that are present on this circuit.
 	 */
-	public Vector<DrawableDroplet> droplets = new Vector<>();
+	private Vector<DrawableDroplet> droplets = new Vector<>();
 
 	/**
 	 * The droplets that are present on this circuit but should not be drawn
 	 * at this moment.
 	 */
-	public Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
+	private Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
 
 	/**
 	 * The current displayOptions that determine drawing parameters.
 	 */
-	public DisplayOptions displayOptions = new DisplayOptions();
+	private DisplayOptions displayOptions = new DisplayOptions();
 
 	/**
 	 * The logger for this instance.
 	 */
-	static Logger logger = LoggerFactory.getLogger(DrawableCircuit.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(DrawableCircuit.class);
 
 	/**
 	 * The visualization this circuit is drawn in.
 	 */
-	public BioViz parent;
+	private BioViz parent;
 
 	private int autoloop_OvertimeCounter = 0;
 
@@ -157,25 +163,25 @@ public class DrawableCircuit implements Drawable {
 	private DrawableField hoveredField = null;
 
 	public void prevStep() {
-		autoAdvance=false;
-		setCurrentTime(currentTime - 1);
+		setAutoAdvance(false);
+		setCurrentTime(getCurrentTime() - 1);
 
 	}
 
 	public void nextStep() {
-		autoAdvance=false;
-		setCurrentTime(currentTime+1);
+		setAutoAdvance(false);
+		setCurrentTime(getCurrentTime()+1);
 	}
 	
 	public void toggleAutoAdvance() {
-		this.autoAdvance = !(this.autoAdvance);
+		this.setAutoAdvance(!(this.isAutoAdvance()));
 	}
 
 	public void setCurrentTime(int timeStep) {
-		if (parent != null) {
+		if (getParent() != null) {
 			if (timeStep >= 1 && timeStep <= getData().getMaxT()) {
 				currentTime = timeStep;
-				parent.callTimeChangedListeners();
+				getParent().callTimeChangedListeners();
 			}
 		} else {
 			throw new RuntimeException("circuit parent is null");
@@ -189,47 +195,47 @@ public class DrawableCircuit implements Drawable {
 	 * @param toDraw the data to draw
 	 */
 	public DrawableCircuit(Biochip toDraw, BioViz parent) {
-		logger.debug("Creating new drawable chip based on " + toDraw);
+		LOGGER.debug("Creating new drawable chip based on " + toDraw);
 		this.setData(toDraw);
-		this.parent = parent;
+		this.setParent(parent);
 		this.initializeDrawables();
-		this.displayOptions.addOptionChangedEvent(e -> {
+		this.getDisplayOptions().addOptionChangedEvent(e -> {
 			if (e.equals(BDisplayOptions.CellUsage)) {
-				boolean doIt = displayOptions.getOption(e);
+				boolean doIt = getDisplayOptions().getOption(e);
 				if (doIt) {
 					getData().computeCellUsage();
 				}
 			}
 		});
-		logger.debug("New DrawableCircuit created successfully.");
+		LOGGER.debug("New DrawableCircuit created successfully.");
 	}
 	/**
 	 * Initializes the drawables according to the circuit stored in the data field
 	 */
 	private void initializeDrawables() {
 		// clear remaining old data first, if any
-		this.fields.clear();
-		this.droplets.clear();
+		this.getFields().clear();
+		this.getDroplets().clear();
 
-		logger.debug("Initializing drawables: {} fields, {} droplets", getData().getAllCoordinates().size(), getData().getDroplets().size());
+		LOGGER.debug("Initializing drawables: {} fields, {} droplets", getData().getAllCoordinates().size(), getData().getDroplets().size());
 
 		//setup fields
 		getData().getAllFields().forEach(fld -> {
 			DrawableField f = new DrawableField(fld, this);
-			this.fields.add(f);
+			this.getFields().add(f);
 		});
 
-		logger.debug("Fields set up.");
+		LOGGER.debug("Fields set up.");
 
 		//setup droplets
 		for (Droplet d : getData().getDroplets()) {
 			DrawableDroplet dd = new DrawableDroplet(d, this);
-			this.droplets.add(dd);
+			this.getDroplets().add(dd);
 		}
 
-		logger.debug("Droplets set up.");
+		LOGGER.debug("Droplets set up.");
 
-		logger.debug("Drawable initialization successfully done.");
+		LOGGER.debug("Drawable initialization successfully done.");
 	}
 
 	@Override
@@ -238,25 +244,25 @@ public class DrawableCircuit implements Drawable {
 		setSmoothOffsetX(getSmoothOffsetX() + (getOffsetX() - getSmoothOffsetX()) / scalingDelay);
 		setSmoothOffsetY(getSmoothOffsetY() + (getOffsetY() - getSmoothOffsetY()) / scalingDelay);
 
-		if (displayOptions.getOption(BDisplayOptions.Coordinates)) {
+		if (getDisplayOptions().getOption(BDisplayOptions.Coordinates)) {
 			displayCoordinates();
 		}
 		else {
 			removeDisplayedCoordinates();
 		}
-		if (displayOptions.getOption(BDisplayOptions.CellUsage)) {
+		if (getDisplayOptions().getOption(BDisplayOptions.CellUsage)) {
 
 		}
 
-		if (autoAdvance) {
+		if (isAutoAdvance()) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long) ((1f / this.autoSpeed) * 1000) < current) {
+			if (lastAutoStepAt + (long) ((1f / this.getAutoSpeed()) * 1000) < current) {
 				lastAutoStepAt = current;
 
-				logger.trace("data.getMaxT: {}\tcurrentTime: {}",getData().getMaxT(), currentTime);
-				setCurrentTime(currentTime +1);
-				if (currentTime >= getData().getMaxT() &&
-						this.displayOptions.getOption(
+				LOGGER.trace("data.getMaxT: {}\tcurrentTime: {}",getData().getMaxT(), getCurrentTime());
+				setCurrentTime(getCurrentTime() +1);
+				if (getCurrentTime() >= getData().getMaxT() &&
+						this.getDisplayOptions().getOption(
 								BDisplayOptions.LoopAutoplay)) {
 					++autoloop_OvertimeCounter;
 					if (autoloop_OvertimeCounter > 5) { //todo magic number
@@ -267,14 +273,14 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 
-		for (DrawableField f : this.fields) {
+		for (DrawableField f : this.getFields()) {
 			if (f.isHovered()) {
 				this.hoveredField = f;
 			}
 			f.draw();
 		}
 
-		for (DrawableDroplet d : this.droplets) {
+		for (DrawableDroplet d : this.getDroplets()) {
 			d.draw();
 		}
 	
@@ -298,7 +304,7 @@ public class DrawableCircuit implements Drawable {
 			maxX = Integer.MIN_VALUE,
 			maxY = Integer.MIN_VALUE;
 
-		for (DrawableField f : this.fields) {
+		for (DrawableField f : this.getFields()) {
 			if (minX > f.getField().x()) {
 				minX = f.getField().x();
 			}
@@ -342,7 +348,7 @@ public class DrawableCircuit implements Drawable {
 		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
-			this.parent.messageCenter.addHUDMessage(
+			this.getParent().messageCenter.addHUDMessage(
 					this.hashCode() + i,	// unique ID for each message
 					Integer.toString(i).trim(),	// message
 					this.xCoordOnScreen(i),	// x
@@ -352,7 +358,7 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		for (int i = minY; i < maxY + 1; i++) {
-			this.parent.messageCenter.addHUDMessage(
+			this.getParent().messageCenter.addHUDMessage(
 					this.hashCode() + maxX + Math.abs(minY) + 1 + i,
 				// unique ID for each message, starting after the previous ids
 
@@ -370,7 +376,7 @@ public class DrawableCircuit implements Drawable {
 			maxX = Integer.MIN_VALUE,
 			maxY = Integer.MIN_VALUE;
 
-		for (DrawableField f : this.fields) {
+		for (DrawableField f : this.getFields()) {
 			if (minX > f.getField().x()) {
 				minX = f.getField().x();
 			}
@@ -387,7 +393,7 @@ public class DrawableCircuit implements Drawable {
 		
 		// remove all HUD messages
 		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
-			this.parent.messageCenter.removeHUDMessage(this.hashCode() + i);
+			this.getParent().messageCenter.removeHUDMessage(this.hashCode() + i);
 		}
 	}
 
@@ -547,7 +553,7 @@ public class DrawableCircuit implements Drawable {
 		// FIXME Does not properly handle non-0 minimum coordinates yet
 		Point max = this.getData().getMaxCoord();
 		Point min = this.getData().getMinCoord();
-		logger.debug("Auto zoom around " + min + " <--/--> " + max);
+		LOGGER.debug("Auto zoom around " + min + " <--/--> " + max);
 
 		float x = (1f / (max.fst - min.fst + 2));
 		float y = (1f / (max.snd - min.snd + 2));
@@ -560,7 +566,7 @@ public class DrawableCircuit implements Drawable {
 		this.setOffsetY((max.snd) / -2f + min.snd / -2f);
 
 
-		logger.debug("Offset now at " + this.getOffsetX() + "/" + this.getOffsetY());
+		LOGGER.debug("Offset now at " + this.getOffsetX() + "/" + this.getOffsetY());
 	}
 
 	/**
@@ -650,5 +656,65 @@ public class DrawableCircuit implements Drawable {
 
 	protected void setSmoothOffsetY(float smoothOffsetY) {
 		this.smoothOffsetY = smoothOffsetY;
+	}
+
+	public int getCurrentTime() {
+		return currentTime;
+	}
+
+	public boolean isAutoAdvance() {
+		return autoAdvance;
+	}
+
+	public void setAutoAdvance(boolean autoAdvance) {
+		this.autoAdvance = autoAdvance;
+	}
+
+	public float getAutoSpeed() {
+		return autoSpeed;
+	}
+
+	public void setAutoSpeed(float autoSpeed) {
+		this.autoSpeed = autoSpeed;
+	}
+
+	public Vector<DrawableField> getFields() {
+		return fields;
+	}
+
+	public void setFields(Vector<DrawableField> fields) {
+		this.fields = fields;
+	}
+
+	public Vector<DrawableDroplet> getDroplets() {
+		return droplets;
+	}
+
+	public void setDroplets(Vector<DrawableDroplet> droplets) {
+		this.droplets = droplets;
+	}
+
+	public Vector<DrawableDroplet> getHiddenDroplets() {
+		return hiddenDroplets;
+	}
+
+	public void setHiddenDroplets(Vector<DrawableDroplet> hiddenDroplets) {
+		this.hiddenDroplets = hiddenDroplets;
+	}
+
+	public DisplayOptions getDisplayOptions() {
+		return displayOptions;
+	}
+
+	public void setDisplayOptions(DisplayOptions displayOptions) {
+		this.displayOptions = displayOptions;
+	}
+
+	public BioViz getParent() {
+		return parent;
+	}
+
+	public void setParent(BioViz parent) {
+		this.parent = parent;
 	}
 }

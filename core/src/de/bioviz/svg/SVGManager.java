@@ -156,7 +156,7 @@ public class SVGManager {
 
 		LOGGER.debug("[SVG] Creating all needed colored cores.");
 
-		for (final DrawableField f : circ.fields) {
+		for (final DrawableField f : circ.getFields()) {
 			String key = f.getDisplayValues().getTexture().toString() + "-" +
 					f.getColor().toString().substring(0, colorDigits);
 			// don't create the svg core code twice
@@ -166,7 +166,7 @@ public class SVGManager {
 								f.getColor(), strokeColor));
 			}
 		}
-		for (final DrawableDroplet d : circ.droplets) {
+		for (final DrawableDroplet d : circ.getDroplets()) {
 			String key = "Droplet" + "-" +
 					d.getColor().toString().substring(0, colorDigits);
 			// don't create the svg core code twice
@@ -208,12 +208,12 @@ public class SVGManager {
 		colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
 
-		for (final DrawableField field : circ.fields) {
+		for (final DrawableField field : circ.getFields()) {
 			sb.append(toSVG(field));
 		}
-		for (final DrawableDroplet drop : circ.droplets) {
+		for (final DrawableDroplet drop : circ.getDroplets()) {
 			if (drop.getDisplayColor().a > 0.1f &&
-					!circ.hiddenDroplets.contains(drop)) {
+					!circ.getHiddenDroplets().contains(drop)) {
 				sb.append(toSVG(drop));
 			}
 		}
