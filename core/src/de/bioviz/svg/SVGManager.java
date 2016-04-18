@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Source;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.DisplayValues;
 import de.bioviz.ui.DrawableCircuit;
@@ -274,8 +275,17 @@ public class SVGManager {
 		}
 		// run over each droplet again and draw the arrows
 		// otherwise arrows can get under droplets
-		for (final DrawableDroplet drop : circuit.droplets) {
-			sb.append(exportArrows(drop));
+		if (circuit.displayOptions.getOption(BDisplayOptions
+				.LongNetIndicatorsOnDroplets)) {
+			for (final DrawableDroplet drop : circuit.droplets) {
+				sb.append(exportDropletArrows(drop));
+			}
+		}
+
+		// append longNetIndicatorsOnFields when needed
+		if (circuit.displayOptions.getOption(BDisplayOptions
+				.LongNetIndicatorsOnFields)) {
+			sb.append(exportStartEndArrows());
 		}
 
 		if (svgExportSettings.getInformationString()) {
@@ -488,12 +498,36 @@ public class SVGManager {
 	}
 
 	/**
+	 * Creates svg arrows from all net sources to their net targets.
+	 *
+	 * @return svg string containing all start end arrows
+	 */
+	private String exportStartEndArrows() {
+
+		Set<Net> nets = circuit.data.getNets();
+		String arrows = "";
+
+		for (final Net net : nets) {
+			for(final Source source : net.getSources()) {
+					Point startPoint = source.startPosition;
+					Point endPoint = net.getTarget();
+					if (startPoint != null && endPoint != null &&
+							!startPoint.equals(endPoint)) {
+						Color arrowColor = Color.BLACK;
+						arrows += createSVGArrow(startPoint, endPoint, arrowColor);
+					}
+			}
+		}
+		return arrows;
+	}
+
+	/**
 	 * Creates the svg string for the longNetIndicator arrows.
 	 *
 	 * @param drawableDrop the drop
 	 * @return svg string
 	 */
-	private String exportArrows(final DrawableDroplet drawableDrop) {
+	private String exportDropletArrows(final DrawableDroplet drawableDrop) {
 
 		int time = circuit.currentTime;
 		Point startPoint = drawableDrop.droplet.getFirstPosition();
@@ -504,28 +538,16 @@ public class SVGManager {
 		String arrows = "";
 		Color dropColor = drawableDrop.getColor();
 
-		if (circuit.displayOptions.getOption(BDisplayOptions
-				.LongNetIndicatorsOnDroplets)) {
-			if (startPoint != null && dropletPos != null &&
-					!startPoint.equals(dropletPos))  {
-				Color arrowColor = dropColor.cpy().sub(0.2f, 0.2f, 0.2f, 0);
-				arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
-			}
-
-			if (dropletPos != null && endPoint != null &&
-					!dropletPos.equals(endPoint)) {
-				Color arrowColor = dropColor.cpy().add(0.2f, 0.2f, 0.2f, 0);
-				arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
-			}
+		if (startPoint != null && dropletPos != null &&
+				!startPoint.equals(dropletPos))  {
+			Color arrowColor = dropColor.cpy().sub(0.2f, 0.2f, 0.2f, 0);
+			arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
 		}
 
-		if (circuit.displayOptions.getOption(BDisplayOptions
-				.LongNetIndicatorsOnFields)) {
-			if (startPoint != null && endPoint != null &&
-					!startPoint.equals(endPoint)) {
-				Color arrowColor = Color.BLACK;
-				arrows += createSVGArrow(startPoint, endPoint, arrowColor);
-			}
+		if (dropletPos != null && endPoint != null &&
+				!dropletPos.equals(endPoint)) {
+			Color arrowColor = dropColor.cpy().add(0.2f, 0.2f, 0.2f, 0);
+			arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
 		}
 
 		return arrows;
@@ -676,8 +698,11 @@ public class SVGManager {
 		if (svgExportSettings.getColorfulExport()) {
 			LOGGER.debug("[SVG] Creating all needed colored cores.");
 
+			String key = "";
+
+			// create all needed svg defs for the fields
 			for (final DrawableField f : circuit.fields) {
-				String 	key = generateColoredID(f.getDisplayValues().getTexture()
+				key = generateColoredID(f.getDisplayValues().getTexture()
 						.toString(), f.getColor());
 				// don't create the svg core code twice
 				if (!colSvgs.containsKey(key)) {
@@ -688,18 +713,22 @@ public class SVGManager {
 				Set<Net> nets = circuit.data.getNetsOf(f.getField());
 				for (final Net n : nets) {
 					for (final GradDir dir : GradDir.values()) {
-						String id = generateColoredID("grad-" + dir.toString(),
+						key = generateColoredID("grad-" + dir.toString(),
 								n.getColor().buildGdxColor());
-						if (!colSvgs.containsKey(id)) {
-							colSvgs.put(id, svgCoreCreator
-									.getSVGLinearGradient(id, dir, n.getColor().buildGdxColor()));
+						if (!colSvgs.containsKey(key)) {
+							colSvgs.put(key, svgCoreCreator
+									.getSVGLinearGradient(key, dir,
+											n.getColor().buildGdxColor()));
 						}
 					}
 				}
 			}
+
+			// create all needed svg defs for the droplets
+			// and droplet based features
 			for (final DrawableDroplet d : circuit.droplets) {
 				// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
-				String key = generateColoredID("Droplet", d.getColor());
+				key = generateColoredID("Droplet", d.getColor());
 				// don't create the svg core code twice
 				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
@@ -709,14 +738,11 @@ public class SVGManager {
 
 				// Add every needed color for the arrowheads
 				if (circuit.displayOptions.getOption(BDisplayOptions
-						.LongNetIndicatorsOnDroplets) ||
-						circuit.displayOptions.getOption(BDisplayOptions
-								.LongNetIndicatorsOnFields)) {
+						.LongNetIndicatorsOnDroplets)) {
 					List<Color> colors = new ArrayList<>();
 					Color diffColor = new Color(0.2f, 0.2f, 0.2f, 0);
 					colors.add(d.getColor().cpy().add(diffColor));
 					colors.add(d.getColor().cpy().sub(diffColor));
-					colors.add(Color.BLACK);
 
 					for (final Color color : colors) {
 						key = generateColoredID("ArrowHead", color);
@@ -738,6 +764,17 @@ public class SVGManager {
 				}
 			}
 
+			// create the svg def for the arrowhead for the source target arrows
+			if (circuit.displayOptions.getOption(BDisplayOptions
+					.LongNetIndicatorsOnFields)) {
+				// this is needed for source target arrows
+				Color color = Color.BLACK;
+				key = generateColoredID("ArrowHead", color);
+				if (!colSvgs.containsKey(key)) {
+					colSvgs.put(key,
+							svgCoreCreator.getArrowHead(key, color));
+				}
+			}
 
 			LOGGER.debug("[SVG] Done creating colored cores.");
 		}
