@@ -8,7 +8,9 @@ import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.util.ColorCalculator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -19,11 +21,8 @@ import org.slf4j.Logger;
 
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
- * Create a ReversibleCircuit first (e.g. by loading a given .real file), then
- * create a DrawableCircuit instance for the ReversibleCircuit to draw the
- * latter.
  *
- * @author jannis
+ * @author Jannis Stoppe
  */
 public class DrawableCircuit implements Drawable {
 	/**
@@ -161,6 +160,14 @@ public class DrawableCircuit implements Drawable {
 	 */
 	public BioViz parent;
 
+	private int autoloop_OvertimeCounter = 0;
+
+	/**
+	 * The field that is currently hovered by the mouse.
+	 * May be null, so be careful.
+	 */
+	private DrawableField hoveredField = null;
+
 	public void prevStep() {
 		autoAdvance=false;
 		setCurrentTime(currentTime - 1);
@@ -198,9 +205,16 @@ public class DrawableCircuit implements Drawable {
 		this.data = toDraw;
 		this.parent = parent;
 		this.initializeDrawables();
+		this.displayOptions.addOptionChangedEvent(e -> {
+			if (e.equals(BDisplayOptions.CellUsage)) {
+				boolean doIt = displayOptions.getOption(e);
+				if (doIt) {
+					data.computeCellUsage();
+				}
+			}
+		});
 		logger.debug("New DrawableCircuit created successfully.");
 	}
-
 	/**
 	 * Initializes the drawables according to the circuit stored in the data field
 	 */
@@ -254,10 +268,22 @@ public class DrawableCircuit implements Drawable {
 
 				logger.trace("data.getMaxT: {}\tcurrentTime: {}",data.getMaxT(), currentTime);
 				setCurrentTime(currentTime +1);
+				if (currentTime >= data.getMaxT() &&
+						this.displayOptions.getOption(
+								BDisplayOptions.LoopAutoplay)) {
+					++autoloop_OvertimeCounter;
+					if (autoloop_OvertimeCounter > 5) { //todo magic number
+						setCurrentTime(1);
+						autoloop_OvertimeCounter = 0;
+					}
+				}
 			}
 		}
 
 		for (DrawableField f : this.fields) {
+			if (f.isHovered()) {
+				this.hoveredField = f;
+			}
 			f.draw();
 		}
 
@@ -273,7 +299,7 @@ public class DrawableCircuit implements Drawable {
 	 * This in fact uses the message center to display the numbers, so the
 	 * actual drawing will be done after the rest has been drawn.
 	 * 
-	 * @author jannis
+	 * @author Jannis Stoppe
 	 */
 	private void displayCoordinates() {
 		// calculate current dimensions first so the coordinates can be either
@@ -286,17 +312,17 @@ public class DrawableCircuit implements Drawable {
 			maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.fields) {
-			if (minX > f.field.x()) {
-				minX = f.field.x();
+			if (minX > f.getField().x()) {
+				minX = f.getField().x();
 			}
-			if (minY > f.field.y()) {
-				minY = f.field.y();
+			if (minY > f.getField().y()) {
+				minY = f.getField().y();
 			}
-			if (maxX < f.field.x()) {
-				maxX = f.field.x();
+			if (maxX < f.getField().x()) {
+				maxX = f.getField().x();
 			}
-			if (maxY < f.field.y()) {
-				maxY = f.field.y();
+			if (maxY < f.getField().y()) {
+				maxY = f.getField().y();
 			}
 		}
 		
@@ -358,17 +384,17 @@ public class DrawableCircuit implements Drawable {
 			maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.fields) {
-			if (minX > f.field.x()) {
-				minX = f.field.x();
+			if (minX > f.getField().x()) {
+				minX = f.getField().x();
 			}
-			if (minY > f.field.y()) {
-				minY = f.field.y();
+			if (minY > f.getField().y()) {
+				minY = f.getField().y();
 			}
-			if (maxX < f.field.x()) {
-				maxX = f.field.x();
+			if (maxX < f.getField().x()) {
+				maxX = f.getField().x();
 			}
-			if (maxY < f.field.y()) {
-				maxY = f.field.y();
+			if (maxY < f.getField().y()) {
+				maxY = f.getField().y();
 			}
 		}
 		
@@ -440,51 +466,6 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in-java-to-rgb-without-using-java-awt-color-disallowe
-	private static Color hsvToRgb(float hue, final float saturation, final float value) {
-
-		while (hue >= 1) {
-			hue -= 1;
-		}
-		while (hue < 0) {
-			hue += 1;
-		}
-		int h = (int) (hue * 6);
-		float f = hue * 6 - h;
-		float p = value * (1 - saturation);
-		float q = value * (1 - f * saturation);
-		float t = value * (1 - (1 - f) * saturation);
-
-		switch (h) {
-			case 0:
-				return new Color(value, t, p, 1);
-			case 1:
-				return new Color(q, value, p, 1);
-			case 2:
-				return new Color(p, value, t, 1);
-			case 3:
-				return new Color(p, q, value, 1);
-			case 4:
-				return new Color(t, p, value, 1);
-			case 5:
-				return new Color(value, p, q, 1);
-			default:
-				throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
-		}
-	}
-
-
-	public void toggleShowUsage() {
-		boolean doIt = displayOptions.toggleOption(BDisplayOptions.CellUsage);
-		if (doIt) {
-			data.computeCellUsage();
-		}
-	}
-
-	public void toggleShowDroplets() {
-		boolean showDroplets = displayOptions.toggleOption(BDisplayOptions.Droplets);
-		droplets.forEach(d -> {d.isVisible=showDroplets;});
-	}
 
 	/**
 	 * retrieves the current x scaling factor
@@ -563,9 +544,6 @@ public class DrawableCircuit implements Drawable {
 		this.offsetY = targetOffsetY;
 	}
 
-	private int busDrawn = 0;
-
-
 	/**
 	 * Resets the zoom to 1 px per element
 	 */
@@ -632,5 +610,13 @@ public class DrawableCircuit implements Drawable {
 		for (BiochipField biochipField : f) {
 
 		}
+	}
+
+	/**
+	 * Retrieves the field that is currently being hovered.
+	 * @return the currently hovered field.
+	 */
+	public DrawableField getHoveredField() {
+		return this.hoveredField;
 	}
 }

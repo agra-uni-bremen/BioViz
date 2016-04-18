@@ -19,7 +19,7 @@ import java.util.List;
  * the parse), it does not make sense to re-use instances of this class. There may be use
  * cases for that but most likely it is a bug.
  *
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 public class BioErrorListener extends BaseErrorListener {
 

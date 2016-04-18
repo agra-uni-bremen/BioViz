@@ -23,8 +23,8 @@ public class DrawableDroplet extends DrawableSprite {
 	private static Random randnum = null;
 
 	public DrawableCircuit parentCircuit;
-	
-	private Color dropletColor; 
+
+	private Color dropletColor;
 
 	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
 		super(TextureE.Droplet, parent.parent);
@@ -56,9 +56,9 @@ public class DrawableDroplet extends DrawableSprite {
 
 		Net net = droplet.getNet();
 		if (net != null &&
-			parentCircuit.displayOptions.getOption(BDisplayOptions
-														   .NetColors)) {
-			color = new Color(net.getColor());
+			parentCircuit.displayOptions.getOption(
+					BDisplayOptions.NetColorOnDroplets)) {
+			color = net.getColor().buildGdxColor();
 		}
 
 
@@ -92,15 +92,16 @@ public class DrawableDroplet extends DrawableSprite {
 	public String getMsg() {
 		String msg = "";
 
+		int dropID = droplet.getID();
+
 		if (parentCircuit.displayOptions.getOption(
 				BDisplayOptions.DropletIDs)) {
-			msg = Integer.toString(droplet.getID()) + " ";
+			msg = Integer.toString(dropID) + " ";
 
 		}
-		logger.trace("droplet msg after dropletIDs option: {}", msg);
 		if (parentCircuit.displayOptions.getOption(BDisplayOptions.FluidIDs)) {
 			// note: fluidID may be null!
-			Integer fluidID = parentCircuit.data.fluidID(droplet.getID());
+			Integer fluidID = parentCircuit.data.fluidID(dropID);
 			if (fluidID != null) {
 				if (!msg.isEmpty()) {
 					msg += "-";
@@ -109,23 +110,23 @@ public class DrawableDroplet extends DrawableSprite {
 			}
 
 		}
-		logger.trace("droplet msg after fluidIDs option: {}", msg);
 		if (parentCircuit.displayOptions
 				.getOption(BDisplayOptions.FluidNames)) {
-			String fname = this.parentCircuit.data
-					.fluidType(this.droplet.getID());
-			//System.out.println("fname: " + fname);
-			//System.out.println(this.parentCircuit.data.fluidTypes);
-			if (fname != null) {
-				if (!msg.isEmpty()) {
-					msg += "-";
+			Integer fluidID = parentCircuit.data.fluidID(dropID);
+			if (fluidID != null) {
+				String fname = parentCircuit.data.fluidType(fluidID);
+
+				if (fname != null) {
+					if (!msg.isEmpty()) {
+						msg += "-";
+					}
+					msg += " " + fname;
 				}
-				msg += " " + fname;
 			}
 
 		}
 		logger.trace("droplet msg after fluidNames option: {}", msg);
-		return msg;
+		return msg.isEmpty() ? null : msg;
 	}
 
 	@Override
@@ -156,29 +157,30 @@ public class DrawableDroplet extends DrawableSprite {
 			droplet.update();
 			route.draw();
 
-			if (isVisible) {
+			if (isVisible() && viz.currentCircuit.displayOptions.
+					getOption(BDisplayOptions.Droplets)) {
 
 				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
 				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
 
-				this.scaleX = circ.smoothScaleX;
-				this.scaleY = circ.smoothScaleY;
+				this.setScaleX(circ.smoothScaleX);
+				this.setScaleY(circ.smoothScaleY);
 
 				// if hidden, place below grid
 				int invisibleIndex =
 						this.parentCircuit.hiddenDroplets.indexOf(this);
 				if (invisibleIndex >= 0) {
 
-					this.scaleX = 32f;
-					this.scaleY = 32f;
+					this.setScaleX(32f);
+					this.setScaleY(32f);
 
 					xCoord = Gdx.graphics.getWidth() / 2f
-							 - this.scaleX * (invisibleIndex + 1);
-					yCoord = Gdx.graphics.getHeight() / 2f - this.scaleY;
+							 - this.getScaleX() * (invisibleIndex + 1);
+					yCoord = Gdx.graphics.getHeight() / 2f - this.getScaleY();
 				}
 
-				this.x = xCoord;
-				this.y = yCoord;
+				this.setX(xCoord);
+				this.setY(yCoord);
 
 				String msg = getMsg();
 
@@ -201,5 +203,9 @@ public class DrawableDroplet extends DrawableSprite {
 		else {
 			parentCircuit.hiddenDroplets.add(this);
 		}
+	}
+
+	public void setDropletColor(Color c) {
+		this.dropletColor = c;
 	}
 }

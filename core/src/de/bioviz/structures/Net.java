@@ -1,13 +1,14 @@
 package de.bioviz.structures;
 
 import java.util.ArrayList;
-
 import java.util.Random;
+
+import de.bioviz.ui.Color;
 
 /**
  * Created by keszocze on 27.07.15.
  *
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 public final class Net {
 
@@ -18,7 +19,7 @@ public final class Net {
 	 * It is used when the option to color all droplets within a net with the
 	 * same color is chosen.
 	 */
-	private final int color;
+	private Color color = new Color();
 
 
 	/**
@@ -51,15 +52,19 @@ public final class Net {
 
 		// TODO be more sophisticated here ^^
 		rnd.setSeed(target.fst + target.snd);
-		color = rnd.nextInt();
+		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(), 1f);
 	}
 
 
 	/**
 	 * @return The net's color
 	 */
-	public int getColor() {
+	public Color getColor() {
 		return color;
+	}
+
+	public void setColor(Color c) {
+		this.color = c;
 	}
 
 	/**
@@ -71,6 +76,46 @@ public final class Net {
 	 */
 	public boolean containsDroplet(final Droplet d) {
 		return sources.stream().anyMatch(o -> o.dropletID == d.getID());
+	}
+	
+	/**
+	 * Checks whether this net contains the given field.
+	 * @param f the field that is supposedly part of this net
+	 * @return true if it is part of this net, otherwise false
+	 */
+	public boolean containsField(BiochipField f) {
+		int xMin = Integer.MAX_VALUE, yMin = Integer.MAX_VALUE,
+			xMax = Integer.MIN_VALUE, yMax = Integer.MIN_VALUE;
+
+		for (Source source : sources) {
+			if (source.startPosition.fst < xMin) {
+				xMin = source.startPosition.fst;
+			}
+			if (source.startPosition.snd < yMin) {
+				yMin = source.startPosition.snd;
+			}
+			if (source.startPosition.fst > xMax) {
+				xMax = source.startPosition.fst;
+			}
+			if (source.startPosition.snd > yMax) {
+				yMax = source.startPosition.snd;
+			}
+		}
+		if (target.fst < xMin) {
+			xMin = target.fst;
+		}
+		if (target.snd < yMin) {
+			yMin = target.snd;
+		}
+		if (target.fst > xMax) {
+			xMax = target.fst;
+		}
+		if (target.snd > yMax) {
+			yMax = target.snd;
+		}
+		
+		return (f.pos.fst >= xMin && f.pos.fst <= xMax &&
+				f.pos.snd >= yMin && f.pos.snd <= yMax);
 	}
 
 	/**

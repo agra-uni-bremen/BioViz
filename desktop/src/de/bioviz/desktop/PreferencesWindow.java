@@ -1,41 +1,59 @@
 package de.bioviz.desktop;
 
-import java.awt.GraphicsConfiguration;
-import java.awt.GridLayout;
-import java.awt.HeadlessException;
-
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-
-
-import com.badlogic.gdx.Gdx;
 import de.bioviz.ui.BioViz;
 
+import javax.swing.*;
+import java.awt.*;
 
+
+/**
+ * Simple window for choosing the animation speed of the droplets.
+ * <p>
+ * Unintuitively, a larger value means a slower movement as the slider
+ * represents the animation duration.
+ *
+ * @author jannis
+ */
 public class PreferencesWindow extends JFrame {
-	
+
+	/**
+	 *
+	 * @author jannis
+	 * @throws HeadlessException
+	 */
 	public PreferencesWindow() throws HeadlessException {
 		super("Preferences");
-		
-		GridLayout layout = new GridLayout(0, 2, 4, 4);
+
+
+		final int minAnimationDuration = 0;
+		final int maxAnimationDuration = 1000;
+		final int defaultAnimationDuration = 500;
+
+		final int rows = 0;
+		final int columns = 2;
+		final int horizontalGap = 4;
+		final int verticalGap = 4;
+
+		GridLayout layout =
+				new GridLayout(rows, columns, horizontalGap, verticalGap);
 		this.setLayout(layout);
-		
+
 		this.add(new JLabel("Animation duration in ms"));
 		JSlider animSlider =
-				new JSlider(SwingConstants.HORIZONTAL, 0, 1000, 500);
+				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,
+							maxAnimationDuration,
+							defaultAnimationDuration);
 		animSlider.addChangeListener(
-				e -> {BioViz.setAnimationDuration(animSlider.getValue());});
+				e -> {
+					BioViz.setAnimationDuration(animSlider.getValue());
+				});
 		this.add(animSlider);
-		
+
 		pack();
 		setVisible(true);
-		setSize(
-				320,
-				240
-				);
+		final int xSize = 320;
+		final int ySize = 240;
+		setSize(xSize, ySize);
 	}
 
 }

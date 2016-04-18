@@ -8,11 +8,11 @@ import java.util.NoSuchElementException;
 import java.util.Vector;
 
 /**
- * @author Oliver Keszöcze
- *         <p>
- *         Class that contains everything that is necessary to describe a DMFB
- *         droplet. This includes basic facts such as a unique ID as well as
- *         information about the movement on the chip.
+ * Class that contains everything that is necessary to describe a DMFB droplet.
+ * This includes basic facts such as a unique ID as well as information about
+ * the movement on the chip.
+ *
+ * @author Oliver Keszocze
  */
 public class Droplet {
 
@@ -76,7 +76,7 @@ public class Droplet {
 	 * Empty means that there is no additional information besides the ID
 	 * stored
 	 * in this particular droplet. This means that it has no associated net or
-	 * routes.
+	 * routes. Also it appears in the first time step.
 	 *
 	 * @param id
 	 * 		The unique ID of the droplet
@@ -85,20 +85,33 @@ public class Droplet {
 		this.id = id;
 	}
 
+	/**
+	 * Creates an almost 'empty' droplet.
+	 * <p>
+	 * Empty means that there is no additional information besides the ID
+	 * stored
+	 * in this particular droplet. This means that it has no associated net or
+	 * routes. But the spawn time is specified.
+	 *
+	 * @param id
+	 * 		The unique ID of the droplet
+	 * @param spawnTime
+	 * 		The first time step the droplet appears
+	 */
 	public Droplet(final int id, final int spawnTime) {
 		this.id = id;
 		this.spawnTime = spawnTime;
 	}
 
 	/**
-	 * @return The net the droplet belongs to
+	 * @return The net the droplet belongs to.
 	 */
 	public Net getNet() {
 		return net;
 	}
 
 	/**
-	 * Tells the droplet which net it belongs to
+	 * Tells the droplet which net it belongs to.
 	 *
 	 * @param net
 	 * 		The net droplet should belong to

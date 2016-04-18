@@ -19,7 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 public class BioParser  {
 
