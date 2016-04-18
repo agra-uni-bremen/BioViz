@@ -163,8 +163,8 @@ public class DrawableDroplet extends DrawableSprite {
 				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
 				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
 
-				this.setScaleX(circ.smoothScaleX);
-				this.setScaleY(circ.smoothScaleY);
+				this.setScaleX(circ.smoothScale);
+				this.setScaleY(circ.smoothScale);
 
 				// if hidden, place below grid
 				int invisibleIndex =

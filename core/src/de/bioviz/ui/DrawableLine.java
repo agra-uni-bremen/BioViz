@@ -39,7 +39,7 @@ public class DrawableLine extends DrawableSprite {
 				singleton.setY(singleton.viz.currentCircuit.yCoordOnScreen(
 						(to.snd + from.snd) / 2f));
 				singleton.setScaleX(
-						singleton.viz.currentCircuit.smoothScaleX * len);
+						singleton.viz.currentCircuit.smoothScale * len);
 				singleton.setScaleY(2f);
 				singleton.setRotation((float)
 						(Math.atan2(toTarget.snd, toTarget.fst) *

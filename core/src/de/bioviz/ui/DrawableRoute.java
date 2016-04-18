@@ -155,8 +155,8 @@ public class DrawableRoute extends DrawableSprite {
 
 			this.setX(xCoord);
 			this.setY(yCoord);
-			this.setScaleX(droplet.parentCircuit.smoothScaleX);
-			this.setScaleY(droplet.parentCircuit.smoothScaleY);
+			this.setScaleX(droplet.parentCircuit.smoothScale);
+			this.setScaleY(droplet.parentCircuit.smoothScale);
 
 			super.draw();
 		}

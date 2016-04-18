@@ -32,7 +32,7 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * The current UI scaling factor.
 	 */
-	private float scaleX = 1;
+	private float scale = 1;
 
 	/**
 	 * The current UI x offset (used for camera movement etc.).
@@ -57,17 +57,7 @@ public class DrawableCircuit implements Drawable {
 	 * smoothScale value is then over the duration of several frames slowly
 	 * adjusted to the scale value in order to have a smoother cam movement.
 	 */
-	protected float smoothScaleX = 1;
-
-	/**
-	 * The "smooth" scaling factor. Unlike the scale values, this does not
-	 * represent the scale value that the user has last set but the one that
-	 * is actually drawn. This is used for a smooth camera zoom, e.g. the user
-	 * zooms in, which sets the scale value to a specific value and the
-	 * smoothScale value is then over the duration of several frames slowly
-	 * adjusted to the scale value in order to have a smoother cam movement.
-	 */
-	protected float smoothScaleY = 1;
+	protected float smoothScale = 1;
 
 	/**
 	 * The "smooth" offset. Unlike the offset values, this does not
@@ -244,8 +234,7 @@ public class DrawableCircuit implements Drawable {
 
 	@Override
 	public void draw() {
-		smoothScaleX += (getScaleX() - smoothScaleX) / scalingDelay;
-		smoothScaleY += (getScaleY() - smoothScaleY) / scalingDelay;
+		smoothScale += (getScaleX() - smoothScale) / scalingDelay;
 		smoothOffsetX += (getOffsetX() - smoothOffsetX) / scalingDelay;
 		smoothOffsetY += (getOffsetY() - smoothOffsetY) / scalingDelay;
 
@@ -338,9 +327,9 @@ public class DrawableCircuit implements Drawable {
 		float endFadingAtScale = 24f;
 		
 		Color col = Color.WHITE.cpy();
-		if (this.smoothScaleX < startFadingAtScale) {
-			if (this.smoothScaleX > endFadingAtScale) {
-				float alpha = 1f - ((startFadingAtScale - smoothScaleX) / (startFadingAtScale - endFadingAtScale));
+		if (this.smoothScale < startFadingAtScale) {
+			if (this.smoothScale > endFadingAtScale) {
+				float alpha = 1f - ((startFadingAtScale - smoothScale) / (startFadingAtScale - endFadingAtScale));
 				col.a = alpha;
 			} else {
 				// TODO: don't draw!
@@ -349,7 +338,7 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		// scale text
-		float scale = Math.min(MessageCenter.textRenderResolution, smoothScaleX / 2f);
+		float scale = Math.min(MessageCenter.textRenderResolution, smoothScale / 2f);
 		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
@@ -423,7 +412,7 @@ public class DrawableCircuit implements Drawable {
 	protected float xCoordOnScreen(float i) {
 		float xCoord = i;
 		xCoord += smoothOffsetX;
-		xCoord *= smoothScaleX;
+		xCoord *= smoothScale;
 		return xCoord;
 	}
 
@@ -434,20 +423,20 @@ public class DrawableCircuit implements Drawable {
 	protected float yCoordOnScreen(float i) {
 		float yCoord = i;
 		yCoord += smoothOffsetY;
-		yCoord *= smoothScaleY;
+		yCoord *= smoothScale;
 		return yCoord;
 	}
 
 	protected float yCoordInCells(float i) {
 		float yCoord = i;
-		yCoord /= smoothScaleY;
+		yCoord /= smoothScale;
 		yCoord -= smoothOffsetY;
 		return yCoord;
 	}
 
 	protected float xCoordInCells(float i) {
 		float xCoord = i;
-		xCoord /= smoothScaleX;
+		xCoord /= smoothScale;
 		xCoord -= smoothOffsetX;
 		return xCoord;
 	}
@@ -469,7 +458,7 @@ public class DrawableCircuit implements Drawable {
 	 * retrieves the current x scaling factor
 	 */
 	public float getScaleX() {
-		return scaleX;
+		return scale;
 	}
 
 	/**
@@ -480,7 +469,7 @@ public class DrawableCircuit implements Drawable {
 	 * is supposed to skip those inbetween steps.
 	 */
 	public void setScaleX(float scaleX) {
-		this.scaleX = scaleX;
+		this.scale = scaleX;
 	}
 	
 	/**
@@ -488,7 +477,7 @@ public class DrawableCircuit implements Drawable {
 	 * animated camera.
 	 */
 	public float getSmoothScaleX() {
-		return smoothScaleX;
+		return smoothScale;
 	}
 
 	/**
@@ -518,7 +507,7 @@ public class DrawableCircuit implements Drawable {
 		Rectangle result = new Rectangle();
 
 		float centerX = -getOffsetX();
-		float width = Gdx.graphics.getWidth() * (1f / scaleX);
+		float width = Gdx.graphics.getWidth() * (1f / scale);
 		float centerY = getOffsetY();
 		float height = Gdx.graphics.getHeight() * (1f / scaleY);
 		result.set(centerX - (width / 2f), centerY - (height / 2f), width, height);
@@ -546,7 +535,7 @@ public class DrawableCircuit implements Drawable {
 	 * Resets the zoom to 1 px per element
 	 */
 	public void zoomTo1Px() {
-		this.scaleX = 1;
+		this.scale = 1;
 		this.scaleY = 1;
 	}
 
@@ -565,7 +554,7 @@ public class DrawableCircuit implements Drawable {
 		float xFactor = Gdx.graphics.getWidth();
 		float yFactor = Gdx.graphics.getHeight();
 		float maxScale = Math.min(x * xFactor, y * yFactor);
-		this.scaleX = maxScale;
+		this.scale = maxScale;
 		this.scaleY = maxScale;
 		this.setOffsetX((max.fst) / -2f + min.fst / -2f);
 		this.setOffsetY((max.snd) / -2f + min.snd / -2f);
@@ -580,19 +569,16 @@ public class DrawableCircuit implements Drawable {
 	 */
 	public void zoomExtentsImmediately() {
 		zoomExtents();
-		this.smoothScaleX = scaleX;
-		this.smoothScaleY = scaleY;
+		this.smoothScale = scale;
 	}
 
 	/**
 	 * Sets the zoom to the given values without smoothly approaching
 	 * those target values (instead sets them immediately).
 	 */
-	public void setScaleImmediately(float scaleX, float scaleY) {
-		this.scaleX = scaleX;
-		this.smoothScaleX = scaleX;
-		this.scaleY = scaleY;
-		this.smoothScaleY = scaleY;
+	public void setScaleImmediately(float scale) {
+		this.scale = scale;
+		this.smoothScale = scale;
 	}
 
 	public void addTimeChangedListener(final BioVizEvent listener) {
