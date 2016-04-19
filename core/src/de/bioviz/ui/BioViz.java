@@ -471,8 +471,8 @@ public class BioViz implements ApplicationListener {
 	}
 
 	static public ShaderProgram createDefaultShader() {
-		FileHandle vertexShaderHandle = new FileHandle("vertexShader.shd");
-		FileHandle fragmentShaderHandle = new FileHandle("fragmentShader.shd");
+		FileHandle vertexShaderHandle = Gdx.files.internal("vertexShader.shd");
+		FileHandle fragmentShaderHandle = Gdx.files.internal("fragmentShader.shd");
 
 		ShaderProgram shader = new ShaderProgram(vertexShaderHandle, fragmentShaderHandle);
 		if (shader.isCompiled() == false) {
