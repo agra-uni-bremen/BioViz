@@ -623,7 +623,8 @@ public class DesktopLauncher extends JFrame {
 			// configuration. For multi-step configuration, omit calling
 			// context.reset().
 			context.reset();
-			configurator.doConfigure("config/logback.xml");
+			configurator.doConfigure(DesktopLauncher.class.getResourceAsStream
+					("/config/logback.xml"));
 		} catch (final JoranException je) {
 			// StatusPrinter will handle this
 			System.out.println("Error setting up logger: "
