@@ -458,8 +458,7 @@ public class DesktopLauncher extends JFrame {
 	private void addNewTab(final File fileForTab) {
 		File file = fileForTab;
 		if (file == null) {
-			file = Gdx.files.getFileHandle("examples/default_grid.bio",
-										   Files.FileType.Internal).file();
+			file = Gdx.files.internal("examples/default_grid.bio").file();
 		}
 		logger.debug("Adding new tab to UI for " + file.getName());
 		JPanel dummyPanel = new JPanel();
