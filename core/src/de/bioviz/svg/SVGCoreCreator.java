@@ -2,6 +2,7 @@ package de.bioviz.svg;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.Point;
 import de.bioviz.ui.TextureE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * @author Maximilian Luenert
+ * @author malu
  */
 public class SVGCoreCreator {
 
@@ -51,6 +52,30 @@ public class SVGCoreCreator {
 	public SVGCoreCreator() {
 	}
 
+
+	/**
+	 * Converts a libGDX color to a SVG-usable format.
+	 *
+	 * What it basically does is to throw away the last to characters, i.e.
+	 * the alpha channel.
+	 *
+	 * @param c Color to transform
+	 * @return Color in format to be used by SVG
+	 */
+	public static String colorToSVG(final Color c) {
+		return c.toString().substring(0, 6);
+	}
+
+	/**
+	 * Creates an ID consisting of a base part and the given color.
+	 * @param baseName The part of thename in front of the '-'
+	 * @param c The color that will be put after the '-'
+	 * @return "<baseName>-<color>"
+	 */
+	public static String generateID(final String baseName, final Color c) {
+		return baseName + "-" + SVGCoreCreator.colorToSVG(c);
+	}
+
 	/**
 	 * @param folder The name of the folder containing the theme,
 	 *               relative to the assets folder
@@ -71,8 +96,10 @@ public class SVGCoreCreator {
 	 * @return the svg code for the given type as a string
 	 */
 	private String getSVGCode(final TextureE type) {
+
 		String svgCoreFile =
 				baseFolder + "/" + svgCoreFolder + "/" + type + ".plain.svg";
+
 
 		LOGGER.debug("[SVG] Loading SVG core for {}", svgCoreFile);
 
@@ -96,8 +123,7 @@ public class SVGCoreCreator {
 	 * @return String containing svg core data.
 	 */
 	public String getSVGCode(final TextureE type, final Color fillColor,
-													 final Color
-			strokeColor) {
+													 final Color strokeColor) {
 		String uncoloredCore = getSVGCode(type);
 		String coloredCore = uncoloredCore;
 
@@ -125,17 +151,16 @@ public class SVGCoreCreator {
 
 			if (fillColor != null) {
 				LOGGER.debug("[SVG] Changing fillColor to {}.",
-						fillColor.toString().substring(0, colorDigits));
+						colorToSVG(fillColor));
 				// set new id for this node if there is a fillColor
 					if (group.getNodeType() == Node.ELEMENT_NODE) {
 						Element elem = (Element) group;
-						elem.setAttribute("id", type.toString() + "-" +
-								fillColor.toString().substring(0, colorDigits));
+						elem.setAttribute("id", generateID(type.toString(), fillColor));
 					}
 			}
 			if (strokeColor != null) {
 				LOGGER.debug("[SVG] Changing strokeColor to {}.",
-						strokeColor.toString().substring(0, colorDigits));
+						colorToSVG(strokeColor));
 			}
 
 			if (fillColor != null || strokeColor != null) {
@@ -196,7 +221,52 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * Sets the style tag for the first tag occurence.
+	 * Get the svg code for an arrowhead with the specified color.
+	 *
+	 * @param color the color for the arrowhead
+	 * @param id the id for the arrowHead
+	 * @return a svg marker string
+	 */
+	public String getArrowHead(final String id, final Color color) {
+		return "<marker id=\"" + id + "\" " +
+				"markerWidth=\"10\" " +	"markerHeight=\"10\" " +
+				"refX=\"7\" " +	"refY=\"3\"	" +
+				"orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path d=\"M0,0 C 1,1" +
+				" 1,5 0,6 L9,3  z\" " +
+				"fill=\"#" + colorToSVG(color) + "\" />\n</marker>\n";
+	}
+
+	/**
+	 * Returns a string representing a linear gradient definition with the
+	 * given id, direction and colors.
+	 *
+	 * @param id of the resulting gradient
+	 * @param dir direction of the resulting gradient
+	 * @param color first color of the resulting gradient
+	 * @return a string
+	 */
+	public String getSVGLinearGradient(final String id, final GradDir dir,
+																		 final Color color) {
+		int x1 = dir.hasOrientation(Point.WEST) ? 1 : 0;
+		int x2 = dir.hasOrientation(Point.EAST) ? 1 : 0;
+
+		int y1 = dir.hasOrientation(Point.NORTH) ? 1 : 0;
+		int y2 = dir.hasOrientation(Point.SOUTH) ? 1 : 0;
+
+		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
+				"y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" >\n";
+		String offset1 = "<stop offset=\"0%\" " +	"style=\"stop-color:rgb(" +
+				color.r * 255 + "," + color.g * 255 + "," + color.b * 255 + ");" +
+				"stop-opacity:0\" />\n";
+		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
+				color.r * 255 + "," + color.g * 255 + "," + color.b * 255 + ");" +
+				"stop-opacity:0.8\" />\n";
+		String end = "</linearGradient>\n";
+		return begin + offset1 + offset2 + end;
+	}
+
+	/**
+	 * Sets the style tag for the first tag occurrence.
 	 *
 	 * @param element xml top node
 	 * @param tagName the name of the tag to modify
@@ -206,6 +276,7 @@ public class SVGCoreCreator {
 	private void setStyleForElement(final Element element,
 																	final String tagName, final Color fillColor,
 																	final Color strokeColor) {
+
 		NodeList elements = element.getElementsByTagName(tagName);
 		if (elements.getLength() > 0) {
 			Node node = elements.item(0);
@@ -221,6 +292,7 @@ public class SVGCoreCreator {
 					} else if ("stroke".equals(styleType) && strokeColor != null) {
 						styleAfter += styleType + ":#" +
 								strokeColor.toString().substring(0, colorDigits) + ";";
+
 					} else {
 						styleAfter += split + ";";
 					}
@@ -261,5 +333,5 @@ public class SVGCoreCreator {
 		return writer.toString();
 	}
 
-
 }
+

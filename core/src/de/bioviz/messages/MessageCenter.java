@@ -50,7 +50,12 @@ public class MessageCenter {
 
 	private float scaleHUD = 1f / 4f;
 	private float scaleMsg = 1f / 8f;
-	private final float SCALEINCSTEP = 0.125f;
+	private static final float SCALEINCSTEP = 0.125f;
+
+
+	private HashMap<Integer, HUDMessage> HUDMessages =
+			new HashMap<Integer, HUDMessage>();
+
 
 	public static final int textRenderResolution = 16;
 
@@ -109,8 +114,6 @@ public class MessageCenter {
 		return font;
 	}
 
-	private HashMap<Integer, HUDMessage> HUDMessages =
-			new HashMap<Integer, HUDMessage>();
 
 
 
@@ -160,12 +163,10 @@ public class MessageCenter {
 				else {
 					messageFont.setColor(Color.WHITE);
 				}
-				int start_x = spacing;
-				int start_y = yCoord;
-				messageFont.draw(parent.batch, m.message, start_x,
-								 start_y); // TODO name of closestHit
-
-
+				int startX = spacing;
+				int startY = yCoord;
+				messageFont.draw(parent.batch, m.message, startX,
+								 startY);
 				yCoord -= spacing;
 			}
 

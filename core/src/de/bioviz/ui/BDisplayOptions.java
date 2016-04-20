@@ -19,7 +19,7 @@ public enum BDisplayOptions {
 	CellUsage("Show cell usage colored", Input.Keys.U),
 
 	/**
-	 * Option for displaying the amount of actuations of a given cell
+	 * Option for displaying the amount of actuations of a given cell.
 	 */
 	CellUsageCount("Cell usage count"),
 
