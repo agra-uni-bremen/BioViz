@@ -1,7 +1,5 @@
 package de.bioviz.messages;
 
-import com.badlogic.gdx.graphics.Color;
-
 public class HUDMessage extends MessageBase {
 	public float x;
 	public float y;

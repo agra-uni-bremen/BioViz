@@ -1,7 +1,5 @@
 package de.bioviz.messages;
 
-import com.badlogic.gdx.graphics.Color;
-
 /**
  * A text message that will be displayed for some time at the top of the
  * screen.
