@@ -1,9 +1,8 @@
 package de.bioviz.ui;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.Vector;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
 import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
@@ -14,12 +13,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.Set;
+import java.util.Vector;
 
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
- *
  * @author Jannis Stoppe
  */
 public class DrawableCircuit implements Drawable {
@@ -115,7 +117,7 @@ public class DrawableCircuit implements Drawable {
 	 * The speed at which the dispaly advances through time <b>if</b> the
 	 * autoAdvance field is set.
 	 */
-	private float autoSpeed = 2f;
+	private float autoDelay = 2f;
 
 	/**
 	 * The last timestep at which time was automatically advanced.
@@ -276,7 +278,7 @@ public class DrawableCircuit implements Drawable {
 
 		if (isAutoAdvance()) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long) ((1f / this.getAutoSpeed()) * 1000) < current) {
+			if (lastAutoStepAt + (long) ((this.getAutoDelay()) * 1000) < current) {
 				lastAutoStepAt = current;
 
 				LOGGER.trace("data.getMaxT: {}\tcurrentTime: {}",getData().getMaxT(), getCurrentTime());
@@ -690,12 +692,12 @@ public class DrawableCircuit implements Drawable {
 		this.autoAdvance = autoAdvance;
 	}
 
-	public float getAutoSpeed() {
-		return autoSpeed;
+	public float getAutoDelay() {
+		return autoDelay;
 	}
 
-	public void setAutoSpeed(float autoSpeed) {
-		this.autoSpeed = autoSpeed;
+	public void setAutoDelay(float autoDelay) {
+		this.autoDelay = autoDelay;
 	}
 
 	public Vector<DrawableField> getFields() {
