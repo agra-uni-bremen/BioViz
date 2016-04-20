@@ -74,6 +74,8 @@ core/src/de/agra/
 core/assets/examples/test.bio
 
 core/assets/examples/iccad15/
+core/assets/examples/date16/
 
 core/assets/examples/tmp.bio
 tst
+.sonar/
