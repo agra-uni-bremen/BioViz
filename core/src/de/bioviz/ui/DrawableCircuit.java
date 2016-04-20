@@ -1,27 +1,28 @@
 package de.bioviz.ui;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Rectangle;
+import java.util.Date;
+import java.util.Set;
+import java.util.Vector;
+
 import de.bioviz.messages.MessageCenter;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
-import java.util.Set;
-import java.util.Vector;
+import org.slf4j.Logger;
 
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
+ * Create a ReversibleCircuit first (e.g. by loading a given .real file), then
+ * create a DrawableCircuit instance for the ReversibleCircuit to draw the latter.
+ *
  * @author Jannis Stoppe
  */
 public class DrawableCircuit implements Drawable {
@@ -321,10 +322,10 @@ public class DrawableCircuit implements Drawable {
 		// displayed at the edge of the viewport (if the grid boundaries are
 		// beyond the viewport boundaries) or at the edge of the grid (if they
 		// are within)
-		int minX = Integer.MAX_VALUE,
-			minY = Integer.MAX_VALUE,
-			maxX = Integer.MIN_VALUE,
-			maxY = Integer.MIN_VALUE;
+		int minX = Integer.MAX_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int	maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.getFields()) {
 			if (minX > f.getField().x()) {

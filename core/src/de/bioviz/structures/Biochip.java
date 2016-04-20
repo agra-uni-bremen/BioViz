@@ -114,22 +114,6 @@ public class Biochip {
 	private Set<BiochipField> adjacencyCache = null;
 
 	public boolean recalculateAdjacency = false;
-	private int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-
-	/**
-	 * Creates a new 2D-Biochip with a certain field size.
-	 *
-	 * @param dimensionX
-	 * 		The size of the chip along the x axis
-	 * @param dimensionY
-	 * 		The size of the chip along the y axis
-	 * @deprecated The chip no longer relies on a fixed field size. Use {@link
-	 * #Biochip()} instead.
-	 */
-	@Deprecated
-	public Biochip(int dimensionX, int dimensionY) {
-
-	}
 
 	public Biochip() {
 	}
@@ -288,7 +272,7 @@ public class Biochip {
 	 * Calculates the last timestamp at which a droplet is moved
 	 *
 	 * @return the last timestamp of the currently loaded simulation
-	 * @author Oliver Keszocze
+	 * @author keszocze
 	 */
 	public int getMaxT() {
 		if (maxT != -1) {
