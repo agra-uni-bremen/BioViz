@@ -169,22 +169,35 @@ public class DrawableCircuit implements Drawable {
 	 */
 	private DrawableField hoveredField = null;
 
+	/**
+	 * Skip to the previous timestep.
+	 */
 	public void prevStep() {
 		setAutoAdvance(false);
 		setCurrentTime(getCurrentTime() - 1);
-
 	}
 
+	/**
+	 * Advance to the next timestep.
+	 */
 	public void nextStep() {
 		setAutoAdvance(false);
-		setCurrentTime(getCurrentTime()+1);
+		setCurrentTime(getCurrentTime() + 1);
 	}
-	
+
+	/**
+	 * Toggle (ie. enable if disabled or vice versa) the auto advance mode that
+	 * automatically advances through the timesteps.
+	 */
 	public void toggleAutoAdvance() {
 		this.setAutoAdvance(!(this.isAutoAdvance()));
 	}
 
-	public void setCurrentTime(int timeStep) {
+	/**
+	 * Jump to a specific timestep.
+	 * @param timeStep the timestep to jump to.
+	 */
+	public void setCurrentTime(final int timeStep) {
 		if (getParent() != null) {
 			if (timeStep >= 1 && timeStep <= getData().getMaxT()) {
 				currentTime = timeStep;
