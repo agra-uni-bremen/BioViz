@@ -10,7 +10,6 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.prefs.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,7 +21,6 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
@@ -411,7 +409,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		visualizationTabs.addChangeListener(
-				l -> currentViz.loadNewFile(
+				l -> currentViz.scheduleLoadingOfNewFile(
 						tabsToFilenames.get(
 								((JTabbedPane) l.getSource())
 										.getSelectedComponent())));
@@ -455,7 +453,7 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Adds a new tab that contains a certain file. This calls the
-	 * loadNewFile(file) method for this DesktopLauncher's bioViz field to open
+	 * scheduleLoadingOfNewFile(file) method for this DesktopLauncher's bioViz field to open
 	 * the given file.
 	 *
 	 * @param fileForTab
@@ -522,7 +520,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() -
 										   1);
 		tabsToFilenames.put(dummyPanel, file);
-		this.currentViz.loadNewFile(file);
+		this.currentViz.scheduleLoadingOfNewFile(file);
 	}
 
 	/**
