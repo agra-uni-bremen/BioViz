@@ -1,7 +1,6 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -172,7 +171,7 @@ public class BioViz implements ApplicationListener {
 
 
 		if (loadFileOnUpdate) {
-			loadNewFileNow();
+			loadNewFile();
 			loadFileOnUpdate = false;
 		}
 
@@ -307,7 +306,7 @@ public class BioViz implements ApplicationListener {
 		}
 	}
 
-	private void loadNewFileNow() {
+	private void loadNewFile() {
 		Biochip bc;
 		boolean error = false;
 		String errorMsg = "";
@@ -375,10 +374,14 @@ public class BioViz implements ApplicationListener {
 		this.callLoadedFileListeners();
 	}
 
-	public void loadNewFile(File f) {
-		logger.debug("Scheduling loading of file " + f);
-		bioFile = f;
-		loadFileOnUpdate = true;
+	public void scheduleLoadingOfNewFile(final File f) {
+
+		// only do stuff if there actually was a file provided
+		if (f != null) {
+			logger.debug("Scheduling loading of file " + f);
+			bioFile = f;
+			loadFileOnUpdate = true;
+		}
 	}
 
 	public void addTimeChangedListener(BioVizEvent listener) {
