@@ -65,11 +65,10 @@ public class BioParser  {
                 return listener.getBiochip();
             }
         } catch (Exception e) {
+            logger.error("Failed to parse file");
             e.printStackTrace();
-            // TODO do something with this exception
-            // ignore the stupid exception :)
+            return null;
         }
-        return null;
     }
 
 }
