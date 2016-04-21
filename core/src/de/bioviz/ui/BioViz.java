@@ -308,9 +308,7 @@ public class BioViz implements ApplicationListener {
 
 	private void loadNewFile() {
 		Biochip bc;
-		boolean error = false;
-		String errorMsg = "";
-			
+		boolean error=false;
 
 		try {
 			drawables.remove(currentCircuit);
@@ -328,27 +326,31 @@ public class BioViz implements ApplicationListener {
 					bc = BioParser.parseFile(bioFile, this);
 
 					if (bc == null) {
-						error = true;
-						errorMsg = "Could not parse file" + bioFile;
+						logger.error("Could not parse file {}",bioFile);
+						logger.info("Creating empty Biochip to display");
 						bc = new Biochip();
+						error = true;
 					}
-					logger.debug("loaded file, creating drawable elements...");
+					logger.debug("Creating drawable elements...");
 					DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
 					currentCircuit = newCircuit;
 					this.loadedCircuits.put(bioFile.getCanonicalPath(),
 							newCircuit);
 					currentCircuit.zoomExtents();
 				}
-				logger.debug("drawable created, replacing old elements...");
+				logger.debug("Drawable created, replacing old elements...");
 				drawables.add(currentCircuit);
-				logger.debug("Initializing circuit");
 				currentCircuit.getData().recalculateAdjacency = true;
-				if (bioFile == null) {
-					logger.info("Done loading default file");
+
+				if (!error) {
+					if (bioFile == null) {
+						logger.info("Done loading default file");
+					}
+					else {
+						logger.info("Done loading file {}", bioFile);
+					}
 				}
-				else {
-					logger.info("Done loading file {}", bioFile);
-				}
+
 			} else {
 				logger.debug(
 						"File to be set is empty, setting empty " +
@@ -357,20 +359,11 @@ public class BioViz implements ApplicationListener {
 				currentCircuit = new DrawableCircuit(new Biochip(), this);
 			}
 		} catch (Exception e) {
-			error = true;
-			errorMsg = "Could not load " + bioFile + ": " + e.getMessage();
-
-			//e.printStackTrace();
-		}
-
-		if (error) {
-			logger.error(errorMsg);
+			logger.error("Error when parsing {}:\n{}",bioFile,e.getMessage());
 		}
 
 		// clear on screen messages as they would otherwise remain visible
 		messageCenter.clearHUDMessages();
-
-
 		this.callLoadedFileListeners();
 	}
 
