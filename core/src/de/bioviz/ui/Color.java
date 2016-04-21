@@ -34,7 +34,10 @@ public class Color {
 	 * Creates an empty color, all values set to 0.
 	 */
 	public Color() {
-		// TODO Auto-generated constructor stub
+		a=0;
+		r=0;
+		g=0;
+		b=0;
 	}
 
 	/**
