@@ -5,8 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by keszocze on 27.07.15.
- *
  * @author Oliver Keszocze
  */
 public class Point extends Pair<Integer, Integer> {
@@ -18,10 +16,9 @@ public class Point extends Pair<Integer, Integer> {
 
 	public final static Point[] DIRECTIONS = {NORTH, EAST, SOUTH, WEST};
 
-	static final Logger logger = LoggerFactory.getLogger(Point.class);
 
 	/**
-	 * Creates a point from two separate coordinates
+	 * Creates a point from two separate coordinates.
 	 *
 	 * @param x
 	 * 		x coordinate of the point
@@ -34,7 +31,7 @@ public class Point extends Pair<Integer, Integer> {
 
 
 	/**
-	 * Copy constructor for Point objects
+	 * Copy constructor for Point objects.
 	 *
 	 * @param p
 	 * 		Point to copy
@@ -46,9 +43,11 @@ public class Point extends Pair<Integer, Integer> {
 	}
 
 
-	/*
-	This hashCode method has been taken from http://stackoverflow
-	.com/a/26981910
+	/**
+	 * Computes the hashcode for the Point.
+	 * <p>
+	 * This hashCode method has been taken from http://stackoverflow
+	 * .com/a/26981910
 	 */
 	@Override
 	public int hashCode() {
@@ -70,7 +69,19 @@ public class Point extends Pair<Integer, Integer> {
 		return new Point(fst + p.fst, snd + p.snd);
 	}
 
-	// Bascially casts from enum to static points
+
+
+	/**
+	 * Creates a Point object pointing in the specified direction.
+	 *
+	 * The translation is as follows:
+	 * * NORTH -> (0,1)
+	 * * EAST -> (1,0)
+	 * * SOUTH -> (0,-1)
+	 * * WEST ->  (-1,0)
+	 * @param dir Direction that is to be translated into a point.
+	 * @return Point corresponding to the direction.
+	 */
 	public static Point pointFromDirection(Direction dir) {
 		switch (dir) {
 			case NORTH:
@@ -81,16 +92,15 @@ public class Point extends Pair<Integer, Integer> {
 				return SOUTH;
 			case WEST:
 				return WEST;
+			default:
+				return new Point(0,0); // this shouldn't be ever reached!
 		}
-
-		// note that this case should not be reachable
-		return new Point(0, 0);
 	}
 
 
 	/**
 	 * Check whether one point can be reached by another point in exactly one
-	 * time step moving horizontically, vertically or by not moving at all.
+	 * time step moving horizontally, vertically or by not moving at all.
 	 *
 	 * @param p1
 	 * 		first point
@@ -103,8 +113,6 @@ public class Point extends Pair<Integer, Integer> {
 			return true;
 		}
 		for (Point direction : DIRECTIONS) {
-//			logger.debug("p1.add("+direction+")="+p1.add(direction)+" == "+p2);
-
 			if (p1.add(direction).equals(p2)) {
 				return true;
 			}
@@ -113,7 +121,7 @@ public class Point extends Pair<Integer, Integer> {
 	}
 
 	/**
-	 * Checks whether two points are adjacent to each other
+	 * Checks whether two points are adjacent to each other.
 	 *
 	 * @param p1
 	 * 		first Point
@@ -134,7 +142,7 @@ public class Point extends Pair<Integer, Integer> {
 	}
 
 	/**
-	 * Non-static wrapper for static adjacency function
+	 * Non-static wrapper for static adjacency function.
 	 *
 	 * @param p2
 	 * 		the other point to check for adjacency
