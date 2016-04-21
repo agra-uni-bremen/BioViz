@@ -96,7 +96,7 @@ public class BioVizInputProcessor implements InputProcessor {
 
 	void toggleOptions(int keycode) {
 		BDisplayOptions.findOption(keycode, ctrl, shift, alt).ifPresent(
-				it -> parentViz.currentCircuit.displayOptions.toggleOption
+				it -> parentViz.currentCircuit.getDisplayOptions().toggleOption
 						(it));
 	}
 
@@ -131,7 +131,7 @@ public class BioVizInputProcessor implements InputProcessor {
 			multiTouchZoom = false;
 		}
 
-		for (DrawableDroplet d : parentViz.currentCircuit.droplets) {
+		for (DrawableDroplet d : parentViz.currentCircuit.getDroplets()) {
 			if (d.isHovered()) {
 				if (button == Buttons.LEFT) {
 					d.toggleGridVisibility();
@@ -152,10 +152,8 @@ public class BioVizInputProcessor implements InputProcessor {
 	@Override
 	public boolean touchDragged(int x, int y, int pointer) {
 		if (isMoving) {
-			parentViz.currentCircuit.offsetX +=
-					(x - oldX) / parentViz.currentCircuit.getScaleX();
-			parentViz.currentCircuit.offsetY -=
-					(y - oldY) / parentViz.currentCircuit.getScaleY();
+			parentViz.currentCircuit.setOffsetX(parentViz.currentCircuit.getOffsetX() + (x - oldX) / parentViz.currentCircuit.getScaleX());
+			parentViz.currentCircuit.setOffsetY(parentViz.currentCircuit.getOffsetY() - (y - oldY) / parentViz.currentCircuit.getScaleY());
 			oldX = x;
 			oldY = y;
 		}

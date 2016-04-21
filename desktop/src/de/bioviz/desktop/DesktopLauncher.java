@@ -960,10 +960,10 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.trace("Received timer event ("
-					+ currentViz.currentCircuit.currentTime + ")");
-			this.time.setValue(currentViz.currentCircuit.currentTime);
+					+ currentViz.currentCircuit.getCurrentTime() + ")");
+			this.time.setValue(currentViz.currentCircuit.getCurrentTime());
 			this.timeInfo.setText(
-					Integer.toString(currentViz.currentCircuit.currentTime));
+					Integer.toString(currentViz.currentCircuit.getCurrentTime()));
 
 		}
 	}
@@ -1081,7 +1081,7 @@ public class DesktopLauncher extends JFrame {
 			if (currentViz.currentCircuit != null) {
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
-				int oldTime = currentViz.currentCircuit.currentTime;
+				int oldTime = currentViz.currentCircuit.getCurrentTime();
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
@@ -1095,14 +1095,14 @@ public class DesktopLauncher extends JFrame {
 				// but although this is a little ugly, it doesn't seem to have
 				// any problematic effect.
 				d.timeSlider.setMaximum(
-						currentViz.currentCircuit.data.getMaxT());
+						currentViz.currentCircuit.getData().getMaxT());
 				d.timeSlider.setMinimum(1);
 				logger.trace("setting time slider to "
 						+ oldTime);
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
-						currentViz.currentCircuit.data.getMaxRouteLength());
+						currentViz.currentCircuit.getData().getMaxRouteLength());
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
@@ -1154,7 +1154,7 @@ public class DesktopLauncher extends JFrame {
 						if (f != null) {
 							if (svgExportSettings.getExportSeries()) {
 
-								int oldTime = currentViz.currentCircuit.currentTime;
+								int oldTime = currentViz.currentCircuit.getCurrentTime();
 								// this is problematic if the file contains .svg inside the name
 								int svgPosition = f.getAbsolutePath().indexOf(".svg");
 								// initialize with absolute path
@@ -1166,7 +1166,7 @@ public class DesktopLauncher extends JFrame {
 											svgPosition);
 								}
 								// create a series of files
-								for (int t = 1; t <= currentViz.currentCircuit.data.getMaxT();
+								for (int t = 1; t <= currentViz.currentCircuit.getData().getMaxT();
 										t++) {
 									currentViz.saveSVG(pathWithoutSuffix + "_ts" + t + ".svg", t);
 								}
@@ -1174,7 +1174,7 @@ public class DesktopLauncher extends JFrame {
 								currentViz.currentCircuit.setCurrentTime(oldTime);
 							} else {
 								currentViz.saveSVG(f.getAbsolutePath(), currentViz
-										.currentCircuit.currentTime);
+										.currentCircuit.getCurrentTime());
 							}
 						}
 					}
@@ -1250,14 +1250,14 @@ public class DesktopLauncher extends JFrame {
 			this.option = option;
 
 			this.addActionListener(l -> {
-					currentViz.currentCircuit.displayOptions.toggleOption(option);
-					setState(currentViz.currentCircuit.displayOptions.getOption(option));
+					currentViz.currentCircuit.getDisplayOptions().toggleOption(option);
+					setState(currentViz.currentCircuit.getDisplayOptions().getOption(option));
 				});
 		}
 		
 		public void updateState() {
 			setState(currentViz.currentCircuit.
-					displayOptions.getOption(option));
+					getDisplayOptions().getOption(option));
 		}
 	}
 }

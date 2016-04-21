@@ -189,8 +189,8 @@ public class SVGManager {
 	 * Calculates min and max values for the resulting svg viewbox.
 	 */
 	private void calculateViewboxDimensions() {
-		Point minCoord = circuit.data.getMinCoord();
-		Point maxCoord = circuit.data.getMaxCoord();
+		Point minCoord = circuit.getData().getMinCoord();
+		Point maxCoord = circuit.getData().getMaxCoord();
 
 		int minX = minCoord.fst;
 		int minY = minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1);
@@ -223,7 +223,7 @@ public class SVGManager {
 
 		calculateViewboxDimensions();
 
-		if (circuit.displayOptions.getOption(BDisplayOptions.Coordinates)) {
+		if (circuit.getDisplayOptions().getOption(BDisplayOptions.Coordinates)) {
 			int coordinateOffsetX = (int) (coordinateMultiplier * 0.75);
 			int coordinateOffsetY = (int) (coordinateMultiplier * 0.75);
 			viewBoxX -= coordinateOffsetX;
@@ -263,36 +263,36 @@ public class SVGManager {
 		}
 		sb.append("</defs>\n");
 
-		for (final DrawableField field : circuit.fields) {
+		for (final DrawableField field : circuit.getFields()) {
 			sb.append(toSVG(field));
 		}
-		for (final DrawableDroplet drop : circuit.droplets) {
+		for (final DrawableDroplet drop : circuit.getDroplets()) {
 			if (drop.getDisplayColor().a > 0.1f &&
-					!circuit.hiddenDroplets.contains(drop)) {
+					!circuit.getHiddenDroplets().contains(drop)) {
 				sb.append(toSVG(drop));
 			}
 		}
 		// run over each droplet again and draw the arrows
 		// otherwise arrows can get under droplets
-		if (circuit.displayOptions.getOption(BDisplayOptions
+		if (circuit.getDisplayOptions().getOption(BDisplayOptions
 				.LongNetIndicatorsOnDroplets)) {
-			for (final DrawableDroplet drop : circuit.droplets) {
+			for (final DrawableDroplet drop : circuit.getDroplets()) {
 				sb.append(createDropletArrows(drop));
 			}
 		}
 
 		// append longNetIndicatorsOnFields when needed
-		if (circuit.displayOptions.getOption(BDisplayOptions
+		if (circuit.getDisplayOptions().getOption(BDisplayOptions
 				.LongNetIndicatorsOnFields)) {
 			sb.append(createStartEndArrows());
 		}
 
 		// export msg strings for fields
-		for (final DrawableField field : circuit.fields) {
+		for (final DrawableField field : circuit.getFields()) {
 			sb.append(createFieldMsg(field));
 		}
 		// export msg strings for droplets
-		for (final DrawableDroplet drop : circuit.droplets) {
+		for (final DrawableDroplet drop : circuit.getDroplets()) {
 			sb.append(createDropletMsg(drop));
 		}
 
@@ -301,7 +301,7 @@ public class SVGManager {
 			sb.append(createInfoString());
 		}
 
-		if (circuit.displayOptions.getOption(BDisplayOptions.Coordinates)) {
+		if (circuit.getDisplayOptions().getOption(BDisplayOptions.Coordinates)) {
 			sb.append(createCoordinates());
 		}
 
@@ -384,7 +384,7 @@ public class SVGManager {
 
 		int displayLength = DrawableRoute.routeDisplayLength;
 
-		Biochip biochip = circuit.data;
+		Biochip biochip = circuit.getData();
 
 		Color routeColor = drawableRoute.getColor();
 
@@ -468,7 +468,7 @@ public class SVGManager {
 	 */
 	private String createStartEndArrows() {
 
-		Set<Net> nets = circuit.data.getNets();
+		Set<Net> nets = circuit.getData().getNets();
 		String arrows = "";
 
 		for (final Net net : nets) {
@@ -493,7 +493,7 @@ public class SVGManager {
 	 */
 	private String createDropletArrows(final DrawableDroplet drawableDrop) {
 
-		int time = circuit.currentTime;
+		int time = circuit.getCurrentTime();
 		Point startPoint = drawableDrop.droplet.getFirstPosition();
 		Point endPoint = drawableDrop.droplet.getLastPosition();
 		//Point endPoint = drawableDrop.droplet.getNet().getTarget();
@@ -565,8 +565,8 @@ public class SVGManager {
 	 */
 	private String createGradient(final DrawableField field) {
 		String gradientSvg = "";
-		if (circuit.displayOptions.getOption(BDisplayOptions.NetColorOnFields)) {
-			for (final Net n : circuit.data.getNetsOf(field.getField())) {
+		if (circuit.getDisplayOptions().getOption(BDisplayOptions.NetColorOnFields)) {
+			for (final Net n : circuit.getData().getNetsOf(field.getField())) {
 				GradDir dir = getGradientDirection(field, n);
 				Point fieldPos = getFieldPosInSVGCoords(field);
 				if (dir != null) {
@@ -598,8 +598,8 @@ public class SVGManager {
 			List<Point> dirs = dir.getOrientation();
 			boolean dirMatch = true;
 			for (final Point p : dirs) {
-				dirMatch &= !circuit.data.hasFieldAt(fieldPos.add(p)) ||
-						!net.containsField(circuit.data.getFieldAt(fieldPos.add(p)));
+				dirMatch &= !circuit.getData().hasFieldAt(fieldPos.add(p)) ||
+						!net.containsField(circuit.getData().getFieldAt(fieldPos.add(p)));
 			}
 			if (dirMatch) {
 				return dir;
@@ -671,8 +671,8 @@ public class SVGManager {
 				"y=\"" + (bottomRightCoord.snd * coordinateMultiplier + 1.5 *
 						fontSizeInfoString) +	"\" ";
 
-		String circName = circuit.parent.getFileName();
-		String timeStep = String.valueOf(circuit.currentTime);
+		String circName = circuit.getParent().getFileName();
+		String timeStep = String.valueOf(circuit.getCurrentTime());
 
 		return "<text " + coordinates +	"fill=\"" + fontColorInfoString + "\" " +
 				"font-family=\"" + font + "\" font-size=\"" + fontSizeInfoString +
@@ -715,7 +715,7 @@ public class SVGManager {
 			// what you do with the stuff before you fill the bottomRightCoord
 			// and topLeftCoord variables.
 			coords.append(bottomRightCoord.snd - yCoord +
-					circuit.data.getMinCoord().snd);
+					circuit.getData().getMinCoord().snd);
 			coords.append("</text>\n");
 		}
 		return coords.toString();
@@ -731,7 +731,7 @@ public class SVGManager {
 			String key = "";
 
 			// create all needed svg defs for the fields
-			for (final DrawableField f : circuit.fields) {
+			for (final DrawableField f : circuit.getFields()) {
 				key = generateColoredID(f.getDisplayValues().getTexture()
 						.toString(), f.getColor());
 				// don't create the svg core code twice
@@ -740,7 +740,7 @@ public class SVGManager {
 							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
 									f.getColor(), strokeColor));
 				}
-				Set<Net> nets = circuit.data.getNetsOf(f.getField());
+				Set<Net> nets = circuit.getData().getNetsOf(f.getField());
 				for (final Net n : nets) {
 					for (final GradDir dir : GradDir.values()) {
 						key = generateColoredID("grad-" + dir.toString(),
@@ -756,7 +756,7 @@ public class SVGManager {
 
 			// create all needed svg defs for the droplets
 			// and droplet based features
-			for (final DrawableDroplet d : circuit.droplets) {
+			for (final DrawableDroplet d : circuit.getDroplets()) {
 				// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
 				key = generateColoredID("Droplet", d.getColor());
 				// don't create the svg core code twice
@@ -767,7 +767,7 @@ public class SVGManager {
 				}
 
 				// Add every needed color for the arrowheads
-				if (circuit.displayOptions.getOption(BDisplayOptions
+				if (circuit.getDisplayOptions().getOption(BDisplayOptions
 						.LongNetIndicatorsOnDroplets)) {
 					List<Color> colors = new ArrayList<>();
 					Color diffColor = new Color(0.2f, 0.2f, 0.2f, 0);
@@ -795,7 +795,7 @@ public class SVGManager {
 			}
 
 			// create the svg def for the arrowhead for the source target arrows
-			if (circuit.displayOptions.getOption(BDisplayOptions
+			if (circuit.getDisplayOptions().getOption(BDisplayOptions
 					.LongNetIndicatorsOnFields)) {
 				// this is needed for source target arrows
 				Color color = Color.BLACK;
@@ -826,10 +826,9 @@ public class SVGManager {
 	 * @param drawableDrop the droplet
 	 * @return A Point with the position
 	 */
-	private Point getDropletPosInSVGCoords(final DrawableDroplet
-																								drawableDrop) {
+	private Point getDropletPosInSVGCoords(final DrawableDroplet drawableDrop) {
 		return toSVGCoords(drawableDrop.droplet.getPositionAt(circuit
-				.currentTime));
+				.getCurrentTime()));
 	}
 
 	/**
@@ -839,7 +838,7 @@ public class SVGManager {
 	 * @return Point with SVG coordinates
 	 */
 	private Point toSVGCoords(final Point point) {
-		int yCoord = -point.snd + circuit.data.getMaxCoord().snd;
+		int yCoord = -point.snd + circuit.getData().getMaxCoord().snd;
 		int xCoord = point.fst;
 
 		xCoord *= coordinateMultiplier;

@@ -77,7 +77,7 @@ public class DrawableRoute extends DrawableSprite {
 	 */
 	public Color getColor() {
 		Color c = this.baseColor.cpy();
-		if (droplet.parentCircuit.displayOptions.getOption(
+		if (droplet.parentCircuit.getDisplayOptions().getOption(
 				BDisplayOptions.ColorfulRoutes)) {
 			c = this.droplet.getColor().cpy();
 		}
@@ -93,7 +93,7 @@ public class DrawableRoute extends DrawableSprite {
 	 * and the transparency.
 	 */
 	public void draw() {
-		int currentTime = droplet.parentCircuit.currentTime;
+		int currentTime = droplet.parentCircuit.getCurrentTime();
 		int displayAt;
 
 		this.disableForcedLOD();
@@ -110,7 +110,7 @@ public class DrawableRoute extends DrawableSprite {
 			Color c = getColor();
 
 
-			if (droplet.parentCircuit.displayOptions.getOption(
+			if (droplet.parentCircuit.getDisplayOptions().getOption(
 					BDisplayOptions.SolidPaths)) {
 				c.a = noTransparency;
 			}
@@ -168,13 +168,13 @@ public class DrawableRoute extends DrawableSprite {
 
 			this.setX(xCoord);
 			this.setY(yCoord);
-			this.setScaleX(droplet.parentCircuit.smoothScaleX);
-			this.setScaleY(droplet.parentCircuit.smoothScaleY);
+			this.setScaleX(droplet.parentCircuit.getSmoothScale());
+			this.setScaleY(droplet.parentCircuit.getSmoothScale());
 
 			super.draw();
 		}
 
-		boolean dropletLongIndicator = droplet.parentCircuit.displayOptions
+		boolean dropletLongIndicator = droplet.parentCircuit.getDisplayOptions()
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
 		if (dropletLongIndicator) {
 			this.setForcedLOD(1f);

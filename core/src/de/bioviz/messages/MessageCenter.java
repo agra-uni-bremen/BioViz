@@ -24,11 +24,29 @@ public class MessageCenter {
 
 
 	private Vector<Message> messages;
+
+	/**
+	 * The font that is used to display infos on top of fields and droplets.
+	 */
 	private BitmapFont font;
+
+
+	/**
+	 * The font that is used to display logging messages.
+	 */
 	private BitmapFont messageFont;
+
+	/**
+	 * Whether messages are to be displayed.
+	 */
 	public boolean hidden = false;
 
+
+	/**
+	 * The maximal amount of messages that are displayed at once.
+	 */
 	public static final int MAX_MESSAGES_IN_UI = 32;
+
 
 	private float scaleHUD = 1f / 4f;
 	private float scaleMsg = 1f / 8f;
@@ -41,15 +59,33 @@ public class MessageCenter {
 
 	public static final int textRenderResolution = 16;
 
+
+	/**
+	 * The central logging device for this class.
+	 */
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
 	BioViz parent;
 
-	public MessageCenter(BioViz parent) {
+
+	/**
+	 * Creates a new message center that will pass messages to a BioViz
+	 * instance.
+	 *
+	 * @param parent
+	 * 		the {@link BioViz} this MessageCenter is attached to.
+	 */
+	public MessageCenter(final BioViz parent) {
 		this.parent = parent;
 		messages = new Vector<Message>();
 	}
 
+	/**
+	 * Retrives the font that is used to display stuff on top of
+	 * droplets/fields.
+	 *
+	 * @return The font that is used to display stuff on top of droplets/fields
+	 */
 	public BitmapFont getFont() {
 		if (font == null) {
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
@@ -79,9 +115,7 @@ public class MessageCenter {
 	}
 
 
-	public boolean isHidden() {
-		return hidden;
-	}
+
 
 
 	/**
@@ -90,7 +124,7 @@ public class MessageCenter {
 	 * @param message
 	 * 		the message to be displayed
 	 */
-	public void addMessage(String message) {
+	public void addMessage(final String message) {
 		Message m = new Message(message);
 
 		// Meh. libgdx doesn't draw line breaks...
@@ -192,7 +226,8 @@ public class MessageCenter {
 	 * @param y
 	 * 		the y coordinate to show the message at
 	 */
-	public void addHUDMessage(int key, String message, float x, float y) {
+	public void addHUDMessage(final int key, final String message, final float
+			x, final float y) {
 		addHUDMessage(key, message, x, y, null, -1f);
 	}
 
@@ -231,12 +266,19 @@ public class MessageCenter {
 		hm.size = size;
 	}
 
-	public void removeHUDMessage(int key) {
+	/**
+	 *  Removes a message from the HUD message queue.
+	 * @param key ID of the message to be removed.
+	 */
+	public void removeHUDMessage(final int key) {
 		if (this.HUDMessages.containsKey(key)) {
 			this.HUDMessages.remove(key);
 		}
 	}
 
+	/**
+	 * Clears all HUD messages.
+	 */
 	public void clearHUDMessages() {
 		this.HUDMessages.clear();
 	}

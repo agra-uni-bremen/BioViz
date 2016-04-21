@@ -102,7 +102,7 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public DrawableField(
 			final BiochipField field, final DrawableCircuit parent) {
-		super(TextureE.GridMarker, parent.parent);
+		super(TextureE.GridMarker, parent.getParent());
 		this.setParentCircuit(parent);
 		this.setField(field);
 		super.addLOD(PIXELIZED_ZOOM_LEVEL, TextureE.BlackPixel);
@@ -129,14 +129,14 @@ public class DrawableField extends DrawableSprite {
 
 		String fieldHUDMsg = null;
 		DrawableCircuit circ = getParentCircuit();
-		int t = circ.currentTime;
+		int t = circ.getCurrentTime();
 		float xCoord = circ.xCoordOnScreen(getField().x());
 		float yCoord = circ.yCoordOnScreen(getField().y());
 		TextureE texture = TextureE.GridMarker;
 		this.setX(xCoord);
 		this.setY(yCoord);
-		this.setScaleX(circ.smoothScaleX);
-		this.setScaleY(circ.smoothScaleY);
+		this.setScaleX(circ.getSmoothScale());
+		this.setScaleY(circ.getSmoothScale());
 
 
 		// TODO what happens if some of these options overlap?
@@ -197,7 +197,7 @@ public class DrawableField extends DrawableSprite {
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show
 		// what
-		if (circ.displayOptions.getOption(BDisplayOptions.Pins)) {
+		if (circ.getDisplayOptions().getOption(BDisplayOptions.Pins)) {
 			if (field.pin != null) {
 				fieldHUDMsg = Integer.toString(field.pin.pinID);
 			}
@@ -220,7 +220,7 @@ public class DrawableField extends DrawableSprite {
 		 */
 		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
 
-		if (getField().isBlocked(getParentCircuit().currentTime)) {
+		if (getField().isBlocked(getParentCircuit().getCurrentTime())) {
 			result.add(BLOCKED_COLOR);
 			colorOverlayCount++;
 		}
@@ -242,13 +242,13 @@ public class DrawableField extends DrawableSprite {
 				// Create non-null array contents
 				cornerColors[i] = Color.BLACK.cpy();
 			}
-			for (final Net n : this.getParentCircuit().data.
-					getNetsOf(field)) {
+			for (final Net n : this.getParentCircuit().getData().
+					getNetsOf(this.getField())) {
 				de.bioviz.ui.Color netCol = n.getColor().cpy();
 
 				// Increase brightness for hovered nets
 				if (this.parentCircuit.getHoveredField() != null) {
-					if (this.getParentCircuit().data.getNetsOf
+					if (this.getParentCircuit().getData().getNetsOf
 							(this.getParentCircuit().getHoveredField().field).
 							contains(n)) {
 						netCol.add(0.5f, 0.5f, 0.5f, 0);
@@ -267,23 +267,27 @@ public class DrawableField extends DrawableSprite {
 				final int topleft = 1;
 				final int topright = 2;
 				final int bottomright = 3;
-				if (!getParentCircuit().data.hasFieldAt(top) ||
-						!n.containsField(getParentCircuit().data.getFieldAt(top))) {
+				if (!getParentCircuit().getData().hasFieldAt(top) ||
+						!n.containsField(
+								getParentCircuit().getData().getFieldAt(top))) {
 					this.cornerColors[topleft].add(netCol.buildGdxColor());
 					this.cornerColors[topright].add(netCol.buildGdxColor());
 				}
-				if (!getParentCircuit().data.hasFieldAt(bottom) ||
-						!n.containsField(getParentCircuit().data.getFieldAt(bottom))) {
+				if (!getParentCircuit().getData().hasFieldAt(bottom) ||
+						!n.containsField(
+								getParentCircuit().getData().getFieldAt(bottom))) {
 					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
 					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
-				if (!getParentCircuit().data.hasFieldAt(left) ||
-						!n.containsField(getParentCircuit().data.getFieldAt(left))) {
+				if (!getParentCircuit().getData().hasFieldAt(left) ||
+						!n.containsField(
+								getParentCircuit().getData().getFieldAt(left))) {
 					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
 					this.cornerColors[topleft].add(netCol.buildGdxColor());
 				}
-				if (!getParentCircuit().data.hasFieldAt(right) ||
-						!n.containsField(getParentCircuit().data.getFieldAt(right))) {
+				if (!getParentCircuit().getData().hasFieldAt(right) ||
+						!n.containsField(
+								getParentCircuit().getData().getFieldAt(right))) {
 					this.cornerColors[topright].add(netCol.buildGdxColor());
 					this.cornerColors[bottomright].add(netCol.buildGdxColor());
 				}
@@ -300,7 +304,7 @@ public class DrawableField extends DrawableSprite {
 		if (getOption(CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
-			float scalingFactor = this.parentCircuit.data.getMaxUsage();
+			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
 			result.add(new Color(
 					field.usage / scalingFactor,
 					field.usage / scalingFactor,
@@ -312,14 +316,13 @@ public class DrawableField extends DrawableSprite {
 		/** Colours the interference region **/
 		if (getOption(InterferenceRegion)) {
 			int amountOfInterferenceRegions = 0;
-
-			for (final Droplet d: getParentCircuit().data.getDroplets()) {
+			for (final Droplet d : getParentCircuit().getData().getDroplets()) {
 				if (isPartOfInterferenceRegion(d)) {
 					boolean interferenceViolation = false;
-					for (DrawableDroplet d2 : parentCircuit.droplets) {
-						if (d2.droplet.getPositionAt(this.parentCircuit.currentTime) != null &&
+					for (DrawableDroplet d2 : parentCircuit.getDroplets()) {
+						if (d2.droplet.getPositionAt(this.parentCircuit.getCurrentTime()) != null &&
 								d2.droplet.getNet() != d.getNet() &&
-								d2.droplet.getPositionAt(this.parentCircuit.currentTime).equals(this.field.pos)) {
+								d2.droplet.getPositionAt(this.parentCircuit.getCurrentTime()).equals(this.field.pos)) {
 							result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 							++colorOverlayCount;
 							interferenceViolation = true;
@@ -337,7 +340,7 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		int t = getParentCircuit().currentTime;
+		int t = getParentCircuit().getCurrentTime();
 		if (getOption(Actuations)) {
 			if (getField().isActuated(t)) {
 				result.add(Colors.ACTAUTED_COLOR);
@@ -372,8 +375,8 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		if (getOption(Adjacency) &&
-			getParentCircuit().data.getAdjacentActivations().contains(
-					field)) {
+			getParentCircuit().getData().getAdjacentActivations().contains(
+					this.getField())) {
 			result.add(ADJACENT_ACTIVATION_COLOR);
 		}
 		
@@ -404,7 +407,7 @@ public class DrawableField extends DrawableSprite {
 		super.draw();
 
 		if (getOption(LongNetIndicatorsOnFields)) {
-			for (Net net : this.parentCircuit.data.getNetsOf(this.field)) {
+			for (Net net : this.parentCircuit.getData().getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
 						Pair<Float, Float> target = new Pair<Float, Float> (
@@ -432,9 +435,9 @@ public class DrawableField extends DrawableSprite {
 	 * @return whether or not this field is part of its interference region
 	 */
 	private boolean isPartOfInterferenceRegion(Droplet d) {
-		Point cur_pos = d.getPositionAt(getParentCircuit().currentTime);
-		Point prev_pos = d.getPositionAt(getParentCircuit().currentTime-1);
-		if(parentCircuit.displayOptions
+		Point cur_pos = d.getPositionAt(getParentCircuit().getCurrentTime());
+		Point prev_pos = d.getPositionAt(getParentCircuit().getCurrentTime()-1);
+		if(parentCircuit.getDisplayOptions()
 				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
 			return 	(cur_pos != null &&
 					cur_pos.adjacent(field.pos)) ||
@@ -491,6 +494,6 @@ public class DrawableField extends DrawableSprite {
 	 * @return true if optn is true
 	 */
 	private boolean getOption(final BDisplayOptions optn) {
-		return parentCircuit.displayOptions.getOption(optn);
+		return getParentCircuit().getDisplayOptions().getOption(optn);
 	}
 }

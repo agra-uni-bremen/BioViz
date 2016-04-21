@@ -6,8 +6,10 @@ import ch.qos.logback.core.AppenderBase;
 import de.bioviz.ui.BioViz;
 
 /**
+ * A wrapper that makes the MessageCenter a valid appender for the logback
+ * framework.
+ *
  * @author Oliver Keszocze
- * @brief A wrapper that makes the MessageCenter a valid appender for the logback framework
  */
 public class MsgAppender extends AppenderBase<ILoggingEvent> {
 	/**
@@ -49,6 +51,16 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
         }
     }
     
+	/**
+	 * Sets the reference to the {@link BioViz} that is supposed to show the
+	 *+ messages.
+	 *
+	 * @param bioViz
+	 * 		The {@link BioViz} that is supposed to show the messages.
+	 */
+	public static void setMessageViz(final BioViz bioViz) {
+		MsgAppender.viz = bioViz;
+	}
     public static void setMessageViz(BioViz viz) {
     	MsgAppender.viz = viz;
     }
