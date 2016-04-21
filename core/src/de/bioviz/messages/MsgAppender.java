@@ -22,7 +22,7 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
 
     @Override
     /**
-     * @brief Forwards a log message to the MessageCenter that will display it on the HUD
+     * Forwards a log message to the MessageCenter that will display it on the HUD.
      */
     protected void append(ILoggingEvent eventObject) {
         if (isStarted() && eventObject.getLevel().isGreaterOrEqual(Level.INFO)) {
@@ -32,7 +32,7 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
 
     @Override
     /**
-     * @brief Checks whether this appender is ready to append messages
+     * Checks whether this appender is ready to append messages.
      *
      * The idea is to check whether a GUI is present. If so, messages can be appended.
      */
