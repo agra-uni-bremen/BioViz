@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -62,7 +62,8 @@ public class DesktopLauncher extends JFrame {
 	private static Logger logger =
 			LoggerFactory.getLogger(DesktopLauncher.class);
 
-	private static SVGExportSettings svgExportSettings = SVGExportSettings.getInstance();
+	private static SVGExportSettings svgExportSettings =
+			SVGExportSettings.getInstance();
 
 	/**
 	 * The label to display the current simulation time.
@@ -233,6 +234,7 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Initializes and returns the top menu bar
+	 *
 	 * @return the menu bar to be displayed at the top of the window
 	 */
 	private JMenuBar initializeMenubar() {
@@ -246,15 +248,19 @@ public class DesktopLauncher extends JFrame {
 		
 		BDisplayOptions[] enumValues = BDisplayOptions.values();
 		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
-			public int compare(BDisplayOptions left, BDisplayOptions right){
-		        return left.description().compareTo(right.description()); //use your criteria here
-		    }
+			public int compare(BDisplayOptions left, BDisplayOptions right) {
+				return left.description().compareTo(
+						right.description()); //use your criteria here
+			}
 		});
 		for (BDisplayOptions option : enumValues) {
 			BioCheckboxMenuItem menuItem =
 					new BioCheckboxMenuItem(option.description(), option);
 			menu.add(menuItem);
-			currentViz.addLoadedFileListener(() -> {menuItem.updateState(); return;});
+			currentViz.addLoadedFileListener(() -> {
+				menuItem.updateState();
+				return;
+			});
 		}
 
 		return result;
@@ -458,8 +464,56 @@ public class DesktopLauncher extends JFrame {
 	private void addNewTab(final File fileForTab) {
 		File file = fileForTab;
 		if (file == null) {
-			file = Gdx.files.getFileHandle("examples/default_grid.bio",
-										   Files.FileType.Internal).file();
+			file = Gdx.files.internal("examples/default_grid.bio").file();
+
+
+			/*
+			file does not exist as we started BioViz from the command line (at
+			least that we will assume now.
+
+			So what we do is
+				1) open a stream to the file within the jar file
+				2) create a temporary file that will be deleted after the JVM
+				   stops running this process
+				3) copy the content of the stream into that file and use it as
+				   a regular file
+				4) by annoyed by Java a lot
+			 */
+			if (!file.exists()) {
+				try {
+					InputStream in = getClass().getResourceAsStream(
+							"/examples/default_grid.bio");
+
+					file = File.createTempFile("default_file_tmp", "bio");
+					file.deleteOnExit();
+
+
+					// manually copying as Java is incredibly bad
+					String read;
+					BufferedReader
+							br = new BufferedReader(new InputStreamReader(in));
+					BufferedWriter w = new BufferedWriter(new FileWriter(file));
+					while((read=br.readLine()) != null) {
+						System.out.println(read);
+						w.write(read+"\n");
+					}
+
+					w.close();
+
+
+					// be even more annoyed by java because the following code
+					// does *not* work! (why would it..)
+					java.nio.file.Files.copy(in,file.toPath());
+
+
+				}
+				catch (IOException e) {
+					logger.error("Could not even locate/create default file");
+				}
+
+			}
+
+
 		}
 		logger.debug("Adding new tab to UI for " + file.getName());
 		JPanel dummyPanel = new JPanel();
@@ -514,9 +568,12 @@ public class DesktopLauncher extends JFrame {
 								UIManager.getSystemLookAndFeelClassName());
 					} catch (final UnsupportedLookAndFeelException e) {
 						logger.error("System look and feel is unsupported: "
-								+ e.getMessage() + "\n" + e.getStackTrace());
+									 + e.getMessage() + "\n" +
+									 e.getStackTrace());
 					} catch (final Exception e) {
-						logger.error("Cannot set look and feel: " + e.getMessage() + "\n"
+						logger.error(
+								"Cannot set look and feel: " + e.getMessage() +
+								"\n"
 								+ e.getStackTrace());
 					}
 
@@ -538,12 +595,14 @@ public class DesktopLauncher extends JFrame {
 				}
 			});
 		} catch (Exception e) {
-			logger.error("Could not start the application: " + e.getStackTrace());
+			logger.error(
+					"Could not start the application: " + e.getStackTrace());
 		}
 	}
 
 	/**
-	 * @param pathPrefName The name of of value stored in the Preferences object.
+	 * @param pathPrefName
+	 * 		The name of of value stored in the Preferences object.
 	 * @param load
 	 * 		if true, opens a 'file open dialog', if false opens a 'file store
 	 * 		dialog'
@@ -577,7 +636,7 @@ public class DesktopLauncher extends JFrame {
 			JCheckBox exportSeries = new JCheckBox("Export series");
 			exportSeries.setSelected(false);
 
-			JPanel checkBoxes = new JPanel(new GridLayout(0,1));
+			JPanel checkBoxes = new JPanel(new GridLayout(0, 1));
 			checkBoxes.add(exportColors);
 			checkBoxes.add(exportInfoString);
 			checkBoxes.add(exportSeries);
@@ -590,7 +649,8 @@ public class DesktopLauncher extends JFrame {
 
 			svgExportSettings.setColorfulExport(exportColors.isSelected());
 			svgExportSettings.setExportSeries(exportSeries.isSelected());
-			svgExportSettings.setInformationString(exportInfoString.isSelected());
+			svgExportSettings.setInformationString(
+					exportInfoString.isSelected());
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -623,7 +683,8 @@ public class DesktopLauncher extends JFrame {
 			// configuration. For multi-step configuration, omit calling
 			// context.reset().
 			context.reset();
-			configurator.doConfigure("config/logback.xml");
+			configurator.doConfigure(DesktopLauncher.class.getResourceAsStream
+					("/config/logback.xml"));
 		} catch (final JoranException je) {
 			// StatusPrinter will handle this
 			System.out.println("Error setting up logger: "
@@ -1245,6 +1306,7 @@ public class DesktopLauncher extends JFrame {
 
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
 		private BDisplayOptions option;
+
 		public BioCheckboxMenuItem(String label, BDisplayOptions option) {
 			super(label);
 			this.option = option;

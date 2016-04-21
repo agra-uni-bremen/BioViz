@@ -238,7 +238,7 @@ public class BioViz implements ApplicationListener {
 		screenshotCount++;
 		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(),
 					   Gdx.graphics.getHeight());
-		logger.info("Saved screenshot to {}", fh.path());
+		logger.info("Saved screenshot to \"{}\"", fh.path());
 	}
 
 	public void saveScreenshotFull() {
@@ -303,7 +303,7 @@ public class BioViz implements ApplicationListener {
 				this.loadedCircuits.remove(f.getCanonicalPath());
 			}
 		} catch (Exception e) {
-			logger.error("Could not unload file " + f);
+			logger.error("Could not unload file \"" + f+"\"");
 		}
 	}
 
@@ -325,12 +325,12 @@ public class BioViz implements ApplicationListener {
 									());
 				}
 				else {
-					logger.debug("Loading {}", bioFile);
+					logger.debug("Loading \"{}\"", bioFile);
 					bc = BioParser.parseFile(bioFile, this);
 
 					if (bc == null) {
 						error = true;
-						errorMsg = "Could not parse file" + bioFile;
+						errorMsg = "Could not parse file \"" + bioFile+"\"";
 						bc = new Biochip();
 					}
 					logger.debug("loaded file, creating drawable elements...");
@@ -348,7 +348,7 @@ public class BioViz implements ApplicationListener {
 					logger.info("Done loading default file");
 				}
 				else {
-					logger.info("Done loading file {}", bioFile);
+					logger.info("Done loading file \"{}\"", bioFile);
 				}
 			} else {
 				logger.debug(
@@ -471,8 +471,8 @@ public class BioViz implements ApplicationListener {
 	}
 
 	static public ShaderProgram createDefaultShader() {
-		FileHandle vertexShaderHandle = new FileHandle("vertexShader.shd");
-		FileHandle fragmentShaderHandle = new FileHandle("fragmentShader.shd");
+		FileHandle vertexShaderHandle = Gdx.files.internal("vertexShader.shd");
+		FileHandle fragmentShaderHandle = Gdx.files.internal("fragmentShader.shd");
 
 		ShaderProgram shader = new ShaderProgram(vertexShaderHandle, fragmentShaderHandle);
 		if (shader.isCompiled() == false) {

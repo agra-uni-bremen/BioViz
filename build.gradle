@@ -60,6 +60,13 @@ project(":desktop") {
     }
     checkstyleMain.finalizedBy checkstyleHtml
 
+    sourceSets{
+        main{
+            java{
+                srcDir 'src/'
+            }
+        }
+    }
     antlr4.source = file('../lib/parser')
     antlr4.output = file('../core/src/de/bioviz/parser/generated')
     antlr4.extraArgs = ['-package', 'de.bioviz.parser.generated']
@@ -99,6 +106,22 @@ project(":core") {
     checkstyle.showViolations = true
     checkstyle {
         toolVersion = "6.0"
+    }
+
+    sourceSets{
+        main{
+            java {
+                srcDir 'src/'
+            }
+            resources {
+                srcDir 'assets/'
+            }
+        }
+        test{
+            java {
+                srcDir 'tests/'
+            }
+        }
     }
 
     dependencies {
