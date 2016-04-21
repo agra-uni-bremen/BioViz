@@ -10,10 +10,6 @@ public class MessageBase {
 
 	/**
 	 * The color used for displaying the message.
-	 *
-	 * TODO this value is never set, i.e. is always null.
-	 * This is, obviously, useless. The MessageCenter even checks whether it
-	 * is null or not before chosing a color on its own.
 	 */
 	public Color color;
 
