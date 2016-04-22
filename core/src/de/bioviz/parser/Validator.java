@@ -125,9 +125,6 @@ public class Validator {
 		return errors;
 	}
 
-
-	// TODO Somehow also generate the list of assigned pins to the cells
-
 	/**
 	 * Method that checks whether there are cells that have multiple pin
 	 * assigned to them.

@@ -124,7 +124,6 @@ public class Droplet {
 	 * sure that you call this with the proper parameters!
 	 */
 	public void setNet(final Net net) {
-		// TODO check whether droplet actually belongs to that net?
 		this.net = net;
 	}
 

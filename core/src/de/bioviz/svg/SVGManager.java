@@ -757,7 +757,6 @@ public class SVGManager {
 			// create all needed svg defs for the droplets
 			// and droplet based features
 			for (final DrawableDroplet d : circuit.getDroplets()) {
-				// TODO why do you add "-"? What is wrong with "Droplet-"? keszocze
 				key = generateColoredID("Droplet", d.getColor());
 				// don't create the svg core code twice
 				if (!colSvgs.containsKey(key)) {
