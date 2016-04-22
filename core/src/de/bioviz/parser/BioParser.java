@@ -23,7 +23,7 @@ import java.nio.file.Paths;
  */
 public class BioParser  {
 
-    static private Logger logger = LoggerFactory.getLogger(BioParser.class);
+    private static Logger logger = LoggerFactory.getLogger(BioParser.class);
 
 
     public static Biochip parseFile(final File file, BioViz viz) {

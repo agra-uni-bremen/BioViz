@@ -1,20 +1,18 @@
 package de.bioviz.structures;
 
 import de.bioviz.util.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Oliver Keszocze
  */
 public class Point extends Pair<Integer, Integer> {
 
-	public final static Point NORTH = new Point(0, 1);
-	public final static Point EAST = new Point(1, 0);
-	public final static Point SOUTH = new Point(0, -1);
-	public final static Point WEST = new Point(-1, 0);
+	public static final Point NORTH = new Point(0, 1);
+	public static final Point EAST = new Point(1, 0);
+	public static final Point SOUTH = new Point(0, -1);
+	public static final Point WEST = new Point(-1, 0);
 
-	public final static Point[] DIRECTIONS = {NORTH, EAST, SOUTH, WEST};
+	public static final Point[] DIRECTIONS = {NORTH, EAST, SOUTH, WEST};
 
 
 	/**
