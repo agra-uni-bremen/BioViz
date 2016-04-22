@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * The way this validator works is that every problem found will be added to an
  * error list that will be returned to the caller.
  *
- * @author Oliver Keszöcze
+ * @author Oliver Keszocze
  */
 public class Validator {
 	/**
@@ -24,6 +24,13 @@ public class Validator {
 	 */
 	static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
+
+	/**
+	 * Private constructor to prevent instantiation of this class
+	 */
+	private Validator() {
+
+	}
 
 	/**
 	 * This method checks that all the positions a droplet moves along is
@@ -37,7 +44,7 @@ public class Validator {
 	 */
 	static ArrayList<String> checkPathsForPositions(
 			final ArrayList<Droplet> drops, final Set<Point> points) {
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 		for (final Droplet drop : drops) {
 			Vector<Point> ps = drop.getPositions();
 			ps.forEach(p -> {
@@ -60,7 +67,7 @@ public class Validator {
 	 */
 	static ArrayList<String> checkPathForBlockages(final Biochip chip) {
 		Set<Droplet> droplets = chip.getDroplets();
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 
 		for (final Droplet drop : droplets) {
 			Vector<Point> positions = drop.getPositions();
@@ -95,8 +102,6 @@ public class Validator {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (final Droplet drop : drops) {
 			Vector<Point> points = drop.getPositions();
-//			logger.debug("Evaluating router of length {} for droplet {}",
-// points.size(),drop.getID());
 
 			if (points.isEmpty()) {
 				errors.add("Droplet " + drop.getID() +
@@ -107,9 +112,6 @@ public class Validator {
 					Point prev = points.get(0);
 					for (int i = 1; i < points.size(); i++) {
 						Point curr = points.get(i);
-//						logger.debug("looking at points {} and {}",prev,curr);
-//						logger.debug("reachable: {}",Point.reachable(prev,
-// curr));
 						if (!Point.reachable(prev, curr)) {
 							errors.add("Droplet " + drop.getID() +
 									   ": Jump in route from " + prev + " to" +
@@ -138,7 +140,7 @@ public class Validator {
 	static ArrayList<String> checkMultiplePinAssignments(
 			final Collection<Pin> pins) {
 		ArrayList<Point> points = new ArrayList<>();
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 
 		for (final Pin pin : pins) {
 			points.addAll(pin.cells);
@@ -173,7 +175,7 @@ public class Validator {
 	static ArrayList<String> checkActuationVectorLengths(
 			final HashMap<Point, ActuationVector> cellActuations,
 			final HashMap<Integer, ActuationVector> pinActuations) {
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 
 		Integer cellActs = null;
 		Integer pinActs = null;
@@ -241,10 +243,10 @@ public class Validator {
 	checkForDetectorPositions(final Biochip chip,
 							  final ArrayList<Detector> detectors,
 							  final boolean removeWrongDetectors) {
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 
 		if (detectors != null && !detectors.isEmpty()) {
-			ArrayList<Detector> removeList = new ArrayList<Detector>();
+			ArrayList<Detector> removeList = new ArrayList<>();
 			for (final Detector det : detectors) {
 				Point pos = det.position();
 				try {
@@ -333,11 +335,11 @@ public class Validator {
 			final Biochip chip,
 			final ArrayList<Pair<Point, Direction>> sinks,
 			final boolean removeWrongDirs) {
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 
 		if (sinks != null && !sinks.isEmpty()) {
 			ArrayList<Pair<Point, Direction>> removeList =
-					new ArrayList<Pair<Point, Direction>>();
+					new ArrayList<>();
 			for (final Pair<Point, Direction> sink : sinks) {
 				String msg = checkOutsidePosition(chip, "Sink", sink);
 				if (!msg.isEmpty()) {
@@ -373,11 +375,11 @@ public class Validator {
 			final ArrayList<Pair<Integer, Pair<Point, Direction>>> disps,
 			final boolean removeWrongDirs) {
 
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 
 		if (disps != null && !disps.isEmpty()) {
 			ArrayList<Pair<Integer, Pair<Point, Direction>>> removeList
-					= new ArrayList<Pair<Integer, Pair<Point, Direction>>>();
+					= new ArrayList<>();
 			for (final Pair<Integer, Pair<Point, Direction>> dir : disps) {
 				String msg = checkOutsidePosition(chip, "Dispenser", dir.snd);
 				if (!msg.isEmpty()) {
@@ -467,7 +469,7 @@ public class Validator {
 			final HashMap<Integer, ActuationVector> pinActuations,
 			final boolean strongCompatibility) {
 
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 
 		/*
 		Check that every cell actuation matches with the pin actuation that is

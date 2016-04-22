@@ -46,8 +46,7 @@ public class Droplet {
 	 * variable.
 	 * <p>
 	 * Combined with the length of the vector, this also implicitly defines
-	 * when
-	 * the droplet vanishes from the chip.
+	 * when the droplet vanishes from the chip.
 	 */
 	private Vector<Point> positions = new Vector<>();
 
