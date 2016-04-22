@@ -10,15 +10,22 @@ buildscript {
 }
 
 apply plugin: 'me.champeau.gradle.antlr4'
+apply plugin: "sonar"
 
 antlr4.source = file('lib/parser')
 antlr4.output = file('core/src/de/bioviz/parser/generated')
 antlr4.extraArgs = ['-package', 'de.bioviz.parser.generated']
 
+
 // add antlr4 to classpath
 configurations {
     compile.extendsFrom antlr4
 }
+
+
+// configuration is done in the sonar-project.properties file
+apply plugin: "sonar-runner"
+
 
 allprojects {
     apply plugin: "eclipse"
