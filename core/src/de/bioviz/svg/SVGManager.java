@@ -6,14 +6,7 @@ import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Source;
-import de.bioviz.ui.BDisplayOptions;
-import de.bioviz.ui.Colors;
-import de.bioviz.ui.DisplayValues;
-import de.bioviz.ui.DrawableCircuit;
-import de.bioviz.ui.DrawableDroplet;
-import de.bioviz.ui.DrawableField;
-import de.bioviz.ui.DrawableRoute;
-import de.bioviz.ui.TextureE;
+import de.bioviz.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -269,24 +262,28 @@ public class SVGManager {
 		}
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
 			if (drop.getDisplayColor().a > 0.1f &&
-					!circuit.getHiddenDroplets().contains(drop)) {
+					!circuit.isHidden(drop)) {
 				sb.append(toSVG(drop));
 			}
 		}
 		// run over each droplet again and draw the arrows
 		// otherwise arrows can get under droplets
-		if (circuit.getDisplayOptions().getOption(BDisplayOptions
-				.LongNetIndicatorsOnDroplets)) {
-			for (final DrawableDroplet drop : circuit.getDroplets()) {
-				sb.append(createDropletArrows(drop));
+		for (final DrawableDroplet drop : circuit.getDroplets()) {
+			if (circuit.getDisplayOptions().getOption(BDisplayOptions
+					.LongNetIndicatorsOnDroplets)) {
+
+					if(!circuit.isHidden(drop)) {
+						sb.append(createDropletArrows(drop));
+					}
+			}
+			// append longNetIndicatorsOnFields when needed
+			if (circuit.getDisplayOptions().getOption(BDisplayOptions
+					.LongNetIndicatorsOnFields)) {
+				sb.append(createSourceTargetArrow(drop));
 			}
 		}
 
-		// append longNetIndicatorsOnFields when needed
-		if (circuit.getDisplayOptions().getOption(BDisplayOptions
-				.LongNetIndicatorsOnFields)) {
-			sb.append(createStartEndArrows());
-		}
+
 
 		// export msg strings for fields
 		for (final DrawableField field : circuit.getFields()) {
@@ -294,7 +291,9 @@ public class SVGManager {
 		}
 		// export msg strings for droplets
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
-			sb.append(createDropletMsg(drop));
+			if(!circuit.isHidden(drop)) {
+				sb.append(createDropletMsg(drop));
+			}
 		}
 
 
@@ -415,8 +414,8 @@ public class SVGManager {
 
 			LOGGER.debug("displayAt {}", displayAt);
 
-			Point p1 = droplet.droplet.getPositionAt(displayAt);
-			Point p2 = droplet.droplet.getPositionAt(displayAt + 1);
+			Point p1 = droplet.droplet.getSafePositionAt(displayAt);
+			Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
 
 			LOGGER.debug("p1 {}; p2 {}", p1, p2);
 
@@ -473,23 +472,20 @@ public class SVGManager {
 	 *
 	 * @return svg string containing all start end arrows
 	 */
-	private String createStartEndArrows() {
+	private String createSourceTargetArrow(DrawableDroplet drawableDrop) {
 
-		Set<Net> nets = circuit.getData().getNets();
-		String arrows = "";
+		Net net = drawableDrop.droplet.getNet();
+		String arrow = "";
 
-		for (final Net net : nets) {
-			for (final Source source : net.getSources()) {
-					Point startPoint = source.startPosition;
-					Point endPoint = net.getTarget();
-					if (startPoint != null && endPoint != null &&
-							!startPoint.equals(endPoint)) {
-						Color arrowColor = Color.BLACK;
-						arrows += createSVGArrow(startPoint, endPoint, arrowColor);
-					}
-			}
+		if (net != null) {
+			Point startPoint = drawableDrop.droplet.getFirstPosition();
+			Point endPoint = net.getTarget();
+
+			Color arrowColor = Color.BLACK;
+			arrow = createSVGArrow(startPoint, endPoint, arrowColor);
 		}
-		return arrows;
+
+		return arrow;
 	}
 
 	/**
@@ -500,25 +496,29 @@ public class SVGManager {
 	 */
 	private String createDropletArrows(final DrawableDroplet drawableDrop) {
 
-		int time = circuit.getCurrentTime();
-		Point startPoint = drawableDrop.droplet.getFirstPosition();
-		Point endPoint = drawableDrop.droplet.getLastPosition();
-		//Point endPoint = drawableDrop.droplet.getNet().getTarget();
-		Point dropletPos = drawableDrop.droplet.getPositionAt(time);
+		Net net = drawableDrop.droplet.getNet();
 
 		String arrows = "";
-		Color dropColor = drawableDrop.getColor();
+		if(net != null) {
 
-		if (startPoint != null && dropletPos != null &&
-				!startPoint.equals(dropletPos))  {
-			Color arrowColor = dropColor.cpy().sub(0.2f, 0.2f, 0.2f, 0);
-			arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
-		}
+			int time = circuit.getCurrentTime();
+			Point startPoint = drawableDrop.droplet.getFirstPosition();
+			Point endPoint = net.getTarget();
+			Point dropletPos = drawableDrop.droplet.getSafePositionAt(time);
 
-		if (dropletPos != null && endPoint != null &&
-				!dropletPos.equals(endPoint)) {
-			Color arrowColor = dropColor.cpy().add(0.2f, 0.2f, 0.2f, 0);
-			arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
+			Color dropColor = drawableDrop.getColor();
+
+			if (startPoint != null && dropletPos != null &&
+					!startPoint.equals(dropletPos)) {
+				Color arrowColor = dropColor.cpy().sub(0.2f, 0.2f, 0.2f, 0);
+				arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
+			}
+
+			if (dropletPos != null && endPoint != null &&
+					!dropletPos.equals(endPoint)) {
+				Color arrowColor = dropColor.cpy().add(0.2f, 0.2f, 0.2f, 0);
+				arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
+			}
 		}
 
 		return arrows;
@@ -841,7 +841,7 @@ public class SVGManager {
 	 * @return A Point with the position
 	 */
 	private Point getDropletPosInSVGCoords(final DrawableDroplet drawableDrop) {
-		return toSVGCoords(drawableDrop.droplet.getPositionAt(circuit
+		return toSVGCoords(drawableDrop.droplet.getSafePositionAt(circuit
 				.getCurrentTime()));
 	}
 
