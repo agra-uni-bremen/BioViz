@@ -7,6 +7,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
+import de.bioviz.parser.BioParser;
+import de.bioviz.structures.Biochip;
 import de.bioviz.svg.SVGExportSettings;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.BioViz;
@@ -585,7 +587,6 @@ public class DesktopLauncher extends JFrame {
 
 		if (opts.check != null) {
 			startErrorChecker(opts.check);
-
 			System.exit(0);
 		}
 
@@ -593,7 +594,13 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	static void startErrorChecker(final File f) {
-
+		Biochip chip = BioParser.parseFile(f);
+		if (!chip.errors.isEmpty()) {
+			System.out.println("Found errors in file \""+f.getAbsolutePath()+"\":");
+			for (String error: chip.errors) {
+				System.out.println(error);
+			}
+		}
 	}
 
 	static void startGUI(final String args[]) {
