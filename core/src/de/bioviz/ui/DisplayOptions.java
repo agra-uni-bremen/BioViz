@@ -51,7 +51,7 @@ public class DisplayOptions {
 		setOption(BDisplayOptions.Droplets, true);
 		setOption(BDisplayOptions.Coordinates, false);
 		setOption(BDisplayOptions.DispenserIcon, true);
-		setOption(BDisplayOptions.DispenserID, true);
+		setOption(BDisplayOptions.DispenserFluidName, true);
 		setOption(BDisplayOptions.DetectorIcon, true);
 		setOption(BDisplayOptions.FluidNames, true);
 		setOption(BDisplayOptions.InterferenceRegion, false);

@@ -31,6 +31,6 @@ sinks
 end
 
 dispensers
-1 (5,4) E
-2 (1,1) S
+1 (1,1) S
+2 (5,4) E
 end

@@ -2,6 +2,7 @@ package de.bioviz.ui;
 
 import de.bioviz.structures.Droplet;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
@@ -50,8 +51,6 @@ public class DrawableDroplet extends DrawableSprite {
 	 */
 	public Color getDisplayColor() {
 
-		DrawableCircuit circ = parentCircuit;
-
 		Color color = this.dropletColor.cpy();
 
 		Net net = droplet.getNet();
@@ -62,7 +61,7 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 
 
-		Point p = droplet.getPositionAt(circ.getCurrentTime());
+		Point p = droplet.getPositionAt(parentCircuit.getCurrentTime());
 
 		// if the droplet is currently not present, make it 'invisible' by
 		// making it totally transparent
@@ -90,43 +89,40 @@ public class DrawableDroplet extends DrawableSprite {
 	 * @return Text to be displayed on top of the droplets
 	 */
 	public String getMsg() {
-		String msg = "";
+		ArrayList<String> msgs = new ArrayList<>();
 
 		int dropID = droplet.getID();
 
-		if (parentCircuit.getDisplayOptions().getOption(
-				BDisplayOptions.DropletIDs)) {
-			msg = Integer.toString(dropID) + " ";
+		boolean dispDropIDs = parentCircuit.getDisplayOptions().getOption(
+				BDisplayOptions.DropletIDs);
 
+		boolean dispFluidIDs = parentCircuit.getDisplayOptions().getOption(
+				BDisplayOptions.FluidIDs);
+
+		boolean dispFluidName = parentCircuit.getDisplayOptions()
+				.getOption(BDisplayOptions.FluidNames);
+
+		Integer fluidID = parentCircuit.getData().fluidID(dropID);
+
+		if (dispDropIDs) {
+			msgs.add(Integer.toString(dropID));
 		}
-		if (parentCircuit.getDisplayOptions().getOption(BDisplayOptions.FluidIDs)) {
-			// note: fluidID may be null!
-			Integer fluidID = parentCircuit.getData().fluidID(dropID);
-			if (fluidID != null) {
-				if (!msg.isEmpty()) {
-					msg += "-";
-				}
-				msg += " " + fluidID.toString() + " ";
+
+		if (dispFluidIDs && fluidID != null) {
+			msgs.add(fluidID.toString());
+		}
+
+		if (dispFluidName && fluidID != null) {
+			String fname = parentCircuit.getData().fluidType(fluidID);
+
+			if (fname != null) {
+				msgs.add(fname);
 			}
-
 		}
-		if (parentCircuit.getDisplayOptions()
-				.getOption(BDisplayOptions.FluidNames)) {
-			Integer fluidID = parentCircuit.getData().fluidID(dropID);
-			if (fluidID != null) {
-				String fname = parentCircuit.getData().fluidType(fluidID);
 
-				if (fname != null) {
-					if (!msg.isEmpty()) {
-						msg += "-";
-					}
-					msg += " " + fname;
-				}
-			}
-
-		}
+		String msg = String.join(" - ", msgs);
 		logger.trace("droplet msg after fluidNames option: {}", msg);
-		return msg.isEmpty() ? null : msg;
+		return msg;
 	}
 
 	@Override
@@ -197,11 +193,11 @@ public class DrawableDroplet extends DrawableSprite {
 	}
 
 	public void toggleGridVisibility() {
-		if (parentCircuit.getHiddenDroplets().contains(this)) {
-			parentCircuit.getHiddenDroplets().remove(this);
+		if (parentCircuit.isHidden(this)) {
+			parentCircuit.unHideDroplet(this);
 		}
 		else {
-			parentCircuit.getHiddenDroplets().add(this);
+			parentCircuit.hideDroplet(this);
 		}
 	}
 
