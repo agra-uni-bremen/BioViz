@@ -30,6 +30,9 @@ import de.bioviz.ui.BioViz;
 import de.bioviz.ui.BioVizEvent;
 import de.bioviz.ui.DrawableRoute;
 
+import de.bioviz.util.BioVizInfo;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -554,6 +557,41 @@ public class DesktopLauncher extends JFrame {
 	 * 		console arguments, currently unused
 	 */
 	public static void main(final String[] args) {
+
+		Options opts = new Options();
+		CmdLineParser parser = new CmdLineParser(opts);
+		try {
+			parser.parseArgument(args);
+		} catch (CmdLineException e) {
+			String argsLine = String.join(" ",args);
+			System.err.println("Unable to parse arguments: \""+argsLine+"\"");
+			System.err.println("\nusage:");
+			parser.printUsage(System.err);
+			System.exit(1);
+		}
+
+		if (opts.help) {
+			parser.printUsage(System.out);
+			System.exit(0);
+		}
+		if (opts.version) {
+			System.out.println("This is BioViz version "+ BioVizInfo.version);
+		}
+
+		if (opts.authors) {
+			System.out.println("BioViz is written by:");
+			for (String author: BioVizInfo.authors) {
+				System.out.println("\t"+author);
+			}
+		}
+
+		if (opts.check != null) {
+			System.out.println(opts.check.getAbsolutePath());
+
+			System.exit(0);
+		}
+
+
 
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
