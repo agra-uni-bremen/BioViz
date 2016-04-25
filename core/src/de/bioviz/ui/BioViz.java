@@ -298,8 +298,10 @@ public class BioViz implements ApplicationListener {
 
 	public void unloadFile(File f) {
 		try {
-			if (this.loadedCircuits.containsKey(f.getCanonicalPath())) {
-				this.loadedCircuits.remove(f.getCanonicalPath());
+			String path = f.getCanonicalPath();
+			if (this.loadedCircuits.containsKey(path)) {
+				logger.info("Removing {}",path);
+				this.loadedCircuits.remove(path);
 			}
 		} catch (Exception e) {
 			logger.error("Could not unload file \"" + f+"\"");
