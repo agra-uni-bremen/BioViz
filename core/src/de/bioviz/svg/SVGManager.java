@@ -408,8 +408,8 @@ public class SVGManager {
 
 			LOGGER.debug("displayAt {}", displayAt);
 
-			Point p1 = droplet.droplet.getPositionAt(displayAt);
-			Point p2 = droplet.droplet.getPositionAt(displayAt + 1);
+			Point p1 = droplet.droplet.getSafePositionAt(displayAt);
+			Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
 
 			LOGGER.debug("p1 {}; p2 {}", p1, p2);
 
@@ -497,7 +497,7 @@ public class SVGManager {
 		Point startPoint = drawableDrop.droplet.getFirstPosition();
 		Point endPoint = drawableDrop.droplet.getLastPosition();
 		//Point endPoint = drawableDrop.droplet.getNet().getTarget();
-		Point dropletPos = drawableDrop.droplet.getPositionAt(time);
+		Point dropletPos = drawableDrop.droplet.getSafePositionAt(time);
 
 		String arrows = "";
 		Color dropColor = drawableDrop.getColor();
@@ -826,7 +826,7 @@ public class SVGManager {
 	 * @return A Point with the position
 	 */
 	private Point getDropletPosInSVGCoords(final DrawableDroplet drawableDrop) {
-		return toSVGCoords(drawableDrop.droplet.getPositionAt(circuit
+		return toSVGCoords(drawableDrop.droplet.getSafePositionAt(circuit
 				.getCurrentTime()));
 	}
 
