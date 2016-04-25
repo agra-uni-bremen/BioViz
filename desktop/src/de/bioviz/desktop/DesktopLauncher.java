@@ -594,10 +594,33 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	static void startErrorChecker(final File f) {
+
+
+		//#########################
+		// The following stuff resets the logger so that no unnecessary messages
+		// are printed
+
+		// assume SLF4J is bound to logback in the current environment
+		LoggerContext context =
+				(LoggerContext) LoggerFactory.getILoggerFactory();
+
+
+		JoranConfigurator configurator = new JoranConfigurator();
+		configurator.setContext(context);
+		// Call context.reset() to clear any previous configuration, e.g.
+		// default
+		// configuration. For multi-step configuration, omit calling context
+		// .reset().
+		context.reset();
+		configurator.doConfigure();
+		//#########################
+
+
 		Biochip chip = BioParser.parseFile(f);
 		if (!chip.errors.isEmpty()) {
-			System.out.println("Found errors in file \""+f.getAbsolutePath()+"\":");
-			for (String error: chip.errors) {
+			System.out.println(
+					"Found errors in file \"" + f.getAbsolutePath() + "\":");
+			for (String error : chip.errors) {
 				System.out.println(error);
 			}
 		}
@@ -712,7 +735,7 @@ public class DesktopLauncher extends JFrame {
 					("/config/logback.xml"));
 		} catch (final JoranException je) {
 			// StatusPrinter will handle this
-			System.out.println("Error setting up logger: "
+			System.err.println("Error setting up logger: "
 							   + je.getStackTrace());
 		}
 		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
@@ -1359,7 +1382,7 @@ public class DesktopLauncher extends JFrame {
 				setState(
 						currentViz.currentCircuit.getDisplayOptions()
 								.getOption(
-								option));
+										option));
 			});
 		}
 
