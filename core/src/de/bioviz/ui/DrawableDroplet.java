@@ -50,8 +50,6 @@ public class DrawableDroplet extends DrawableSprite {
 	 */
 	public Color getDisplayColor() {
 
-		DrawableCircuit circ = parentCircuit;
-
 		Color color = this.dropletColor.cpy();
 
 		Net net = droplet.getNet();
@@ -62,7 +60,7 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 
 
-		Point p = droplet.getPositionAt(circ.getCurrentTime());
+		Point p = droplet.getPositionAt(parentCircuit.getCurrentTime());
 
 		// if the droplet is currently not present, make it 'invisible' by
 		// making it totally transparent
@@ -94,37 +92,39 @@ public class DrawableDroplet extends DrawableSprite {
 
 		int dropID = droplet.getID();
 
-		if (parentCircuit.getDisplayOptions().getOption(
-				BDisplayOptions.DropletIDs)) {
-			msg = Integer.toString(dropID) + " ";
+		boolean dispDropIDs = parentCircuit.getDisplayOptions().getOption(
+				BDisplayOptions.DropletIDs);
 
+		boolean dispFluidIDs = parentCircuit.getDisplayOptions().getOption(
+				BDisplayOptions.FluidIDs);
+
+		boolean dispFluidName = parentCircuit.getDisplayOptions()
+				.getOption(BDisplayOptions.FluidNames);
+
+		Integer fluidID = parentCircuit.getData().fluidID(dropID);
+
+		if (dispDropIDs) {
+			msg = Integer.toString(dropID) + " ";
 		}
-		if (parentCircuit.getDisplayOptions().getOption(BDisplayOptions.FluidIDs)) {
-			// note: fluidID may be null!
-			Integer fluidID = parentCircuit.getData().fluidID(dropID);
-			if (fluidID != null) {
+
+		if (dispFluidIDs && fluidID != null) {
+			if (!msg.isEmpty()) {
+				msg += "-";
+			}
+			msg += " " + fluidID.toString() + " ";
+		}
+
+		if (dispFluidName && fluidID != null) {
+			String fname = parentCircuit.getData().fluidType(fluidID);
+
+			if (fname != null) {
 				if (!msg.isEmpty()) {
 					msg += "-";
 				}
-				msg += " " + fluidID.toString() + " ";
+				msg += " " + fname;
 			}
-
 		}
-		if (parentCircuit.getDisplayOptions()
-				.getOption(BDisplayOptions.FluidNames)) {
-			Integer fluidID = parentCircuit.getData().fluidID(dropID);
-			if (fluidID != null) {
-				String fname = parentCircuit.getData().fluidType(fluidID);
 
-				if (fname != null) {
-					if (!msg.isEmpty()) {
-						msg += "-";
-					}
-					msg += " " + fname;
-				}
-			}
-
-		}
 		logger.trace("droplet msg after fluidNames option: {}", msg);
 		return msg.isEmpty() ? null : msg;
 	}
