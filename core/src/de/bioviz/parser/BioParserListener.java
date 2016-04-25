@@ -30,10 +30,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @SuppressWarnings("Convert2Diamond")
@@ -501,6 +498,12 @@ public class BioParserListener extends BioBaseListener {
 				chip.getFieldAt(pos).mixers.add(m);
 			});
 		});
+
+		Set<BiochipField> badFields = chip.getAdjacentActivations();
+
+		for (BiochipField bad: badFields) {
+			errors.add(bad.toString());
+		}
 
 
 		errors.forEach(s -> logger.error(s));
