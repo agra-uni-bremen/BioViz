@@ -428,7 +428,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		if (this.isHovered()) {
-			result.add(0.2f, 0.2f, 0.2f, 0);
+			result.add(Colors.HOVER_DIFF_COLOR);
 		}
 
 		return result.buildGdxColor();
@@ -462,7 +462,8 @@ public class DrawableField extends DrawableSprite {
 
 						// draw to target
 						DrawableLine.draw(source, target,
-										  Color.BLACK.cpy().sub(0, 0, 0, 0.5f));
+										  Color.BLACK.cpy()
+													.sub(Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
 					}
 				}
 			}

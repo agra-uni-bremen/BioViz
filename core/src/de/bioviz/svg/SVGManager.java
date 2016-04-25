@@ -7,6 +7,7 @@ import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Source;
 import de.bioviz.ui.BDisplayOptions;
+import de.bioviz.ui.Colors;
 import de.bioviz.ui.DisplayValues;
 import de.bioviz.ui.DrawableCircuit;
 import de.bioviz.ui.DrawableDroplet;
@@ -333,8 +334,14 @@ public class SVGManager {
 
 		DisplayValues vals = field.getDisplayValues();
 
+		Color fieldCol = vals.getColor().cpy();
+
+		if (field.isHovered()) {
+			fieldCol.sub(Colors.HOVER_DIFF_COLOR);
+		}
+
 		String fieldID = generateColoredID(vals.getTexture().toString(),
-				vals.getColor());
+				fieldCol);
 		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
 						   "\" />\n";
@@ -472,7 +479,7 @@ public class SVGManager {
 		String arrows = "";
 
 		for (final Net net : nets) {
-			for(final Source source : net.getSources()) {
+			for (final Source source : net.getSources()) {
 					Point startPoint = source.startPosition;
 					Point endPoint = net.getTarget();
 					if (startPoint != null && endPoint != null &&
@@ -732,13 +739,21 @@ public class SVGManager {
 
 			// create all needed svg defs for the fields
 			for (final DrawableField f : circuit.getFields()) {
+
+				Color fieldColor = f.getColor().cpy();
+
+				// reverse colorChanges for hoveredFields
+				if (f.isHovered()) {
+					fieldColor = fieldColor.sub(Colors.HOVER_DIFF_COLOR);
+				}
+
 				key = generateColoredID(f.getDisplayValues().getTexture()
-						.toString(), f.getColor());
+						.toString(), fieldColor);
 				// don't create the svg core code twice
 				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
 							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
-									f.getColor(), strokeColor));
+									fieldColor, strokeColor));
 				}
 				Set<Net> nets = circuit.getData().getNetsOf(f.getField());
 				for (final Net n : nets) {
