@@ -300,6 +300,14 @@ public class BioViz implements ApplicationListener {
 		try {
 			String path = f.getCanonicalPath();
 			if (this.loadedCircuits.containsKey(path)) {
+				DrawableCircuit c = loadedCircuits.get(path);
+
+				// remove the visualization if it is currently active.
+				if (currentCircuit == c) {
+					this.drawables.remove(c);
+					currentCircuit = new DrawableCircuit(
+							new Biochip(), this);
+				}
 				logger.info("Removing {}",path);
 				this.loadedCircuits.remove(path);
 			}
