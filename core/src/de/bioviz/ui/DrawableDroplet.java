@@ -197,11 +197,11 @@ public class DrawableDroplet extends DrawableSprite {
 	}
 
 	public void toggleGridVisibility() {
-		if (parentCircuit.getHiddenDroplets().contains(this)) {
-			parentCircuit.getHiddenDroplets().remove(this);
+		if (parentCircuit.isHidden(this)) {
+			parentCircuit.unHideDroplet(this);
 		}
 		else {
-			parentCircuit.getHiddenDroplets().add(this);
+			parentCircuit.hideDroplet(this);
 		}
 	}
 
