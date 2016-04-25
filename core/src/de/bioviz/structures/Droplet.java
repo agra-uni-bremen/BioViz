@@ -3,6 +3,7 @@ package de.bioviz.structures;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Vector;
@@ -48,7 +49,7 @@ public class Droplet {
 	 * Combined with the length of the vector, this also implicitly defines
 	 * when the droplet vanishes from the chip.
 	 */
-	private Vector<Point> positions = new Vector<>();
+	private ArrayList<Point> positions = new ArrayList<>();
 
 	/**
 	 * The unique ID of the droplet
@@ -132,7 +133,7 @@ public class Droplet {
 	 * droplet. We could think about returning a copy but than again we believe
 	 * in the non-evilness of our clients :)
 	 */
-	public Vector<Point> getPositions() {
+	public ArrayList<Point> getPositions() {
 		return positions;
 	}
 
@@ -176,10 +177,10 @@ public class Droplet {
 		}
 
 		if (index < 0) {
-			return positions.firstElement();
+			return getFirstPosition();
 		}
 		if (index >= positions.size()) {
-			return positions.lastElement();
+			return getLastPosition();
 		}
 		return positions.get(index);
 	}
@@ -202,21 +203,22 @@ public class Droplet {
 
 	/**
 	 * @return First position of the droplet
-	 * @throws NoSuchElementException
-	 * 		if list of positions is empty
+	 * @throws IndexOutOfBoundsException
+	 * 	if list of positions is empty
+	 *
 	 */
 	public Point getFirstPosition() {
-		return positions.firstElement();
+		return positions.get(0);
 	}
 
 
 	/**
 	 * @return Last position of the droplet
-	 * @throws NoSuchElementException
+	 * @throws IndexOutOfBoundsException
 	 * 		if list of positions is empty
 	 */
 	public Point getLastPosition() {
-		return positions.lastElement();
+		return positions.get(positions.size()-1);
 	}
 
 
