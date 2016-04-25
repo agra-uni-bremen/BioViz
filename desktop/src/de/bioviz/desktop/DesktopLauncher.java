@@ -533,10 +533,17 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private void closeTab(final int index) {
 		logger.info("Closing file (" + index + ")");
-		currentViz.unloadFile(
-				tabsToFilenames.get(visualizationTabs.getSelectedComponent()));
-		tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
-		visualizationTabs.removeTabAt(index);
+		File file = tabsToFilenames.get(visualizationTabs.getSelectedComponent
+				());
+
+		if (file != null) {
+			currentViz.unloadFile(file);
+			tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
+			visualizationTabs.removeTabAt(index);
+		}
+		else {
+			logger.info("Nothing to close");
+		}
 	}
 
 	/**
