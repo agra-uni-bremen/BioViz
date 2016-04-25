@@ -277,7 +277,9 @@ public class SVGManager {
 		if (circuit.getDisplayOptions().getOption(BDisplayOptions
 				.LongNetIndicatorsOnDroplets)) {
 			for (final DrawableDroplet drop : circuit.getDroplets()) {
-				sb.append(createDropletArrows(drop));
+				if(!circuit.getHiddenDroplets().contains(drop)) {
+					sb.append(createDropletArrows(drop));
+				}
 			}
 		}
 
@@ -293,7 +295,9 @@ public class SVGManager {
 		}
 		// export msg strings for droplets
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
-			sb.append(createDropletMsg(drop));
+			if(!circuit.getHiddenDroplets().contains(drop)) {
+				sb.append(createDropletMsg(drop));
+			}
 		}
 
 
