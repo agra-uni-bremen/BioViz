@@ -504,6 +504,7 @@ public class BioParserListener extends BioBaseListener {
 
 
 		errors.forEach(s -> logger.error(s));
+		chip.errors.addAll(errors);
 
 	}
 }

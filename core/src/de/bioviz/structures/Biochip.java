@@ -37,6 +37,7 @@ public class Biochip {
 	public final HashMap<Point, ActuationVector> cellActuations =
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<Mixer>();
+	public ArrayList<String> errors = new ArrayList<>();
 
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 
