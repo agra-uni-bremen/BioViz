@@ -313,7 +313,7 @@ public class BioViz implements ApplicationListener {
 				this.loadedCircuits.remove(path);
 			}
 		} catch (Exception e) {
-			logger.error("Could not unload file \"" + f+"\"");
+			logger.error("Could not unload file \"{}\"",f);
 		}
 	}
 
