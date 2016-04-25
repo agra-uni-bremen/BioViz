@@ -447,8 +447,8 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Adds a new tab that contains a certain file. This calls the
-	 * scheduleLoadingOfNewFile(file) method for this DesktopLauncher's bioViz field to open
-	 * the given file.
+	 * scheduleLoadingOfNewFile(file) method for this DesktopLauncher's bioViz
+	 * field to open the given file.
 	 *
 	 * @param fileForTab
 	 * 		the file to be opened
@@ -484,10 +484,11 @@ public class DesktopLauncher extends JFrame {
 					String read;
 					BufferedReader
 							br = new BufferedReader(new InputStreamReader(in));
-					BufferedWriter w = new BufferedWriter(new FileWriter(file));
-					while((read=br.readLine()) != null) {
+					BufferedWriter w = new BufferedWriter(new FileWriter
+																  (file));
+					while ((read = br.readLine()) != null) {
 						System.out.println(read);
-						w.write(read+"\n");
+						w.write(read + "\n");
 					}
 
 					w.close();
@@ -495,11 +496,10 @@ public class DesktopLauncher extends JFrame {
 
 					// be even more annoyed by java because the following code
 					// does *not* work! (why would it..)
-					java.nio.file.Files.copy(in,file.toPath());
+					java.nio.file.Files.copy(in, file.toPath());
 
 
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					logger.error("Could not even locate/create default file");
 				}
 
@@ -527,10 +527,17 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private void closeTab(final int index) {
 		logger.info("Closing file (" + index + ")");
-		currentViz.unloadFile(
-				tabsToFilenames.get(visualizationTabs.getSelectedComponent()));
-		tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
-		visualizationTabs.removeTabAt(index);
+		File file = tabsToFilenames.get(visualizationTabs.getSelectedComponent
+				());
+
+		if (file != null) {
+			currentViz.unloadFile(file);
+			tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
+			visualizationTabs.removeTabAt(index);
+		}
+		else {
+			logger.info("Nothing to close");
+		}
 	}
 
 	/**
@@ -1032,10 +1039,11 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.trace("Received timer event ("
-					+ currentViz.currentCircuit.getCurrentTime() + ")");
+						 + currentViz.currentCircuit.getCurrentTime() + ")");
 			this.time.setValue(currentViz.currentCircuit.getCurrentTime());
 			this.timeInfo.setText(
-					Integer.toString(currentViz.currentCircuit.getCurrentTime()));
+					Integer.toString(currentViz.currentCircuit.getCurrentTime
+							()));
 
 		}
 	}
@@ -1170,16 +1178,18 @@ public class DesktopLauncher extends JFrame {
 						currentViz.currentCircuit.getData().getMaxT());
 				d.timeSlider.setMinimum(1);
 				logger.trace("setting time slider to "
-						+ oldTime);
+							 + oldTime);
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
-						currentViz.currentCircuit.getData().getMaxRouteLength());
+						currentViz.currentCircuit.getData().getMaxRouteLength
+								());
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + d.programName);
-			} else {
+			}
+			else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
 				d.timeSlider.setMaximum(1);
@@ -1226,27 +1236,40 @@ public class DesktopLauncher extends JFrame {
 						if (f != null) {
 							if (svgExportSettings.getExportSeries()) {
 
-								int oldTime = currentViz.currentCircuit.getCurrentTime();
-								// this is problematic if the file contains .svg inside the name
-								int svgPosition = f.getAbsolutePath().indexOf(".svg");
+								int oldTime = currentViz.currentCircuit
+										.getCurrentTime();
+								// this is problematic if the file contains
+								// .svg inside the name
+								int svgPosition = f.getAbsolutePath().indexOf
+										(".svg");
 								// initialize with absolute path
 								String pathWithoutSuffix = f.getAbsolutePath();
-								// check if suffix was found, if not the path is already
+								// check if suffix was found, if not the path
+								// is already
 								// without a suffix
 								if (svgPosition != -1) {
-									pathWithoutSuffix = f.getAbsolutePath().substring(0,
-											svgPosition);
+									pathWithoutSuffix =
+											f.getAbsolutePath().substring(0,
+																		  svgPosition);
 								}
 								// create a series of files
-								for (int t = 1; t <= currentViz.currentCircuit.getData().getMaxT();
-										t++) {
-									currentViz.saveSVG(pathWithoutSuffix + "_ts" + t + ".svg", t);
+								for (int t = 1; t <=
+												currentViz.currentCircuit
+														.getData().getMaxT();
+									 t++) {
+									currentViz.saveSVG(
+											pathWithoutSuffix + "_ts" + t +
+											".svg", t);
 								}
 								// restore time from start
-								currentViz.currentCircuit.setCurrentTime(oldTime);
-							} else {
-								currentViz.saveSVG(f.getAbsolutePath(), currentViz
-										.currentCircuit.getCurrentTime());
+								currentViz.currentCircuit.setCurrentTime(
+										oldTime);
+							}
+							else {
+								currentViz.saveSVG(f.getAbsolutePath(),
+												   currentViz
+														   .currentCircuit
+														   .getCurrentTime());
 							}
 						}
 					}
@@ -1307,7 +1330,8 @@ public class DesktopLauncher extends JFrame {
 				else if (e.getID() == KeyEvent.KEY_TYPED) {
 					// That thing might not have been initiliazed yet
 					if (currentViz.getInputProcessor() != null) {
-						currentViz.getInputProcessor().keyTyped(e.getKeyChar());
+						currentViz.getInputProcessor().keyTyped(e.getKeyChar
+								());
 					}
 				}
 			}
@@ -1323,9 +1347,13 @@ public class DesktopLauncher extends JFrame {
 			this.option = option;
 
 			this.addActionListener(l -> {
-					currentViz.currentCircuit.getDisplayOptions().toggleOption(option);
-					setState(currentViz.currentCircuit.getDisplayOptions().getOption(option));
-				});
+				currentViz.currentCircuit.getDisplayOptions().toggleOption(
+						option);
+				setState(
+						currentViz.currentCircuit.getDisplayOptions()
+								.getOption(
+								option));
+			});
 		}
 
 		public void updateState() {

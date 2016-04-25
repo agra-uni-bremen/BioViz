@@ -299,8 +299,18 @@ public class BioViz implements ApplicationListener {
 
 	public void unloadFile(File f) {
 		try {
-			if (this.loadedCircuits.containsKey(f.getCanonicalPath())) {
-				this.loadedCircuits.remove(f.getCanonicalPath());
+			String path = f.getCanonicalPath();
+			if (this.loadedCircuits.containsKey(path)) {
+				DrawableCircuit c = loadedCircuits.get(path);
+
+				// remove the visualization if it is currently active.
+				if (currentCircuit == c) {
+					this.drawables.remove(c);
+					currentCircuit = new DrawableCircuit(
+							new Biochip(), this);
+				}
+				logger.info("Removing {}",path);
+				this.loadedCircuits.remove(path);
 			}
 		} catch (Exception e) {
 			logger.error("Could not unload file \"" + f+"\"");
