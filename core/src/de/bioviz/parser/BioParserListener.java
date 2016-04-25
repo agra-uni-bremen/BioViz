@@ -61,11 +61,6 @@ public class BioParserListener extends BioBaseListener {
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
-	BioViz viz;
-
-	public BioParserListener(BioViz viz) {
-		this.viz = viz;
-	}
 
 	public Biochip getBiochip() {
 		return chip;

@@ -1,6 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -323,7 +324,7 @@ public class BioViz implements ApplicationListener {
 				}
 				else {
 					logger.debug("Loading \"{}\"", bioFile);
-					bc = BioParser.parseFile(bioFile, this);
+					bc = BioParser.parseFile(bioFile);
 
 					if (bc == null) {
 						logger.error("Could not parse file {}",bioFile);
@@ -350,7 +351,9 @@ public class BioViz implements ApplicationListener {
 						logger.info("Done loading file {}", bioFile);
 					}
 				}
-
+				else {
+					logger.info("Done loading file {}", bioFile);
+				}
 			} else {
 				logger.debug(
 						"File to be set is empty, setting empty " +
@@ -364,6 +367,8 @@ public class BioViz implements ApplicationListener {
 
 		// clear on screen messages as they would otherwise remain visible
 		messageCenter.clearHUDMessages();
+
+
 		this.callLoadedFileListeners();
 	}
 
