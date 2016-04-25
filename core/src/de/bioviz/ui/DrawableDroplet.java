@@ -2,6 +2,7 @@ package de.bioviz.ui;
 
 import de.bioviz.structures.Droplet;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
@@ -88,7 +89,7 @@ public class DrawableDroplet extends DrawableSprite {
 	 * @return Text to be displayed on top of the droplets
 	 */
 	public String getMsg() {
-		String msg = "";
+		ArrayList<String> msgs = new ArrayList<>();
 
 		int dropID = droplet.getID();
 
@@ -104,29 +105,24 @@ public class DrawableDroplet extends DrawableSprite {
 		Integer fluidID = parentCircuit.getData().fluidID(dropID);
 
 		if (dispDropIDs) {
-			msg = Integer.toString(dropID) + " ";
+			msgs.add(Integer.toString(dropID));
 		}
 
 		if (dispFluidIDs && fluidID != null) {
-			if (!msg.isEmpty()) {
-				msg += "-";
-			}
-			msg += " " + fluidID.toString() + " ";
+			msgs.add(fluidID.toString());
 		}
 
 		if (dispFluidName && fluidID != null) {
 			String fname = parentCircuit.getData().fluidType(fluidID);
 
 			if (fname != null) {
-				if (!msg.isEmpty()) {
-					msg += "-";
-				}
-				msg += " " + fname;
+				msgs.add(fname);
 			}
 		}
 
+		String msg = String.join(" - ", msgs);
 		logger.trace("droplet msg after fluidNames option: {}", msg);
-		return msg.isEmpty() ? null : msg;
+		return msg;
 	}
 
 	@Override
