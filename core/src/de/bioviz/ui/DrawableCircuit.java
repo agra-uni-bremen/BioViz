@@ -717,6 +717,36 @@ public class DrawableCircuit implements Drawable {
 		this.droplets = droplets;
 	}
 
+	/**
+	 * Checks whether a certain droplet is hidden.
+	 *
+	 * 'Hidden' means that the droplet is not present on the field as such but
+	 * displayed on the top right corner.
+	 *
+	 * @param drop Droplet to test
+	 * @return true if the droplet is hidden, false otherwise.
+	 */
+	public boolean isHidden(final DrawableDroplet drop) {
+		return hiddenDroplets.contains(drop);
+	}
+
+	/**
+	 * Hides a droplet.
+
+	 * @param drop Droplet to hide
+	 */
+	public void hideDroplet(final DrawableDroplet drop) {
+		hiddenDroplets.add(drop);
+	}
+
+	/**
+	 * Unhides a droplet.
+	 * @param drop The droplet to unhide.
+	 */
+	public void unHideDroplet(final DrawableDroplet drop) {
+		hiddenDroplets.remove(drop);
+	}
+
 	public Vector<DrawableDroplet> getHiddenDroplets() {
 		return hiddenDroplets;
 	}
