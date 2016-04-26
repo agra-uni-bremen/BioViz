@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Class responsible for drawing the routes that droplets may follow.
- *
- *
+ * <p>
+ * <p>
  * Note that there is no corresponding class in the structure package. The
- * path's positions are computed by queyring the positions of the parent
- * droplet for each time step.
+ * path's positions are computed by queyring the positions of the parent droplet
+ * for each time step.
  */
 public class DrawableRoute extends DrawableSprite {
 	/**
@@ -47,11 +47,9 @@ public class DrawableRoute extends DrawableSprite {
 	public DrawableDroplet droplet;
 
 
-
-
 	/**
 	 * The color the route is drawn in of not superseeded by another option.
-	 *
+	 * <p>
 	 * Currently that color is black.
 	 */
 	private Color baseColor = Color.BLACK.cpy();
@@ -59,7 +57,9 @@ public class DrawableRoute extends DrawableSprite {
 
 	/**
 	 * Creates a route for a given droplet.
-	 * @param droplet The droplet this route belongs to.
+	 *
+	 * @param droplet
+	 * 		The droplet this route belongs to.
 	 */
 	public DrawableRoute(final DrawableDroplet droplet) {
 		super(TextureE.StepMarker, droplet.viz);
@@ -69,7 +69,7 @@ public class DrawableRoute extends DrawableSprite {
 
 	/**
 	 * Returns the color used for drawingf the route.
-	 *
+	 * <p>
 	 * The color depends on the {@link BDisplayOptions} option ColorfulRoutes.
 	 * If it is set to true, the droplet's color is used instead of black.
 	 *
@@ -93,7 +93,8 @@ public class DrawableRoute extends DrawableSprite {
 	 * and the transparency.
 	 */
 	public void draw() {
-		int currentTime = droplet.parentCircuit.getCurrentTime();
+		DrawableCircuit circ = droplet.parentCircuit;
+		int currentTime = circ.getCurrentTime();
 		int displayAt;
 
 		disableForcedLOD();
@@ -110,7 +111,7 @@ public class DrawableRoute extends DrawableSprite {
 			Color c = getColor();
 
 
-			if (droplet.parentCircuit.getDisplayOptions().getOption(
+			if (circ.getDisplayOptions().getOption(
 					BDisplayOptions.SolidPaths)) {
 				c.a = noTransparency;
 			}
@@ -139,27 +140,27 @@ public class DrawableRoute extends DrawableSprite {
 			int y1 = p1.snd;
 			int y2 = p2.snd;
 
-			float xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
-			float yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
+			float xCoord;
+			float yCoord;
 
 			if (y1 == y2 && x2 > x1) {
-				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
-				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
+				xCoord = circ.xCoordOnScreen(x1 + 0.5f);
+				yCoord = circ.yCoordOnScreen(y1);
 				setRotation(0);
 			}
 			else if (y1 == y2 && x2 < x1) {
-				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 - 0.5f);
-				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
+				xCoord = circ.xCoordOnScreen(x1 - 0.5f);
+				yCoord = circ.yCoordOnScreen(y1);
 				setRotation(180);
 			}
 			else if (x1 == x2 && y2 > y1) {
-				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
-				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 + 0.5f);
+				xCoord = circ.xCoordOnScreen(x1);
+				yCoord = circ.yCoordOnScreen(y1 + 0.5f);
 				setRotation(90);
 			}
 			else if (x1 == x2 && y2 < y1) {
-				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
-				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 - 0.5f);
+				xCoord = circ.xCoordOnScreen(x1);
+				yCoord = circ.yCoordOnScreen(y1 - 0.5f);
 				setRotation(270);
 			}
 			else {
@@ -168,13 +169,14 @@ public class DrawableRoute extends DrawableSprite {
 
 			setX(xCoord);
 			setY(yCoord);
-			setScaleX(droplet.parentCircuit.getSmoothScale());
-			setScaleY(droplet.parentCircuit.getSmoothScale());
+			setScaleX(circ.getSmoothScale());
+			setScaleY(circ.getSmoothScale());
 
 			super.draw();
 		}
 
-		boolean dropletLongIndicator = droplet.parentCircuit.getDisplayOptions()
+		boolean dropletLongIndicator = circ
+				.getDisplayOptions()
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
 		if (dropletLongIndicator && droplet.droplet.getNet() != null) {
 			setForcedLOD(1f);
@@ -191,9 +193,11 @@ public class DrawableRoute extends DrawableSprite {
 
 			// draw to target
 			DrawableLine.draw(target, current,
-							  droplet.getColor().cpy().add(Colors.HOVER_DIFF_COLOR));
+							  droplet.getColor().cpy().add(
+									  Colors.HOVER_DIFF_COLOR));
 			DrawableLine.draw(source, current,
-							  droplet.getColor().cpy().sub(Colors.HOVER_DIFF_COLOR));
+							  droplet.getColor().cpy().sub(
+									  Colors.HOVER_DIFF_COLOR));
 		}
 	}
 }
