@@ -64,9 +64,9 @@ public class SVGManager {
 	private final int fontSizeInfoString = 100;
 
 	/** font color. */
-	private final String fontColor = SVGCoreCreator.colorToSVG(Color.WHITE);
+	private final String fontColor = SVGUtils.colorToSVG(Color.WHITE);
 	/** font color for the info String. */
-	private final String fontColorInfoString = SVGCoreCreator.colorToSVG(Color
+	private final String fontColorInfoString = SVGUtils.colorToSVG(Color
 			.BLACK);
 
 	/** hard coded stroke color. */
@@ -339,7 +339,7 @@ public class SVGManager {
 			fieldCol.sub(Colors.HOVER_DIFF_COLOR);
 		}
 
-		String fieldID = generateColoredID(vals.getTexture().toString(),
+		String fieldID = SVGUtils.generateColoredID(vals.getTexture().toString(),
 				fieldCol);
 		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
@@ -361,7 +361,8 @@ public class SVGManager {
 		Point dropletPos = getDropletPosInSVGCoords(drawableDrop);
 		String route = toSVG(drawableDrop.route);
 
-		String dropletID = generateColoredID("Droplet", drawableDrop.getColor());
+		String dropletID = SVGUtils.generateColoredID("Droplet", drawableDrop
+				.getColor());
 		String dropShape = "<use x=\"" + dropletPos.fst + "\" " + "y=\"" +
 				dropletPos.snd + "\"" +
 				getScaleTransformation() + " xlink:href=\"#" + dropletID + "\" />\n";
@@ -452,7 +453,7 @@ public class SVGManager {
 					app = false;
 				}
 				if (app) {
-					String routeID = generateColoredID("StepMarker", routeColor);
+					String routeID = SVGUtils.generateColoredID("StepMarker", routeColor);
 					sb.append("<use");
 					sb.append(position);
 					sb.append(widthHeight);
@@ -580,7 +581,7 @@ public class SVGManager {
 					gradientSvg += "<rect x=\"" + (fieldPos.fst + 24) + "\" " +
 							"y=\"" + (fieldPos.snd + 24) + "\" rx=\"24\" ry=\"24\" " +
 							"height=\"208\" width=\"208\" fill=\"url(#grad-" +
-							dir.toString() + "-" + SVGCoreCreator.colorToSVG(n
+							dir.toString() + "-" + SVGUtils.colorToSVG(n
 							.getColor().buildGdxColor()) + ")\" />\n";
 
 				}
@@ -627,8 +628,9 @@ public class SVGManager {
 	private String createSVGArrow(final Point startPoint, final Point endPoint,
 																final Color color) {
 
-		Point start = toSVGCoords(startPoint);
-		Point end = toSVGCoords(endPoint);
+		Point start = SVGUtils.toSVGCoords(startPoint, circuit,
+				coordinateMultiplier);
+		Point end = SVGUtils.toSVGCoords(endPoint, circuit, coordinateMultiplier);
 		int x1 = start.fst;
 		int y1 = start.snd;
 
@@ -659,9 +661,9 @@ public class SVGManager {
 
 		String line = "<line x1=\"" + x1 +	"\" y1=\"" + y1 +
 				"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-				"\" stroke=\"#" +	SVGCoreCreator.colorToSVG(color) +
+				"\" stroke=\"#" +	SVGUtils.colorToSVG(color) +
 				"\" stroke-width=\"10\" marker-end=\"url(#" +
-				generateColoredID("ArrowHead", color) + ")\" />\n";
+				SVGUtils.generateColoredID("ArrowHead", color) + ")\" />\n";
 
 		return line;
 	}
@@ -772,7 +774,7 @@ public class SVGManager {
 			// create all needed svg defs for the droplets
 			// and droplet based features
 			for (final DrawableDroplet d : circuit.getDroplets()) {
-				key = generateColoredID("Droplet", d.getColor());
+				key = SVGUtils.generateColoredID("Droplet", d.getColor());
 				// don't create the svg core code twice
 				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
@@ -789,7 +791,7 @@ public class SVGManager {
 					colors.add(d.getColor().cpy().sub(diffColor));
 
 					for (final Color color : colors) {
-						key = generateColoredID("ArrowHead", color);
+						key = SVGUtils.generateColoredID("ArrowHead", color);
 						if (!colSvgs.containsKey(key)) {
 							colSvgs.put(key,
 									svgCoreCreator.getArrowHead(key, color));
@@ -799,7 +801,7 @@ public class SVGManager {
 
 				if (d.route != null) {
 					Color routeColor = d.route.getColor();
-					key = generateColoredID("StepMarker", routeColor);
+					key = SVGUtils.generateColoredID("StepMarker", routeColor);
 					if (!colSvgs.containsKey(key)) {
 						colSvgs.put(key,
 								svgCoreCreator.getSVGCode(TextureE.StepMarker,
@@ -813,7 +815,7 @@ public class SVGManager {
 					.LongNetIndicatorsOnFields)) {
 				// this is needed for source target arrows
 				Color color = Color.BLACK;
-				key = generateColoredID("ArrowHead", color);
+				key = SVGUtils.generateColoredID("ArrowHead", color);
 				if (!colSvgs.containsKey(key)) {
 					colSvgs.put(key,
 							svgCoreCreator.getArrowHead(key, color));
@@ -831,7 +833,8 @@ public class SVGManager {
 	 * @return A Point with the position.
 	 */
 	private Point getFieldPosInSVGCoords(final DrawableField drawableField) {
-		return toSVGCoords(drawableField.getField().pos);
+		return SVGUtils.toSVGCoords(drawableField.getField().pos,
+				circuit, coordinateMultiplier);
 	}
 
 	/**
@@ -841,23 +844,8 @@ public class SVGManager {
 	 * @return A Point with the position
 	 */
 	private Point getDropletPosInSVGCoords(final DrawableDroplet drawableDrop) {
-		return toSVGCoords(drawableDrop.droplet.getSafePositionAt(circuit
-				.getCurrentTime()));
+		return SVGUtils.toSVGCoords(drawableDrop.droplet.getSafePositionAt(circuit
+				.getCurrentTime()), circuit, coordinateMultiplier);
 	}
 
-	/**
-	 * Transforms a point to svgCoordinates.
-	 *
-	 * @param point the point to transform
-	 * @return Point with SVG coordinates
-	 */
-	private Point toSVGCoords(final Point point) {
-		int yCoord = -point.snd + circuit.getData().getMaxCoord().snd;
-		int xCoord = point.fst;
-
-		xCoord *= coordinateMultiplier;
-		yCoord *= coordinateMultiplier;
-
-		return new Point(xCoord, yCoord);
-	}
 }

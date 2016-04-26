@@ -51,20 +51,6 @@ public class SVGCoreCreator {
 	public SVGCoreCreator() {
 	}
 
-
-	/**
-	 * Converts a libGDX color to a SVG-usable format.
-	 *
-	 * What it basically does is to throw away the last to characters, i.e.
-	 * the alpha channel.
-	 *
-	 * @param c Color to transform
-	 * @return Color in format to be used by SVG
-	 */
-	public static String colorToSVG(final Color c) {
-		return c.toString().substring(0, 6);
-	}
-
 	/**
 	 * Creates an ID consisting of a base part and the given color.
 	 * @param baseName The part of thename in front of the '-'
@@ -72,7 +58,7 @@ public class SVGCoreCreator {
 	 * @return "<baseName>-<color>"
 	 */
 	public static String generateID(final String baseName, final Color c) {
-		return baseName + "-" + SVGCoreCreator.colorToSVG(c);
+		return baseName + "-" + SVGUtils.colorToSVG(c);
 	}
 
 	/**
@@ -144,7 +130,7 @@ public class SVGCoreCreator {
 
 			if (fillColor != null) {
 				LOGGER.debug("[SVG] Changing fillColor to {}.",
-						colorToSVG(fillColor));
+						SVGUtils.colorToSVG(fillColor));
 				// set new id for this node if there is a fillColor
 					if (group.getNodeType() == Node.ELEMENT_NODE) {
 						Element elem = (Element) group;
@@ -153,7 +139,7 @@ public class SVGCoreCreator {
 			}
 			if (strokeColor != null) {
 				LOGGER.debug("[SVG] Changing strokeColor to {}.",
-						colorToSVG(strokeColor));
+						SVGUtils.colorToSVG(strokeColor));
 			}
 
 			if (fillColor != null || strokeColor != null) {
@@ -226,7 +212,7 @@ public class SVGCoreCreator {
 				"refX=\"7\" " +	"refY=\"3\"	" +
 				"orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path d=\"M0,0 C 1,1" +
 				" 1,5 0,6 L9,3  z\" " +
-				"fill=\"#" + colorToSVG(color) + "\" />\n</marker>\n";
+				"fill=\"#" + SVGUtils.colorToSVG(color) + "\" />\n</marker>\n";
 	}
 
 	/**
