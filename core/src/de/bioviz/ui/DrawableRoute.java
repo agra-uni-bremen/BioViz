@@ -76,10 +76,10 @@ public class DrawableRoute extends DrawableSprite {
 	 * @return The color of the route
 	 */
 	public Color getColor() {
-		Color c = this.baseColor.cpy();
+		Color c = baseColor.cpy();
 		if (droplet.parentCircuit.getDisplayOptions().getOption(
 				BDisplayOptions.ColorfulRoutes)) {
-			c = this.droplet.getColor().cpy();
+			c = droplet.getColor().cpy();
 		}
 		return c;
 	}
@@ -96,12 +96,12 @@ public class DrawableRoute extends DrawableSprite {
 		int currentTime = droplet.parentCircuit.getCurrentTime();
 		int displayAt;
 
-		this.disableForcedLOD();
+		disableForcedLOD();
 
 		hoverTimesteps = 2 * routeDisplayLength + 8;
 
 		int stepsToUse = routeDisplayLength;
-		if (this.droplet.isHovered()) {
+		if (droplet.isHovered()) {
 			stepsToUse = hoverTimesteps;
 		}
 
@@ -124,7 +124,7 @@ public class DrawableRoute extends DrawableSprite {
 				}
 			}
 
-			this.setColorImmediately(c);
+			setColorImmediately(c);
 
 
 			displayAt = currentTime + i;
@@ -145,56 +145,56 @@ public class DrawableRoute extends DrawableSprite {
 			if (y1 == y2 && x2 > x1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
-				this.setRotation(0);
+				setRotation(0);
 			}
 			else if (y1 == y2 && x2 < x1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 - 0.5f);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
-				this.setRotation(180);
+				setRotation(180);
 			}
 			else if (x1 == x2 && y2 > y1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 + 0.5f);
-				this.setRotation(90);
+				setRotation(90);
 			}
 			else if (x1 == x2 && y2 < y1) {
 				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
 				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 - 0.5f);
-				this.setRotation(270);
+				setRotation(270);
 			}
 			else {
 				continue;
 			}
 
-			this.setX(xCoord);
-			this.setY(yCoord);
-			this.setScaleX(droplet.parentCircuit.getSmoothScale());
-			this.setScaleY(droplet.parentCircuit.getSmoothScale());
+			setX(xCoord);
+			setY(yCoord);
+			setScaleX(droplet.parentCircuit.getSmoothScale());
+			setScaleY(droplet.parentCircuit.getSmoothScale());
 
 			super.draw();
 		}
 
 		boolean dropletLongIndicator = droplet.parentCircuit.getDisplayOptions()
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
-		if (dropletLongIndicator && this.droplet.droplet.getNet() != null) {
-			this.setForcedLOD(1f);
+		if (dropletLongIndicator && droplet.droplet.getNet() != null) {
+			setForcedLOD(1f);
 			Pair<Float, Float> target = new Pair<Float, Float>(
-					this.droplet.droplet.getNet().getTarget().fst.floatValue(),
-					this.droplet.droplet.getNet().getTarget().snd.floatValue
+					droplet.droplet.getNet().getTarget().fst.floatValue(),
+					droplet.droplet.getNet().getTarget().snd.floatValue
 							());
 			Pair<Float, Float> source = new Pair<Float, Float>(
-					this.droplet.droplet.getFirstPosition().fst.floatValue(),
-					this.droplet.droplet.getFirstPosition().snd.floatValue());
+					droplet.droplet.getFirstPosition().fst.floatValue(),
+					droplet.droplet.getFirstPosition().snd.floatValue());
 			Pair<Float, Float> current = new Pair<Float, Float>
-					(this.droplet.droplet.smoothX,
-					 this.droplet.droplet.smoothY);
+					(droplet.droplet.smoothX,
+					 droplet.droplet.smoothY);
 
 			// draw to target
 			DrawableLine.draw(target, current,
-							  this.droplet.getColor().cpy().add(0.2f, 0.2f,
+							  droplet.getColor().cpy().add(0.2f, 0.2f,
 																0.2f, 0));
 			DrawableLine.draw(source, current,
-							  this.droplet.getColor().cpy().sub(0.2f, 0.2f,
+							  droplet.getColor().cpy().sub(0.2f, 0.2f,
 																0.2f, 0));
 		}
 	}
