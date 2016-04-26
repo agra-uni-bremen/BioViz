@@ -191,11 +191,9 @@ public class DrawableRoute extends DrawableSprite {
 
 			// draw to target
 			DrawableLine.draw(target, current,
-							  droplet.getColor().cpy().add(0.2f, 0.2f,
-																0.2f, 0));
+							  droplet.getColor().cpy().add(Colors.HOVER_DIFF_COLOR));
 			DrawableLine.draw(source, current,
-							  droplet.getColor().cpy().sub(0.2f, 0.2f,
-																0.2f, 0));
+							  droplet.getColor().cpy().sub(Colors.HOVER_DIFF_COLOR));
 		}
 	}
 }
