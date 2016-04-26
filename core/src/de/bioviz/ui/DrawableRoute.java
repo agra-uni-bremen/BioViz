@@ -79,7 +79,7 @@ public class DrawableRoute extends DrawableSprite {
 		Color c = baseColor.cpy();
 		if (droplet.parentCircuit.getDisplayOptions().getOption(
 				BDisplayOptions.ColorfulRoutes)) {
-			c = droplet.getColor().cpy();
+			c = droplet.getColor();
 		}
 		return c;
 	}
@@ -193,10 +193,10 @@ public class DrawableRoute extends DrawableSprite {
 
 			// draw to target
 			DrawableLine.draw(target, current,
-							  droplet.getColor().cpy().add(
+							  droplet.getColor().add(
 									  Colors.HOVER_DIFF_COLOR));
 			DrawableLine.draw(source, current,
-							  droplet.getColor().cpy().sub(
+							  droplet.getColor().sub(
 									  Colors.HOVER_DIFF_COLOR));
 		}
 	}
