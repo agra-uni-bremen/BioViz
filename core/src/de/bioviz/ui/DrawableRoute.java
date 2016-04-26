@@ -28,13 +28,6 @@ public class DrawableRoute extends DrawableSprite {
 	 */
 	public static int routeDisplayLength = 0;
 
-
-	/**
-	 * What length of the route will be displayed when hovering over a droplet.
-	 */
-	private static int hoverTimesteps = 2 * routeDisplayLength + 8;
-
-
 	/**
 	 * Non magic number version for turning off transparency.
 	 */
@@ -99,7 +92,7 @@ public class DrawableRoute extends DrawableSprite {
 
 		disableForcedLOD();
 
-		hoverTimesteps = 2 * routeDisplayLength + 8;
+		int hoverTimesteps = 2 * routeDisplayLength + 8;
 
 		int stepsToUse = routeDisplayLength;
 		if (droplet.isHovered()) {
@@ -180,14 +173,14 @@ public class DrawableRoute extends DrawableSprite {
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
 		if (dropletLongIndicator && droplet.droplet.getNet() != null) {
 			setForcedLOD(1f);
-			Pair<Float, Float> target = new Pair<Float, Float>(
+			Pair<Float, Float> target = new Pair<>(
 					droplet.droplet.getNet().getTarget().fst.floatValue(),
 					droplet.droplet.getNet().getTarget().snd.floatValue
 							());
-			Pair<Float, Float> source = new Pair<Float, Float>(
+			Pair<Float, Float> source = new Pair<>(
 					droplet.droplet.getFirstPosition().fst.floatValue(),
 					droplet.droplet.getFirstPosition().snd.floatValue());
-			Pair<Float, Float> current = new Pair<Float, Float>
+			Pair<Float, Float> current = new Pair<>
 					(droplet.droplet.smoothX,
 					 droplet.droplet.smoothY);
 
