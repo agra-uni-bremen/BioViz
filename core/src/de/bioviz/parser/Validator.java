@@ -46,7 +46,7 @@ public class Validator {
 			final ArrayList<Droplet> drops, final Set<Point> points) {
 		ArrayList<String> errors = new ArrayList<>();
 		for (final Droplet drop : drops) {
-			Vector<Point> ps = drop.getPositions();
+			ArrayList<Point> ps = drop.getPositions();
 			ps.forEach(p -> {
 				if (!points.contains(p)) {
 					errors.add("Droplet " + drop.getID() + ": position " + p +
@@ -70,7 +70,7 @@ public class Validator {
 		ArrayList<String> errors = new ArrayList<>();
 
 		for (final Droplet drop : droplets) {
-			Vector<Point> positions = drop.getPositions();
+			ArrayList<Point> positions = drop.getPositions();
 			for (int i = 0; i < positions.size(); i++) {
 				Point pos = positions.get(i);
 				if (chip.hasFieldAt(pos)) {
@@ -101,7 +101,7 @@ public class Validator {
 			final ArrayList<Droplet> drops) {
 		ArrayList<String> errors = new ArrayList<String>();
 		for (final Droplet drop : drops) {
-			Vector<Point> points = drop.getPositions();
+			ArrayList<Point> points = drop.getPositions();
 
 			if (points.isEmpty()) {
 				errors.add("Droplet " + drop.getID() +
