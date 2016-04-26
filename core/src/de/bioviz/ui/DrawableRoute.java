@@ -171,7 +171,7 @@ public class DrawableRoute extends DrawableSprite {
 		boolean dropletLongIndicator = circ
 				.getDisplayOptions()
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
-		if (dropletLongIndicator && droplet.droplet.getNet() != null) {
+		if (dropletLongIndicator && droplet.droplet.hasNet()) {
 			setForcedLOD(1f);
 			Pair<Float, Float> target = new Pair<>(
 					droplet.droplet.getNet().getTarget().fst.floatValue(),
