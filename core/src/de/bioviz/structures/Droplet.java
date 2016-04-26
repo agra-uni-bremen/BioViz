@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.NoSuchElementException;
-import java.util.Vector;
 
 /**
  * Class that contains everything that is necessary to describe a DMFB droplet.
