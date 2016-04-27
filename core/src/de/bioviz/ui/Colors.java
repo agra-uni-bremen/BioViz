@@ -80,4 +80,10 @@ public abstract class Colors {
 	public static final Color LONG_NET_INDICATORS_ON_FIELD_COLOR
 			= new Color(0, 0, 0, 0.5f);
 
+	/**
+	 * Diff color for indicators on droplets.
+	 */
+	public static final Color LONG_NET_INDICATORS_ON_DROPLET_DIFF =
+			new Color(0.2f, 0.2f, 0.2f, 0);
+
 }
