@@ -45,7 +45,7 @@ public class DrawableRoute extends DrawableSprite {
 	 * <p>
 	 * Currently that color is black.
 	 */
-	private Color baseColor = Color.BLACK.cpy();
+	private Color baseColor = Color.BLACK;
 
 
 	/**
@@ -187,10 +187,10 @@ public class DrawableRoute extends DrawableSprite {
 			// draw to target
 			DrawableLine.draw(target, current,
 							  droplet.getColor().add(
-									  Colors.HOVER_DIFF_COLOR));
+									  Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
 			DrawableLine.draw(source, current,
 							  droplet.getColor().sub(
-									  Colors.HOVER_DIFF_COLOR));
+									  Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
 		}
 	}
 }
