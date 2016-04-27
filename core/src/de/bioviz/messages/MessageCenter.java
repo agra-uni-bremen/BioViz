@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 		.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Matrix4;
+
+import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.BioViz;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,7 +198,8 @@ public class MessageCenter {
 
 				float hideAt = textRenderResolution;
 				float showAt = (textRenderResolution * 2);
-				if (s.hideWhenZoomedOut) {
+				if (parent.currentCircuit.getDisplayOptions().getOption(
+						BDisplayOptions.HideTextOnZoom)) {
 					// Hide when zoomed out
 					if (this.parent.currentCircuit.getScaleX() < hideAt) {
 						targetColor.a = 0;
@@ -209,6 +212,8 @@ public class MessageCenter {
 					else {
 						targetColor.a = 1;
 					}
+				} else { 
+					targetColor.a = 1;
 				}
 
 				font.setColor(targetColor);

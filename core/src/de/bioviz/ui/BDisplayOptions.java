@@ -144,7 +144,12 @@ public enum BDisplayOptions {
 	/**
 	 * When using autoplay, restart it after it has finished.
 	 */
-	LoopAutoplay("Loop the autoplayed animation");
+	LoopAutoplay("Loop the autoplayed animation"),
+
+	/**
+	 * When zooming out, hide the on screen text elements. 
+	 */
+	HideTextOnZoom("Hide text for small zoom factors");
 
 	/**
 	 * The description that is used in the menus to display this option.
