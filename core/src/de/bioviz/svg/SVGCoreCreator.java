@@ -1,6 +1,7 @@
 package de.bioviz.svg;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Point;
 import de.bioviz.ui.TextureE;
@@ -25,8 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * @author malu
@@ -103,14 +102,8 @@ public class SVGCoreCreator {
 
 		LOGGER.debug("[SVG] Loading SVG core for {}", svgCoreFile);
 
-		Path svgCoreFilePath = Gdx.files.internal(svgCoreFile).file().toPath();
-		String svgCore = "";
-		try {
-			svgCore = new String(Files.readAllBytes(svgCoreFilePath));
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		return svgCore;
+		FileHandle svgCoreFilePath = Gdx.files.internal(svgCoreFile);
+		return svgCoreFilePath.readString();
 	}
 
 	/**

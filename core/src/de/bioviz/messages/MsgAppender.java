@@ -12,52 +12,45 @@ import de.bioviz.ui.BioViz;
  * @author Oliver Keszocze
  */
 public class MsgAppender extends AppenderBase<ILoggingEvent> {
+	/**
+	 * The "parent" MessageCenter.
+	 */
+	MessageCenter mc = null;
 
 	/**
 	 * The "parent" visualization.
 	 */
 	private static BioViz viz;
 
+    @Override
+    /**
+     * Forwards a log message to the MessageCenter that will display it on the HUD.
+     */
+    protected void append(ILoggingEvent eventObject) {
+        if (isStarted() && eventObject.getLevel().isGreaterOrEqual(Level.INFO)) {
+            mc.addMessage(eventObject.getFormattedMessage());
+        }
+    }
 
-	/**
-	 * The "parent" MessageCenter.
-	 */
-	MessageCenter mc = null;
-
-	@Override
-	/**
-	 * @brief Forwards a log message to the MessageCenter that will display it
-	 * on the HUD
-	 */
-	protected void append(final ILoggingEvent eventObject) {
-		if (isStarted() &&
-			eventObject.getLevel().isGreaterOrEqual(Level.INFO)) {
-			mc.addMessage(eventObject.getFormattedMessage());
-		}
-	}
-
-	@Override
-	/**
-	 * @brief Checks whether this appender is ready to append messages
-	 *
-	 * The idea is to check whether a GUI is present. If so, messages can be
-	 * appended.
-	 */
-	public boolean isStarted() {
-		if (mc == null) {
-			if (viz != null && viz.messageCenter != null) {
-				mc = viz.messageCenter;
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else {
-			return true;
-		}
-	}
-
+    @Override
+    /**
+     * Checks whether this appender is ready to append messages.
+     *
+     * The idea is to check whether a GUI is present. If so, messages can be appended.
+     */
+    public boolean isStarted() {
+        if (mc == null) {
+            if (viz != null && viz.messageCenter != null) {
+                mc = viz.messageCenter;
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+    
 	/**
 	 * Sets the reference to the {@link BioViz} that is supposed to show the
 	 *+ messages.
@@ -68,4 +61,5 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
 	public static void setMessageViz(final BioViz bioViz) {
 		MsgAppender.viz = bioViz;
 	}
+
 }

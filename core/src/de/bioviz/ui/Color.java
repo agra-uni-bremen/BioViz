@@ -5,6 +5,7 @@ package de.bioviz.ui;
  * the most pressing point was that libgdx autoclamps values after all
  * operations, limiting values at all times to the range of 0 to 1 (which is
  * kind of a bummer if you want to calculate something like an average color).
+ * @author jannis
  *
  * @author Jannis Stoppe
  */
@@ -29,7 +30,7 @@ public class Color {
 	 * The blue channel.
 	 */
 	public float b;
-
+	
 	/**
 	 * Creates an empty color, all values set to 0.
 	 */
@@ -181,7 +182,6 @@ public class Color {
 
 	/**
 	 * Creates a new copy of this color.
-	 *
 	 * @return a new color with the same values as this one.
 	 */
 	public Color cpy() {

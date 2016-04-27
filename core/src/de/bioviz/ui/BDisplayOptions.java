@@ -86,7 +86,12 @@ public enum BDisplayOptions {
 	 * Option for displaying the fluid ID dispensed by the given dispenser.
 	 * Please note that this is not the ID of the dispensing unit!
 	 */
-	DispenserID("Show dispenser IDs", Input.Keys.D, true, false, false),
+	DispenserFluidID("Show fluid IDs on dispensers", Input.Keys.D, true, false, false),
+
+	/**
+	 * Option for displaying the fluid name dispensed by the given dispenser.
+	 */
+	DispenserFluidName("Show fluid names on dispensers",Input.Keys.N,true,false,false),
 	/**
 	 * Option for displaying the icon of a dispenser.
 	 */

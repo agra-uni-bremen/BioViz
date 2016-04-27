@@ -6,11 +6,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.prefs.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,7 +21,6 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
 
@@ -62,7 +60,8 @@ public class DesktopLauncher extends JFrame {
 	private static Logger logger =
 			LoggerFactory.getLogger(DesktopLauncher.class);
 
-	private static SVGExportSettings svgExportSettings = SVGExportSettings.getInstance();
+	private static SVGExportSettings svgExportSettings =
+			SVGExportSettings.getInstance();
 
 	/**
 	 * The label to display the current simulation time.
@@ -143,7 +142,7 @@ public class DesktopLauncher extends JFrame {
 	 * Used to display the tabs for open files.
 	 */
 	private JTabbedPane visualizationTabs;
-	
+
 	/**
 	 * Used for more options than the panel can hold.
 	 */
@@ -233,6 +232,7 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Initializes and returns the top menu bar
+	 *
 	 * @return the menu bar to be displayed at the top of the window
 	 */
 	private JMenuBar initializeMenubar() {
@@ -241,20 +241,24 @@ public class DesktopLauncher extends JFrame {
 		JMenu menu = new JMenu("Display Options");
 		menu.setMnemonic(KeyEvent.VK_D);
 		menu.getAccessibleContext().setAccessibleDescription(
-		        "This menu triggers all kinds of display options.");
+				"This menu triggers all kinds of display options.");
 		result.add(menu);
-		
+
 		BDisplayOptions[] enumValues = BDisplayOptions.values();
 		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
-			public int compare(BDisplayOptions left, BDisplayOptions right){
-		        return left.description().compareTo(right.description()); //use your criteria here
-		    }
+			public int compare(BDisplayOptions left, BDisplayOptions right) {
+				return left.description().compareTo(
+						right.description()); //use your criteria here
+			}
 		});
 		for (BDisplayOptions option : enumValues) {
 			BioCheckboxMenuItem menuItem =
 					new BioCheckboxMenuItem(option.description(), option);
 			menu.add(menuItem);
-			currentViz.addLoadedFileListener(() -> {menuItem.updateState(); return;});
+			currentViz.addLoadedFileListener(() -> {
+				menuItem.updateState();
+				return;
+			});
 		}
 
 		return result;
@@ -405,7 +409,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		visualizationTabs.addChangeListener(
-				l -> currentViz.loadNewFile(
+				l -> currentViz.scheduleLoadingOfNewFile(
 						tabsToFilenames.get(
 								((JTabbedPane) l.getSource())
 										.getSelectedComponent())));
@@ -449,8 +453,8 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Adds a new tab that contains a certain file. This calls the
-	 * loadNewFile(file) method for this DesktopLauncher's bioViz field to open
-	 * the given file.
+	 * scheduleLoadingOfNewFile(file) method for this DesktopLauncher's bioViz
+	 * field to open the given file.
 	 *
 	 * @param fileForTab
 	 * 		the file to be opened
@@ -458,8 +462,56 @@ public class DesktopLauncher extends JFrame {
 	private void addNewTab(final File fileForTab) {
 		File file = fileForTab;
 		if (file == null) {
-			file = Gdx.files.getFileHandle("examples/default_grid.bio",
-										   Files.FileType.Internal).file();
+			file = Gdx.files.internal("examples/default_grid.bio").file();
+
+
+			/*
+			file does not exist as we started BioViz from the command line (at
+			least that we will assume now.
+
+			So what we do is
+				1) open a stream to the file within the jar file
+				2) create a temporary file that will be deleted after the JVM
+				   stops running this process
+				3) copy the content of the stream into that file and use it as
+				   a regular file
+				4) by annoyed by Java a lot
+			 */
+			if (!file.exists()) {
+				try {
+					InputStream in = getClass().getResourceAsStream(
+							"/examples/default_grid.bio");
+
+					file = File.createTempFile("default_file_tmp", "bio");
+					file.deleteOnExit();
+
+
+					// manually copying as Java is incredibly bad
+					String read;
+					BufferedReader
+							br = new BufferedReader(new InputStreamReader(in));
+					BufferedWriter w = new BufferedWriter(new FileWriter
+																  (file));
+					while ((read = br.readLine()) != null) {
+						System.out.println(read);
+						w.write(read + "\n");
+					}
+
+					w.close();
+
+
+					// be even more annoyed by java because the following code
+					// does *not* work! (why would it..)
+					java.nio.file.Files.copy(in, file.toPath());
+
+
+				} catch (IOException e) {
+					logger.error("Could not even locate/create default file");
+				}
+
+			}
+
+
 		}
 		logger.debug("Adding new tab to UI for " + file.getName());
 		JPanel dummyPanel = new JPanel();
@@ -468,7 +520,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() -
 										   1);
 		tabsToFilenames.put(dummyPanel, file);
-		this.currentViz.loadNewFile(file);
+		this.currentViz.scheduleLoadingOfNewFile(file);
 	}
 
 	/**
@@ -481,10 +533,17 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private void closeTab(final int index) {
 		logger.info("Closing file (" + index + ")");
-		currentViz.unloadFile(
-				tabsToFilenames.get(visualizationTabs.getSelectedComponent()));
-		tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
-		visualizationTabs.removeTabAt(index);
+		File file = tabsToFilenames.get(visualizationTabs.getSelectedComponent
+				());
+
+		if (file != null) {
+			currentViz.unloadFile(file);
+			tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
+			visualizationTabs.removeTabAt(index);
+		}
+		else {
+			logger.info("Nothing to close");
+		}
 	}
 
 	/**
@@ -514,9 +573,12 @@ public class DesktopLauncher extends JFrame {
 								UIManager.getSystemLookAndFeelClassName());
 					} catch (final UnsupportedLookAndFeelException e) {
 						logger.error("System look and feel is unsupported: "
-								+ e.getMessage() + "\n" + e.getStackTrace());
+									 + e.getMessage() + "\n" +
+									 e.getStackTrace());
 					} catch (final Exception e) {
-						logger.error("Cannot set look and feel: " + e.getMessage() + "\n"
+						logger.error(
+								"Cannot set look and feel: " + e.getMessage() +
+								"\n"
 								+ e.getStackTrace());
 					}
 
@@ -538,12 +600,14 @@ public class DesktopLauncher extends JFrame {
 				}
 			});
 		} catch (Exception e) {
-			logger.error("Could not start the application: " + e.getStackTrace());
+			logger.error(
+					"Could not start the application: " + e.getStackTrace());
 		}
 	}
 
 	/**
-	 * @param pathPrefName The name of of value stored in the Preferences object.
+	 * @param pathPrefName
+	 * 		The name of of value stored in the Preferences object.
 	 * @param load
 	 * 		if true, opens a 'file open dialog', if false opens a 'file store
 	 * 		dialog'
@@ -577,7 +641,7 @@ public class DesktopLauncher extends JFrame {
 			JCheckBox exportSeries = new JCheckBox("Export series");
 			exportSeries.setSelected(false);
 
-			JPanel checkBoxes = new JPanel(new GridLayout(0,1));
+			JPanel checkBoxes = new JPanel(new GridLayout(0, 1));
 			checkBoxes.add(exportColors);
 			checkBoxes.add(exportInfoString);
 			checkBoxes.add(exportSeries);
@@ -590,7 +654,8 @@ public class DesktopLauncher extends JFrame {
 
 			svgExportSettings.setColorfulExport(exportColors.isSelected());
 			svgExportSettings.setExportSeries(exportSeries.isSelected());
-			svgExportSettings.setInformationString(exportInfoString.isSelected());
+			svgExportSettings.setInformationString(
+					exportInfoString.isSelected());
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -623,7 +688,8 @@ public class DesktopLauncher extends JFrame {
 			// configuration. For multi-step configuration, omit calling
 			// context.reset().
 			context.reset();
-			configurator.doConfigure("config/logback.xml");
+			configurator.doConfigure(DesktopLauncher.class.getResourceAsStream
+					("/config/logback.xml"));
 		} catch (final JoranException je) {
 			// StatusPrinter will handle this
 			System.out.println("Error setting up logger: "
@@ -960,10 +1026,11 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.trace("Received timer event ("
-					+ currentViz.currentCircuit.getCurrentTime() + ")");
+						 + currentViz.currentCircuit.getCurrentTime() + ")");
 			this.time.setValue(currentViz.currentCircuit.getCurrentTime());
 			this.timeInfo.setText(
-					Integer.toString(currentViz.currentCircuit.getCurrentTime()));
+					Integer.toString(currentViz.currentCircuit.getCurrentTime
+							()));
 
 		}
 	}
@@ -1098,16 +1165,18 @@ public class DesktopLauncher extends JFrame {
 						currentViz.currentCircuit.getData().getMaxT());
 				d.timeSlider.setMinimum(1);
 				logger.trace("setting time slider to "
-						+ oldTime);
+							 + oldTime);
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
-						currentViz.currentCircuit.getData().getMaxRouteLength());
+						currentViz.currentCircuit.getData().getMaxRouteLength
+								());
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + d.programName);
-			} else {
+			}
+			else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
 				d.timeSlider.setMaximum(1);
@@ -1154,27 +1223,40 @@ public class DesktopLauncher extends JFrame {
 						if (f != null) {
 							if (svgExportSettings.getExportSeries()) {
 
-								int oldTime = currentViz.currentCircuit.getCurrentTime();
-								// this is problematic if the file contains .svg inside the name
-								int svgPosition = f.getAbsolutePath().indexOf(".svg");
+								int oldTime = currentViz.currentCircuit
+										.getCurrentTime();
+								// this is problematic if the file contains
+								// .svg inside the name
+								int svgPosition = f.getAbsolutePath().indexOf
+										(".svg");
 								// initialize with absolute path
 								String pathWithoutSuffix = f.getAbsolutePath();
-								// check if suffix was found, if not the path is already
+								// check if suffix was found, if not the path
+								// is already
 								// without a suffix
 								if (svgPosition != -1) {
-									pathWithoutSuffix = f.getAbsolutePath().substring(0,
-											svgPosition);
+									pathWithoutSuffix =
+											f.getAbsolutePath().substring(0,
+																		  svgPosition);
 								}
 								// create a series of files
-								for (int t = 1; t <= currentViz.currentCircuit.getData().getMaxT();
-										t++) {
-									currentViz.saveSVG(pathWithoutSuffix + "_ts" + t + ".svg", t);
+								for (int t = 1; t <=
+												currentViz.currentCircuit
+														.getData().getMaxT();
+									 t++) {
+									currentViz.saveSVG(
+											pathWithoutSuffix + "_ts" + t +
+											".svg", t);
 								}
 								// restore time from start
-								currentViz.currentCircuit.setCurrentTime(oldTime);
-							} else {
-								currentViz.saveSVG(f.getAbsolutePath(), currentViz
-										.currentCircuit.getCurrentTime());
+								currentViz.currentCircuit.setCurrentTime(
+										oldTime);
+							}
+							else {
+								currentViz.saveSVG(f.getAbsolutePath(),
+												   currentViz
+														   .currentCircuit
+														   .getCurrentTime());
 							}
 						}
 					}
@@ -1235,7 +1317,8 @@ public class DesktopLauncher extends JFrame {
 				else if (e.getID() == KeyEvent.KEY_TYPED) {
 					// That thing might not have been initiliazed yet
 					if (currentViz.getInputProcessor() != null) {
-						currentViz.getInputProcessor().keyTyped(e.getKeyChar());
+						currentViz.getInputProcessor().keyTyped(e.getKeyChar
+								());
 					}
 				}
 			}
@@ -1245,16 +1328,21 @@ public class DesktopLauncher extends JFrame {
 
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
 		private BDisplayOptions option;
+
 		public BioCheckboxMenuItem(String label, BDisplayOptions option) {
 			super(label);
 			this.option = option;
 
 			this.addActionListener(l -> {
-					currentViz.currentCircuit.getDisplayOptions().toggleOption(option);
-					setState(currentViz.currentCircuit.getDisplayOptions().getOption(option));
-				});
+				currentViz.currentCircuit.getDisplayOptions().toggleOption(
+						option);
+				setState(
+						currentViz.currentCircuit.getDisplayOptions()
+								.getOption(
+								option));
+			});
 		}
-		
+
 		public void updateState() {
 			setState(currentViz.currentCircuit.
 					getDisplayOptions().getOption(option));

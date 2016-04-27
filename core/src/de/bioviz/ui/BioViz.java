@@ -1,7 +1,6 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -172,7 +171,7 @@ public class BioViz implements ApplicationListener {
 
 
 		if (loadFileOnUpdate) {
-			loadNewFileNow();
+			loadNewFile();
 			loadFileOnUpdate = false;
 		}
 
@@ -238,7 +237,7 @@ public class BioViz implements ApplicationListener {
 		screenshotCount++;
 		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(),
 					   Gdx.graphics.getHeight());
-		logger.info("Saved screenshot to {}", fh.path());
+		logger.info("Saved screenshot to \"{}\"", fh.path());
 	}
 
 	public void saveScreenshotFull() {
@@ -299,19 +298,27 @@ public class BioViz implements ApplicationListener {
 
 	public void unloadFile(File f) {
 		try {
-			if (this.loadedCircuits.containsKey(f.getCanonicalPath())) {
-				this.loadedCircuits.remove(f.getCanonicalPath());
+			String path = f.getCanonicalPath();
+			if (this.loadedCircuits.containsKey(path)) {
+				DrawableCircuit c = loadedCircuits.get(path);
+
+				// remove the visualization if it is currently active.
+				if (currentCircuit == c) {
+					this.drawables.remove(c);
+					currentCircuit = new DrawableCircuit(
+							new Biochip(), this);
+				}
+				logger.info("Removing {}",path);
+				this.loadedCircuits.remove(path);
 			}
 		} catch (Exception e) {
-			logger.error("Could not unload file " + f);
+			logger.error("Could not unload file \"" + f+"\"");
 		}
 	}
 
-	private void loadNewFileNow() {
+	private void loadNewFile() {
 		Biochip bc;
-		boolean error = false;
-		String errorMsg = "";
-			
+		boolean error=false;
 
 		try {
 			drawables.remove(currentCircuit);
@@ -325,31 +332,35 @@ public class BioViz implements ApplicationListener {
 									());
 				}
 				else {
-					logger.debug("Loading {}", bioFile);
+					logger.debug("Loading \"{}\"", bioFile);
 					bc = BioParser.parseFile(bioFile, this);
 
 					if (bc == null) {
-						error = true;
-						errorMsg = "Could not parse file" + bioFile;
+						logger.error("Could not parse file {}",bioFile);
+						logger.info("Creating empty Biochip to display");
 						bc = new Biochip();
+						error = true;
 					}
-					logger.debug("loaded file, creating drawable elements...");
+					logger.debug("Creating drawable elements...");
 					DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
 					currentCircuit = newCircuit;
 					this.loadedCircuits.put(bioFile.getCanonicalPath(),
 							newCircuit);
 					currentCircuit.zoomExtents();
 				}
-				logger.debug("drawable created, replacing old elements...");
+				logger.debug("Drawable created, replacing old elements...");
 				drawables.add(currentCircuit);
-				logger.debug("Initializing circuit");
 				currentCircuit.getData().recalculateAdjacency = true;
-				if (bioFile == null) {
-					logger.info("Done loading default file");
+
+				if (!error) {
+					if (bioFile == null) {
+						logger.info("Done loading default file");
+					}
+					else {
+						logger.info("Done loading file {}", bioFile);
+					}
 				}
-				else {
-					logger.info("Done loading file {}", bioFile);
-				}
+
 			} else {
 				logger.debug(
 						"File to be set is empty, setting empty " +
@@ -358,27 +369,22 @@ public class BioViz implements ApplicationListener {
 				currentCircuit = new DrawableCircuit(new Biochip(), this);
 			}
 		} catch (Exception e) {
-			error = true;
-			errorMsg = "Could not load " + bioFile + ": " + e.getMessage();
-
-			//e.printStackTrace();
-		}
-
-		if (error) {
-			logger.error(errorMsg);
+			logger.error("Error when parsing {}:\n{}",bioFile,e.getMessage());
 		}
 
 		// clear on screen messages as they would otherwise remain visible
 		messageCenter.clearHUDMessages();
-
-
 		this.callLoadedFileListeners();
 	}
 
-	public void loadNewFile(File f) {
-		logger.debug("Scheduling loading of file " + f);
-		bioFile = f;
-		loadFileOnUpdate = true;
+	public void scheduleLoadingOfNewFile(final File f) {
+
+		// only do stuff if there actually was a file provided
+		if (f != null) {
+			logger.debug("Scheduling loading of file " + f);
+			bioFile = f;
+			loadFileOnUpdate = true;
+		}
 	}
 
 	public void addTimeChangedListener(BioVizEvent listener) {
@@ -471,8 +477,8 @@ public class BioViz implements ApplicationListener {
 	}
 
 	static public ShaderProgram createDefaultShader() {
-		FileHandle vertexShaderHandle = new FileHandle("vertexShader.shd");
-		FileHandle fragmentShaderHandle = new FileHandle("fragmentShader.shd");
+		FileHandle vertexShaderHandle = Gdx.files.internal("vertexShader.shd");
+		FileHandle fragmentShaderHandle = Gdx.files.internal("fragmentShader.shd");
 
 		ShaderProgram shader = new ShaderProgram(vertexShaderHandle, fragmentShaderHandle);
 		if (shader.isCompiled() == false) {
