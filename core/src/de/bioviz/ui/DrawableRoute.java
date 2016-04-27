@@ -67,6 +67,23 @@ public class DrawableRoute extends DrawableSprite {
 		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 	}
 
+	/**
+	 * Returns the color used for drawingf the route.
+	 *
+	 * The color depends on the {@link BDisplayOptions} option ColorfulRoutes.
+	 * If it is set to true, the droplet's color is used instead of black.
+	 *
+	 * @return The color of the route
+	 */
+	public Color getColor() {
+		Color c = this.baseColor.cpy();
+		if (droplet.parentCircuit.getDisplayOptions().getOption(
+				BDisplayOptions.ColorfulRoutes)) {
+			c = this.droplet.getColor().cpy();
+		}
+		return c;
+	}
+
 	@Override
 	/**
 	 * Actually draws the route on the canvas.
@@ -76,7 +93,7 @@ public class DrawableRoute extends DrawableSprite {
 	 * and the transparency.
 	 */
 	public void draw() {
-		int currentTime = droplet.parentCircuit.currentTime;
+		int currentTime = droplet.parentCircuit.getCurrentTime();
 		int displayAt;
 
 		this.disableForcedLOD();
@@ -90,14 +107,10 @@ public class DrawableRoute extends DrawableSprite {
 
 		for (int i = -stepsToUse; i < stepsToUse; i++) {
 
-			Color c = this.baseColor.cpy();
-			if (droplet.parentCircuit.displayOptions.getOption(
-					BDisplayOptions.ColorfulRoutes)) {
-				c = this.droplet.getColor().cpy();
-			}
+			Color c = getColor();
 
 
-			if (droplet.parentCircuit.displayOptions.getOption(
+			if (droplet.parentCircuit.getDisplayOptions().getOption(
 					BDisplayOptions.SolidPaths)) {
 				c.a = noTransparency;
 			}
@@ -155,15 +168,15 @@ public class DrawableRoute extends DrawableSprite {
 
 			this.setX(xCoord);
 			this.setY(yCoord);
-			this.setScaleX(droplet.parentCircuit.smoothScaleX);
-			this.setScaleY(droplet.parentCircuit.smoothScaleY);
+			this.setScaleX(droplet.parentCircuit.getSmoothScale());
+			this.setScaleY(droplet.parentCircuit.getSmoothScale());
 
 			super.draw();
 		}
 
-		boolean dropletLongIndicator = droplet.parentCircuit.displayOptions
+		boolean dropletLongIndicator = droplet.parentCircuit.getDisplayOptions()
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
-		if (dropletLongIndicator) {
+		if (dropletLongIndicator && this.droplet.droplet.getNet() != null) {
 			this.setForcedLOD(1f);
 			Pair<Float, Float> target = new Pair<Float, Float>(
 					this.droplet.droplet.getNet().getTarget().fst.floatValue(),

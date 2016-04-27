@@ -7,13 +7,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * @author Oliver Keszocze
- *         <p>
- *         Class storing the current display options/settings.
- *         <p>
- *         It loads all options as defined in {@link BDisplayOptions} and
- *         initially sets them to false. It provides method for
- *         getting/setting/toggling these options.
+ *
+ * Stores the current display options/settings.
+ * <p>
+ * It loads all options as defined in {@link BDisplayOptions} and initially sets
+ * them to false. It provides method for getting/setting/toggling these
+ * options.
+ * <p>
+ * @author keszocze
  */
 public class DisplayOptions {
 
@@ -48,9 +49,9 @@ public class DisplayOptions {
 		setOption(BDisplayOptions.SourceTargetIcons, true);
 		setOption(BDisplayOptions.SourceTargetIDs, false);
 		setOption(BDisplayOptions.Droplets, true);
-		setOption(BDisplayOptions.Coordinates,false);
+		setOption(BDisplayOptions.Coordinates, false);
 		setOption(BDisplayOptions.DispenserIcon, true);
-		setOption(BDisplayOptions.DispenserID, true);
+		setOption(BDisplayOptions.DispenserFluidName, true);
 		setOption(BDisplayOptions.DetectorIcon, true);
 		setOption(BDisplayOptions.FluidNames, true);
 		setOption(BDisplayOptions.InterferenceRegion, false);
@@ -68,8 +69,11 @@ public class DisplayOptions {
 
 	/**
 	 * Sets the value of an option.
-	 * @param opt Option that is to be set
-	 * @param val The new value of that option
+	 *
+	 * @param opt
+	 * 		Option that is to be set
+	 * @param val
+	 * 		The new value of that option
 	 */
 	public void setOption(final BDisplayOptions opt, final boolean val) {
 
@@ -80,7 +84,9 @@ public class DisplayOptions {
 
 	/**
 	 * Toggles the value of an option and returns the new value.
-	 * @param opt The option to toggle.
+	 *
+	 * @param opt
+	 * 		The option to toggle.
 	 * @return The new value of the option, that is !old_value.
 	 */
 	public boolean toggleOption(final BDisplayOptions opt) {
@@ -88,11 +94,11 @@ public class DisplayOptions {
 		setOption(opt, val);
 		return val;
 	}
-	
+
 	public interface displayOptionEvent {
 		void e(BDisplayOptions value);
 	}
-	
+
 	public void addOptionChangedEvent(displayOptionEvent e) {
 		optionChangedEvents.add(e);
 	}

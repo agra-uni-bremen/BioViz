@@ -38,9 +38,22 @@ public class Biochip {
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
+	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 
 	public HashMap<Integer, String> fluidTypes =
 			new HashMap<Integer, String>();
+
+	private int maxT = -1;
+	private int maxRouteLength = -1;
+
+
+	/**
+	 * All droplets of this chip. Use the get-method to retrieve them from
+	 * other
+	 * classes.
+	 */
+	private HashSet<Droplet> droplets = new HashSet<>();
+	private ArrayList<Net> nets = new ArrayList<Net>();
 
 	public void addFluidType(int fluidID, String fluidDescription) {
 		fluidTypes.put(fluidID, fluidDescription);
@@ -49,9 +62,6 @@ public class Biochip {
 	public void addFluidTypes(HashMap<Integer, String> types) {
 		fluidTypes.putAll(types);
 	}
-
-
-	private ArrayList<Net> nets = new ArrayList<Net>();
 
 	public void addNet(Net n) {
 		nets.add(n);
@@ -82,7 +92,6 @@ public class Biochip {
 		return result;
 	}
 
-	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 
 	public void addDropToFluid(int dropletID, int fluidID) {
 		dropletIDsToFluidTypes.put(dropletID, fluidID);
@@ -97,16 +106,7 @@ public class Biochip {
 	}
 
 
-	private int maxT = -1;
-	private int maxRouteLength = -1;
 
-
-	/**
-	 * All droplets of this chip. Use the get-method to retrieve them from
-	 * other
-	 * classes.
-	 */
-	private HashSet<Droplet> droplets = new HashSet<>();
 
 	/**
 	 * Caching data that does not need to be recalculated with each frame.
@@ -114,22 +114,6 @@ public class Biochip {
 	private Set<BiochipField> adjacencyCache = null;
 
 	public boolean recalculateAdjacency = false;
-	private int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-
-	/**
-	 * Creates a new 2D-Biochip with a certain field size.
-	 *
-	 * @param dimensionX
-	 * 		The size of the chip along the x axis
-	 * @param dimensionY
-	 * 		The size of the chip along the y axis
-	 * @deprecated The chip no longer relies on a fixed field size. Use {@link
-	 * #Biochip()} instead.
-	 */
-	@Deprecated
-	public Biochip(int dimensionX, int dimensionY) {
-
-	}
 
 	public Biochip() {
 	}

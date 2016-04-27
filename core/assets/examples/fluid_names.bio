@@ -24,12 +24,12 @@ fluids
 end
 
 droplets
-2 3
+2 2
 1 1
-3 2
+3 3
 end
 
 dispensers
-1 (5,4) E
-2 (1,1) S
+1 (1,1) S
+2 (5,4) E
 end

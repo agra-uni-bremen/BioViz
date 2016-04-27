@@ -158,7 +158,7 @@ public class BioParserListener extends BioBaseListener {
 			return Direction.WEST;
 		}
 
-		logger.error("Could not parse \"{}\" as direction.");
+		logger.error("Could not parse  \"{}\" as direction.");
 		return null;
 	}
 

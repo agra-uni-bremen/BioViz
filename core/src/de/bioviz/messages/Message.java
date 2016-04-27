@@ -1,12 +1,10 @@
 package de.bioviz.messages;
 
-import com.badlogic.gdx.graphics.Color;
-
 /**
  * A text message that will be displayed for some time at the top of the
  * screen.
  *
- * @author jannis
+ * @author Jannis Stoppe
  */
 public class Message extends MessageBase {
 
@@ -24,6 +22,9 @@ public class Message extends MessageBase {
 	public long createdOn;
 
 	/**
+	 * Creates a message that will be displayed on the top of the screen.
+	 *
+	 * Its color is set to white as per the {@link MessageBase} constructor.
 	 * @param msg
 	 * 		The message that will be displayed.
 	 */
@@ -35,7 +36,7 @@ public class Message extends MessageBase {
 	/**
 	 * Computes whether the messages has expired.
 	 *
-	 * @return true if the messages has epxired, false otherwise
+	 * @return true if the messages has expired, false otherwise
 	 */
 	public boolean expired() {
 		long currentTime = System.currentTimeMillis();

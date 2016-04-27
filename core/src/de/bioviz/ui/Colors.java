@@ -60,12 +60,24 @@ public abstract class Colors {
 	 */
 	public static final Color INTERFERENCE_REGION_COLOR
 			= new Color(0.75f, 0.75f, 0.5f, 1);
-	
+
 	/**
 	 * Base color for an interference region overlap. This color is used before
 	 * any modifications are applied.
 	 */
 	public static final Color INTERFERENCE_REGION_OVERLAP_COLOR
 			= new Color(1f, 0f, 0f, 1f);
+
+	/**
+	 * Diff color for hovered fields.
+	 */
+	public static final Color HOVER_DIFF_COLOR
+			= new Color(0.2f, 0.2f, 0.2f, 0);
+
+	/**
+	 * Diff color for source target arrows.
+	 */
+	public static final Color LONG_NET_INDICATORS_ON_FIELD_COLOR
+			= new Color(0, 0, 0, 0.5f);
 
 }

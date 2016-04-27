@@ -19,7 +19,7 @@ public enum BDisplayOptions {
 	CellUsage("Show cell usage colored", Input.Keys.U),
 
 	/**
-	 * Option for displaying the amount of actuations of a given cell
+	 * Option for displaying the amount of actuations of a given cell.
 	 */
 	CellUsageCount("Cell usage count"),
 
@@ -86,7 +86,12 @@ public enum BDisplayOptions {
 	 * Option for displaying the fluid ID dispensed by the given dispenser.
 	 * Please note that this is not the ID of the dispensing unit!
 	 */
-	DispenserID("Show dispenser IDs", Input.Keys.D, true, false, false),
+	DispenserFluidID("Show fluid IDs on dispensers", Input.Keys.D, true, false, false),
+
+	/**
+	 * Option for displaying the fluid name dispensed by the given dispenser.
+	 */
+	DispenserFluidName("Show fluid names on dispensers",Input.Keys.N,true,false,false),
 	/**
 	 * Option for displaying the icon of a dispenser.
 	 */
@@ -101,22 +106,15 @@ public enum BDisplayOptions {
 	DetectorIcon("Show detector icons"),
 
 	/**
-<<<<<<< HEAD
 	 * Option for displaying a net's colour on all its corresponding droplets
-=======
 	 * Will draw solid paths for the droplets.
 	 * <p>
 	 * This basically disables the fancy fading.
->>>>>>> master
 	 */
 	SolidPaths("Draw solid paths"),
 
 	/**
-<<<<<<< HEAD
-	 * Option for displaying a net's colour on all its corresponding fields
-=======
 	 * Option for displaying a net's colour on all its corresponding droplets.
->>>>>>> master
 	 */
 	NetColorOnDroplets("Color droplets within net"),
 
@@ -152,10 +150,7 @@ public enum BDisplayOptions {
 	 * The description that is used in the menus to display this option.
 	 */
 	private final String description;
-
-	//
-	// th
-
+	
 	/**
 	 * Stores the hotkey used to toggle the option.
 	 * <p>

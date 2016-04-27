@@ -23,7 +23,7 @@ import java.nio.file.Paths;
  */
 public class BioParser  {
 
-    static private Logger logger = LoggerFactory.getLogger(BioParser.class);
+    private static Logger logger = LoggerFactory.getLogger(BioParser.class);
 
 
     public static Biochip parseFile(final File file, BioViz viz) {
@@ -65,11 +65,10 @@ public class BioParser  {
                 return listener.getBiochip();
             }
         } catch (Exception e) {
+            logger.error("Failed to parse file");
             e.printStackTrace();
-            // TODO do something with this exception
-            // ignore the stupid exception :)
+            return null;
         }
-        return null;
     }
 
 }
