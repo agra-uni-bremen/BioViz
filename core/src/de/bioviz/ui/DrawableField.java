@@ -2,12 +2,7 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 
-import de.bioviz.structures.BiochipField;
-import de.bioviz.structures.Droplet;
-import de.bioviz.structures.Mixer;
-import de.bioviz.structures.Net;
-import de.bioviz.structures.Point;
-import de.bioviz.structures.Source;
+import de.bioviz.structures.*;
 import de.bioviz.util.Pair;
 
 import static de.bioviz.ui.BDisplayOptions.*;
@@ -156,23 +151,23 @@ public class DrawableField extends DrawableSprite {
 		 There is an execption: the cell usage count overwrites any previous
 		 text. I really dislike this case by case hard coding  :/
 		 */
-		if (field.isSink && getOption(SinkIcon)) {
+		if (field instanceof Sink && getOption(SinkIcon)) {
 			texture = TextureE.Sink;
 		}
-		else if (field.isDispenser) {
+		else if (field instanceof Dispenser) {
 			if (getOption(DispenserIcon)) {
 				texture = TextureE.Dispenser;
 			}
 
-			String fluidID = Integer.toString(getField().fluidID);
+			int fluidID = ((Dispenser)field).fluidID;
 			ArrayList<String> msgs = new ArrayList<>();
 
 			if (getOption(DispenserFluidID)) {
-				msgs.add(fluidID);
+				msgs.add(Integer.toString(fluidID));
 			}
 			if (getOption(DispenserFluidName)) {
 				String fluidName =
-						parentCircuit.getData().fluidType(getField().fluidID);
+						parentCircuit.getData().fluidType(fluidID);
 				if (fluidName != null) {
 					msgs.add(fluidName);
 				}
@@ -390,11 +385,11 @@ public class DrawableField extends DrawableSprite {
 		// nope it seems that the cell usage is supposed to override the other
 		// overlays
 		if (colorOverlayCount == 0) {
-			if (field.isSink) {
+			if (field instanceof Sink) {
 				result.add(SINK_DEFAULT_COLOR);
 				colorOverlayCount++;
 			}
-			else if (field.isDispenser) {
+			else if (field instanceof Dispenser) {
 				result.add(SOURCE_DEFAULT_COLOR);
 				colorOverlayCount++;
 			}
