@@ -275,7 +275,7 @@ public class DrawableField extends DrawableSprite {
 					if (this.getParentCircuit().getData().getNetsOf
 							(this.getParentCircuit().getHoveredField().field).
 							contains(n)) {
-						netCol.add(0.5f, 0.5f, 0.5f, 0);
+						netCol.add(Colors.HOVER_NET_DIFF_COLOR);
 					}
 				}
 				Point top = new Point(
