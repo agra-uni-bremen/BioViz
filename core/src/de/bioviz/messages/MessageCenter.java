@@ -23,7 +23,7 @@ import java.util.Vector;
  * @author Jannis Stoppe, Oliver Keszocze
  */
 public class MessageCenter {
-
+	
 
 	private Vector<Message> messages;
 
@@ -49,11 +49,38 @@ public class MessageCenter {
 	 */
 	public static final int MAX_MESSAGES_IN_UI = 32;
 
+	/**
+	 * The step width at which the scale is increased.
+	 */
 	private final float SCALEINCSTEP = 2f;
 
+	/**
+	 * The text rendering resolution.
+	 * In order to avoid artifacts when zooming with text, the text is instead
+	 * redrawn for the given size each time the zoom factor changes.
+	 * This value is the current text size for HUD messages.
+	 */
 	private float textRenderResolution = 16;
+
+	/**
+	 * The minimum text rendering resolution for HUD messages.
+	 */
 	private float textRenderResolutionMinimum = 4f;
+
+	/**
+	 * The text rendering resolution.
+	 * In order to avoid artifacts when zooming with text, the text is instead
+	 * redrawn for the given size each time the zoom factor changes.
+	 * This value is the current text size for HUD messages.
+	 */
 	public float getTextRenderResolution() {return textRenderResolution;}
+
+	/**
+	 * Sets the resolution at which the HUD messages should be rendered and
+	 * resets the fontInvalidated flag to toggle a recalculation of the text
+	 * graphics before the next frame.
+	 * @param value the new text resolution.
+	 */
 	public void setTextRenderResolution(float value) {
 		this.textRenderResolution = Math.max(
 				textRenderResolutionMinimum,
@@ -63,9 +90,33 @@ public class MessageCenter {
 				this.textRenderResolution);
 	}
 
+	/**
+	 * The text rendering resolution.
+	 * In order to avoid artifacts when zooming with text, the text is instead
+	 * redrawn for the given size each time the zoom factor changes.
+	 * This value is the current text size for text messages.
+	 */
 	private float msgTextRenderResolution = 8f;
+
+	/**
+	 * The minimum text rendering resolution for text messages.
+	 */
 	private float msgTextRenderResolutionMinimum = 4f;
+
+	/**
+	 * The text rendering resolution.
+	 * In order to avoid artifacts when zooming with text, the text is instead
+	 * redrawn for the given size each time the zoom factor changes.
+	 * This value is the current text size for text messages.
+	 */
 	public float getmsgTextRenderResolution() {return msgTextRenderResolution;}
+
+	/**
+	 * Sets the resolution at which the text messages should be rendered and
+	 * resets the fontInvalidated flag to toggle a recalculation of the text
+	 * graphics before the next frame.
+	 * @param value the new text resolution.
+	 */
 	public void setmsgTextRenderResolution(float value) {
 		this.msgTextRenderResolution = Math.max(
 				msgTextRenderResolutionMinimum,
@@ -75,9 +126,18 @@ public class MessageCenter {
 				this.msgTextRenderResolution);
 	}
 
+	/**
+	 * The messages that should be displayed on top of the circuit, mapped from
+	 * their specific id to the message itself.
+	 */
 	private HashMap<Integer, HUDMessage> HUDMessages =
 			new HashMap<Integer, HUDMessage>();
 
+	/**
+	 * If this flag is set to true, the font bitmaps will be re-rendered before
+	 * the next frame (and the flag then set to false again). Use this if the
+	 * font needs to be altered.
+	 */
 	private boolean fontInvalidated = true;
 
 
@@ -86,6 +146,9 @@ public class MessageCenter {
 	 */
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
+	/**
+	 * The parent visualization.
+	 */
 	BioViz parent;
 
 
