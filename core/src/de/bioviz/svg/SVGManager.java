@@ -785,8 +785,8 @@ public class SVGManager {
 						.LongNetIndicatorsOnDroplets)) {
 					List<Color> colors = new ArrayList<>();
 					Color diffColor = new Color(0.2f, 0.2f, 0.2f, 0);
-					colors.add(d.getColor().cpy().add(diffColor));
-					colors.add(d.getColor().cpy().sub(diffColor));
+					colors.add(d.getColor().add(diffColor));
+					colors.add(d.getColor().sub(diffColor));
 
 					for (final Color color : colors) {
 						key = generateColoredID("ArrowHead", color);
