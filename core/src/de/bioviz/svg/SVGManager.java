@@ -333,7 +333,7 @@ public class SVGManager {
 
 		DisplayValues vals = field.getDisplayValues();
 
-		Color fieldCol = vals.getColor().cpy();
+		Color fieldCol = vals.getColor();
 
 		if (field.isHovered()) {
 			fieldCol.sub(Colors.HOVER_DIFF_COLOR);
