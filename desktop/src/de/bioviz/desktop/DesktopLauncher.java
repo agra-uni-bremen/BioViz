@@ -612,7 +612,7 @@ public class DesktopLauncher extends JFrame {
 		// configuration. For multi-step configuration, omit calling context
 		// .reset().
 		context.reset();
-		configurator.doConfigure();
+
 		//#########################
 
 

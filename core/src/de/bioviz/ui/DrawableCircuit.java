@@ -5,11 +5,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import de.bioviz.messages.MessageCenter;
-import de.bioviz.structures.Biochip;
-import de.bioviz.structures.BiochipField;
-import de.bioviz.structures.Droplet;
-import de.bioviz.structures.Net;
-import de.bioviz.structures.Point;
+import de.bioviz.structures.*;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -612,17 +608,6 @@ public class DrawableCircuit implements Drawable {
 
 	public void addTimeChangedListener(final BioVizEvent listener) {
 		timeChangedListeners.add(listener);
-	}
-
-	/**
-	 * Re-calculates the adjacency for all blobs and sets
-	 * the fields' colours accordingly.
-	 */
-	public void updateAdjacencyColours() {
-		Set<BiochipField> f = this.getData().getAdjacentActivations();
-		for (BiochipField biochipField : f) {
-
-		}
 	}
 
 	/**

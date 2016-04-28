@@ -2,12 +2,7 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 
-import de.bioviz.structures.BiochipField;
-import de.bioviz.structures.Droplet;
-import de.bioviz.structures.Mixer;
-import de.bioviz.structures.Net;
-import de.bioviz.structures.Point;
-import de.bioviz.structures.Source;
+import de.bioviz.structures.*;
 import de.bioviz.util.Pair;
 
 import static de.bioviz.ui.BDisplayOptions.*;
@@ -16,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -356,7 +353,7 @@ public class DrawableField extends DrawableSprite {
 							d2.droplet.getPositionAt(
 									this.parentCircuit.getCurrentTime())
 									.equals(
-									this.field.pos)) {
+											this.field.pos)) {
 							result.add(
 									Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 							++colorOverlayCount;
@@ -413,10 +410,15 @@ public class DrawableField extends DrawableSprite {
 			}
 		}
 
-		if (getOption(Adjacency) &&
-			getParentCircuit().getData().getAdjacentActivations().contains(
-					this.getField())) {
-			result.add(ADJACENT_ACTIVATION_COLOR);
+		if (getOption(Adjacency)) {
+			Set<FluidicConstraintViolation> violations =
+					getParentCircuit().getData().getAdjacentActivations();
+			boolean fluidicConstraintViolated = violations.stream().filter(
+					it -> it.containsField(this.field)).findAny().isPresent();
+			if (fluidicConstraintViolated) {
+
+				result.add(ADJACENT_ACTIVATION_COLOR);
+			}
 		}
 
 		if (colorOverlayCount > 0) {
@@ -463,7 +465,8 @@ public class DrawableField extends DrawableSprite {
 						// draw to target
 						DrawableLine.draw(source, target,
 										  Color.BLACK.cpy()
-													.sub(Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
+												  .sub(Colors
+															   .LONG_NET_INDICATORS_ON_FIELD_COLOR));
 					}
 				}
 			}

@@ -499,10 +499,10 @@ public class BioParserListener extends BioBaseListener {
 			});
 		});
 
-		Set<BiochipField> badFields = chip.getAdjacentActivations();
+		Set<FluidicConstraintViolation> badFields = chip.getAdjacentActivations();
 
-		for (BiochipField bad: badFields) {
-			errors.add(bad.toString());
+		for (FluidicConstraintViolation violation: badFields) {
+			errors.add(violation.toString());
 		}
 
 
