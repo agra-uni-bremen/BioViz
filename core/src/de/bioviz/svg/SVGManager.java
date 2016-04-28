@@ -740,7 +740,7 @@ public class SVGManager {
 			// create all needed svg defs for the fields
 			for (final DrawableField f : circuit.getFields()) {
 
-				Color fieldColor = f.getColor().cpy();
+				Color fieldColor = f.getColor();
 
 				// reverse colorChanges for hoveredFields
 				if (f.isHovered()) {

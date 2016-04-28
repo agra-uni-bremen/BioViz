@@ -56,11 +56,7 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public static final Color BLOCKED_COLOR = Colors.BLOCKED_COLOR;
 
-	/**
-	 * Overlay color used for fields that have adjacent activations.
-	 */
-	public static final Color ADJACENT_ACTIVATION_COLOR =
-			new Color(0.5f, -0.5f, -0.5f, 0);
+
 
 	/**
 	 * The zoom level at which fields resort to drawing boxes instead of actual
@@ -416,7 +412,7 @@ public class DrawableField extends DrawableSprite {
 		if (getOption(Adjacency) &&
 			getParentCircuit().getData().getAdjacentActivations().contains(
 					this.getField())) {
-			result.add(ADJACENT_ACTIVATION_COLOR);
+			result.add(Colors.ADJACENT_ACTIVATION_COLOR);
 		}
 
 		if (colorOverlayCount > 0) {
@@ -431,7 +427,7 @@ public class DrawableField extends DrawableSprite {
 			result.add(Colors.HOVER_DIFF_COLOR);
 		}
 
-		return result.buildGdxColor();
+		return result.buildGdxColor().cpy();
 	}
 
 	@Override

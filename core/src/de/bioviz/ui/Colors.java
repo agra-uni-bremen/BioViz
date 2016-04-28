@@ -86,4 +86,10 @@ public abstract class Colors {
 	public static final Color LONG_NET_INDICATORS_ON_DROPLET_DIFF =
 			new Color(0.2f, 0.2f, 0.2f, 0);
 
+	/**
+	 * Overlay color used for fields that have adjacent activations.
+	 */
+	public static final Color ADJACENT_ACTIVATION_COLOR =
+			new Color(0.5f, -0.5f, -0.5f, 0);
+
 }
