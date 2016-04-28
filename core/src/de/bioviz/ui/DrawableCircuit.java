@@ -367,7 +367,9 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		// scale text
-		float scale = Math.min(MessageCenter.textRenderResolution, getSmoothScale() / 2f);
+		float scale = Math.min(
+				this.parent.messageCenter.getTextRenderResolution(),
+				getSmoothScale() / 2f);
 		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {

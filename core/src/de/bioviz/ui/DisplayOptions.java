@@ -55,6 +55,7 @@ public class DisplayOptions {
 		setOption(BDisplayOptions.DetectorIcon, true);
 		setOption(BDisplayOptions.FluidNames, true);
 		setOption(BDisplayOptions.InterferenceRegion, false);
+		setOption(BDisplayOptions.HideTextOnZoom, true);
 	}
 
 
