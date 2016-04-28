@@ -784,7 +784,7 @@ public class SVGManager {
 				if (circuit.getDisplayOptions().getOption(BDisplayOptions
 						.LongNetIndicatorsOnDroplets)) {
 					List<Color> colors = new ArrayList<>();
-					Color diffColor = new Color(0.2f, 0.2f, 0.2f, 0);
+					Color diffColor = Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF;
 					colors.add(d.getColor().add(diffColor));
 					colors.add(d.getColor().sub(diffColor));
 
