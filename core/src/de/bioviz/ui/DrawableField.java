@@ -511,7 +511,7 @@ public class DrawableField extends DrawableSprite {
 	 *
 	 * @param optn
 	 * 		Option to check
-	 * @return true if optn is true
+	 * @return true if option is true
 	 */
 	private boolean getOption(final BDisplayOptions optn) {
 		return getParentCircuit().getDisplayOptions().getOption(optn);
