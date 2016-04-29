@@ -90,7 +90,6 @@ public class DrawableDroplet extends DrawableSprite {
 	 */
 	public String getMsg() {
 		ArrayList<String> msgs = new ArrayList<>();
-		Color.BLACK
 
 		int dropID = droplet.getID();
 
