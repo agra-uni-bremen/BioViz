@@ -5,11 +5,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import de.bioviz.messages.MessageCenter;
-import de.bioviz.structures.Biochip;
-import de.bioviz.structures.BiochipField;
-import de.bioviz.structures.Droplet;
-import de.bioviz.structures.Net;
-import de.bioviz.structures.Point;
+import de.bioviz.structures.*;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -244,8 +240,14 @@ public class DrawableCircuit implements Drawable {
 
 		//setup fields
 		getData().getAllFields().forEach(fld -> {
-			DrawableField f = new DrawableField(fld, this);
-			this.getFields().add(f);
+			if (fld instanceof Sink) {
+				fields.add(new DrawableSink((Sink)fld,this));
+			}
+			else {
+				DrawableField f = new DrawableField(fld, this);
+				fields.add(f);
+			}
+
 		});
 
 		LOGGER.debug("Fields set up.");
