@@ -12,8 +12,6 @@ import de.bioviz.ui.DrawableField;
  */
 public class SVGUtils {
 
-	private final static Color DIFF_COLOR = new Color(0.2f, 0.2f, 0.2f, 0);
-
 	private final static SVGExportSettings SVG_EXPORT_SETTINGS =
 			SVGExportSettings.getInstance();
 
@@ -56,7 +54,7 @@ public class SVGUtils {
 	 */
 	public static Color getLighterLongNetIndicatorColor(final Color dropColor){
 		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
-			return dropColor.cpy().sub(DIFF_COLOR);
+			return dropColor.cpy().sub(Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF);
 		}
 		else {
 			return Color.BLACK;
@@ -74,7 +72,7 @@ public class SVGUtils {
 	 */
 	public static Color getDarkerLongNetIndicatorColor(final Color dropColor) {
 		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
-			return dropColor.cpy().add(DIFF_COLOR);
+			return dropColor.cpy().add(Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF);
 		}
 		else {
 			return Color.BLACK;
