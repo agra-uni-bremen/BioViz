@@ -336,7 +336,7 @@ public class SVGCoreCreator {
 	 */
 	public void appendGradSVG(final Map<String, String> svgs,
 														final Net net, final GradDir dir) {
-		final String key = SVGUtils.generateColoredID("grad-" + dir.toString(),
+		final String key = SVGUtils.generateColoredID("Gradient-" + dir.toString(),
 				SVGUtils.getNetColor(net));
 		if (!svgs.containsKey(key)) {
 			svgs.put(key, getSVGLinearGradient(key, dir,

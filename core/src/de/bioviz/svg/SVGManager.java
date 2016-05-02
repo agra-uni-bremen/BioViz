@@ -14,20 +14,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
-<<<<<<< HEAD
  * @author Maximilian Luenert, Oliver Keszocze
  * Texture cache class.
  * <p>
  * This class manages texture themes. One can specify a folder in which the png
  * files that are loaded as textures are stored. These images are thenn either
  * loaded on demand or returned from the cache.
-=======
- * @author malu, keszocze Texture cache class.
- *         <p>
- *         This class manages texture themes. One can specify a folder in which
- *         the png files that are loaded as textures are stored. These images
- *         are thenn either loaded on demand or returned from the cache.
->>>>>>> master
  */
 public class SVGManager {
 
@@ -638,7 +630,7 @@ public class SVGManager {
 				gradientSvg += "<rect x=\"" + (fieldPos.fst + 24) + "\" " +
 						"y=\"" + (fieldPos.snd + 24) + "\" rx=\"24\" ry=\"24\" " +
 						"height=\"208\" width=\"208\" fill=\"url(#" + SVGUtils
-						.generateColoredID("grad" + dir.toString(),
+						.generateColoredID("Gradient-" + dir.toString(),
 								SVGUtils.getNetColor(n)) + ")\" " +
 						"/>\n";
 			}
