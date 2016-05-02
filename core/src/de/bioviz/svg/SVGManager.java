@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author malu, keszocze
+ * @author Maximilian Luenert, Oliver Keszocze
  * Texture cache class.
  * <p>
  * This class manages texture themes. One can specify a folder in which the png
@@ -37,9 +37,7 @@ public class SVGManager {
 	private SVGCoreCreator svgCoreCreator;
 
 	/** hashMap for uncolored svg elements. */
-	private HashMap<TextureE, String> svgs = new HashMap<>();
-	/** hashMap for colored svg elements. */
-	private HashMap<String, String> colSvgs = new HashMap<>();
+	private HashMap<String, String> svgs = new HashMap<>();
 
 	/** folder in which the svgs are. */
 	private String svgFolder;
