@@ -378,6 +378,18 @@ public class SVGCoreCreator {
 	}
 
 	/**
+	 *
+	 * @param svgs
+	 */
+	public void appendSourceTargetArrowHead(final Map<String, String> svgs){
+		final Color color = Color.BLACK;
+		final String key = SVGUtils.generateColoredID("ArrowHead", color);
+		if (!svgs.containsKey(key)) {
+			svgs.put(key, getArrowHead(key, color));
+		}
+	}
+
+	/**
 	 * Puts the svg code of a route into the given map.
 	 *
 	 * @param svgs
