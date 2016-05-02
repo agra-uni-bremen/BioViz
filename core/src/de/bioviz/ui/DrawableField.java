@@ -210,6 +210,8 @@ public class DrawableField extends DrawableSprite {
 	 * @return the field's color.
 	 */
 	public Color getColor() {
+
+		// TODO document what this variable is good for.
 		int colorOverlayCount = 0;
 		/*
 		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
