@@ -56,16 +56,6 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * Creates an ID consisting of a base part and the given color.
-	 * @param baseName The part of thename in front of the '-'
-	 * @param c The color that will be put after the '-'
-	 * @return "<baseName>-<color>"
-	 */
-	public static String generateID(final String baseName, final Color c) {
-		return baseName + "-" + SVGUtils.colorToSVG(c);
-	}
-
-	/**
 	 * @param folder The name of the folder containing the theme,
 	 *               relative to the assets folder
 	 * @brief Tells the manager where to find the svgs (i.e. .svg images).
@@ -138,7 +128,8 @@ public class SVGCoreCreator {
 				// set new id for this node if there is a fillColor
 					if (group.getNodeType() == Node.ELEMENT_NODE) {
 						Element elem = (Element) group;
-						elem.setAttribute("id", generateID(type.toString(), fillColor));
+						elem.setAttribute("id", SVGUtils.generateColoredID(type.toString(),
+								fillColor));
 					}
 			}
 			if (strokeColor != null) {
