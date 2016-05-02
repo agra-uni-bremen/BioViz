@@ -5,7 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
-import de.bioviz.ui.*;
+import de.bioviz.ui.BDisplayOptions;
+import de.bioviz.ui.Colors;
+import de.bioviz.ui.DisplayValues;
+import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableDroplet;
+import de.bioviz.ui.DrawableField;
+import de.bioviz.ui.DrawableRoute;
+import de.bioviz.ui.TextureE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -466,23 +473,19 @@ public class SVGManager {
 
 				if (x1 < x2 && y1 == y2) {
 					//intentionally do nothing here
-				}
-				else if (y1 == y2 && x2 < x1) {
+				}	else if (y1 == y2 && x2 < x1) {
 					transFormParams +=
 							" rotate(180 " + targetX + " " +
 							(targetY + 0.5f * coordinateMultiplier) + ") ";
-				}
-				else if (x1 == x2 && y2 > y1) {
+				}	else if (x1 == x2 && y2 > y1) {
 					transFormParams +=
 							" rotate(90 " + targetX + " " +
 							(targetY + 0.5f * coordinateMultiplier) + ") ";
-				}
-				else if (x1 == x2 && y2 < y1) {
+				}	else if (x1 == x2 && y2 < y1) {
 					transFormParams +=
 							"rotate(270 " + targetX + " " +
 							(targetY + 0.5f * coordinateMultiplier) + ") ";
-				}
-				else {
+				}	else {
 					app = false;
 				}
 				if (app) {
@@ -506,9 +509,10 @@ public class SVGManager {
 	/**
 	 * Creates svg arrows from all net sources to their net targets.
 	 *
+	 * @param drawableDrop the droplet
 	 * @return svg string containing all start end arrows
 	 */
-	private String createSourceTargetArrow(DrawableDroplet drawableDrop) {
+	private String createSourceTargetArrow(final DrawableDroplet drawableDrop) {
 
 		Net net = drawableDrop.droplet.getNet();
 		String arrow = "";
@@ -658,8 +662,8 @@ public class SVGManager {
 			boolean dirMatch = true;
 			for (final Point p : dirs) {
 				dirMatch &= !circuit.getData().hasFieldAt(fieldPos.add(p)) ||
-							!net.containsField(circuit.getData().getFieldAt
-									(fieldPos.add(p)));
+							!net.containsField(circuit.getData().
+									getFieldAt(fieldPos.add(p)));
 			}
 			if (dirMatch) {
 				return dir;
@@ -710,8 +714,7 @@ public class SVGManager {
 
 		if (x2 > x1) {
 			x2 -= xDiff;
-		}
-		else if (x2 < x1) {
+		}	else if (x2 < x1) {
 			x2 += xDiff;
 		}
 		y2 -= yDiff;

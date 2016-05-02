@@ -295,8 +295,8 @@ public class SVGCoreCreator {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-			DOMSource source = new DOMSource(doc.getElementsByTagName("g").item
-					(0));
+			DOMSource source = new DOMSource(doc.getElementsByTagName("g").
+					item(0));
 			writer = new StringWriter();
 			StreamResult result = new StreamResult(writer);
 			transformer.transform(source, result);
@@ -309,13 +309,13 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * Puts the svg code of a field into the given map.
+	 * Puts the svg code for a field into the given map.
 	 *
 	 * @param svgs the map
 	 * @param field the field
 	 */
 	public void appendFieldSVG(final Map<String, String> svgs,
-														 final DrawableField field){
+														 final DrawableField field) {
 
 		final String key = SVGUtils.generateColoredID(field.getDisplayValues()
 				.getTexture().toString(), SVGUtils.getUnhoveredColor(field));
@@ -328,7 +328,7 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * Puts the svg code of a gradient into the given map.
+	 * Puts the svg code for a gradient into the given map.
 	 *
 	 * @param svgs the map
 	 * @param net the net
@@ -345,10 +345,10 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * Puts the svg code of a droplet into the given map.
+	 * Puts the svg code for a droplet into the given map.
 	 *
-	 * @param svgs
-	 * @param drop
+	 * @param svgs the map to insert into
+	 * @param drop the droplet
 	 */
 	public void appendDropletSVG(final Map<String, String> svgs,
 															 final DrawableDroplet drop) {
@@ -360,15 +360,15 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * Puts the svg code of an arrowhead into the given map.
+	 * Puts the svg code for arrowheads into the given map.
 	 *
-	 * @param svgs
-	 * @param color
+	 * @param svgs the map
+	 * @param dropColor the dropletColor
 	 */
 	public void appendArrowheads(final Map<String, String> svgs,
 															 final Color dropColor) {
-		final Color[] colors = {SVGUtils.getLighterLongNetIndicatorColor(dropColor),
-										SVGUtils.getDarkerLongNetIndicatorColor(dropColor)};
+		final Color[] colors = {SVGUtils.getLighterLongNetIndicatorColor(dropColor)
+										, SVGUtils.getDarkerLongNetIndicatorColor(dropColor)};
 		for (final Color color : colors) {
 			final String key = SVGUtils.generateColoredID("ArrowHead", color);
 			if (!svgs.containsKey(key)) {
@@ -378,10 +378,11 @@ public class SVGCoreCreator {
 	}
 
 	/**
+	 * Puts the svg code for a sourceTargetArrowHead into the given map.
 	 *
-	 * @param svgs
+	 * @param svgs the map
 	 */
-	public void appendSourceTargetArrowHead(final Map<String, String> svgs){
+	public void appendSourceTargetArrowHead(final Map<String, String> svgs) {
 		final Color color = Color.BLACK;
 		final String key = SVGUtils.generateColoredID("ArrowHead", color);
 		if (!svgs.containsKey(key)) {

@@ -10,10 +10,20 @@ import de.bioviz.ui.DrawableField;
 /**
  * @author Maximilian Luenert
  */
-public class SVGUtils {
+public final class SVGUtils {
 
-	private final static SVGExportSettings SVG_EXPORT_SETTINGS =
+	/**
+	 * svgExportSettings instance.
+	 */
+	private static final SVGExportSettings SVG_EXPORT_SETTINGS =
 			SVGExportSettings.getInstance();
+
+	/**
+	 * Constructor to satisfy checkstyle.
+	 */
+	private SVGUtils() {
+
+	}
 
 	/**
 	 * Converts a libGDX color to a SVG-usable format.
@@ -35,7 +45,7 @@ public class SVGUtils {
 	 * @return
 	 * 			the color of the net or Color.DARK_GREY if the colorfulExport is off
 	 */
-	public static Color getNetColor(Net net){
+	public static Color getNetColor(final Net net) {
 		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
 			return net.getColor().buildGdxColor();
 		} else {
@@ -52,11 +62,10 @@ public class SVGUtils {
 	 *			the color for the lighter arrowHead or Color.DARK_GREY if the
 	 *			colorfulExport is off
 	 */
-	public static Color getLighterLongNetIndicatorColor(final Color dropColor){
+	public static Color getLighterLongNetIndicatorColor(final Color dropColor) {
 		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
 			return dropColor.cpy().sub(Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF);
-		}
-		else {
+		}	else {
 			return Color.BLACK;
 		}
 	}
@@ -73,8 +82,7 @@ public class SVGUtils {
 	public static Color getDarkerLongNetIndicatorColor(final Color dropColor) {
 		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
 			return dropColor.cpy().add(Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF);
-		}
-		else {
+		}	else {
 			return Color.BLACK;
 		}
 	}
@@ -98,6 +106,8 @@ public class SVGUtils {
 	 * Transforms a point to svgCoordinates.
 	 *
 	 * @param point the point to transform
+	 * @param circuit the actual circuit
+	 * @param coordinateMultiplier the used coordinateMultiplier
 	 * @return Point with SVG coordinates
 	 */
 	public static Point toSVGCoords(final Point point,
@@ -118,9 +128,9 @@ public class SVGUtils {
 	 * @param field the field
 	 * @return the unhovered color
 	 */
-	public static Color getUnhoveredColor(DrawableField field){
+	public static Color getUnhoveredColor(final DrawableField field) {
 		Color fieldCol = field.getColor().cpy();
-		if(field.isHovered()){
+		if (field.isHovered()) {
 			fieldCol = fieldCol.sub(Colors.HOVER_DIFF_COLOR);
 		}
 		return fieldCol;
