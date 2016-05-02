@@ -60,7 +60,7 @@ public final class Net {
 	 * @return The net's color
 	 */
 	public Color getColor() {
-		return color;
+		return color.cpy();
 	}
 
 	public void setColor(Color c) {

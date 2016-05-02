@@ -104,6 +104,15 @@ public class Droplet {
 		this.spawnTime = spawnTime;
 	}
 
+
+	/**
+	 * Checks whether this droplet belongs to a net.
+	 * @return true if the droplet belongs to a net; false otherwise.
+	 */
+	public boolean hasNet() {
+		return net != null;
+	}
+
 	/**
 	 * @return The net the droplet belongs to.
 	 */

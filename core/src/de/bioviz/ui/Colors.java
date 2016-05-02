@@ -69,6 +69,11 @@ public abstract class Colors {
 			= new Color(1f, 0f, 0f, 1f);
 
 	/**
+	 * Diff color for hovered nets.
+	 */
+	public static final Color HOVER_NET_DIFF_COLOR = new Color(0.5f, 0.5f, 0.5f,0);
+
+	/**
 	 * Diff color for hovered fields.
 	 */
 	public static final Color HOVER_DIFF_COLOR
@@ -79,5 +84,17 @@ public abstract class Colors {
 	 */
 	public static final Color LONG_NET_INDICATORS_ON_FIELD_COLOR
 			= new Color(0, 0, 0, 0.5f);
+
+	/**
+	 * Diff color for indicators on droplets.
+	 */
+	public static final Color LONG_NET_INDICATORS_ON_DROPLET_DIFF =
+			new Color(0.2f, 0.2f, 0.2f, 0);
+
+	/**
+	 * Overlay color used for fields that have adjacent activations.
+	 */
+	public static final Color ADJACENT_ACTIVATION_COLOR =
+			new Color(0.5f, -0.5f, -0.5f, 0);
 
 }

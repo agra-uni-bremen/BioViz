@@ -22,12 +22,6 @@ public class HUDMessage extends MessageBase {
 	public float size;
 
 	/**
-	 * Whether this message should be hidden when zoomed out too far.
-	 */
-	public boolean hideWhenZoomedOut = true;
-
-
-	/**
 	 *
 	 * Creates a HUDMessage that is to be displayed at the specified position.
 	 *

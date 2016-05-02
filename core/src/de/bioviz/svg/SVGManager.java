@@ -14,72 +14,118 @@ import java.util.List;
 import java.util.Set;
 
 /**
+<<<<<<< HEAD
  * @author Maximilian Luenert, Oliver Keszocze
  * Texture cache class.
  * <p>
  * This class manages texture themes. One can specify a folder in which the png
  * files that are loaded as textures are stored. These images are thenn either
  * loaded on demand or returned from the cache.
+=======
+ * @author malu, keszocze Texture cache class.
+ *         <p>
+ *         This class manages texture themes. One can specify a folder in which
+ *         the png files that are loaded as textures are stored. These images
+ *         are thenn either loaded on demand or returned from the cache.
+>>>>>>> master
  */
 public class SVGManager {
 
-	/** svgExportSettings. */
+	/**
+	 * svgExportSettings.
+	 */
 	private static SVGExportSettings svgExportSettings = SVGExportSettings
 			.getInstance();
 
-	/** logger. */
+	/**
+	 * logger.
+	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(
 			SVGManager.class);
 
-	/** svgCoreCreator. */
+	/**
+	 * svgCoreCreator.
+	 */
 	private SVGCoreCreator svgCoreCreator;
 
 	/** hashMap for uncolored svg elements. */
 	private HashMap<String, String> svgs = new HashMap<>();
 
-	/** folder in which the svgs are. */
+	/**
+	 * folder in which the svgs are.
+	 */
 	private String svgFolder;
 
-	/** folder in which all images are. */
+	/**
+	 * folder in which all images are.
+	 */
 	private final String baseFolder = "images";
 
 	/*
 	Warning: magic numbers ahead
 	 */
-	/** scaleFactor. */
+	/**
+	 * scaleFactor.
+	 */
 	private final double scaleFactor = 1;
-	/** size of one block in pixels. */
+	/**
+	 * size of one block in pixels.
+	 */
 	private final int coordinateMultiplier = 256;
 
 	// font options
-	/** the font for the exported texts. */
+	/**
+	 * the font for the exported texts.
+	 */
 	private final String font = "Helvetica";
-	/** the font size for text. */
+	/**
+	 * the font size for text.
+	 */
 	private final int fontSize = 90;
-	/** the font size for the info string. */
+	/**
+	 * the font size for the info string.
+	 */
 	private final int fontSizeInfoString = 100;
 
-	/** font color. */
+	/**
+	 * font color.
+	 */
 	private final String fontColor = SVGUtils.colorToSVG(Color.WHITE);
-	/** font color for the info String. */
+	/**
+	 * font color for the info String.
+	 */
 	private final String fontColorInfoString = SVGUtils.colorToSVG(Color
-			.BLACK);
+																				 .BLACK);
 
-	/** min coordinate for the exported svg. */
+	/**
+	 * min coordinate for the exported svg.
+	 */
 	private Point topLeftCoord;
-	/** max coordinate for the exported svg. */
+	/**
+	 * max coordinate for the exported svg.
+	 */
 	private Point bottomRightCoord;
 
-	/** ViewBox X coordinate. */
+	/**
+	 * ViewBox X coordinate.
+	 */
 	private int viewBoxX;
-	/** ViewBox Y coordinate. */
+	/**
+	 * ViewBox Y coordinate.
+	 */
 	private int viewBoxY;
-	/** ViewBox width. */
+	/**
+	 * ViewBox width.
+	 */
 	private int viewBoxWidth;
-	/** ViewBox height. */
+	/**
+	 * ViewBox height.
+	 */
 	private int viewBoxHeight;
 
-	/** Reference to the drawableCircuit. */
+	/**
+	 * Reference to the drawableCircuit.
+	 */
 	private DrawableCircuit circuit;
 
 	/**
@@ -95,8 +141,8 @@ public class SVGManager {
 	 * @param folder
 	 * 		The name of the folder containing the theme, relative to the assets
 	 * 		folder
-	 * <p>
-	 * The location is relative to the assets folder.
+	 * 		<p>
+	 * 		The location is relative to the assets folder.
 	 * @warning The folder name must not begin or end with a slash!
 	 */
 	public SVGManager(final String folder) {
@@ -107,7 +153,8 @@ public class SVGManager {
 	/**
 	 * creates a string for an svg transform.
 	 *
-	 * @param params the transformation params
+	 * @param params
+	 * 		the transformation params
 	 * @return a string for an svg transform
 	 */
 	private String getTransformation(final String params) {
@@ -125,6 +172,7 @@ public class SVGManager {
 
 	/**
 	 * creates a svg scaling string.
+	 *
 	 * @return a string for an svg scaling operation
 	 */
 	public String getScale() {
@@ -138,6 +186,7 @@ public class SVGManager {
 	 * <p>
 	 * Every time this method is called, all previously loaded textures are
 	 * flushed.
+	 *
 	 * @note The name of the png files must match the names of the values
 	 * specified in the TextureE enum
 	 * @warning The folder name must not begin or end with a slash!
@@ -179,8 +228,10 @@ public class SVGManager {
 	/**
 	 * Export the circuit to svg.
 	 *
-	 * @param circ The circuit to export
-	 * @param timeStep The timeStep for the export
+	 * @param circ
+	 * 		The circuit to export
+	 * @param timeStep
+	 * 		The timeStep for the export
 	 * @return svg string representation
 	 */
 	public String toSVG(final DrawableCircuit circ, final int timeStep) {
@@ -192,7 +243,8 @@ public class SVGManager {
 
 		calculateViewboxDimensions();
 
-		if (circuit.getDisplayOptions().getOption(BDisplayOptions.Coordinates)) {
+		if (circuit.getDisplayOptions().getOption(BDisplayOptions
+														  .Coordinates)) {
 			int coordinateOffsetX = (int) (coordinateMultiplier * 0.75);
 			int coordinateOffsetY = (int) (coordinateMultiplier * 0.75);
 			viewBoxX -= coordinateOffsetX;
@@ -209,14 +261,16 @@ public class SVGManager {
 		LOGGER.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-						"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
-						"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
+		sb.append(
+				"<?xml version=\"1.1\" encoding=\"UTF-8\" " +
+				"standalone=\"yes\"?>\n" +
+				"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
+				"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
 				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
 				viewBoxX + " " + viewBoxY + " " +
 				viewBoxWidth + " " + viewBoxHeight +
-						"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
-						"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
+				"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
+				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
@@ -234,7 +288,7 @@ public class SVGManager {
 		}
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
 			if (drop.getDisplayColor().a > 0.1f &&
-					!circuit.isHidden(drop)) {
+				!circuit.isHidden(drop)) {
 				sb.append(toSVG(drop));
 			}
 		}
@@ -242,19 +296,18 @@ public class SVGManager {
 		// otherwise arrows can get under droplets
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
 			if (circuit.getDisplayOptions().getOption(BDisplayOptions
-					.LongNetIndicatorsOnDroplets)) {
+															  .LongNetIndicatorsOnDroplets)) {
 
-					if(!circuit.isHidden(drop)) {
-						sb.append(createDropletArrows(drop));
-					}
+				if (!circuit.isHidden(drop)) {
+					sb.append(createDropletArrows(drop));
+				}
 			}
 			// append longNetIndicatorsOnFields when needed
 			if (circuit.getDisplayOptions().getOption(BDisplayOptions
-					.LongNetIndicatorsOnFields)) {
+															  .LongNetIndicatorsOnFields)) {
 				sb.append(createSourceTargetArrow(drop));
 			}
 		}
-
 
 
 		// export msg strings for fields
@@ -263,7 +316,7 @@ public class SVGManager {
 		}
 		// export msg strings for droplets
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
-			if(!circuit.isHidden(drop)) {
+			if (!circuit.isHidden(drop)) {
 				sb.append(createDropletMsg(drop));
 			}
 		}
@@ -273,7 +326,8 @@ public class SVGManager {
 			sb.append(createInfoString());
 		}
 
-		if (circuit.getDisplayOptions().getOption(BDisplayOptions.Coordinates)) {
+		if (circuit.getDisplayOptions().getOption(
+				BDisplayOptions.Coordinates)) {
 			sb.append(createCoordinates());
 		}
 
@@ -285,7 +339,8 @@ public class SVGManager {
 	/**
 	 * Exports a drawableField to svg.
 	 *
-	 * @param field The field to export
+	 * @param field
+	 * 		The field to export
 	 * @return svg string representation of a field
 	 */
 	private String toSVG(final DrawableField field) {
@@ -305,13 +360,18 @@ public class SVGManager {
 
 		DisplayValues vals = field.getDisplayValues();
 
-		Color fieldCol = SVGUtils.getUnhoveredColor(field);
+		Color fieldCol = vals.getColor();
+
+		if (field.isHovered()) {
+			fieldCol.sub(Colors.HOVER_DIFF_COLOR);
+		}
 
 		String fieldID = SVGUtils.generateColoredID(vals.getTexture().toString(),
-				fieldCol);
+										   fieldCol);
 		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
-						   "\" />\n";
+						  getScaleTransformation() + " xlink:href=\"#" +
+						  fieldID +
+						  "\" />\n";
 
 		if (circuit.getDisplayOptions().getOption(BDisplayOptions.NetColorOnFields)) {
 			fieldSvg += createGradient(field);
@@ -323,7 +383,8 @@ public class SVGManager {
 	/**
 	 * Exports drawableDroplets as svg.
 	 *
-	 * @param drawableDrop The drawableDroplet to export
+	 * @param drawableDrop
+	 * 		The drawableDroplet to export
 	 * @return svg string representation of the drop
 	 */
 	private String toSVG(final DrawableDroplet drawableDrop) {
@@ -333,21 +394,24 @@ public class SVGManager {
 
 		String dropletID = SVGUtils.generateColoredID("Droplet", drawableDrop
 				.getColor());
+
 		String dropShape = "<use x=\"" + dropletPos.fst + "\" " + "y=\"" +
-				dropletPos.snd + "\"" +
-				getScaleTransformation() + " xlink:href=\"#" + dropletID + "\" />\n";
+						   dropletPos.snd + "\"" +
+						   getScaleTransformation() + " xlink:href=\"#" +
+						   dropletID + "\" />\n";
 
 		return route + dropShape;
 	}
 
 	/**
 	 * Creates svg code to draw a route.
-	 *
+	 * <p>
 	 * Note that the svg code generated by this method references an earlier
 	 * definition of the routes symbol that needs to be stored in the svg file
 	 * in order to display anything.
 	 *
-	 * @param drawableRoute The route to export to svg
+	 * @param drawableRoute
+	 * 		The route to export to svg
 	 * @return SVG code for that particular route
 	 */
 	private String toSVG(final DrawableRoute drawableRoute) {
@@ -393,13 +457,16 @@ public class SVGManager {
 			if (p1 != null && p2 != null) {
 				int x1 = p1.fst * coordinateMultiplier;
 				int x2 = p2.fst * coordinateMultiplier;
-				int y1 = (-p1.snd + biochip.getMaxCoord().snd) * coordinateMultiplier;
-				int y2 = (-p2.snd + biochip.getMaxCoord().snd) * coordinateMultiplier;
+				int y1 = (-p1.snd + biochip.getMaxCoord().snd) *
+						 coordinateMultiplier;
+				int y2 = (-p2.snd + biochip.getMaxCoord().snd) *
+						 coordinateMultiplier;
 
 				float targetX = x1 + (0.5f * coordinateMultiplier);
 				float targetY = y1;
 
-				String position = " x=\"" + targetX + "\" y=\"" + targetY + "\" ";
+				String position =
+						" x=\"" + targetX + "\" y=\"" + targetY + "\" ";
 				String widthHeight = " width=\"1\" height=\"1\" ";
 				String transFormParams = getScale();
 				String opacity = " opacity=\"" + alpha + "\" ";
@@ -407,23 +474,29 @@ public class SVGManager {
 
 				if (x1 < x2 && y1 == y2) {
 					//intentionally do nothing here
-				} else if (y1 == y2 && x2 < x1) {
+				}
+				else if (y1 == y2 && x2 < x1) {
 					transFormParams +=
 							" rotate(180 " + targetX + " " +
-									(targetY + 0.5f * coordinateMultiplier) +	") ";
-				} else if (x1 == x2 && y2 > y1) {
+							(targetY + 0.5f * coordinateMultiplier) + ") ";
+				}
+				else if (x1 == x2 && y2 > y1) {
 					transFormParams +=
 							" rotate(90 " + targetX + " " +
-									(targetY + 0.5f * coordinateMultiplier) +	") ";
-				} else if (x1 == x2 && y2 < y1) {
+							(targetY + 0.5f * coordinateMultiplier) + ") ";
+				}
+				else if (x1 == x2 && y2 < y1) {
 					transFormParams +=
 							"rotate(270 " + targetX + " " +
-									(targetY + 0.5f * coordinateMultiplier) + ") ";
-				} else {
+							(targetY + 0.5f * coordinateMultiplier) + ") ";
+				}
+				else {
 					app = false;
 				}
 				if (app) {
-					String routeID = SVGUtils.generateColoredID("StepMarker", routeColor);
+					String routeID =
+							SVGUtils.generateColoredID("StepMarker", routeColor);
+
 					sb.append("<use");
 					sb.append(position);
 					sb.append(widthHeight);
@@ -462,7 +535,8 @@ public class SVGManager {
 	/**
 	 * Creates the svg string for the longNetIndicator arrows.
 	 *
-	 * @param drawableDrop the drop
+	 * @param drawableDrop
+	 * 		the drop
 	 * @return svg string
 	 */
 	private String createDropletArrows(final DrawableDroplet drawableDrop) {
@@ -470,7 +544,7 @@ public class SVGManager {
 		Net net = drawableDrop.droplet.getNet();
 
 		String arrows = "";
-		if(net != null) {
+		if (net != null) {
 
 			int time = circuit.getCurrentTime();
 			Point startPoint = drawableDrop.droplet.getFirstPosition();
@@ -482,6 +556,7 @@ public class SVGManager {
 			if (startPoint != null && dropletPos != null &&
 					!startPoint.equals(dropletPos)) {
 				Color arrowColor = SVGUtils.getLighterLongNetIndicatorColor(dropColor);
+
 				arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
 			}
 
@@ -497,7 +572,9 @@ public class SVGManager {
 
 	/**
 	 * This creates the message element for a droplet.
-	 * @param drawableDrop The droplet
+	 *
+	 * @param drawableDrop
+	 * 		The droplet
 	 * @return Svg text element
 	 */
 	private String createDropletMsg(final DrawableDroplet drawableDrop) {
@@ -505,18 +582,23 @@ public class SVGManager {
 		String msg = "";
 		if (drawableDrop.getMsg() != null) {
 			msg += "<text text-anchor=\"middle\" " +
-					"x=\"" + (dropPos.fst + coordinateMultiplier / 2) + "\" " +
-					"y=\"" + (dropPos.snd + coordinateMultiplier / 2 + (fontSize / 2)) +
-					"\" " +
-					"font-family=\"" + font + "\" font-size=\"" + fontSize + "\" " +
-					"fill=\"#" + fontColor + "\">" + drawableDrop.getMsg() + "</text>\n";
+				   "x=\"" + (dropPos.fst + coordinateMultiplier / 2) + "\" " +
+				   "y=\"" + (dropPos.snd + coordinateMultiplier / 2 +
+							 (fontSize / 2)) +
+				   "\" " +
+				   "font-family=\"" + font + "\" font-size=\"" + fontSize +
+				   "\" " +
+				   "fill=\"#" + fontColor + "\">" + drawableDrop.getMsg() +
+				   "</text>\n";
 		}
 		return msg;
 	}
 
 	/**
 	 * Creates an svg text field with the displayValues for a Field.
-	 * @param field the field
+	 *
+	 * @param field
+	 * 		the field
 	 * @return svg text element
 	 */
 	private String createFieldMsg(final DrawableField field) {
@@ -528,17 +610,22 @@ public class SVGManager {
 		String fieldSvg = "";
 		if (vals.getMsg() != null) {
 			fieldSvg += "<text text-anchor=\"middle\" x=\"" +
-					(fieldPos.fst + coordinateMultiplier / 2)	+ "\" y=\"" +
-					(fieldPos.snd + coordinateMultiplier / 2 + (fontSize / 2)) +
-					"\" font-family=\"" + font + "\" font-size=\"" + fontSize +
-					"\" fill=\"#" + fontColor + "\">"	+ vals.getMsg() + "</text>\n";
+						(fieldPos.fst + coordinateMultiplier / 2) + "\" y=\"" +
+						(fieldPos.snd + coordinateMultiplier / 2 +
+						 (fontSize / 2)) +
+						"\" font-family=\"" + font + "\" font-size=\"" +
+						fontSize +
+						"\" fill=\"#" + fontColor + "\">" + vals.getMsg() +
+						"</text>\n";
 		}
 		return fieldSvg;
 	}
 
 	/**
 	 * Create the svg rect for a gradient for a given field.
-	 * @param field the field
+	 *
+	 * @param field
+	 * 		the field
 	 * @return an svg rect string
 	 */
 	private String createGradient(final DrawableField field) {
@@ -561,10 +648,13 @@ public class SVGManager {
 
 	/**
 	 * Checks if the given field is on the edge of the given net and returns
-	 * the gradient direction.
+	 * the
+	 * gradient direction.
 	 *
-	 * @param field the field to check
-	 * @param net the net to which the field belongs
+	 * @param field
+	 * 		the field to check
+	 * @param net
+	 * 		the net to which the field belongs
 	 * @return the gradient direction
 	 */
 	private GradDir getGradientDirection(final DrawableField field, final Net
@@ -576,7 +666,8 @@ public class SVGManager {
 			boolean dirMatch = true;
 			for (final Point p : dirs) {
 				dirMatch &= !circuit.getData().hasFieldAt(fieldPos.add(p)) ||
-						!net.containsField(circuit.getData().getFieldAt(fieldPos.add(p)));
+							!net.containsField(circuit.getData().getFieldAt
+									(fieldPos.add(p)));
 			}
 			if (dirMatch) {
 				return dir;
@@ -589,13 +680,16 @@ public class SVGManager {
 	/**
 	 * Creates an svgArrow with the given start and endpoint.
 	 *
-	 * @param startPoint the startpoint for the arrow
-	 * @param endPoint the endpoint for the arrow
-	 * @param color the color for the arrow
+	 * @param startPoint
+	 * 		the startpoint for the arrow
+	 * @param endPoint
+	 * 		the endpoint for the arrow
+	 * @param color
+	 * 		the color for the arrow
 	 * @return svg string of an arrow
 	 */
 	private String createSVGArrow(final Point startPoint, final Point endPoint,
-																final Color color) {
+								  final Color color) {
 
 		Point start = SVGUtils.toSVGCoords(startPoint, circuit,
 				coordinateMultiplier);
@@ -613,7 +707,8 @@ public class SVGManager {
 		x2 += coordinateMultiplier / 2;
 		y2 += coordinateMultiplier / 2;
 
-		double length = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+		double length =
+				Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
 		double angle = Math.asin((double) (y2 - y1) / length);
 
 		// move endPoint a bit back on the arrow so the arrowHead won't reach
@@ -623,16 +718,17 @@ public class SVGManager {
 
 		if (x2 > x1) {
 			x2 -= xDiff;
-		} else if (x2 < x1) {
+		}
+		else if (x2 < x1) {
 			x2 += xDiff;
 		}
 		y2 -= yDiff;
 
-		String line = "<line x1=\"" + x1 +	"\" y1=\"" + y1 +
-				"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-				"\" stroke=\"#" +	SVGUtils.colorToSVG(color) +
-				"\" stroke-width=\"10\" marker-end=\"url(#" +
-				SVGUtils.generateColoredID("ArrowHead", color) + ")\" />\n";
+		final String line = "<line x1=\"" + x1 +	"\" y1=\"" + y1 +
+					"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
+					"\" stroke=\"#" +	SVGUtils.colorToSVG(color) +
+					"\" stroke-width=\"10\" marker-end=\"url(#" +
+					SVGUtils.generateColoredID("ArrowHead", color) + ")\" />\n";
 
 		return line;
 	}
@@ -647,15 +743,20 @@ public class SVGManager {
 		String coordinates =
 				"x=\"" + (topLeftCoord.fst * coordinateMultiplier) + "\" " +
 				"y=\"" + (bottomRightCoord.snd * coordinateMultiplier + 1.5 *
-						fontSizeInfoString) +	"\" ";
+																		fontSizeInfoString) +
+				"\" ";
 
 		String circName = circuit.getParent().getFileName();
 		String timeStep = String.valueOf(circuit.getCurrentTime());
 
-		return "<text " + coordinates +	"fill=\"" + fontColorInfoString + "\" " +
-				"font-family=\"" + font + "\" font-size=\"" + fontSizeInfoString +
-				"\">" +
-				"Filename: " + circName +	" Timestep: " + timeStep + "</text>\n";
+		return "<text " + coordinates + "fill=\"" + fontColorInfoString +
+			   "\"" +
+			   " " +
+			   "font-family=\"" + font + "\" font-size=\"" +
+			   fontSizeInfoString +
+			   "\">" +
+			   "Filename: " + circName + " Timestep: " + timeStep +
+			   "</text>\n";
 	}
 
 	/**
@@ -667,33 +768,36 @@ public class SVGManager {
 		StringBuilder coords = new StringBuilder();
 		int coordSize = fontSizeInfoString;
 		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
-				 ++xCoord) {
+			 ++xCoord) {
 			coords.append("<text text-anchor=\"middle\" ");
 			coords.append("x=\"" + (xCoord * coordinateMultiplier +
-					0.5 * coordinateMultiplier) +	"\" ");
+									0.5 * coordinateMultiplier) + "\" ");
 			coords.append("y=\"" + (topLeftCoord.snd *
-					coordinateMultiplier - coordSize) + "\" ");
-			coords.append("font-family=\"" + font + "\" font-size=\"" + coordSize +
+									coordinateMultiplier - coordSize) + "\" ");
+			coords.append(
+					"font-family=\"" + font + "\" font-size=\"" + coordSize +
 					"\">");
 			coords.append(xCoord);
 			coords.append("</text>\n");
 		}
 
 		for (int yCoord = topLeftCoord.snd + 1; yCoord <= bottomRightCoord.snd;
-				 ++yCoord) {
+			 ++yCoord) {
 			coords.append("<text text-anchor=\"middle\" ");
 			coords.append("y=\"" + ((yCoord - 1) * coordinateMultiplier +
-					0.5 * coordSize +	0.5 * coordinateMultiplier) +	"\" ");
+									0.5 * coordSize +
+									0.5 * coordinateMultiplier) + "\" ");
 			coords.append("x=\"" + (topLeftCoord.fst * coordinateMultiplier -
-					coordSize) + "\" ");
-			coords.append("font-family=\"" + font + "\" font-size=\"" + coordSize +
+									coordSize) + "\" ");
+			coords.append(
+					"font-family=\"" + font + "\" font-size=\"" + coordSize +
 					"\">");
 			// FIXME the call to getMinCoord() is computing the stuff again
 			// that is unnecessary but I was too stupid to fastly figure out
 			// what you do with the stuff before you fill the bottomRightCoord
 			// and topLeftCoord variables.
 			coords.append(bottomRightCoord.snd - yCoord +
-					circuit.getData().getMinCoord().snd);
+						  circuit.getData().getMinCoord().snd);
 			coords.append("</text>\n");
 		}
 		return coords.toString();
@@ -737,6 +841,7 @@ public class SVGManager {
 			if (circuit.getDisplayOptions().getOption(BDisplayOptions
 					.LongNetIndicatorsOnDroplets)) {
 					svgCoreCreator.appendArrowheads(svgs, d.getColor());
+
 			}
 
 			if (d.route != null) {
@@ -750,7 +855,8 @@ public class SVGManager {
 	/**
 	 * Gets the position of a field in svg coordinates.
 	 *
-	 * @param drawableField the drawableField
+	 * @param drawableField
+	 * 		the drawableField
 	 * @return A Point with the position.
 	 */
 	private Point getFieldPosInSVGCoords(final DrawableField drawableField) {
@@ -761,12 +867,12 @@ public class SVGManager {
 	/**
 	 * Gets the position for a droplet in svg coordinates.
 	 *
-	 * @param drawableDrop the droplet
+	 * @param drawableDrop
+	 * 		the droplet
 	 * @return A Point with the position
 	 */
 	private Point getDropletPosInSVGCoords(final DrawableDroplet drawableDrop) {
 		return SVGUtils.toSVGCoords(drawableDrop.droplet.getSafePositionAt(circuit
 				.getCurrentTime()), circuit, coordinateMultiplier);
 	}
-
 }

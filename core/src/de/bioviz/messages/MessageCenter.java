@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 		.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Matrix4;
+
+import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.BioViz;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,7 @@ import java.util.Vector;
  * @author Jannis Stoppe, Oliver Keszocze
  */
 public class MessageCenter {
-
+	
 
 	private Vector<Message> messages;
 
@@ -47,17 +49,96 @@ public class MessageCenter {
 	 */
 	public static final int MAX_MESSAGES_IN_UI = 32;
 
+	/**
+	 * The step width at which the scale is increased.
+	 */
+	private final float SCALEINCSTEP = 2f;
 
-	private float scaleHUD = 1f / 4f;
-	private float scaleMsg = 1f / 8f;
-	private static final float SCALEINCSTEP = 0.125f;
+	/**
+	 * The text rendering resolution.
+	 * In order to avoid artifacts when zooming with text, the text is instead
+	 * redrawn for the given size each time the zoom factor changes.
+	 * This value is the current text size for HUD messages.
+	 */
+	private float textRenderResolution = 16;
 
+	/**
+	 * The minimum text rendering resolution for HUD messages.
+	 */
+	private float textRenderResolutionMinimum = 4f;
 
+	/**
+	 * The text rendering resolution.
+	 * In order to avoid artifacts when zooming with text, the text is instead
+	 * redrawn for the given size each time the zoom factor changes.
+	 * This value is the current text size for HUD messages.
+	 */
+	public float getTextRenderResolution() {return textRenderResolution;}
+
+	/**
+	 * Sets the resolution at which the HUD messages should be rendered and
+	 * resets the fontInvalidated flag to toggle a recalculation of the text
+	 * graphics before the next frame.
+	 * @param value the new text resolution.
+	 */
+	public void setTextRenderResolution(float value) {
+		this.textRenderResolution = Math.max(
+				textRenderResolutionMinimum,
+				value);
+		fontInvalidated = true;
+		logger.debug("setting HUD font size to " +
+				this.textRenderResolution);
+	}
+
+	/**
+	 * The text rendering resolution.
+	 * In order to avoid artifacts when zooming with text, the text is instead
+	 * redrawn for the given size each time the zoom factor changes.
+	 * This value is the current text size for text messages.
+	 */
+	private float msgTextRenderResolution = 8f;
+
+	/**
+	 * The minimum text rendering resolution for text messages.
+	 */
+	private float msgTextRenderResolutionMinimum = 4f;
+
+	/**
+	 * The text rendering resolution.
+	 * In order to avoid artifacts when zooming with text, the text is instead
+	 * redrawn for the given size each time the zoom factor changes.
+	 * This value is the current text size for text messages.
+	 */
+	public float getmsgTextRenderResolution() {return msgTextRenderResolution;}
+
+	/**
+	 * Sets the resolution at which the text messages should be rendered and
+	 * resets the fontInvalidated flag to toggle a recalculation of the text
+	 * graphics before the next frame.
+	 * @param value the new text resolution.
+	 */
+	public void setmsgTextRenderResolution(float value) {
+		this.msgTextRenderResolution = Math.max(
+				msgTextRenderResolutionMinimum,
+				value);
+		fontInvalidated = true;
+		logger.debug("setting message font size to " +
+				this.msgTextRenderResolution);
+	}
+
+	/**
+	 * The messages that should be displayed on top of the circuit, mapped from
+	 * their specific id to the message itself.
+	 */
 	private HashMap<Integer, HUDMessage> HUDMessages =
 			new HashMap<Integer, HUDMessage>();
 
-
-	public static final int textRenderResolution = 16;
+	/**
+	 * If this flag is set to true, the font bitmaps will be re-rendered before
+	 * the next frame (and the flag then set to false again). Use this if the
+	 * font needs to be altered.
+	 */
+	private boolean fontInvalidated = true;
 
 
 	/**
@@ -65,6 +146,9 @@ public class MessageCenter {
 	 */
 	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
 
+	/**
+	 * The parent visualization.
+	 */
 	BioViz parent;
 
 
@@ -87,11 +171,12 @@ public class MessageCenter {
 	 * @return The font that is used to display stuff on top of droplets/fields
 	 */
 	public BitmapFont getFont() {
-		if (font == null) {
+		if (fontInvalidated) {
+			fontInvalidated = false;
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
 					Gdx.files.internal("images/FreeUniversal-Regular.ttf"));
 			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-			parameter.size = textRenderResolution;
+			parameter.size = (int)textRenderResolution;
 			parameter.color = Color.WHITE.cpy();
 			parameter.borderWidth = 2;
 			parameter.borderColor = Color.BLACK.cpy();
@@ -104,9 +189,10 @@ public class MessageCenter {
 			generator = new FreeTypeFontGenerator(
 					Gdx.files.internal("images/Anonymous_Pro.ttf"));
 			parameter = new FreeTypeFontParameter();
-			parameter.size = 8;
+			parameter.size = (int)msgTextRenderResolution;
 			parameter.color = Color.BLACK.cpy();
 			this.messageFont = generator.generateFont(parameter);
+			generator.dispose();
 			logger.debug("set up font");
 
 			font = font12;//new BitmapFont();
@@ -145,7 +231,7 @@ public class MessageCenter {
 
 	public void render() {
 		if (!hidden) {
-			if (font == null) {
+			if (font == null || fontInvalidated) {
 				getFont();
 			}
 
@@ -154,7 +240,7 @@ public class MessageCenter {
 											   Gdx.graphics.getHeight());
 			parent.batch.setProjectionMatrix(normalProjection);
 
-			int spacing = 10;
+			int spacing = 2 + (int)getmsgTextRenderResolution();
 			int yCoord = Gdx.graphics.getHeight() - spacing;
 			for (Message m : this.messages) {
 				if (m.color != null) {
@@ -173,9 +259,10 @@ public class MessageCenter {
 			for (HUDMessage s : this.HUDMessages.values()) {
 				Color targetColor = s.color.cpy();
 
-				float hideAt = (1f / scaleHUD) * 4f;
-				float showAt = (1f / scaleHUD) * 8f;
-				if (s.hideWhenZoomedOut) {
+				float hideAt = textRenderResolution;
+				float showAt = (textRenderResolution * 2);
+				if (parent.currentCircuit.getDisplayOptions().getOption(
+						BDisplayOptions.HideTextOnZoom)) {
 					// Hide when zoomed out
 					if (this.parent.currentCircuit.getScaleX() < hideAt) {
 						targetColor.a = 0;
@@ -188,6 +275,8 @@ public class MessageCenter {
 					else {
 						targetColor.a = 1;
 					}
+				} else { 
+					targetColor.a = 1;
 				}
 
 				font.setColor(targetColor);
@@ -289,11 +378,11 @@ public class MessageCenter {
 	}
 
 	public void resetMsgScale() {
-		scaleMsg = 1f;
+		setmsgTextRenderResolution(8f);
 	}
 
 	public void resetHUDScale() {
-		scaleHUD = 1f;
+		setTextRenderResolution(16f);
 	}
 
 	public void incScales() {
@@ -302,11 +391,11 @@ public class MessageCenter {
 	}
 
 	public void incScaleHUD() {
-		scaleHUD = scaleMsg + SCALEINCSTEP;
+		setTextRenderResolution(getTextRenderResolution() + SCALEINCSTEP);
 	}
 
 	public void incScaleMsg() {
-		scaleMsg = scaleMsg + SCALEINCSTEP;
+		setmsgTextRenderResolution(getmsgTextRenderResolution() + SCALEINCSTEP);
 	}
 
 	public void decScales() {
@@ -315,20 +404,11 @@ public class MessageCenter {
 	}
 
 	public void decScaleHUD() {
-
-		// only decrease size if not going below zero
-		float res = scaleHUD - SCALEINCSTEP;
-		if (res > 0) {
-			scaleHUD = scaleHUD - SCALEINCSTEP;
-		}
+		setTextRenderResolution(getTextRenderResolution() - SCALEINCSTEP);
 	}
 
 	public void decScaleMsg() {
-		// only decrease size if not going below zero
-		float res = scaleMsg - SCALEINCSTEP;
-		if (res > 0) {
-			scaleMsg = scaleMsg - SCALEINCSTEP;
-		}
+		setmsgTextRenderResolution(getmsgTextRenderResolution() - SCALEINCSTEP);
 	}
 
 	public void setScales(final float scale) {
@@ -337,10 +417,10 @@ public class MessageCenter {
 	}
 
 	public void setScaleHUD(final float scaleHUD) {
-		this.scaleHUD = scaleHUD;
+		setTextRenderResolution(scaleHUD);
 	}
 
 	public void setScaleMsg(final float scaleMsg) {
-		this.scaleMsg = scaleMsg;
+		setmsgTextRenderResolution(scaleMsg);
 	}
 }

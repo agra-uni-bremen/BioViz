@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Class responsible for drawing the routes that droplets may follow.
- *
- *
+ * <p>
+ * <p>
  * Note that there is no corresponding class in the structure package. The
- * path's positions are computed by queyring the positions of the parent
- * droplet for each time step.
+ * path's positions are computed by queyring the positions of the parent droplet
+ * for each time step.
  */
 public class DrawableRoute extends DrawableSprite {
 	/**
@@ -28,13 +28,6 @@ public class DrawableRoute extends DrawableSprite {
 	 */
 	public static int routeDisplayLength = 0;
 
-
-	/**
-	 * What length of the route will be displayed when hovering over a droplet.
-	 */
-	private static int hoverTimesteps = 2 * routeDisplayLength + 8;
-
-
 	/**
 	 * Non magic number version for turning off transparency.
 	 */
@@ -47,19 +40,19 @@ public class DrawableRoute extends DrawableSprite {
 	public DrawableDroplet droplet;
 
 
-
-
 	/**
 	 * The color the route is drawn in of not superseeded by another option.
-	 *
+	 * <p>
 	 * Currently that color is black.
 	 */
-	private Color baseColor = Color.BLACK.cpy();
+	private Color baseColor = Color.BLACK;
 
 
 	/**
 	 * Creates a route for a given droplet.
-	 * @param droplet The droplet this route belongs to.
+	 *
+	 * @param droplet
+	 * 		The droplet this route belongs to.
 	 */
 	public DrawableRoute(final DrawableDroplet droplet) {
 		super(TextureE.StepMarker, droplet.viz);
@@ -69,17 +62,17 @@ public class DrawableRoute extends DrawableSprite {
 
 	/**
 	 * Returns the color used for drawingf the route.
-	 *
+	 * <p>
 	 * The color depends on the {@link BDisplayOptions} option ColorfulRoutes.
 	 * If it is set to true, the droplet's color is used instead of black.
 	 *
 	 * @return The color of the route
 	 */
 	public Color getColor() {
-		Color c = this.baseColor.cpy();
+		Color c = baseColor.cpy();
 		if (droplet.parentCircuit.getDisplayOptions().getOption(
 				BDisplayOptions.ColorfulRoutes)) {
-			c = this.droplet.getColor().cpy();
+			c = droplet.getColor();
 		}
 		return c;
 	}
@@ -93,15 +86,16 @@ public class DrawableRoute extends DrawableSprite {
 	 * and the transparency.
 	 */
 	public void draw() {
-		int currentTime = droplet.parentCircuit.getCurrentTime();
+		DrawableCircuit circ = droplet.parentCircuit;
+		int currentTime = circ.getCurrentTime();
 		int displayAt;
 
-		this.disableForcedLOD();
+		disableForcedLOD();
 
-		hoverTimesteps = 2 * routeDisplayLength + 8;
+		int hoverTimesteps = 2 * routeDisplayLength + 8;
 
 		int stepsToUse = routeDisplayLength;
-		if (this.droplet.isHovered()) {
+		if (droplet.isHovered()) {
 			stepsToUse = hoverTimesteps;
 		}
 
@@ -110,7 +104,7 @@ public class DrawableRoute extends DrawableSprite {
 			Color c = getColor();
 
 
-			if (droplet.parentCircuit.getDisplayOptions().getOption(
+			if (circ.getDisplayOptions().getOption(
 					BDisplayOptions.SolidPaths)) {
 				c.a = noTransparency;
 			}
@@ -124,7 +118,7 @@ public class DrawableRoute extends DrawableSprite {
 				}
 			}
 
-			this.setColorImmediately(c);
+			setColorImmediately(c);
 
 
 			displayAt = currentTime + i;
@@ -139,63 +133,64 @@ public class DrawableRoute extends DrawableSprite {
 			int y1 = p1.snd;
 			int y2 = p2.snd;
 
-			float xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
-			float yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
+			float xCoord;
+			float yCoord;
 
 			if (y1 == y2 && x2 > x1) {
-				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 + 0.5f);
-				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
-				this.setRotation(0);
+				xCoord = circ.xCoordOnScreen(x1 + 0.5f);
+				yCoord = circ.yCoordOnScreen(y1);
+				setRotation(0);
 			}
 			else if (y1 == y2 && x2 < x1) {
-				xCoord = droplet.parentCircuit.xCoordOnScreen(x1 - 0.5f);
-				yCoord = droplet.parentCircuit.yCoordOnScreen(y1);
-				this.setRotation(180);
+				xCoord = circ.xCoordOnScreen(x1 - 0.5f);
+				yCoord = circ.yCoordOnScreen(y1);
+				setRotation(180);
 			}
 			else if (x1 == x2 && y2 > y1) {
-				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
-				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 + 0.5f);
-				this.setRotation(90);
+				xCoord = circ.xCoordOnScreen(x1);
+				yCoord = circ.yCoordOnScreen(y1 + 0.5f);
+				setRotation(90);
 			}
 			else if (x1 == x2 && y2 < y1) {
-				xCoord = droplet.parentCircuit.xCoordOnScreen(x1);
-				yCoord = droplet.parentCircuit.yCoordOnScreen(y1 - 0.5f);
-				this.setRotation(270);
+				xCoord = circ.xCoordOnScreen(x1);
+				yCoord = circ.yCoordOnScreen(y1 - 0.5f);
+				setRotation(270);
 			}
 			else {
 				continue;
 			}
 
-			this.setX(xCoord);
-			this.setY(yCoord);
-			this.setScaleX(droplet.parentCircuit.getSmoothScale());
-			this.setScaleY(droplet.parentCircuit.getSmoothScale());
+			setX(xCoord);
+			setY(yCoord);
+			setScaleX(circ.getSmoothScale());
+			setScaleY(circ.getSmoothScale());
 
 			super.draw();
 		}
 
-		boolean dropletLongIndicator = droplet.parentCircuit.getDisplayOptions()
+		boolean dropletLongIndicator = circ
+				.getDisplayOptions()
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
-		if (dropletLongIndicator && this.droplet.droplet.getNet() != null) {
-			this.setForcedLOD(1f);
-			Pair<Float, Float> target = new Pair<Float, Float>(
-					this.droplet.droplet.getNet().getTarget().fst.floatValue(),
-					this.droplet.droplet.getNet().getTarget().snd.floatValue
+		if (dropletLongIndicator && droplet.droplet.hasNet()) {
+			setForcedLOD(1f);
+			Pair<Float, Float> target = new Pair<>(
+					droplet.droplet.getNet().getTarget().fst.floatValue(),
+					droplet.droplet.getNet().getTarget().snd.floatValue
 							());
-			Pair<Float, Float> source = new Pair<Float, Float>(
-					this.droplet.droplet.getFirstPosition().fst.floatValue(),
-					this.droplet.droplet.getFirstPosition().snd.floatValue());
-			Pair<Float, Float> current = new Pair<Float, Float>
-					(this.droplet.droplet.smoothX,
-					 this.droplet.droplet.smoothY);
+			Pair<Float, Float> source = new Pair<>(
+					droplet.droplet.getFirstPosition().fst.floatValue(),
+					droplet.droplet.getFirstPosition().snd.floatValue());
+			Pair<Float, Float> current = new Pair<>
+					(droplet.droplet.smoothX,
+					 droplet.droplet.smoothY);
 
 			// draw to target
 			DrawableLine.draw(target, current,
-							  this.droplet.getColor().cpy().add(0.2f, 0.2f,
-																0.2f, 0));
+							  droplet.getColor().add(
+									  Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
 			DrawableLine.draw(source, current,
-							  this.droplet.getColor().cpy().sub(0.2f, 0.2f,
-																0.2f, 0));
+							  droplet.getColor().sub(
+									  Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
 		}
 	}
 }
