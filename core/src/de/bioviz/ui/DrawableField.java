@@ -80,7 +80,7 @@ public class DrawableField extends DrawableSprite {
 	 * The underlying structure that is drawn by this {@link DrawableField}'s
 	 * instance.
 	 */
-	private BiochipField field;
+	protected BiochipField field;
 
 	/**
 	 * <p>Creates an object that draws a given field for a biochip.</p>
@@ -151,33 +151,9 @@ public class DrawableField extends DrawableSprite {
 		 There is an execption: the cell usage count overwrites any previous
 		 text. I really dislike this case by case hard coding  :/
 		 */
-		if (field instanceof Sink && getOption(SinkIcon)) {
-			texture = TextureE.Sink;
-		}
-		else if (field instanceof Dispenser) {
-			if (getOption(DispenserIcon)) {
-				texture = TextureE.Dispenser;
-			}
-
-			int fluidID = ((Dispenser)field).fluidID;
-			ArrayList<String> msgs = new ArrayList<>();
-
-			if (getOption(DispenserFluidID)) {
-				msgs.add(Integer.toString(fluidID));
-			}
-			if (getOption(DispenserFluidName)) {
-				String fluidName =
-						parentCircuit.getData().fluidType(fluidID);
-				if (fluidName != null) {
-					msgs.add(fluidName);
-				}
-			}
 
 
-			fieldHUDMsg = String.join(" - ", msgs);
-
-		}
-		else if (field.isPotentiallyBlocked()) {
+		if (field.isPotentiallyBlocked()) {
 			texture = TextureE.Blockage;
 		}
 		else if (field.getDetector() != null &&
@@ -540,7 +516,7 @@ public class DrawableField extends DrawableSprite {
 	 * 		Option to check
 	 * @return true if optn is true
 	 */
-	private boolean getOption(final BDisplayOptions optn) {
+	protected boolean getOption(final BDisplayOptions optn) {
 		return getParentCircuit().getDisplayOptions().getOption(optn);
 	}
 }

@@ -243,6 +243,9 @@ public class DrawableCircuit implements Drawable {
 			if (fld instanceof Sink) {
 				fields.add(new DrawableSink((Sink)fld,this));
 			}
+			else if (fld instanceof Dispenser) {
+				fields.add(new DrawableDispenser((Dispenser)fld,this));
+			}
 			else {
 				DrawableField f = new DrawableField(fld, this);
 				fields.add(f);
