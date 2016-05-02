@@ -1,15 +1,19 @@
 package de.bioviz.svg;
 
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.ui.Colors;
 import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableDroplet;
 import de.bioviz.ui.DrawableField;
 
 /**
- * Created by max on 4/26/16.
+ * @author Maximilian Luenert
  */
 public class SVGUtils {
+
+	private final static Color DIFF_COLOR = new Color(0.2f, 0.2f, 0.2f, 0);
 
 	private final static SVGExportSettings SVG_EXPORT_SETTINGS =
 			SVGExportSettings.getInstance();
@@ -25,6 +29,57 @@ public class SVGUtils {
 	 */
 	public static String colorToSVG(final Color c) {
 		return c.toString().substring(0, 6);
+	}
+
+	/**
+	 * Gets the color of a net.
+	 * @param net
+	 * 			the net
+	 * @return
+	 * 			the color of the net or Color.DARK_GREY if the colorfulExport is off
+	 */
+	public static Color getNetColor(Net net){
+		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
+			return net.getColor().buildGdxColor();
+		} else {
+			return Color.DARK_GRAY;
+		}
+	}
+
+	/**
+	 * Get the color for a lighter arrowHead.
+	 *
+	 * @param drop
+	 * 			the droplet to get the base color
+	 * @return
+	 *			the color for the lighter arrowHead or Color.DARK_GREY if the
+	 *			colorfulExport is off
+	 */
+	public static Color getLighterArrowHeadColor(DrawableDroplet drop){
+		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
+			return drop.getColor().sub(DIFF_COLOR);
+		}
+		else {
+			return Color.DARK_GRAY;
+		}
+	}
+
+	/**
+	 * Get the color for a darker arrowHead.
+	 *
+	 * @param drop
+	 * 			the droplet to get the base color
+	 * @return
+	 * 			the color for the darker arrowHead or Color.DARK_GREY if the
+	 *			colorfulExport is off
+	 */
+	public static Color getDarkerArrowHeadColor(DrawableDroplet drop){
+		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
+			return drop.getColor().add(DIFF_COLOR);
+		}
+		else {
+			return Color.DARK_GRAY;
+		}
 	}
 
 	/**
