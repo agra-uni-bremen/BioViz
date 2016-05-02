@@ -3,7 +3,10 @@ package de.bioviz.svg;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.ui.DrawableDroplet;
+import de.bioviz.ui.DrawableField;
 import de.bioviz.ui.TextureE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +29,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
- * @author malu
+ * @author Maximilian Luenert
  */
 public class SVGCoreCreator {
 
@@ -310,6 +314,93 @@ public class SVGCoreCreator {
 		}
 
 		return writer.toString();
+	}
+
+	/**
+	 * Puts the svg code of a field into the given map.
+	 *
+	 * @param svgs the map
+	 * @param field the field
+	 */
+	public void appendFieldSVG(final Map<String, String> svgs,
+														 final DrawableField field){
+
+		String key = SVGUtils.generateColoredID(field.getDisplayValues()
+				.getTexture().toString(), SVGUtils.getUnhoveredColor(field));
+		// don't create the svg core code twice
+		if (!svgs.containsKey(key)) {
+			svgs.put(key,
+					getSVGCode(field.getDisplayValues().getTexture(),
+							SVGUtils.getUnhoveredColor(field), null));
+		}
+	}
+
+	/**
+	 * Puts the svg code of a gradient into the given map.
+	 *
+	 * @param svgs the map
+	 * @param net the net
+	 * @param dir the direction of the gradient
+	 */
+	public void appendGradSVG(final Map<String, String> svgs,
+														final Net net, final GradDir dir){
+		String key = SVGUtils.generateColoredID("grad-" + dir.toString(),
+				SVGUtils.getNetColor(net));
+		if (!svgs.containsKey(key)) {
+			svgs.put(key, getSVGLinearGradient(key, dir,
+					SVGUtils.getNetColor(net)));
+		}
+	}
+
+	/**
+	 * Puts the svg code of a droplet into the given map.
+	 *
+	 * @param svgs
+	 * @param drop
+	 */
+	public void appendDropletSVG(final Map<String, String> svgs,
+															 final DrawableDroplet drop){
+		String key = SVGUtils.generateColoredID("Droplet", drop.getColor());
+		// don't create the svg core code twice
+		if (!svgs.containsKey(key)) {
+			svgs.put(key, getSVGCode(TextureE.Droplet, drop.getColor(), null));
+		}
+	}
+
+	/**
+	 * Puts the svg code of an arrowhead into the given map.
+	 *
+	 * @param svgs
+	 * @param color
+	 */
+	public void appendArrowheads(final Map<String, String> svgs,
+															 final DrawableDroplet drop){
+		Color[] colors = {SVGUtils.getLighterArrowHeadColor(drop),
+										SVGUtils.getDarkerArrowHeadColor(drop)};
+		for (Color color : colors) {
+			String key = SVGUtils.generateColoredID("ArrowHead", color);
+			if (!svgs.containsKey(key)) {
+				svgs.put(key, getArrowHead(key, color));
+			}
+		}
+	}
+
+	/**
+	 * Puts the svg code of a route into the given map.
+	 *
+	 * @param svgs
+	 * 					the map to append to
+	 * @param drop
+	 * 					the droplet
+	 */
+	public void appendRoute(final Map<String, String> svgs,
+													final DrawableDroplet drop) {
+		Color routeColor = drop.route.getColor();
+		String key = SVGUtils.generateColoredID("StepMarker", routeColor);
+		if (!svgs.containsKey(key)) {
+			svgs.put(key,
+					getSVGCode(TextureE.StepMarker,	routeColor, null));
+		}
 	}
 
 }

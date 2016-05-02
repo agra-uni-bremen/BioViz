@@ -5,12 +5,10 @@ import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
-import de.bioviz.structures.Source;
 import de.bioviz.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -109,7 +107,6 @@ public class SVGManager {
 	public SVGManager(final String folder) {
 		svgCoreCreator = new SVGCoreCreator();
 		svgCoreCreator.setFolder(folder);
-		createCores();
 	}
 
 	/**
@@ -156,24 +153,9 @@ public class SVGManager {
 		for (final TextureE s : TextureE.values()) {
 
 			if (s != TextureE.BlackPixel) {
-				svgs.put(s, svgCoreCreator.getSVGCode(s, null, null));
+				svgs.put(s.toString(), svgCoreCreator.getSVGCode(s, null, null));
 			}
 
-		}
-	}
-
-	/**
-	 * Creates an ID consisting of a base part and the given color.
-	 * @param baseName The part of thename in front of the '-'
-	 * @param c The color that will be put after the '-'
-	 * @return "<baseName>-<color>"
-	 */
-	private static String generateColoredID(final String baseName, final Color
-			c) {
-		if (svgExportSettings.getColorfulExport()) {
-			return baseName + "-" + SVGCoreCreator.colorToSVG(c);
-		} else {
-			return baseName;
 		}
 	}
 
@@ -250,9 +232,7 @@ public class SVGManager {
 
 		// append all colored cores to the svg string
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
-		if (svgExportSettings.getColorfulExport()) {
-			colSvgs.forEach((name, svgcode) -> sb.append(svgcode));
-		}
+		//svgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
 
 		for (final DrawableField field : circuit.getFields()) {
@@ -331,11 +311,7 @@ public class SVGManager {
 
 		DisplayValues vals = field.getDisplayValues();
 
-		Color fieldCol = vals.getColor().cpy();
-
-		if (field.isHovered()) {
-			fieldCol.sub(Colors.HOVER_DIFF_COLOR);
-		}
+		Color fieldCol = SVGUtils.getUnhoveredColor(field);
 
 		String fieldID = SVGUtils.generateColoredID(vals.getTexture().toString(),
 				fieldCol);
@@ -343,7 +319,9 @@ public class SVGManager {
 						   getScaleTransformation() + " xlink:href=\"#" + fieldID +
 						   "\" />\n";
 
-		fieldSvg += createGradient(field);
+		if (circuit.getDisplayOptions().getOption(BDisplayOptions.NetColorOnFields)) {
+			fieldSvg += createGradient(field);
+		}
 
 		return fieldSvg;
 	}
@@ -571,18 +549,17 @@ public class SVGManager {
 	 */
 	private String createGradient(final DrawableField field) {
 		String gradientSvg = "";
-		if (circuit.getDisplayOptions().getOption(BDisplayOptions.NetColorOnFields)) {
-			for (final Net n : circuit.getData().getNetsOf(field.getField())) {
-				GradDir dir = getGradientDirection(field, n);
-				Point fieldPos = getFieldPosInSVGCoords(field);
-				if (dir != null) {
-					gradientSvg += "<rect x=\"" + (fieldPos.fst + 24) + "\" " +
-							"y=\"" + (fieldPos.snd + 24) + "\" rx=\"24\" ry=\"24\" " +
-							"height=\"208\" width=\"208\" fill=\"url(#grad-" +
-							dir.toString() + "-" + SVGUtils.colorToSVG(n
-							.getColor().buildGdxColor()) + ")\" />\n";
 
-				}
+		for (final Net n : circuit.getData().getNetsOf(field.getField())) {
+			GradDir dir = getGradientDirection(field, n);
+			Point fieldPos = getFieldPosInSVGCoords(field);
+			if (dir != null) {
+				gradientSvg += "<rect x=\"" + (fieldPos.fst + 24) + "\" " +
+						"y=\"" + (fieldPos.snd + 24) + "\" rx=\"24\" ry=\"24\" " +
+						"height=\"208\" width=\"208\" fill=\"url(#" + SVGUtils
+						.generateColoredID("grad-" + dir.toString(),
+								SVGUtils.getNetColor(n)) + ")\" " +
+						"/>\n";
 			}
 		}
 		return gradientSvg;
@@ -732,7 +709,9 @@ public class SVGManager {
 	 * Creates all colored core strings and saves them into colSvgs.
 	 */
 	private void createDefCores() {
-		if (svgExportSettings.getColorfulExport()) {
+
+			createCores();
+
 			LOGGER.debug("[SVG] Creating all needed colored cores.");
 
 			String key = "";
@@ -740,31 +719,12 @@ public class SVGManager {
 			// create all needed svg defs for the fields
 			for (final DrawableField f : circuit.getFields()) {
 
-				Color fieldColor = f.getColor().cpy();
+				svgCoreCreator.appendFieldSVG(svgs, f);
 
-				// reverse colorChanges for hoveredFields
-				if (f.isHovered()) {
-					fieldColor = fieldColor.sub(Colors.HOVER_DIFF_COLOR);
-				}
-
-				key = generateColoredID(f.getDisplayValues().getTexture()
-						.toString(), fieldColor);
-				// don't create the svg core code twice
-				if (!colSvgs.containsKey(key)) {
-					colSvgs.put(key,
-							svgCoreCreator.getSVGCode(f.getDisplayValues().getTexture(),
-									fieldColor, strokeColor));
-				}
 				Set<Net> nets = circuit.getData().getNetsOf(f.getField());
 				for (final Net n : nets) {
 					for (final GradDir dir : GradDir.values()) {
-						key = generateColoredID("grad-" + dir.toString(),
-								n.getColor().buildGdxColor());
-						if (!colSvgs.containsKey(key)) {
-							colSvgs.put(key, svgCoreCreator
-									.getSVGLinearGradient(key, dir,
-											n.getColor().buildGdxColor()));
-						}
+						svgCoreCreator.appendGradSVG(svgs, n, dir);
 					}
 				}
 			}
@@ -772,39 +732,16 @@ public class SVGManager {
 			// create all needed svg defs for the droplets
 			// and droplet based features
 			for (final DrawableDroplet d : circuit.getDroplets()) {
-				key = SVGUtils.generateColoredID("Droplet", d.getColor());
-				// don't create the svg core code twice
-				if (!colSvgs.containsKey(key)) {
-					colSvgs.put(key,
-							svgCoreCreator.getSVGCode(TextureE.Droplet,
-									d.getColor(), strokeColor));
-				}
+				svgCoreCreator.appendDropletSVG(svgs, d);
 
 				// Add every needed color for the arrowheads
 				if (circuit.getDisplayOptions().getOption(BDisplayOptions
 						.LongNetIndicatorsOnDroplets)) {
-					List<Color> colors = new ArrayList<>();
-					Color diffColor = new Color(0.2f, 0.2f, 0.2f, 0);
-					colors.add(d.getColor().cpy().add(diffColor));
-					colors.add(d.getColor().cpy().sub(diffColor));
-
-					for (final Color color : colors) {
-						key = SVGUtils.generateColoredID("ArrowHead", color);
-						if (!colSvgs.containsKey(key)) {
-							colSvgs.put(key,
-									svgCoreCreator.getArrowHead(key, color));
-						}
-					}
+						svgCoreCreator.appendArrowheads(svgs, d);
 				}
 
 				if (d.route != null) {
-					Color routeColor = d.route.getColor();
-					key = SVGUtils.generateColoredID("StepMarker", routeColor);
-					if (!colSvgs.containsKey(key)) {
-						colSvgs.put(key,
-								svgCoreCreator.getSVGCode(TextureE.StepMarker,
-										routeColor, strokeColor));
-					}
+					svgCoreCreator.appendRoute(svgs, d);
 				}
 			}
 
@@ -814,14 +751,13 @@ public class SVGManager {
 				// this is needed for source target arrows
 				Color color = Color.BLACK;
 				key = SVGUtils.generateColoredID("ArrowHead", color);
-				if (!colSvgs.containsKey(key)) {
-					colSvgs.put(key,
+				if (!svgs.containsKey(key)) {
+					svgs.put(key,
 							svgCoreCreator.getArrowHead(key, color));
 				}
 			}
 
 			LOGGER.debug("[SVG] Done creating colored cores.");
-		}
 	}
 
 	/**
