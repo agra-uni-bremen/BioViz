@@ -5,7 +5,6 @@ import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.ui.Colors;
 import de.bioviz.ui.DrawableCircuit;
-import de.bioviz.ui.DrawableDroplet;
 import de.bioviz.ui.DrawableField;
 
 /**
@@ -47,38 +46,38 @@ public class SVGUtils {
 	}
 
 	/**
-	 * Get the color for a lighter arrowHead.
+	 * Get the color for a lighter longNetIndicator.
 	 *
-	 * @param drop
+	 * @param dropColor
 	 * 			the droplet to get the base color
 	 * @return
 	 *			the color for the lighter arrowHead or Color.DARK_GREY if the
 	 *			colorfulExport is off
 	 */
-	public static Color getLighterArrowHeadColor(DrawableDroplet drop){
+	public static Color getLighterLongNetIndicatorColor(final Color dropColor){
 		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
-			return drop.getColor().sub(DIFF_COLOR);
+			return dropColor.cpy().sub(DIFF_COLOR);
 		}
 		else {
-			return Color.DARK_GRAY;
+			return Color.BLACK;
 		}
 	}
 
 	/**
-	 * Get the color for a darker arrowHead.
+	 * Get the color for a darker longNetIndicator.
 	 *
-	 * @param drop
+	 * @param dropColor
 	 * 			the droplet to get the base color
 	 * @return
 	 * 			the color for the darker arrowHead or Color.DARK_GREY if the
 	 *			colorfulExport is off
 	 */
-	public static Color getDarkerArrowHeadColor(DrawableDroplet drop){
+	public static Color getDarkerLongNetIndicatorColor(final Color dropColor) {
 		if (SVG_EXPORT_SETTINGS.getColorfulExport()) {
-			return drop.getColor().add(DIFF_COLOR);
+			return dropColor.cpy().add(DIFF_COLOR);
 		}
 		else {
-			return Color.DARK_GRAY;
+			return Color.BLACK;
 		}
 	}
 

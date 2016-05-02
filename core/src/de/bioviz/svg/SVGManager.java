@@ -65,11 +65,6 @@ public class SVGManager {
 	private final String fontColorInfoString = SVGUtils.colorToSVG(Color
 			.BLACK);
 
-	/** hard coded stroke color. */
-	private final Color strokeColor = null; // means don't change svg stroke color
-	/** color for the stepMarkers. */
-	private final Color stepMarkerColor = Color.BLACK;
-
 	/** min coordinate for the exported svg. */
 	private Point topLeftCoord;
 	/** max coordinate for the exported svg. */
@@ -230,9 +225,8 @@ public class SVGManager {
 		// create all def strings and save them in colSvgs
 		createDefCores();
 
-		// append all colored cores to the svg string
+		// append all cores to the svg string
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
-		//svgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
 
 		for (final DrawableField field : circuit.getFields()) {
@@ -487,13 +481,13 @@ public class SVGManager {
 
 			if (startPoint != null && dropletPos != null &&
 					!startPoint.equals(dropletPos)) {
-				Color arrowColor = dropColor.cpy().sub(0.2f, 0.2f, 0.2f, 0);
+				Color arrowColor = SVGUtils.getLighterLongNetIndicatorColor(dropColor);
 				arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
 			}
 
 			if (dropletPos != null && endPoint != null &&
 					!dropletPos.equals(endPoint)) {
-				Color arrowColor = dropColor.cpy().add(0.2f, 0.2f, 0.2f, 0);
+				Color arrowColor = SVGUtils.getDarkerLongNetIndicatorColor(dropColor);
 				arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
 			}
 		}
@@ -557,7 +551,7 @@ public class SVGManager {
 				gradientSvg += "<rect x=\"" + (fieldPos.fst + 24) + "\" " +
 						"y=\"" + (fieldPos.snd + 24) + "\" rx=\"24\" ry=\"24\" " +
 						"height=\"208\" width=\"208\" fill=\"url(#" + SVGUtils
-						.generateColoredID("grad-" + dir.toString(),
+						.generateColoredID("grad" + dir.toString(),
 								SVGUtils.getNetColor(n)) + ")\" " +
 						"/>\n";
 			}
@@ -710,54 +704,47 @@ public class SVGManager {
 	 */
 	private void createDefCores() {
 
-			createCores();
+		LOGGER.debug("[SVG] Creating all needed colored cores.");
 
-			LOGGER.debug("[SVG] Creating all needed colored cores.");
+		createCores();
 
-			String key = "";
+		// create the svg def for the arrowhead for the source target arrows
+		if (circuit.getDisplayOptions().getOption(BDisplayOptions
+				.LongNetIndicatorsOnFields)) {
+			// this is needed for source target arrows
+			svgCoreCreator.appendSourceTargetArrowHead(svgs);
+		}
 
-			// create all needed svg defs for the fields
-			for (final DrawableField f : circuit.getFields()) {
+		// create all needed svg defs for the fields
+		for (final DrawableField f : circuit.getFields()) {
 
-				svgCoreCreator.appendFieldSVG(svgs, f);
+			svgCoreCreator.appendFieldSVG(svgs, f);
 
-				Set<Net> nets = circuit.getData().getNetsOf(f.getField());
-				for (final Net n : nets) {
-					for (final GradDir dir : GradDir.values()) {
-						svgCoreCreator.appendGradSVG(svgs, n, dir);
-					}
+			Set<Net> nets = circuit.getData().getNetsOf(f.getField());
+			for (final Net n : nets) {
+				for (final GradDir dir : GradDir.values()) {
+					svgCoreCreator.appendGradSVG(svgs, n, dir);
 				}
 			}
+		}
 
-			// create all needed svg defs for the droplets
-			// and droplet based features
-			for (final DrawableDroplet d : circuit.getDroplets()) {
-				svgCoreCreator.appendDropletSVG(svgs, d);
+		// create all needed svg defs for the droplets
+		// and droplet based features
+		for (final DrawableDroplet d : circuit.getDroplets()) {
+			svgCoreCreator.appendDropletSVG(svgs, d);
 
-				// Add every needed color for the arrowheads
-				if (circuit.getDisplayOptions().getOption(BDisplayOptions
-						.LongNetIndicatorsOnDroplets)) {
-						svgCoreCreator.appendArrowheads(svgs, d);
-				}
-
-				if (d.route != null) {
-					svgCoreCreator.appendRoute(svgs, d);
-				}
-			}
-
-			// create the svg def for the arrowhead for the source target arrows
+			// Add every needed color for the arrowheads
 			if (circuit.getDisplayOptions().getOption(BDisplayOptions
-					.LongNetIndicatorsOnFields)) {
-				// this is needed for source target arrows
-				Color color = Color.BLACK;
-				key = SVGUtils.generateColoredID("ArrowHead", color);
-				if (!svgs.containsKey(key)) {
-					svgs.put(key,
-							svgCoreCreator.getArrowHead(key, color));
-				}
+					.LongNetIndicatorsOnDroplets)) {
+					svgCoreCreator.appendArrowheads(svgs, d.getColor());
 			}
 
-			LOGGER.debug("[SVG] Done creating colored cores.");
+			if (d.route != null) {
+				svgCoreCreator.appendRoute(svgs, d);
+			}
+		}
+
+		LOGGER.debug("[SVG] Done creating colored cores.");
 	}
 
 	/**
