@@ -27,37 +27,6 @@ import java.util.ArrayList;
 public class DrawableField extends DrawableSprite {
 
 	/**
-	 * The default color used for fields.
-	 */
-	public static final Color FIELD_DEFAULT_COLOR = Colors.FIELD_COLOR;
-
-	/**
-	 * The default color used for sinks.
-	 */
-	public static final Color SINK_DEFAULT_COLOR = Colors.SINK_COLOR;
-
-	/**
-	 * The default color used for sources.
-	 */
-	public static final Color SOURCE_DEFAULT_COLOR = Colors.SOURCE_COLOR;
-
-	/**
-	 * The default color used for mixers.
-	 */
-	public static final Color MIXER_DEFAULT_COLOR = Colors.MIXER_COLOR;
-
-	/**
-	 * The default color used for blockages.
-	 */
-	public static final Color BLOCKED_COLOR = Colors.BLOCKED_COLOR;
-
-	/**
-	 * Overlay color used for fields that have adjacent activations.
-	 */
-	public static final Color ADJACENT_ACTIVATION_COLOR =
-			new Color(0.5f, -0.5f, -0.5f, 0);
-
-	/**
 	 * The zoom level at which fields resort to drawing boxes instead of actual
 	 * structures.
 	 */
@@ -151,8 +120,6 @@ public class DrawableField extends DrawableSprite {
 		 There is an execption: the cell usage count overwrites any previous
 		 text. I really dislike this case by case hard coding  :/
 		 */
-
-
 		if (field.isPotentiallyBlocked()) {
 			texture = TextureE.Blockage;
 		}
@@ -222,7 +189,7 @@ public class DrawableField extends DrawableSprite {
 		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
 
 		if (getField().isBlocked(getParentCircuit().getCurrentTime())) {
-			result.add(BLOCKED_COLOR);
+			result.add(Colors.BLOCKED_COLOR);
 			colorOverlayCount++;
 		}
 
@@ -252,7 +219,7 @@ public class DrawableField extends DrawableSprite {
 					if (this.getParentCircuit().getData().getNetsOf
 							(this.getParentCircuit().getHoveredField().field).
 							contains(n)) {
-						netCol.add(0.5f, 0.5f, 0.5f, 0);
+						netCol.add(Colors.HOVER_NET_DIFF_COLOR);
 					}
 				}
 				Point top = new Point(
@@ -364,15 +331,15 @@ public class DrawableField extends DrawableSprite {
 		// overlays
 		if (colorOverlayCount == 0) {
 			if (field instanceof Sink) {
-				result.add(SINK_DEFAULT_COLOR);
+				result.add(Colors.SINK_COLOR);
 				colorOverlayCount++;
 			}
 			else if (field instanceof Dispenser) {
-				result.add(SOURCE_DEFAULT_COLOR);
+				result.add(Colors.SOURCE_COLOR);
 				colorOverlayCount++;
 			}
 			else {
-				result.add(FIELD_DEFAULT_COLOR);
+				result.add(Colors.FIELD_COLOR);
 				colorOverlayCount++;
 			}
 
@@ -380,7 +347,7 @@ public class DrawableField extends DrawableSprite {
 
 				for (final Mixer m : field.mixers) {
 					if (m.timing.inRange(t)) {
-						result.add(MIXER_DEFAULT_COLOR);
+						result.add(Colors.MIXER_COLOR);
 					}
 				}
 			}
@@ -389,7 +356,7 @@ public class DrawableField extends DrawableSprite {
 		if (getOption(Adjacency) &&
 			getParentCircuit().getData().getAdjacentActivations().contains(
 					this.getField())) {
-			result.add(ADJACENT_ACTIVATION_COLOR);
+			result.add(Colors.ADJACENT_ACTIVATION_COLOR);
 		}
 
 		if (colorOverlayCount > 0) {
@@ -404,7 +371,7 @@ public class DrawableField extends DrawableSprite {
 			result.add(Colors.HOVER_DIFF_COLOR);
 		}
 
-		return result.buildGdxColor();
+		return result.buildGdxColor().cpy();
 	}
 
 	@Override
@@ -516,7 +483,7 @@ public class DrawableField extends DrawableSprite {
 	 *
 	 * @param optn
 	 * 		Option to check
-	 * @return true if optn is true
+	 * @return true if option is true
 	 */
 	protected boolean getOption(final BDisplayOptions optn) {
 		return getParentCircuit().getDisplayOptions().getOption(optn);
