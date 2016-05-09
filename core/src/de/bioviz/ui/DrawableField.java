@@ -98,15 +98,7 @@ public class DrawableField extends DrawableSprite {
 	public Pair<String, TextureE> getMsgTexture() {
 
 		String fieldHUDMsg = null;
-		DrawableCircuit circ = getParentCircuit();
-		int t = circ.getCurrentTime();
-		float xCoord = circ.xCoordOnScreen(getField().x());
-		float yCoord = circ.yCoordOnScreen(getField().y());
 		TextureE texture = TextureE.GridMarker;
-		this.setX(xCoord);
-		this.setY(yCoord);
-		this.setScaleX(circ.getSmoothScale());
-		this.setScaleY(circ.getSmoothScale());
 
 
 		// TODO what happens if some of these options overlap?
@@ -158,6 +150,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
+		DrawableCircuit circ = getParentCircuit();
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show
 		// what
@@ -380,6 +373,15 @@ public class DrawableField extends DrawableSprite {
 
 		displayText(vals.getMsg());
 		setColor(vals.getColor());
+
+		DrawableCircuit circ = getParentCircuit();
+		int t = circ.getCurrentTime();
+		float xCoord = circ.xCoordOnScreen(getField().x());
+		float yCoord = circ.yCoordOnScreen(getField().y());
+		this.setX(xCoord);
+		this.setY(yCoord);
+		this.setScaleX(circ.getSmoothScale());
+		this.setScaleY(circ.getSmoothScale());
 
 		// this call is actually necessary to draw any textures at all!
 		this.addLOD(Float.MAX_VALUE, vals.getTexture());

@@ -42,7 +42,6 @@ public class DrawableDispenser extends DrawableField {
 
 
 		fieldHUDMsg = String.join(" - ", msgs);
-		System.out.println("Correct getMsgTextre()");
 		return Pair.mkPair(fieldHUDMsg,texture);
 	}
 }
