@@ -251,8 +251,8 @@ public class MessageCenter {
 				}
 				int startX = spacing;
 				int startY = yCoord;
-//				messageFont.draw(parent.batch, m.message, startX,
-//								 startY);
+				parent.batch.drawMessage(
+						messageFont, m.message, startX, startY);
 				yCoord -= spacing;
 			}
 
@@ -291,7 +291,7 @@ public class MessageCenter {
 									layout.height / 2f +
 									Gdx.graphics.getHeight() / 2f;
 
-//				font.draw(parent.batch, layout, fontX, fontY);
+				parent.batch.drawMessage(font, layout, fontX, fontY);
 			}
 
 			while (this.messages.size() > 0 &&

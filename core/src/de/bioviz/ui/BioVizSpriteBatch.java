@@ -3,6 +3,8 @@ package de.bioviz.ui;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class BioVizSpriteBatch {
 
@@ -29,5 +31,23 @@ public class BioVizSpriteBatch {
 
 	public void end() {
 		sb.end();
+	}
+
+	public void drawMessage(
+			BitmapFont messageFont,
+			String message,
+			float startX,
+			float startY) {
+		messageFont.draw(sb, message, startX,
+				 startY);
+	}
+
+	public void drawMessage(
+			BitmapFont messageFont,
+			GlyphLayout message,
+			float startX,
+			float startY) {
+		messageFont.draw(sb, message, startX,
+				 startY);
 	}
 }
