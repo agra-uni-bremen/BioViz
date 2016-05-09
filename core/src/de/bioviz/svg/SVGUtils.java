@@ -5,6 +5,7 @@ import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.ui.Colors;
 import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableDroplet;
 import de.bioviz.ui.DrawableField;
 
 /**
@@ -134,5 +135,16 @@ public final class SVGUtils {
 			fieldCol = fieldCol.sub(Colors.HOVER_DIFF_COLOR);
 		}
 		return fieldCol;
+	}
+
+	/**
+	 * Checks if a droplet is hidden or invisible.
+	 *
+	 * @param droplet the droplet to check
+	 * @return true if it is hidden or invisible, false otherwise
+	 */
+	public static boolean isHiddenOrInvisible(final DrawableDroplet droplet) {
+		return droplet.getDisplayColor().a > 0.1f &&
+				!droplet.parentCircuit.isHidden(droplet);
 	}
 }
