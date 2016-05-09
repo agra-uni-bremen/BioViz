@@ -54,18 +54,32 @@ public class BioVizSpriteBatch {
 			BitmapFont messageFont,
 			String message,
 			float startX,
-			float startY) {
-		messageFont.draw(sb, message, startX,
-				 startY);
+			float startY,
+			Matrix4 m) {
+		drawCalls.add(new Pair<Integer, Runnable>(
+				0,
+				() -> {
+					Matrix4 old = sb.getProjectionMatrix();
+					sb.setProjectionMatrix(m);
+					messageFont.draw(sb, message, startX, startY);
+					sb.setProjectionMatrix(old);
+				}));
 	}
 
 	public void drawMessage(
 			BitmapFont messageFont,
 			GlyphLayout message,
 			float startX,
-			float startY) {
-		messageFont.draw(sb, message, startX,
-				 startY);
+			float startY,
+			Matrix4 m) {
+		drawCalls.add(new Pair<Integer, Runnable>(
+				0,
+				() -> {
+					Matrix4 old = sb.getProjectionMatrix();
+					sb.setProjectionMatrix(m);
+					messageFont.draw(sb, message, startX, startY);
+					sb.setProjectionMatrix(old);
+				}));
 	}
 
 	public Matrix4 getProjectionMatrix() {
