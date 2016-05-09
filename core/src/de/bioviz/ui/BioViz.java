@@ -33,7 +33,7 @@ import java.util.Vector;
 
 public class BioViz implements ApplicationListener {
 	public OrthographicCamera camera;
-	public SpriteBatch batch;
+	public BioVizSpriteBatch batch;
 	
 	/**
 	 * Sets the duration of intermediate animations in ms.
@@ -145,7 +145,8 @@ public class BioViz implements ApplicationListener {
 		float h = Gdx.graphics.getHeight();
 
 		camera = new OrthographicCamera(1, h / w);
-		batch = new SpriteBatch(1000, this.createDefaultShader());
+		batch = new BioVizSpriteBatch(
+				new SpriteBatch(1000, this.createDefaultShader()));
 
 		inputProcessor = new BioVizInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);

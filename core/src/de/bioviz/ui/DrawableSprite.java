@@ -276,8 +276,7 @@ public abstract class DrawableSprite implements Drawable {
 					}
 				}
 			}
-			
-			this.sprite.draw(viz.batch);
+			viz.batch.draw(this.sprite);
 		}
 	}
 
