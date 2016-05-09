@@ -387,8 +387,7 @@ public class DrawableField extends DrawableSprite {
 		super.draw();
 
 		if (getOption(LongNetIndicatorsOnFields)) {
-			for (Net net : this.parentCircuit.getData().getNetsOf(this
-																		  .field)) {
+			for (Net net : this.parentCircuit.getData().getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
 						Pair<Float, Float> target = new Pair<Float, Float>(
@@ -401,9 +400,8 @@ public class DrawableField extends DrawableSprite {
 
 
 						// draw to target
-						DrawableLine.draw(source, target,
-										  Color.BLACK.cpy()
-													.sub(Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
+						DrawableLine.draw(source, target,Color.BLACK.cpy().sub(
+								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
 					}
 				}
 			}
