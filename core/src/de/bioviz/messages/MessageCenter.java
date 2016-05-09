@@ -298,6 +298,8 @@ public class MessageCenter {
 				   this.messages.get(0).expired()) {
 				this.messages.remove(0);
 			}
+
+			parent.batch.setProjectionMatrix(parent.camera.combined);
 		}
 	}
 
