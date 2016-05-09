@@ -297,7 +297,8 @@ public class SVGManager {
 			if (circuit.getDisplayOptions().getOption(BDisplayOptions
 															  .LongNetIndicatorsOnDroplets)) {
 
-				if (!circuit.isHidden(drop)) {
+				if (drop.getDisplayColor().a > 0.1f &&
+						!circuit.isHidden(drop)) {
 					sb.append(createDropletArrows(drop));
 				}
 			}
@@ -315,7 +316,9 @@ public class SVGManager {
 		}
 		// export msg strings for droplets
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
-			if (!circuit.isHidden(drop)) {
+			//
+			if (drop.getDisplayColor().a > 0.1f &&
+					!circuit.isHidden(drop)) {
 				sb.append(createDropletMsg(drop));
 			}
 		}
