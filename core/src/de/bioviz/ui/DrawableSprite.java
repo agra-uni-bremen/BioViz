@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.NumberUtils;
 
 import de.bioviz.messages.MessageCenter;
 import de.bioviz.util.Pair;
+import javafx.scene.Parent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,6 +211,10 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	public void draw() {
+		draw(0);
+	}
+
+	public void draw(int z) {
 
 		if (isVisible()) {
 
@@ -276,7 +281,7 @@ public abstract class DrawableSprite implements Drawable {
 					}
 				}
 			}
-			viz.batch.draw(this.sprite);
+			viz.batch.draw(this.sprite, this.viz.camera.combined, z);
 		}
 	}
 

@@ -30,10 +30,22 @@ public class BioVizSpriteBatch {
 		sb.setProjectionMatrix(matrix);
 	}
 
-	public void draw(Sprite s) {
+	public void draw(Sprite s, Matrix4 m) {
+		draw(s, m, 0);
+	}
+	public void draw(Sprite s, Matrix4 m, int z) {
 		drawCalls.add(new Pair<Integer, Runnable>(
-					0,
-					() -> sb.draw(s.getTexture(), s.getVertices(), 0, 20)
+					z,
+					() -> {
+						Matrix4 old = sb.getProjectionMatrix();
+						if (!(old.equals(m))) {
+							sb.end();
+							sb.setProjectionMatrix(m);
+							sb.begin();
+						}
+						
+						sb.draw(s.getTexture(), s.getVertices(), 0, 20);
+					}
 				));
 	}
 
@@ -60,9 +72,12 @@ public class BioVizSpriteBatch {
 				0,
 				() -> {
 					Matrix4 old = sb.getProjectionMatrix();
-					sb.setProjectionMatrix(m);
+					if (!(old.equals(m))) {
+						sb.end();
+						sb.setProjectionMatrix(m);
+						sb.begin();
+					}
 					messageFont.draw(sb, message, startX, startY);
-					sb.setProjectionMatrix(old);
 				}));
 	}
 
@@ -76,9 +91,12 @@ public class BioVizSpriteBatch {
 				0,
 				() -> {
 					Matrix4 old = sb.getProjectionMatrix();
-					sb.setProjectionMatrix(m);
+					if (!(old.equals(m))) {
+						sb.end();
+						sb.setProjectionMatrix(m);
+						sb.begin();
+					}
 					messageFont.draw(sb, message, startX, startY);
-					sb.setProjectionMatrix(old);
 				}));
 	}
 
