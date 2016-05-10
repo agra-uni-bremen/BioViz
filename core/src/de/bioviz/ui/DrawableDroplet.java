@@ -66,7 +66,7 @@ public class DrawableDroplet extends DrawableSprite {
 		// if the droplet is currently not present, make it 'invisible' by
 		// making it totally transparent
 		if (p == null) {
-			color.sub(0, 0, 0, 1).clamp();
+			color.sub(Color.BLACK).clamp();
 
 		}
 		else {
@@ -74,7 +74,7 @@ public class DrawableDroplet extends DrawableSprite {
 				color.a = 0.25f;
 			}
 			else {
-				color.add(0, 0, 0, 1).clamp();
+				color.add(Color.BLACK).clamp();
 			}
 		}
 
