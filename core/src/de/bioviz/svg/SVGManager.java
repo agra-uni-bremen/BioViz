@@ -286,7 +286,7 @@ public class SVGManager {
 			sb.append(toSVG(field));
 		}
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
-			if (!SVGUtils.isHiddenOrInvisible(drop)) {
+			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
 				sb.append(toSVG(drop));
 			}
 		}
@@ -296,7 +296,7 @@ public class SVGManager {
 			if (circuit.getDisplayOptions().getOption(BDisplayOptions
 															  .LongNetIndicatorsOnDroplets)) {
 
-				if (SVGUtils.isHiddenOrInvisible(drop)) {
+				if (SVGUtils.isNotHiddenOrInvisible(drop)) {
 					sb.append(createDropletArrows(drop));
 				}
 			}
@@ -315,7 +315,7 @@ public class SVGManager {
 		// export msg strings for droplets
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
 			//
-			if (SVGUtils.isHiddenOrInvisible(drop)) {
+			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
 				sb.append(createDropletMsg(drop));
 			}
 		}
