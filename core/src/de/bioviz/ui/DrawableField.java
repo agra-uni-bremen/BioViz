@@ -2,12 +2,7 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 
-import de.bioviz.structures.BiochipField;
-import de.bioviz.structures.Droplet;
-import de.bioviz.structures.Mixer;
-import de.bioviz.structures.Net;
-import de.bioviz.structures.Point;
-import de.bioviz.structures.Source;
+import de.bioviz.structures.*;
 import de.bioviz.util.Pair;
 
 import static de.bioviz.ui.BDisplayOptions.*;
@@ -54,7 +49,7 @@ public class DrawableField extends DrawableSprite {
 	 * The underlying structure that is drawn by this {@link DrawableField}'s
 	 * instance.
 	 */
-	private BiochipField field;
+	protected BiochipField field;
 
 	/**
 	 * <p>Creates an object that draws a given field for a biochip.</p>
@@ -103,14 +98,7 @@ public class DrawableField extends DrawableSprite {
 	public Pair<String, TextureE> getMsgTexture() {
 
 		String fieldHUDMsg = null;
-		DrawableCircuit circ = getParentCircuit();
-		float xCoord = circ.xCoordOnScreen(getField().x());
-		float yCoord = circ.yCoordOnScreen(getField().y());
 		TextureE texture = TextureE.GridMarker;
-		this.setX(xCoord);
-		this.setY(yCoord);
-		this.setScaleX(circ.getSmoothScale());
-		this.setScaleY(circ.getSmoothScale());
 
 
 		// TODO what happens if some of these options overlap?
@@ -124,33 +112,7 @@ public class DrawableField extends DrawableSprite {
 		 There is an execption: the cell usage count overwrites any previous
 		 text. I really dislike this case by case hard coding  :/
 		 */
-		if (field.isSink && getOption(SinkIcon)) {
-			texture = TextureE.Sink;
-		}
-		else if (field.isDispenser) {
-			if (getOption(DispenserIcon)) {
-				texture = TextureE.Dispenser;
-			}
-
-			String fluidID = Integer.toString(getField().fluidID);
-			ArrayList<String> msgs = new ArrayList<>();
-
-			if (getOption(DispenserFluidID)) {
-				msgs.add(fluidID);
-			}
-			if (getOption(DispenserFluidName)) {
-				String fluidName =
-						parentCircuit.getData().fluidType(getField().fluidID);
-				if (fluidName != null) {
-					msgs.add(fluidName);
-				}
-			}
-
-
-			fieldHUDMsg = String.join(" - ", msgs);
-
-		}
-		else if (field.isPotentiallyBlocked()) {
+		if (field.isPotentiallyBlocked()) {
 			texture = TextureE.Blockage;
 		}
 		else if (field.getDetector() != null &&
@@ -188,6 +150,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
+		DrawableCircuit circ = getParentCircuit();
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show
 		// what
@@ -207,6 +170,8 @@ public class DrawableField extends DrawableSprite {
 	 * @return the field's color.
 	 */
 	public Color getColor() {
+
+		// TODO document what this variable is good for.
 		int colorOverlayCount = 0;
 		/*
 		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
@@ -358,11 +323,11 @@ public class DrawableField extends DrawableSprite {
 		// nope it seems that the cell usage is supposed to override the other
 		// overlays
 		if (colorOverlayCount == 0) {
-			if (field.isSink) {
+			if (field instanceof Sink) {
 				result.add(Colors.SINK_COLOR);
 				colorOverlayCount++;
 			}
-			else if (field.isDispenser) {
+			else if (field instanceof Dispenser) {
 				result.add(Colors.SOURCE_COLOR);
 				colorOverlayCount++;
 			}
@@ -409,14 +374,22 @@ public class DrawableField extends DrawableSprite {
 		displayText(vals.getMsg());
 		setColor(vals.getColor());
 
+		DrawableCircuit circ = getParentCircuit();
+		int t = circ.getCurrentTime();
+		float xCoord = circ.xCoordOnScreen(getField().x());
+		float yCoord = circ.yCoordOnScreen(getField().y());
+		this.setX(xCoord);
+		this.setY(yCoord);
+		this.setScaleX(circ.getSmoothScale());
+		this.setScaleY(circ.getSmoothScale());
+
 		// this call is actually necessary to draw any textures at all!
 		this.addLOD(Float.MAX_VALUE, vals.getTexture());
 
 		super.draw();
 
 		if (getOption(LongNetIndicatorsOnFields)) {
-			for (Net net : this.parentCircuit.getData().getNetsOf(this
-																		  .field)) {
+			for (Net net : this.parentCircuit.getData().getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
 						Pair<Float, Float> target = new Pair<Float, Float>(
@@ -429,9 +402,8 @@ public class DrawableField extends DrawableSprite {
 
 
 						// draw to target
-						DrawableLine.draw(source, target,
-										  Color.BLACK.cpy()
-													.sub(Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
+						DrawableLine.draw(source, target,Color.BLACK.cpy().sub(
+								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
 					}
 				}
 			}
@@ -513,7 +485,7 @@ public class DrawableField extends DrawableSprite {
 	 * 		Option to check
 	 * @return true if option is true
 	 */
-	private boolean getOption(final BDisplayOptions optn) {
+	protected boolean getOption(final BDisplayOptions optn) {
 		return getParentCircuit().getDisplayOptions().getOption(optn);
 	}
 }
