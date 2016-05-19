@@ -88,6 +88,11 @@ public abstract class DrawableSprite implements Drawable {
 	private float y = 0;
 
 	/**
+	 * The depth drawing order.
+	 */
+	private float z = 0;
+
+	/**
 	 * The x scaling factor of this sprite.
 	 */
 	private float scaleX = 1;
@@ -211,10 +216,10 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	public void draw() {
-		draw(0);
+		draw(this.z);
 	}
 
-	public void draw(int z) {
+	public void draw(float z) {
 
 		if (isVisible()) {
 

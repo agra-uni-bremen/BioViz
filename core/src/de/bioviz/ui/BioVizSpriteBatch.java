@@ -16,8 +16,8 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class BioVizSpriteBatch {
 
-	private ArrayList<Pair<Integer, Runnable>> drawCalls =
-			new ArrayList<Pair<Integer, Runnable>>();
+	private ArrayList<Pair<Float, Runnable>> drawCalls =
+			new ArrayList<Pair<Float, Runnable>>();
 	private SpriteBatch sb;
 	public BioVizSpriteBatch(SpriteBatch sb) {
 		this.sb = sb;
@@ -35,10 +35,10 @@ public class BioVizSpriteBatch {
 		draw(s, m, 0);
 	}
 
-	public void draw(Sprite s, Matrix4 m, int z) {
+	public void draw(Sprite s, Matrix4 m, float z) {
 		float[] vertices = s.getVertices().clone();
 		Texture tex = s.getTexture();
-		drawCalls.add(new Pair<Integer, Runnable>(
+		drawCalls.add(new Pair<Float, Runnable>(
 					z,
 					() -> {
 						Matrix4 old = sb.getProjectionMatrix();
@@ -59,7 +59,7 @@ public class BioVizSpriteBatch {
 
 	public void end() {
 		drawCalls.sort((dca, dcb) -> dca.fst.compareTo(dcb.fst));
-		for (Pair<Integer, Runnable> pair : drawCalls) {
+		for (Pair<Float, Runnable> pair : drawCalls) {
 			pair.snd.run();
 		}
 		drawCalls.clear();
@@ -72,8 +72,8 @@ public class BioVizSpriteBatch {
 			float startX,
 			float startY,
 			Matrix4 m) {
-		drawCalls.add(new Pair<Integer, Runnable>(
-				0,
+		drawCalls.add(new Pair<Float, Runnable>(
+				0f,
 				() -> {
 					Matrix4 old = sb.getProjectionMatrix();
 					if (!(old.equals(m))) {
@@ -91,8 +91,8 @@ public class BioVizSpriteBatch {
 			float startX,
 			float startY,
 			Matrix4 m) {
-		drawCalls.add(new Pair<Integer, Runnable>(
-				0,
+		drawCalls.add(new Pair<Float, Runnable>(
+				0f,
 				() -> {
 					Matrix4 old = sb.getProjectionMatrix();
 					if (!(old.equals(m))) {
