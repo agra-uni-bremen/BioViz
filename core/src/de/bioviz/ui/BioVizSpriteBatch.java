@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
@@ -31,9 +32,11 @@ public class BioVizSpriteBatch {
 	}
 
 	public void draw(Sprite s) {
+		float[] vertices = s.getVertices().clone();
+		Texture tex = s.getTexture();
 		drawCalls.add(new Pair<Integer, Runnable>(
 					0,
-					() -> sb.draw(s.getTexture(), s.getVertices(), 0, 20)
+					() -> sb.draw(tex, vertices, 0, 20)
 				));
 	}
 
