@@ -9,6 +9,7 @@ public class DrawableLine extends DrawableSprite {
 
 	public DrawableLine(BioViz parent) {
 		super(TextureE.BlackPixel, parent);
+		this.setZ(DisplayValues.DEFAULT_LINE_DEPTH);
 	}
 
 	public void draw() {

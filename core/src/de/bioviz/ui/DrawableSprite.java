@@ -417,6 +417,13 @@ public abstract class DrawableSprite implements Drawable {
 		this.y = y;
 	}
 
+	public float getZ() {
+		return z;
+	}
+
+	public void setZ(float z) {
+		this.z = z;
+	}
 	public float getScaleX() {
 		return scaleX;
 	}

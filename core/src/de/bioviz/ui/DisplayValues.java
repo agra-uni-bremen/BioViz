@@ -10,6 +10,11 @@ import com.badlogic.gdx.graphics.Color;
  */
 public class DisplayValues {
 
+	public static final float DEFAULT_FIELD_DEPTH = 0f;
+	public static final float DEFAULT_DROPLET_DEPTH = 10f;
+	public static final float DEFAULT_ROUTE_DEPTH = 20f;
+	public static final float DEFAULT_LINE_DEPTH = 5f;
+
 	/**
 	 * The color of the drawable.
 	 */

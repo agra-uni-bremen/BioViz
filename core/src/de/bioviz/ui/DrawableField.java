@@ -82,6 +82,7 @@ public class DrawableField extends DrawableSprite {
 		this.setParentCircuit(parent);
 		this.setField(field);
 		super.addLOD(PIXELIZED_ZOOM_LEVEL, TextureE.BlackPixel);
+		this.setZ(DisplayValues.DEFAULT_FIELD_DEPTH);
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 

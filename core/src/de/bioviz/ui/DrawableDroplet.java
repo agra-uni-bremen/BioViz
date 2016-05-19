@@ -42,6 +42,7 @@ public class DrawableDroplet extends DrawableSprite {
 		super.setColor(c);
 		this.dropletColor = c;
 		route = new DrawableRoute(this);
+		this.setZ(DisplayValues.DEFAULT_DROPLET_DEPTH);
 	}
 
 	/**

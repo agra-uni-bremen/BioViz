@@ -63,6 +63,7 @@ public class DrawableRoute extends DrawableSprite {
 		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 		toTarget = new DrawableLine(droplet.viz);
 		fromSource = new DrawableLine(droplet.viz);
+		this.setZ(DisplayValues.DEFAULT_ROUTE_DEPTH);
 	}
 
 	/**
