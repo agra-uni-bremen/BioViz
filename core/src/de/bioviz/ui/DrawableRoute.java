@@ -1,6 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 
 import de.bioviz.structures.Point;
 import de.bioviz.util.Pair;
@@ -47,6 +48,8 @@ public class DrawableRoute extends DrawableSprite {
 	 */
 	private Color baseColor = Color.BLACK;
 
+	DrawableLine toTarget, fromSource;
+
 
 	/**
 	 * Creates a route for a given droplet.
@@ -58,6 +61,8 @@ public class DrawableRoute extends DrawableSprite {
 		super(TextureE.StepMarker, droplet.viz);
 		this.droplet = droplet;
 		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
+		toTarget = new DrawableLine(droplet.viz);
+		fromSource = new DrawableLine(droplet.viz);
 	}
 
 	/**
@@ -173,24 +178,29 @@ public class DrawableRoute extends DrawableSprite {
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
 		if (dropletLongIndicator && droplet.droplet.hasNet()) {
 			setForcedLOD(1f);
-			Pair<Float, Float> target = new Pair<>(
+			Vector2 target = new Vector2(
 					droplet.droplet.getNet().getTarget().fst.floatValue(),
 					droplet.droplet.getNet().getTarget().snd.floatValue
 							());
-			Pair<Float, Float> source = new Pair<>(
+			Vector2 source = new Vector2(
 					droplet.droplet.getFirstPosition().fst.floatValue(),
 					droplet.droplet.getFirstPosition().snd.floatValue());
-			Pair<Float, Float> current = new Pair<>
+			Vector2 current = new Vector2
 					(droplet.droplet.smoothX,
 					 droplet.droplet.smoothY);
 
 			// draw to target
-			DrawableLine.draw(target, current,
-							  droplet.getColor().add(
-									  Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
-			DrawableLine.draw(source, current,
-							  droplet.getColor().sub(
-									  Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
+			toTarget.from = current;
+			toTarget.to = target;
+			toTarget.setColor(droplet.getColor().add(
+					Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
+			toTarget.draw();
+			
+			fromSource.from = source;
+			fromSource.to = current;
+			fromSource.setColor(droplet.getColor().sub(
+					Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
+			fromSource.draw();
 		}
 	}
 }

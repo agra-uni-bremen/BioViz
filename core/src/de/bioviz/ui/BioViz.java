@@ -151,7 +151,7 @@ public class BioViz implements ApplicationListener {
 		inputProcessor = new BioVizInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);
 		
-		DrawableLine.singleton = new DrawableLine(this);
+		//DrawableLine.singleton = new DrawableLine(this);
 
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
@@ -192,7 +192,7 @@ public class BioViz implements ApplicationListener {
 			drawable.draw();
 		}
 		
-		DrawableLine.drawNow();
+		//DrawableLine.drawNow();
 
 		messageCenter.render();
 
@@ -506,5 +506,12 @@ public class BioViz implements ApplicationListener {
 		return handle;
 	}
 
+	public void addDrawbale(Drawable d) {
+		this.drawables.add(d);
+	}
+
+	public void removeDrawable(Drawable d) {
+		this.drawables.remove(d);
+	}
 
 }

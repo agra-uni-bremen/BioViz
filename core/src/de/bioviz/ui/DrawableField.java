@@ -1,6 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
@@ -55,6 +56,8 @@ public class DrawableField extends DrawableSprite {
 	 * instance.
 	 */
 	private BiochipField field;
+
+	private DrawableLine netIndicator = null;
 
 	/**
 	 * <p>Creates an object that draws a given field for a biochip.</p>
@@ -419,19 +422,24 @@ public class DrawableField extends DrawableSprite {
 																		  .field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
-						Pair<Float, Float> target = new Pair<Float, Float>(
+						Vector2 target = new Vector2(
 								net.getTarget().fst.floatValue(),
 								net.getTarget().snd.floatValue());
 
-						Pair<Float, Float> source = new Pair<Float, Float>(
+						Vector2 source = new Vector2(
 								s.startPosition.fst.floatValue(),
 								s.startPosition.snd.floatValue());
 
 
 						// draw to target
-						DrawableLine.draw(source, target,
-										  Color.BLACK.cpy()
-													.sub(Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
+						if (netIndicator == null) {
+							netIndicator = new DrawableLine(this.viz);
+						}
+						netIndicator.from = source;
+						netIndicator.to = target;
+						netIndicator.setColor(Color.BLACK.cpy().
+								sub(Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
+						netIndicator.draw();
 					}
 				}
 			}
