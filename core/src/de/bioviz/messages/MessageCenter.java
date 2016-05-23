@@ -238,7 +238,6 @@ public class MessageCenter {
 			Matrix4 normalProjection =
 					new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
 											   Gdx.graphics.getHeight());
-			parent.batch.setProjectionMatrix(normalProjection);
 
 			int spacing = 2 + (int)getmsgTextRenderResolution();
 			int yCoord = Gdx.graphics.getHeight() - spacing;
@@ -251,8 +250,9 @@ public class MessageCenter {
 				}
 				int startX = spacing;
 				int startY = yCoord;
-				messageFont.draw(parent.batch, m.message, startX,
-								 startY);
+				parent.batch.drawMessage(
+						messageFont, m.message, startX, startY,
+						normalProjection);
 				yCoord -= spacing;
 			}
 
@@ -291,7 +291,8 @@ public class MessageCenter {
 									layout.height / 2f +
 									Gdx.graphics.getHeight() / 2f;
 
-				font.draw(parent.batch, layout, fontX, fontY);
+				parent.batch.drawMessage(font, layout, fontX, fontY,
+						normalProjection);
 			}
 
 			while (this.messages.size() > 0 &&

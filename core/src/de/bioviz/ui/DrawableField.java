@@ -1,6 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 
 import de.bioviz.structures.*;
 import de.bioviz.util.Pair;
@@ -51,6 +52,8 @@ public class DrawableField extends DrawableSprite {
 	 */
 	protected BiochipField field;
 
+	private DrawableLine netIndicator = null;
+
 	/**
 	 * <p>Creates an object that draws a given field for a biochip.</p>
 	 * <p>Notice that we separate the structure from the drawing, hence the
@@ -74,6 +77,7 @@ public class DrawableField extends DrawableSprite {
 		this.setParentCircuit(parent);
 		this.setField(field);
 		super.addLOD(PIXELIZED_ZOOM_LEVEL, TextureE.BlackPixel);
+		this.setZ(DisplayValues.DEFAULT_FIELD_DEPTH);
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 
@@ -392,18 +396,24 @@ public class DrawableField extends DrawableSprite {
 			for (Net net : this.parentCircuit.getData().getNetsOf(this.field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
-						Pair<Float, Float> target = new Pair<Float, Float>(
+						Vector2 target = new Vector2(
 								net.getTarget().fst.floatValue(),
 								net.getTarget().snd.floatValue());
 
-						Pair<Float, Float> source = new Pair<Float, Float>(
+						Vector2 source = new Vector2(
 								s.startPosition.fst.floatValue(),
 								s.startPosition.snd.floatValue());
 
 
 						// draw to target
-						DrawableLine.draw(source, target,Color.BLACK.cpy().sub(
-								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
+						if (netIndicator == null) {
+							netIndicator = new DrawableLine(this.viz);
+						}
+						netIndicator.from = source;
+						netIndicator.to = target;
+						netIndicator.setColor(
+								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
+						netIndicator.draw();
 					}
 				}
 			}

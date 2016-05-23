@@ -1,53 +1,28 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
-import de.bioviz.util.Pair;
-
-import java.util.LinkedList;
-import java.util.Queue;
+import com.badlogic.gdx.math.Vector2;
 
 public class DrawableLine extends DrawableSprite {
 
-	static DrawableLine singleton = null;
-
-	private static Queue<Pair<Pair<Pair<Float, Float>, Pair<Float, Float>>, Color>>
-		drawQueue = new LinkedList<Pair<Pair<Pair<Float, Float>, Pair<Float, Float>>, Color>>();
+	public Vector2 from, to;
 
 	public DrawableLine(BioViz parent) {
 		super(TextureE.BlackPixel, parent);
+		this.setZ(DisplayValues.DEFAULT_LINE_DEPTH);
 	}
 
-	public static void draw(
-			Pair<Float, Float> from, 
-			Pair<Float, Float> to,
-			Color col) {
-		drawQueue.add(new Pair(new Pair(from, to), col));
-	}
-	
-	public static void drawNow() {
-		for (Pair<Pair<Pair<Float, Float>, Pair<Float, Float>>, Color> line : drawQueue) {
-			Pair<Float, Float> from = line.fst.fst;
-			Pair<Float, Float> to = line.fst.snd;
-			Color col = line.snd;
-			if (singleton != null) {
-				Pair<Float, Float> toTarget = new Pair<Float, Float> (
-						from.fst - to.fst, from.snd - to.snd);
-				final float len = (float)Math.sqrt(
-						toTarget.fst * toTarget.fst + toTarget.snd * toTarget.snd); 
-				singleton.setX(singleton.viz.currentCircuit.xCoordOnScreen(
-						(to.fst + from.fst) / 2f));
-				singleton.setY(singleton.viz.currentCircuit.yCoordOnScreen(
-						(to.snd + from.snd) / 2f));
-				singleton.setScaleX(
-						singleton.viz.currentCircuit.getSmoothScale() * len);
-				singleton.setScaleY(2f);
-				singleton.setRotation((float)
-						(Math.atan2(toTarget.snd, toTarget.fst) *
-								(180f / Math.PI)));
-				singleton.setColorImmediately(col);
-				singleton.draw();
-			}
-		}
-		drawQueue.clear();
+	public void draw() {
+		Color col = this.getColor();
+		Vector2 toTarget = from.cpy().sub(to);
+		final float len = toTarget.len(); 
+		setX(viz.currentCircuit.xCoordOnScreen((to.x + from.x) / 2f));
+		setY(viz.currentCircuit.yCoordOnScreen((to.y + from.y) / 2f));
+		setScaleX(viz.currentCircuit.getSmoothScale() * len);
+		setScaleY(2f);
+		setRotation((float) (Math.atan2(toTarget.y, toTarget.x) * 
+				(180f / Math.PI)));
+		setColorImmediately(col);
+		super.draw();
 	}
 }
