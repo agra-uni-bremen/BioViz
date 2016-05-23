@@ -1,18 +1,15 @@
 package de.bioviz.ui;
 
+import java.util.ArrayList;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 
 import de.bioviz.util.Pair;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 /**
  * This class serves as a wrapper around the original libgdx sprite batch but
@@ -43,7 +40,7 @@ public class BioVizSpriteBatch {
 	 * Creates a new batch to draw elements with.
 	 * @param sb the original libgdx batch to be wrapped.
 	 */
-	public BioVizSpriteBatch(SpriteBatch sb) {
+	public BioVizSpriteBatch(final SpriteBatch sb) {
 		this.sb = sb;
 	}
 
@@ -59,7 +56,7 @@ public class BioVizSpriteBatch {
 	 * setProjectionMatrix method.
 	 * @param matrix the matrix to be used, retrieve from the camera.
 	 */
-	public void setProjectionMatrix(Matrix4 matrix) {
+	public void setProjectionMatrix(final Matrix4 matrix) {
 		sb.setProjectionMatrix(matrix);
 	}
 
@@ -69,7 +66,7 @@ public class BioVizSpriteBatch {
 	 * @param s the sprite to be drawn.
 	 * @param m the matrix to transform the sprite with.
 	 */
-	public void draw(Sprite s, Matrix4 m) {
+	public void draw(final Sprite s, final Matrix4 m) {
 		draw(s, m, 0);
 	}
 
@@ -79,7 +76,7 @@ public class BioVizSpriteBatch {
 	 * @param m the matrix to use.
 	 * @param z the depth value of the sprite.
 	 */
-	public void draw(Sprite s, Matrix4 m, float z) {
+	public void draw(final Sprite s, final Matrix4 m, final float z) {
 		float[] vertices = s.getVertices().clone();
 		Texture tex = s.getTexture();
 		drawCalls.add(new Pair<Float, Runnable>(
@@ -91,7 +88,6 @@ public class BioVizSpriteBatch {
 							sb.setProjectionMatrix(m);
 							sb.begin();
 						}
-						
 						sb.draw(tex, vertices, 0, 20);
 					}
 				));
@@ -110,7 +106,7 @@ public class BioVizSpriteBatch {
 	 */
 	public void end() {
 		drawCalls.sort((dca, dcb) -> dca.fst.compareTo(dcb.fst));
-		for (Pair<Float, Runnable> pair : drawCalls) {
+		for (final Pair<Float, Runnable> pair : drawCalls) {
 			pair.snd.run();
 		}
 		drawCalls.clear();
@@ -126,11 +122,11 @@ public class BioVizSpriteBatch {
 	 * @param m the transformation matrix to use.
 	 */
 	public void drawMessage(
-			BitmapFont messageFont,
-			String message,
-			float startX,
-			float startY,
-			Matrix4 m) {
+			final BitmapFont messageFont,
+			final String message,
+			final float startX,
+			final float startY,
+			final Matrix4 m) {
 		drawCalls.add(new Pair<Float, Runnable>(
 				0f,
 				() -> {
@@ -153,11 +149,11 @@ public class BioVizSpriteBatch {
 	 * @param m the transformation matrix to use.
 	 */
 	public void drawMessage(
-			BitmapFont messageFont,
-			GlyphLayout message,
-			float startX,
-			float startY,
-			Matrix4 m) {
+			final BitmapFont messageFont,
+			final GlyphLayout message,
+			final float startX,
+			final float startY,
+			final Matrix4 m) {
 		drawCalls.add(new Pair<Float, Runnable>(
 				0f,
 				() -> {
