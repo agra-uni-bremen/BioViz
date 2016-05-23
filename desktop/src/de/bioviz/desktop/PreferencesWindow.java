@@ -49,7 +49,9 @@ public class PreferencesWindow extends JFrame {
 
 		try {
 			this.setIconImage(
-					ImageIO.read(viz.getApplicationIcon().file()));
+					ImageIO.read(DesktopLauncher.getFileFromStream("/" + viz
+							.getApplicationIcon()
+							.path())));
 		} catch (final Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage());
 		}
