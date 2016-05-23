@@ -6,7 +6,13 @@ import java.util.Random;
 import de.bioviz.ui.Color;
 
 /**
- * Created by keszocze on 27.07.15.
+ * A net as used for routing.
+ * <p>
+ * A net defines how droplets are to be routed. It consists of a target
+ * destination and at least one droplet that is to be transported to that
+ * destination. If multiple droplets are routed to that destination (by the same
+ * net!), they are allowed to violate the fluidic constraints between each other
+ * and have to be at the destination simultaneously.
  *
  * @author Oliver Keszocze
  */
@@ -52,18 +58,27 @@ public final class Net {
 
 		// TODO be more sophisticated here ^^
 		rnd.setSeed(target.fst + target.snd);
-		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(), 1f);
+		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(),
+						  1f);
 	}
 
 
 	/**
+	 * Returns the net's color.
+	 *
 	 * @return The net's color
 	 */
 	public Color getColor() {
 		return color.cpy();
 	}
 
-	public void setColor(Color c) {
+	/**
+	 * Sets the color of the net.
+	 *
+	 * @param c
+	 * 		The new color of the net.
+	 */
+	public void setColor(final Color c) {
 		this.color = c;
 	}
 
@@ -77,17 +92,21 @@ public final class Net {
 	public boolean containsDroplet(final Droplet d) {
 		return sources.stream().anyMatch(o -> o.dropletID == d.getID());
 	}
-	
+
 	/**
 	 * Checks whether this net contains the given field.
-	 * @param f the field that is supposedly part of this net
+	 *
+	 * @param f
+	 * 		the field that is supposedly part of this net
 	 * @return true if it is part of this net, otherwise false
 	 */
-	public boolean containsField(BiochipField f) {
-		int xMin = Integer.MAX_VALUE, yMin = Integer.MAX_VALUE,
-			xMax = Integer.MIN_VALUE, yMax = Integer.MIN_VALUE;
+	public boolean containsField(final BiochipField f) {
+		int xMin = Integer.MAX_VALUE;
+		int yMin = Integer.MAX_VALUE;
+		int xMax = Integer.MIN_VALUE;
+		int yMax = Integer.MIN_VALUE;
 
-		for (Source source : sources) {
+		for (final Source source : sources) {
 			if (source.startPosition.fst < xMin) {
 				xMin = source.startPosition.fst;
 			}
@@ -113,12 +132,14 @@ public final class Net {
 		if (target.snd > yMax) {
 			yMax = target.snd;
 		}
-		
-		return (f.pos.fst >= xMin && f.pos.fst <= xMax &&
-				f.pos.snd >= yMin && f.pos.snd <= yMax);
+
+		return f.pos.fst >= xMin && f.pos.fst <= xMax &&
+			   f.pos.snd >= yMin && f.pos.snd <= yMax;
 	}
 
 	/**
+	 * Returns the target of the net.
+	 *
 	 * @return the target this net's droplets are directed to.
 	 */
 	public Point getTarget() {
@@ -126,6 +147,8 @@ public final class Net {
 	}
 
 	/**
+	 * Returns the initial positions of the droplets of this net.
+	 *
 	 * @return the list of all starting points of this net's droplets.
 	 */
 	public ArrayList<Source> getSources() {
