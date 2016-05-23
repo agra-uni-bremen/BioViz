@@ -694,7 +694,7 @@ public class DesktopLauncher extends JFrame {
 					(fileName);
 
 			if(in != null) {
-				file = File.createTempFile("default_file_tmp", "bio");
+				file = File.createTempFile(fileName, ".BioViz_tmp");
 				file.deleteOnExit();
 
 				OutputStream fout = new FileOutputStream(file);
