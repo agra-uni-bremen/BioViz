@@ -171,8 +171,15 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public Color getColor() {
 
-		// TODO document what this variable is good for.
+		/**
+		 * This value stores the amount of colors being overlaid in the process
+		 * of computing the color. This is currently required to calculate the
+		 * average value of all colors at the end of the process (e.g. if three
+		 * different colors are being added, the final result needs to be
+		 * divided by three).
+		 */
 		int colorOverlayCount = 0;
+
 		/*
 		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
 		final
