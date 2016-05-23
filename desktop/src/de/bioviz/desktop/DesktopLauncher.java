@@ -727,7 +727,7 @@ public class DesktopLauncher extends JFrame {
 																	   .class);
 		File path = new File(prefs.get(pathPrefName, "."));
 		File selectedPath = null;
-		logger.debug("Open file choose with path {}", path);
+		logger.debug("Open file choose with path {}", path.getParent());
 
 		JFileChooser fileDialog = new JFileChooser(path);
 		int choice = JFileChooser.CANCEL_OPTION;
