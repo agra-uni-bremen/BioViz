@@ -41,10 +41,11 @@ public class DisplayValues {
 	}
 
 	/**
+	 * Returns a copy of the color of the drawable.
 	 * @return the color of the drawable.
 	 */
 	public Color getColor() {
-		return color;
+		return color.cpy();
 	}
 
 	/**

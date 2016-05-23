@@ -428,7 +428,7 @@ public class BioParserListener extends BioBaseListener {
 			Direction dir = sink.snd;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point sinkPoint = p.add(dirPoint);
-			BiochipField sinkField = new BiochipField(sinkPoint, dir, chip);
+			Sink sinkField = new Sink(sinkPoint, dir, chip);
 			chip.addField(sinkPoint, sinkField);
 		});
 
@@ -441,8 +441,8 @@ public class BioParserListener extends BioBaseListener {
 			Direction dir = dispenser.snd.snd;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point dispPoint = p.add(dirPoint);
-			BiochipField dispField =
-					new BiochipField(dispPoint, fluidID, dir, chip);
+			Dispenser dispField =
+					new Dispenser(dispPoint, fluidID, dir, chip);
 			chip.addField(dispPoint, dispField);
 
 		});

@@ -240,8 +240,17 @@ public class DrawableCircuit implements Drawable {
 
 		//setup fields
 		getData().getAllFields().forEach(fld -> {
-			DrawableField f = new DrawableField(fld, this);
-			this.getFields().add(f);
+			if (fld instanceof Sink) {
+				fields.add(new DrawableSink((Sink)fld,this));
+			}
+			else if (fld instanceof Dispenser) {
+				fields.add(new DrawableDispenser((Dispenser)fld,this));
+			}
+			else {
+				DrawableField f = new DrawableField(fld, this);
+				fields.add(f);
+			}
+
 		});
 
 		LOGGER.debug("Fields set up.");
@@ -363,7 +372,9 @@ public class DrawableCircuit implements Drawable {
 		}
 		
 		// scale text
-		float scale = Math.min(MessageCenter.textRenderResolution, getSmoothScale() / 2f);
+		float scale = Math.min(
+				this.parent.messageCenter.getTextRenderResolution(),
+				getSmoothScale() / 2f);
 		
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {

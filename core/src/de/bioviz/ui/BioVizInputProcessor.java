@@ -51,11 +51,21 @@ public class BioVizInputProcessor implements InputProcessor {
 		if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
 			shift = false;
 		}
-		else if (keycode == Keys.RIGHT || keycode == Keys.UP) {
+		else if ((keycode == Keys.RIGHT || keycode == Keys.UP) && !ctrl &&
+				 !alt) {
 			parentViz.currentCircuit.nextStep();
 		}
-		else if (keycode == Keys.LEFT || keycode == Keys.DOWN) {
+		else if ((keycode == Keys.LEFT || keycode == Keys.DOWN) && !ctrl &&
+				 !alt) {
 			parentViz.currentCircuit.prevStep();
+		}
+		else if ((keycode == Keys.PAGE_UP && ctrl) ||
+				 (keycode == Keys.LEFT && alt)) {
+			parentViz.callPreviousTabListeners();
+		}
+		else if (keycode == Keys.PAGE_DOWN && ctrl ||
+				 (keycode == Keys.RIGHT && alt)) {
+			parentViz.callNextTabListeners();
 		}
 		else if (keycode == Keys.PLUS && ctrl) {
 			parentViz.messageCenter.incScales();
@@ -152,8 +162,12 @@ public class BioVizInputProcessor implements InputProcessor {
 	@Override
 	public boolean touchDragged(int x, int y, int pointer) {
 		if (isMoving) {
-			parentViz.currentCircuit.setOffsetX(parentViz.currentCircuit.getOffsetX() + (x - oldX) / parentViz.currentCircuit.getScaleX());
-			parentViz.currentCircuit.setOffsetY(parentViz.currentCircuit.getOffsetY() - (y - oldY) / parentViz.currentCircuit.getScaleY());
+			parentViz.currentCircuit.setOffsetX(
+					parentViz.currentCircuit.getOffsetX() +
+					(x - oldX) / parentViz.currentCircuit.getScaleX());
+			parentViz.currentCircuit.setOffsetY(
+					parentViz.currentCircuit.getOffsetY() -
+					(y - oldY) / parentViz.currentCircuit.getScaleY());
 			oldX = x;
 			oldY = y;
 		}

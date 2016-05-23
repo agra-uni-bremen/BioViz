@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 public class BiochipField {
-	public boolean isSink = false;
-	public boolean isDispenser = false;
 	public final Point pos;
 	private Range blockage;
 	private Detector detector;
@@ -69,20 +67,6 @@ public class BiochipField {
 
 
 	// ############################################################################################################
-	// TODO put Information about sink/dispenser in
-	// if the field is either a sink or a dispenser this field stores the
-	// information from which
-	// field the fluid is removed from or dispensed to
-	Direction direction = null;
-
-	/**
-	 * The fluid ID that is dispensed from this field.
-	 * <p>
-	 * This variable only has a meaning if the field is a dispenser.
-	 */
-	public int fluidID = 0;
-
-
 	/**
 	 * Sets the time, this field is blocked.
 	 *
@@ -174,33 +158,6 @@ public class BiochipField {
 	}
 
 
-	public void setSink(final Direction removeTo) {
-		isDispenser = false;
-		isSink = true;
-		fluidID = 0;
-		direction = removeTo;
-	}
-
-	public void setDispenser(final int fluidID, final Direction dispenseFrom) {
-		isSink = false;
-		isDispenser = true;
-		this.fluidID = fluidID;
-		direction = dispenseFrom;
-	}
-
-	public BiochipField(Point pos, int fluidID, Direction dispenseFrom, Biochip
-			parent) {
-		this.pos = pos;
-		setDispenser(fluidID, dispenseFrom);
-		this.parent = parent;
-	}
-
-	public BiochipField(Point pos, Direction removeTo, Biochip parent) {
-		this.pos = pos;
-		setSink(removeTo);
-		this.parent = parent;
-	}
-
 	// end of TODO
 	// ############################################################################################################
 	public BiochipField(int x, int y, Biochip parent) {
@@ -211,40 +168,6 @@ public class BiochipField {
 	public BiochipField(Point p, Biochip parent) {
 		this.pos = p;
 		this.parent = parent;
-	}
-
-	public enum NetBorder {
-		North, East, South, West;
-	}
-
-	public EnumSet<NetBorder> getBorderType(Net partOf) {
-		EnumSet<NetBorder> result = EnumSet.noneOf(NetBorder.class);
-
-		if (partOf.containsField(this)) {
-			BiochipField top, bottom, left, right;
-			int x = this.x();
-			int y = this.y();
-
-			right = parent.getFieldAt(new Point(x + 1, y));
-			left = parent.getFieldAt(new Point(x - 1, y));
-			top = parent.getFieldAt(new Point(x, y + 1));
-			bottom = parent.getFieldAt(new Point(x, y - 1));
-
-			if (!partOf.containsField(top)) {
-				result.add(NetBorder.North);
-			}
-			if (!partOf.containsField(bottom)) {
-				result.add(NetBorder.South);
-			}
-			if (!partOf.containsField(left)) {
-				result.add(NetBorder.West);
-			}
-			if (!partOf.containsField(right)) {
-				result.add(NetBorder.East);
-			}
-		}
-
-		return result;
 	}
 
 }

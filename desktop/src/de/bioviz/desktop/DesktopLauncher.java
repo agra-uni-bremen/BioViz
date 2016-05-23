@@ -410,6 +410,44 @@ public class DesktopLauncher extends JFrame {
 								((JTabbedPane) l.getSource())
 										.getSelectedComponent())));
 
+		// nextTabListener
+		currentViz.addNextTabListener(
+				() -> {
+					int nextIndex = visualizationTabs.getSelectedIndex() + 1;
+					// wrap around at the end
+					if (nextIndex > visualizationTabs.getTabCount() - 1){
+						nextIndex = 0;
+					}
+					// load new file
+					currentViz.scheduleLoadingOfNewFile(
+							tabsToFilenames.get(
+									visualizationTabs.getComponentAt(nextIndex)
+							)
+					);
+					// change to the correct tab in the ui
+					visualizationTabs.setSelectedIndex(nextIndex);
+				}
+		);
+
+		// previousTabListener
+		currentViz.addPreviousTabListener(
+				() -> {
+					int prevIndex = visualizationTabs.getSelectedIndex() - 1;
+					// wrap around at the beginning
+					if (prevIndex < 0){
+						prevIndex = visualizationTabs.getTabCount() - 1;
+					}
+					// load new file
+					currentViz.scheduleLoadingOfNewFile(
+							tabsToFilenames.get(visualizationTabs.getComponentAt(prevIndex)
+							)
+					);
+					// change to the correct tab in the ui
+					visualizationTabs.setSelectedIndex(prevIndex);
+				}
+		);
+
+
 		visualizationTabs.addMouseListener(new MouseListener() {
 
 			@Override
