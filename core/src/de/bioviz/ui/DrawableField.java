@@ -85,7 +85,8 @@ public class DrawableField extends DrawableSprite {
 	protected BiochipField field;
 
 	/**
-	 * <p>Creates an object that draws a given field for a biochip.</p>
+	 * Creates an object that draws a given field for a biochip.
+	 *
 	 * <p>Notice that we separate the structure from the drawing, hence the
 	 * separation of Drawable-something vs structural classes. This class needs
 	 * the structural information what it's supposed to draw (given via the
@@ -322,7 +323,7 @@ public class DrawableField extends DrawableSprite {
 							d2.droplet.getPositionAt(
 									this.parentCircuit.getCurrentTime())
 									.equals(
-									this.field.pos)) {
+											this.field.pos)) {
 							result.add(
 									Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 							++colorOverlayCount;
@@ -422,7 +423,8 @@ public class DrawableField extends DrawableSprite {
 		super.draw();
 
 		if (getOption(LongNetIndicatorsOnFields)) {
-			for (Net net : this.parentCircuit.getData().getNetsOf(this.field)) {
+			for (Net net : this.parentCircuit.getData().getNetsOf(this
+																		  .field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
 						Pair<Float, Float> target = new Pair<Float, Float>(
@@ -435,7 +437,8 @@ public class DrawableField extends DrawableSprite {
 
 
 						// draw to target
-						DrawableLine.draw(source, target,Color.BLACK.cpy().sub(
+						DrawableLine.draw(source, target, Color.BLACK.cpy()
+								.sub(
 								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
 					}
 				}
