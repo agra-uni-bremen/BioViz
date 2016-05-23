@@ -7,13 +7,22 @@ import de.bioviz.ui.TextureE;
 import de.bioviz.util.Pair;
 
 /**
+ * Specialization of a DrawableField for sinks
  * @author Oliver Keszocze
  */
 public class DrawableSink extends DrawableField {
+	/**
+	 * \copydoc DrawableField::DrawableField()
+	 *
+	 * Note that the field must be of type Sink!
+	 */
 	public DrawableSink(final Sink sink, final DrawableCircuit parent) {
 		super(sink, parent);
 	}
 
+	/**
+	 * @copydoc DrawableField::getMsgTexture()
+	 */
 	@Override
 	public Pair<String, TextureE> getMsgTexture() {
 		TextureE texture = TextureE.GridMarker;
