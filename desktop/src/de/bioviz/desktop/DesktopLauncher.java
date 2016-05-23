@@ -697,19 +697,20 @@ public class DesktopLauncher extends JFrame {
 				file = File.createTempFile("default_file_tmp", "bio");
 				file.deleteOnExit();
 
+				OutputStream fout = new FileOutputStream(file);
 
-				// manually copying as Java is incredibly bad
-				String read;
-				BufferedReader
-						br = new BufferedReader(new InputStreamReader(in));
-				BufferedWriter w = new BufferedWriter(new FileWriter
-						(file));
-				while ((read = br.readLine()) != null) {
-					w.write(read + "\n");
+				byte[] buffer = new byte[1024];
+
+				int length;
+				//copy the file content in bytes
+				while ((length = in.read(buffer)) > 0){
+
+					fout.write(buffer, 0, length);
+
 				}
 
-				w.close();
 
+				fout.close();
 
 				// be even more annoyed by java because the following code
 				// does *not* work! (why would it..)
