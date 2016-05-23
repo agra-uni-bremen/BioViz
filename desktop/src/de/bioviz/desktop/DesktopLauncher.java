@@ -217,12 +217,14 @@ public class DesktopLauncher extends JFrame {
 
 		currentViz.addPickColourListener(new colourPickCallback());
 
+		String iconPath = "";
 		try {
+			iconPath = "/" + currentViz.getApplicationIcon().path();
 			this.setIconImage(
-					ImageIO.read(getFileFromStream(currentViz.getApplicationIcon()
-							.path())));
+					ImageIO.read(getFileFromStream(iconPath)));
 		} catch (final Exception e) {
-			logger.error("Could not set application icon: " + e.getMessage());
+			logger.error("Could not set application icon: " + e.getMessage() +
+					" with path: " + iconPath);
 		}
 
 		pack();
@@ -517,7 +519,7 @@ public class DesktopLauncher extends JFrame {
 				4) by annoyed by Java a lot
 			 */
 			if (!file.exists()) {
-				file = getFileFromStream("examples/default_grid.bio");
+				file = getFileFromStream("/examples/default_grid.bio");
 			}
 
 
@@ -679,37 +681,40 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	/**
+	 * Returns a File object for the given path.
+	 * The path must start with a '/' also when it is a local path.
 	 *
-	 * @param fileName
-	 * @return
+	 * @param fileName the fileName
+	 * @return A File Object if the file exists. Null otherwise.
 	 */
-	private File getFileFromStream(String fileName) {
+	public static File getFileFromStream(String fileName) {
 		File file = null;
 		try {
-			InputStream in = getClass().getResourceAsStream(fileName);
+			InputStream in = DesktopLauncher.class.getResourceAsStream
+					(fileName);
 
-			file = File.createTempFile("default_file_tmp", "bio");
-			file.deleteOnExit();
+			if(in != null) {
+				file = File.createTempFile("default_file_tmp", "bio");
+				file.deleteOnExit();
 
 
-			// manually copying as Java is incredibly bad
-			String read;
-			BufferedReader
-					br = new BufferedReader(new InputStreamReader(in));
-			BufferedWriter w = new BufferedWriter(new FileWriter
-					(file));
-			while ((read = br.readLine()) != null) {
-				System.out.println(read);
-				w.write(read + "\n");
+				// manually copying as Java is incredibly bad
+				String read;
+				BufferedReader
+						br = new BufferedReader(new InputStreamReader(in));
+				BufferedWriter w = new BufferedWriter(new FileWriter
+						(file));
+				while ((read = br.readLine()) != null) {
+					w.write(read + "\n");
+				}
+
+				w.close();
+
+
+				// be even more annoyed by java because the following code
+				// does *not* work! (why would it..)
+				//java.nio.file.Files.copy(in, file.toPath());
 			}
-
-			w.close();
-
-
-			// be even more annoyed by java because the following code
-			// does *not* work! (why would it..)
-			java.nio.file.Files.copy(in, file.toPath());
-
 
 		} catch (IOException e) {
 			logger.error("Could not even locate/create default file");
