@@ -7,9 +7,24 @@ import de.bioviz.util.Pair;
  */
 public class Point extends Pair<Integer, Integer> {
 
+	/**
+	 * Direction pointing north.
+	 */
 	public static final Point NORTH = new Point(0, 1);
+
+	/**
+	 * Direction pointing east.
+	 */
 	public static final Point EAST = new Point(1, 0);
+
+	/**
+	 * Direction pointing south.
+	 */
 	public static final Point SOUTH = new Point(0, -1);
+
+	/**
+	 * Direction pointing west.
+	 */
 	public static final Point WEST = new Point(-1, 0);
 
 	public static final Point[] DIRECTIONS = {NORTH, EAST, SOUTH, WEST};
@@ -23,7 +38,7 @@ public class Point extends Pair<Integer, Integer> {
 	 * @param y
 	 * 		y coordinate of the point
 	 */
-	public Point(int x, int y) {
+	public Point(final int x, final int y) {
 		super(new Integer(x), new Integer(y));
 	}
 
@@ -36,7 +51,7 @@ public class Point extends Pair<Integer, Integer> {
 	 * 		<p>
 	 * 		It is only a real copy constructor as long as Integer(int) is.
 	 */
-	public Point(Point p) {
+	public Point(final Point p) {
 		this(new Integer(p.fst), new Integer(p.snd));
 	}
 
@@ -63,24 +78,19 @@ public class Point extends Pair<Integer, Integer> {
 	 * @return new Point created by adding the coordinates of p to this's
 	 * coordinates
 	 */
-	public Point add(Point p) {
+	public Point add(final Point p) {
 		return new Point(fst + p.fst, snd + p.snd);
 	}
-
 
 
 	/**
 	 * Creates a Point object pointing in the specified direction.
 	 *
-	 * The translation is as follows:
-	 * * NORTH -> (0,1)
-	 * * EAST -> (1,0)
-	 * * SOUTH -> (0,-1)
-	 * * WEST ->  (-1,0)
-	 * @param dir Direction that is to be translated into a point.
+	 * @param dir
+	 * 		Direction that is to be translated into a point.
 	 * @return Point corresponding to the direction.
 	 */
-	public static Point pointFromDirection(Direction dir) {
+	public static Point pointFromDirection(final Direction dir) {
 		switch (dir) {
 			case NORTH:
 				return NORTH;
@@ -91,7 +101,7 @@ public class Point extends Pair<Integer, Integer> {
 			case WEST:
 				return WEST;
 			default:
-				return new Point(0,0); // this shouldn't be ever reached!
+				return new Point(0, 0); // this shouldn't be ever reached!
 		}
 	}
 
@@ -106,11 +116,11 @@ public class Point extends Pair<Integer, Integer> {
 	 * 		second point
 	 * @return true if p2 is reachable from p1 in one time step
 	 */
-	public static boolean reachable(Point p1, Point p2) {
+	public static boolean reachable(final Point p1, final Point p2) {
 		if (p1.equals(p2)) {
 			return true;
 		}
-		for (Point direction : DIRECTIONS) {
+		for (final Point direction : DIRECTIONS) {
 			if (p1.add(direction).equals(p2)) {
 				return true;
 			}
@@ -130,7 +140,7 @@ public class Point extends Pair<Integer, Integer> {
 	 * coordinates. It does *not* take into account the grid, the droplets are
 	 * moving on.
 	 */
-	public static boolean adjacent(Point p1, Point p2) {
+	public static boolean adjacent(final Point p1, final Point p2) {
 		if (p1 == null || p2 == null) {
 			return false;
 		}
@@ -146,7 +156,7 @@ public class Point extends Pair<Integer, Integer> {
 	 * 		the other point to check for adjacency
 	 * @return whether or not the points are adjacent
 	 */
-	public boolean adjacent(Point p2) {
+	public boolean adjacent(final Point p2) {
 		return adjacent(this, p2);
 	}
 

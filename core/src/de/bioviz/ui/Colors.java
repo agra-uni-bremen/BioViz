@@ -71,7 +71,8 @@ public abstract class Colors {
 	/**
 	 * Diff color for hovered nets.
 	 */
-	public static final Color HOVER_NET_DIFF_COLOR = new Color(0.5f, 0.5f, 0.5f,0);
+	public static final Color HOVER_NET_DIFF_COLOR =
+			new Color(0.5f, 0.5f, 0.5f, 0);
 
 	/**
 	 * Diff color for hovered fields.

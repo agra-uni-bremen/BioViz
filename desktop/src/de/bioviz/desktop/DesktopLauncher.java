@@ -1,37 +1,33 @@
 package de.bioviz.desktop;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.*;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
-
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTInput;
-
+import de.bioviz.parser.BioParser;
+import de.bioviz.structures.Biochip;
 import de.bioviz.svg.SVGExportSettings;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.BioViz;
 import de.bioviz.ui.BioVizEvent;
 import de.bioviz.ui.DrawableRoute;
-
+import de.bioviz.util.BioVizInfo;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 
 /**
  * This class is the single desktop starter class. It starts the cross-platform
@@ -513,7 +509,7 @@ public class DesktopLauncher extends JFrame {
 				   stops running this process
 				3) copy the content of the stream into that file and use it as
 				   a regular file
-				4) by annoyed by Java a lot
+				4) be annoyed by Java a lot
 			 */
 			if (!file.exists()) {
 				try {
@@ -599,7 +595,76 @@ public class DesktopLauncher extends JFrame {
 	 * 		console arguments, currently unused
 	 */
 	public static void main(final String[] args) {
+		Options opts = new Options();
+		CmdLineParser parser = new CmdLineParser(opts);
+		try {
+			parser.parseArgument(args);
+		} catch (CmdLineException e) {
+			String argsLine = String.join(" ", args);
+			System.err.println(
+					"Unable to parse arguments: \"" + argsLine + "\"");
+			System.err.println("\nusage:");
+			parser.printUsage(System.err);
+			System.exit(1);
+		}
 
+		if (opts.help) {
+			parser.printUsage(System.out);
+			System.exit(0);
+		}
+		if (opts.version) {
+			System.out.println("This is BioViz version " + BioVizInfo.version);
+		}
+
+		if (opts.authors) {
+			System.out.println("BioViz is written by:");
+			for (String author : BioVizInfo.authors) {
+				System.out.println("\t" + author);
+			}
+		}
+
+		if (opts.check != null) {
+			startErrorChecker(opts.check);
+			System.exit(0);
+		}
+
+		startGUI(args);
+	}
+
+	static void startErrorChecker(final File f) {
+
+
+		//#########################
+		// The following stuff resets the logger so that no unnecessary messages
+		// are printed
+
+		// assume SLF4J is bound to logback in the current environment
+		LoggerContext context =
+				(LoggerContext) LoggerFactory.getILoggerFactory();
+
+
+		JoranConfigurator configurator = new JoranConfigurator();
+		configurator.setContext(context);
+		// Call context.reset() to clear any previous configuration, e.g.
+		// default
+		// configuration. For multi-step configuration, omit calling context
+		// .reset().
+		context.reset();
+
+		//#########################
+
+
+		Biochip chip = BioParser.parseFile(f);
+		if (!chip.errors.isEmpty()) {
+			System.out.println(
+					"Found errors in file \"" + f.getAbsolutePath() + "\":");
+			for (String error : chip.errors) {
+				System.out.println(error);
+			}
+		}
+	}
+
+	static void startGUI(final String args[]) {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -610,14 +675,15 @@ public class DesktopLauncher extends JFrame {
 						UIManager.setLookAndFeel(
 								UIManager.getSystemLookAndFeelClassName());
 					} catch (final UnsupportedLookAndFeelException e) {
-						logger.error("System look and feel is unsupported: "
+						logger.error("System look and feel is " +
+									 "unsupported: "
+
 									 + e.getMessage() + "\n" +
 									 e.getStackTrace());
 					} catch (final Exception e) {
-						logger.error(
-								"Cannot set look and feel: " + e.getMessage() +
-								"\n"
-								+ e.getStackTrace());
+						logger.error("Cannot set look and feel: " +
+									 e.getMessage() + "\n"
+									 + e.getStackTrace());
 					}
 
 					File file;
@@ -638,10 +704,11 @@ public class DesktopLauncher extends JFrame {
 				}
 			});
 		} catch (Exception e) {
-			logger.error(
-					"Could not start the application: " + e.getStackTrace());
+			logger.error("Could not start the application: " +
+						 e.getStackTrace());
 		}
 	}
+
 
 	/**
 	 * @param pathPrefName
@@ -669,31 +736,7 @@ public class DesktopLauncher extends JFrame {
 			choice = fileDialog.showOpenDialog(null);
 		}
 		else {
-			// add the svg export options as an accessory to the fileChooser
-			JPanel accessory = new JPanel(new BorderLayout());
-
-			JCheckBox exportColors = new JCheckBox("Export colors");
-			exportColors.setSelected(true);
-			JCheckBox exportInfoString = new JCheckBox("Export info tag");
-			exportInfoString.setSelected(true);
-			JCheckBox exportSeries = new JCheckBox("Export series");
-			exportSeries.setSelected(false);
-
-			JPanel checkBoxes = new JPanel(new GridLayout(0, 1));
-			checkBoxes.add(exportColors);
-			checkBoxes.add(exportInfoString);
-			checkBoxes.add(exportSeries);
-
-			accessory.add(checkBoxes);
-
-			fileDialog.setAccessory(accessory);
-
 			choice = fileDialog.showSaveDialog(null);
-
-			svgExportSettings.setColorfulExport(exportColors.isSelected());
-			svgExportSettings.setExportSeries(exportSeries.isSelected());
-			svgExportSettings.setInformationString(
-					exportInfoString.isSelected());
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -730,7 +773,7 @@ public class DesktopLauncher extends JFrame {
 					("/config/logback.xml"));
 		} catch (final JoranException je) {
 			// StatusPrinter will handle this
-			System.out.println("Error setting up logger: "
+			System.err.println("Error setting up logger: "
 							   + je.getStackTrace());
 		}
 		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
@@ -1377,7 +1420,7 @@ public class DesktopLauncher extends JFrame {
 				setState(
 						currentViz.currentCircuit.getDisplayOptions()
 								.getOption(
-								option));
+										option));
 			});
 		}
 

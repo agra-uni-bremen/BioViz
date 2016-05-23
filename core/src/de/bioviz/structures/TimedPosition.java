@@ -1,7 +1,7 @@
 package de.bioviz.structures;
 
 /**
- * @author jannis
+ * @author Jannis Stoppe
  * @note This class has a natural ordering that is inconsistent with equals.
  */
 class TimedPosition implements Comparable<TimedPosition> {

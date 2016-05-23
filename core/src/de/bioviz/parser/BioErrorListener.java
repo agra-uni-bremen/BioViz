@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Class that collects error messages.
  *
- * This class also serves as hack to check whether any parsing problems occured.
+ * This class also serves as hack to check whether any parsing problems occurred.
  * Most likely there is a better way to do so.
  *
  * @note Due to the fact that this class stores state (i.e. the errors that occurred during

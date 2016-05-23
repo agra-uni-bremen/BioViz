@@ -37,6 +37,7 @@ public class Biochip {
 	public final HashMap<Point, ActuationVector> cellActuations =
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<Mixer>();
+	public ArrayList<String> errors = new ArrayList<>();
 
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 
@@ -74,10 +75,12 @@ public class Biochip {
 	public Set<Net> getNets() {
 		return new HashSet<Net>(this.nets);
 	}
-	
+
 	/**
 	 * Returns all nets that a field belongs to
-	 * @param field the field to be tested
+	 *
+	 * @param field
+	 * 		the field to be tested
 	 * @return the nets that this field is a part of
 	 */
 	public Set<Net> getNetsOf(BiochipField field) {
@@ -106,12 +109,10 @@ public class Biochip {
 	}
 
 
-
-
 	/**
 	 * Caching data that does not need to be recalculated with each frame.
 	 */
-	private Set<BiochipField> adjacencyCache = null;
+	private Set<FluidicConstraintViolation> adjacencyCache = null;
 
 	public boolean recalculateAdjacency = false;
 
@@ -202,7 +203,7 @@ public class Biochip {
 	 *
 	 * @return Set of fields with adjacent droplets (at any point in time)
 	 */
-	public Set<BiochipField> getAdjacentActivations() {
+	public Set<FluidicConstraintViolation> getAdjacentActivations() {
 
 		if (adjacencyCache != null && !recalculateAdjacency) {
 			return adjacencyCache;
@@ -210,7 +211,7 @@ public class Biochip {
 		else {
 			logger.debug("Recalculating adjacency");
 			recalculateAdjacency = false;
-			HashSet<BiochipField> result = new HashSet<>();
+			HashSet<FluidicConstraintViolation> result = new HashSet<>();
 
 			for (int timestep = 1; timestep <= getMaxT(); timestep++) {
 				for (Droplet d1 : droplets) {
@@ -236,8 +237,13 @@ public class Biochip {
 										p2 + "(" + d2 +
 										") are adjacent in time step " +
 										timestep);
-								result.add(this.field.get(p1));
-								result.add(this.field.get(p2));
+								BiochipField f1 = field.get(p1);
+								BiochipField f2 = field.get(p2);
+								result.add(
+										new FluidicConstraintViolation(d1, f1,
+																	   d2, f2,
+																	   timestep));
+
 							}
 							if (Point.adjacent(pp1, p2)) {
 								logger.trace(
@@ -245,8 +251,12 @@ public class Biochip {
 										p2 + "(" + d2 +
 										") are adjacent in time step " +
 										(timestep + 1) + "/" + timestep);
-								result.add(this.field.get(pp1));
-								result.add(this.field.get(p2));
+								BiochipField f1 = field.get(pp1);
+								BiochipField f2 = field.get(p2);
+								result.add(
+										new FluidicConstraintViolation(d1, f1,
+																	   d2, f2,
+																	   timestep));
 							}
 							if (Point.adjacent(p1, pp2)) {
 								logger.trace(
@@ -254,8 +264,13 @@ public class Biochip {
 										pp2 + "(" + d2 +
 										") are adjacent in time step " +
 										timestep + "/" + (timestep + 1));
-								result.add(this.field.get(p1));
-								result.add(this.field.get(pp2));
+
+								BiochipField f1 = field.get(p1);
+								BiochipField f2 = field.get(pp2);
+								result.add(
+										new FluidicConstraintViolation(d1, f1,
+																	   d2, f2,
+																	   timestep));
 							}
 						}
 					}

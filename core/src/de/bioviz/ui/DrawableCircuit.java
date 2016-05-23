@@ -622,17 +622,6 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Re-calculates the adjacency for all blobs and sets
-	 * the fields' colours accordingly.
-	 */
-	public void updateAdjacencyColours() {
-		Set<BiochipField> f = this.getData().getAdjacentActivations();
-		for (BiochipField biochipField : f) {
-
-		}
-	}
-
-	/**
 	 * Retrieves the field that is currently being hovered.
 	 * @return the currently hovered field.
 	 */

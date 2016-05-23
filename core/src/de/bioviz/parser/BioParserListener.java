@@ -30,10 +30,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @SuppressWarnings("Convert2Diamond")
@@ -47,7 +44,7 @@ public class BioParserListener extends BioBaseListener {
 	private int maxY = 0;
 	private int nGrids = 0;
 
-	private Biochip chip;
+
 	private HashMap<Integer, String> fluidTypes = new HashMap<>();
 	private ArrayList<Net> nets = new ArrayList<>();
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
@@ -61,10 +58,14 @@ public class BioParserListener extends BioBaseListener {
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
-	BioViz viz;
 
-	public BioParserListener(BioViz viz) {
-		this.viz = viz;
+
+	private Biochip chip;
+
+	private ArrayList<String> errors;
+
+	public ArrayList<String> getErrors() {
+		return errors;
 	}
 
 	public Biochip getBiochip() {
@@ -373,7 +374,7 @@ public class BioParserListener extends BioBaseListener {
 	public void exitBio(BioContext ctx) {
 
 		chip = new Biochip();
-		ArrayList<String> errors = new ArrayList<String>();
+		errors = new ArrayList<String>();
 
 		for (Rectangle rect : rectangles) {
 			for (Point cell : rect.positions()) {
@@ -498,8 +499,15 @@ public class BioParserListener extends BioBaseListener {
 			});
 		});
 
+		Set<FluidicConstraintViolation> badFields = chip.getAdjacentActivations();
 
-		errors.forEach(s -> logger.error(s));
+		for (FluidicConstraintViolation violation: badFields) {
+			errors.add(violation.toString());
+		}
+
+
+		errors.forEach(s -> logger.info(s));
+		chip.errors.addAll(errors);
 
 	}
 }

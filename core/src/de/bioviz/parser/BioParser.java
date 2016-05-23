@@ -26,7 +26,7 @@ public class BioParser  {
     private static Logger logger = LoggerFactory.getLogger(BioParser.class);
 
 
-    public static Biochip parseFile(final File file, BioViz viz) {
+    public static Biochip parseFile(final File file) {
         String content = null;
         try {
             content = new String(Files.readAllBytes(Paths.get(file.toURI())));
@@ -34,10 +34,10 @@ public class BioParser  {
             logger.error("Failed to parse file \"{}\".", file);
             return null;
         }
-        return parse(content, viz);
+        return parse(content);
     }
 
-    public static Biochip parse(final String inputString, BioViz viz) {
+    public static Biochip parse(final String inputString) {
 
         logger.trace("Parsing file of length {}",inputString.length());
 
@@ -60,7 +60,7 @@ public class BioParser  {
             else {
                 ParseTreeWalker walker = new ParseTreeWalker();
                 // Walk the tree created during the parse, trigger callbacks
-                BioParserListener listener = new BioParserListener(viz);
+                BioParserListener listener = new BioParserListener();
                 walker.walk(listener, tree);
                 return listener.getBiochip();
             }
