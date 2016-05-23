@@ -219,7 +219,8 @@ public class DesktopLauncher extends JFrame {
 
 		try {
 			this.setIconImage(
-					ImageIO.read(currentViz.getApplicationIcon().file()));
+					ImageIO.read(getFileFromStream(currentViz.getApplicationIcon()
+							.path())));
 		} catch (final Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage());
 		}
@@ -516,37 +517,7 @@ public class DesktopLauncher extends JFrame {
 				4) by annoyed by Java a lot
 			 */
 			if (!file.exists()) {
-				try {
-					InputStream in = getClass().getResourceAsStream(
-							"/examples/default_grid.bio");
-
-					file = File.createTempFile("default_file_tmp", "bio");
-					file.deleteOnExit();
-
-
-					// manually copying as Java is incredibly bad
-					String read;
-					BufferedReader
-							br = new BufferedReader(new InputStreamReader(in));
-					BufferedWriter w = new BufferedWriter(new FileWriter
-																  (file));
-					while ((read = br.readLine()) != null) {
-						System.out.println(read);
-						w.write(read + "\n");
-					}
-
-					w.close();
-
-
-					// be even more annoyed by java because the following code
-					// does *not* work! (why would it..)
-					java.nio.file.Files.copy(in, file.toPath());
-
-
-				} catch (IOException e) {
-					logger.error("Could not even locate/create default file");
-				}
-
+				file = getFileFromStream("examples/default_grid.bio");
 			}
 
 
@@ -705,6 +676,46 @@ public class DesktopLauncher extends JFrame {
 
 		allowHotkeys = true;
 		return selectedPath;
+	}
+
+	/**
+	 *
+	 * @param fileName
+	 * @return
+	 */
+	private File getFileFromStream(String fileName) {
+		File file = null;
+		try {
+			InputStream in = getClass().getResourceAsStream(fileName);
+
+			file = File.createTempFile("default_file_tmp", "bio");
+			file.deleteOnExit();
+
+
+			// manually copying as Java is incredibly bad
+			String read;
+			BufferedReader
+					br = new BufferedReader(new InputStreamReader(in));
+			BufferedWriter w = new BufferedWriter(new FileWriter
+					(file));
+			while ((read = br.readLine()) != null) {
+				System.out.println(read);
+				w.write(read + "\n");
+			}
+
+			w.close();
+
+
+			// be even more annoyed by java because the following code
+			// does *not* work! (why would it..)
+			java.nio.file.Files.copy(in, file.toPath());
+
+
+		} catch (IOException e) {
+			logger.error("Could not even locate/create default file");
+		}
+
+		return file;
 	}
 
 
