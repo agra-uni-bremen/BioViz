@@ -1,6 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 
 import de.bioviz.structures.*;
 import de.bioviz.util.Pair;
@@ -84,6 +85,8 @@ public class DrawableField extends DrawableSprite {
 	 */
 	protected BiochipField field;
 
+	private DrawableLine netIndicator = null;
+
 	/**
 	 * Creates an object that draws a given field for a biochip.
 	 *
@@ -108,6 +111,7 @@ public class DrawableField extends DrawableSprite {
 		this.setParentCircuit(parent);
 		this.setField(field);
 		super.addLOD(PIXELIZED_ZOOM_LEVEL, TextureE.BlackPixel);
+		this.setZ(DisplayValues.DEFAULT_FIELD_DEPTH);
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 
@@ -205,8 +209,15 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public Color getColor() {
 
-		// TODO document what this variable is good for.
+		/**
+		 * This value stores the amount of colors being overlaid in the process
+		 * of computing the color. This is currently required to calculate the
+		 * average value of all colors at the end of the process (e.g. if three
+		 * different colors are being added, the final result needs to be
+		 * divided by three).
+		 */
 		int colorOverlayCount = 0;
+
 		/*
 		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
 		final
@@ -427,19 +438,24 @@ public class DrawableField extends DrawableSprite {
 																		  .field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
-						Pair<Float, Float> target = new Pair<Float, Float>(
+						Vector2 target = new Vector2(
 								net.getTarget().fst.floatValue(),
 								net.getTarget().snd.floatValue());
 
-						Pair<Float, Float> source = new Pair<Float, Float>(
+						Vector2 source = new Vector2(
 								s.startPosition.fst.floatValue(),
 								s.startPosition.snd.floatValue());
 
 
 						// draw to target
-						DrawableLine.draw(source, target, Color.BLACK.cpy()
-								.sub(
-								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
+						if (netIndicator == null) {
+							netIndicator = new DrawableLine(this.viz);
+						}
+						netIndicator.from = source;
+						netIndicator.to = target;
+						netIndicator.setColor(
+								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
+						netIndicator.draw();
 					}
 				}
 			}

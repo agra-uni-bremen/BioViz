@@ -31,7 +31,7 @@ import java.util.*;
 
 public class BioViz implements ApplicationListener {
 	public OrthographicCamera camera;
-	public SpriteBatch batch;
+	public BioVizSpriteBatch batch;
 	
 	/**
 	 * Sets the duration of intermediate animations in ms.
@@ -145,12 +145,13 @@ public class BioViz implements ApplicationListener {
 		float h = Gdx.graphics.getHeight();
 
 		camera = new OrthographicCamera(1, h / w);
-		batch = new SpriteBatch(1000, this.createDefaultShader());
+		batch = new BioVizSpriteBatch(
+				new SpriteBatch(1000, this.createDefaultShader()));
 
 		inputProcessor = new BioVizInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);
 		
-		DrawableLine.singleton = new DrawableLine(this);
+		//DrawableLine.singleton = new DrawableLine(this);
 
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
@@ -191,7 +192,7 @@ public class BioViz implements ApplicationListener {
 			drawable.draw();
 		}
 		
-		DrawableLine.drawNow();
+		//DrawableLine.drawNow();
 
 		messageCenter.render();
 
@@ -547,5 +548,12 @@ public class BioViz implements ApplicationListener {
 		return handle;
 	}
 
+	public void addDrawbale(Drawable d) {
+		this.drawables.add(d);
+	}
+
+	public void removeDrawable(Drawable d) {
+		this.drawables.remove(d);
+	}
 
 }
