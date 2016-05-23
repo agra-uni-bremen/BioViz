@@ -213,11 +213,14 @@ public class DesktopLauncher extends JFrame {
 
 		currentViz.addPickColourListener(new colourPickCallback());
 
+		String iconPath = "";
 		try {
+			iconPath = "/" + currentViz.getApplicationIcon().path();
 			this.setIconImage(
-					ImageIO.read(currentViz.getApplicationIcon().file()));
+					ImageIO.read(getFileFromStream(iconPath)));
 		} catch (final Exception e) {
-			logger.error("Could not set application icon: " + e.getMessage());
+			logger.error("Could not set application icon: " + e.getMessage() +
+					" with path: " + iconPath);
 		}
 
 		pack();
@@ -512,37 +515,7 @@ public class DesktopLauncher extends JFrame {
 				4) be annoyed by Java a lot
 			 */
 			if (!file.exists()) {
-				try {
-					InputStream in = getClass().getResourceAsStream(
-							"/examples/default_grid.bio");
-
-					file = File.createTempFile("default_file_tmp", "bio");
-					file.deleteOnExit();
-
-
-					// manually copying as Java is incredibly bad
-					String read;
-					BufferedReader
-							br = new BufferedReader(new InputStreamReader(in));
-					BufferedWriter w = new BufferedWriter(new FileWriter
-																  (file));
-					while ((read = br.readLine()) != null) {
-						System.out.println(read);
-						w.write(read + "\n");
-					}
-
-					w.close();
-
-
-					// be even more annoyed by java because the following code
-					// does *not* work! (why would it..)
-					java.nio.file.Files.copy(in, file.toPath());
-
-
-				} catch (IOException e) {
-					logger.error("Could not even locate/create default file");
-				}
-
+				file = getFileFromStream("/examples/default_grid.bio");
 			}
 
 
@@ -748,6 +721,50 @@ public class DesktopLauncher extends JFrame {
 
 		allowHotkeys = true;
 		return selectedPath;
+	}
+
+	/**
+	 * Returns a File object for the given path.
+	 * The path must start with a '/' also when it is a local path.
+	 *
+	 * @param fileName the fileName
+	 * @return A File Object if the file exists. Null otherwise.
+	 */
+	public static File getFileFromStream(String fileName) {
+		File file = null;
+		try {
+			InputStream in = DesktopLauncher.class.getResourceAsStream
+					(fileName);
+
+			if(in != null) {
+				file = File.createTempFile(fileName, ".BioViz_tmp");
+				file.deleteOnExit();
+
+				OutputStream fout = new FileOutputStream(file);
+
+				byte[] buffer = new byte[1024];
+
+				int length;
+				//copy the file content in bytes
+				while ((length = in.read(buffer)) > 0){
+
+					fout.write(buffer, 0, length);
+
+				}
+
+
+				fout.close();
+
+				// be even more annoyed by java because the following code
+				// does *not* work! (why would it..)
+				//java.nio.file.Files.copy(in, file.toPath());
+			}
+
+		} catch (IOException e) {
+			logger.error("Could not even locate/create default file");
+		}
+
+		return file;
 	}
 
 
