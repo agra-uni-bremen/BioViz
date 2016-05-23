@@ -144,7 +144,7 @@ public class TextureManager {
 	}
 
 	/**
-	 * Returns the path to the file the provided texture is stored in
+	 * Returns the path to the file the provided texture is stored in.
 	 *
 	 * @param texture
 	 * 		The texture whose corresponding file is requested
