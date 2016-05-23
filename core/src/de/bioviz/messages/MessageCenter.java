@@ -68,6 +68,11 @@ public class MessageCenter {
 	private float textRenderResolutionMinimum = 4f;
 
 	/**
+	 * The alpha value of any rendered text.
+	 */
+	private float defaultTextTransparency = 0.5f;
+
+	/**
 	 * The text rendering resolution.
 	 * In order to avoid artifacts when zooming with text, the text is instead
 	 * redrawn for the given size each time the zoom factor changes.
@@ -270,13 +275,13 @@ public class MessageCenter {
 					else if (this.parent.currentCircuit.getScaleX() < showAt) {
 						float val = this.parent.currentCircuit.getScaleX();
 						val = (val - hideAt) / (showAt - hideAt);
-						targetColor.a = val;
+						targetColor.a = val * getDefaultTextTransparency();
 					}
 					else {
-						targetColor.a = 1;
+						targetColor.a = getDefaultTextTransparency();
 					}
 				} else { 
-					targetColor.a = 1;
+					targetColor.a = getDefaultTextTransparency();
 				}
 
 				font.setColor(targetColor);
@@ -422,5 +427,21 @@ public class MessageCenter {
 
 	public void setScaleMsg(final float scaleMsg) {
 		setmsgTextRenderResolution(scaleMsg);
+	}
+
+	/**
+	 * Retrieves the default text transparency.
+	 * @return the current default text transparency.
+	 */
+	public float getDefaultTextTransparency() {
+		return defaultTextTransparency;
+	}
+
+	/**
+	 * Sets the default text transparency.
+	 * @param defaultTextTransparency the new transparency value.
+	 */
+	public void setDefaultTextTransparency(float defaultTextTransparency) {
+		this.defaultTextTransparency = defaultTextTransparency;
 	}
 }
