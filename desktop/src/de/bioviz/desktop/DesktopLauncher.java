@@ -592,7 +592,7 @@ public class DesktopLauncher extends JFrame {
 	 * Starting point for the application.
 	 *
 	 * @param args
-	 * 		console arguments, currently unused
+	 * 		console arguments, parsed using the {@link Options} class.
 	 */
 	public static void main(final String[] args) {
 		Options opts = new Options();
