@@ -69,14 +69,15 @@ public class PreferencesWindow extends JFrame {
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.LINE_END;
 		JLabel timestepLabel =
-				new JLabel(Float.toString(defaultDurationBetweenSteps/1000f));
+				new JLabel(Float.toString(defaultDurationBetweenSteps
+										  / 1000f));
 		this.add(timestepLabel, c);
 
 
 		c.gridx = 2;
 		c.gridy = 0;
-		c.anchor =GridBagConstraints.LINE_START;
-		this.add(new JLabel("s"),c);
+		c.anchor = GridBagConstraints.LINE_START;
+		this.add(new JLabel("s"), c);
 
 		JSlider animSlider =
 				new JSlider(SwingConstants.HORIZONTAL, minDurationBetweenSteps,
@@ -92,7 +93,6 @@ public class PreferencesWindow extends JFrame {
 								newSpeed);
 					viz.currentCircuit.setAutoDelay(newSpeed);
 					timestepLabel.setText(Float.toString(newSpeed));
-					;
 				});
 
 		c.gridx = 0;
@@ -108,8 +108,6 @@ public class PreferencesWindow extends JFrame {
 		this.add(new JLabel("Animation duration:"), c);
 
 
-
-
 		c.gridx = 1;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.LINE_END;
@@ -121,7 +119,7 @@ public class PreferencesWindow extends JFrame {
 		c.gridx = 2;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.LINE_START;
-		this.add(new JLabel("ms"),c);
+		this.add(new JLabel("ms"), c);
 
 		JSlider dropMovementSpeedSlider =
 				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,
