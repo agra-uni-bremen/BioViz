@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 public class BiochipField {
-	public boolean isSink = false;
-	public boolean isDispenser = false;
 	public final Point pos;
 	private Range blockage;
 	private Detector detector;
@@ -69,20 +67,6 @@ public class BiochipField {
 
 
 	// ############################################################################################################
-	// TODO put Information about sink/dispenser in
-	// if the field is either a sink or a dispenser this field stores the
-	// information from which
-	// field the fluid is removed from or dispensed to
-	Direction direction = null;
-
-	/**
-	 * The fluid ID that is dispensed from this field.
-	 * <p>
-	 * This variable only has a meaning if the field is a dispenser.
-	 */
-	public int fluidID = 0;
-
-
 	/**
 	 * Sets the time, this field is blocked.
 	 *
@@ -173,33 +157,6 @@ public class BiochipField {
 		return act == Actuation.ON;
 	}
 
-
-	public void setSink(final Direction removeTo) {
-		isDispenser = false;
-		isSink = true;
-		fluidID = 0;
-		direction = removeTo;
-	}
-
-	public void setDispenser(final int fluidID, final Direction dispenseFrom) {
-		isSink = false;
-		isDispenser = true;
-		this.fluidID = fluidID;
-		direction = dispenseFrom;
-	}
-
-	public BiochipField(Point pos, int fluidID, Direction dispenseFrom, Biochip
-			parent) {
-		this.pos = pos;
-		setDispenser(fluidID, dispenseFrom);
-		this.parent = parent;
-	}
-
-	public BiochipField(Point pos, Direction removeTo, Biochip parent) {
-		this.pos = pos;
-		setSink(removeTo);
-		this.parent = parent;
-	}
 
 	// end of TODO
 	// ############################################################################################################

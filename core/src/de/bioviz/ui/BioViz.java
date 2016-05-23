@@ -25,10 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Vector;
+import java.util.*;
 
 
 public class BioViz implements ApplicationListener {
@@ -112,6 +109,8 @@ public class BioViz implements ApplicationListener {
 	private Vector<BioVizEvent> saveFileListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> closeFileListeners = new Vector<BioVizEvent>();
 	private Vector<BioVizEvent> pickColorListeners = new Vector<BioVizEvent>();
+	private List<BioVizEvent> nextTabListeners = new ArrayList<>();
+	private List<BioVizEvent> previousTabListeners = new ArrayList<>();
 	static Logger logger = LoggerFactory.getLogger(BioViz.class);
 
 	private boolean loadFileOnUpdate = true;
@@ -456,6 +455,44 @@ public class BioViz implements ApplicationListener {
 		logger.trace("Calling " + this.closeFileListeners.size() +
 				" listeners for picking a colour");
 		for (BioVizEvent listener : this.pickColorListeners) {
+			listener.bioVizEvent();
+		}
+	}
+
+	/**
+	 * Add a listener for tab changes to the next tab.
+	 * @param listener the listener
+	 */
+	public void addNextTabListener(BioVizEvent listener) {
+		nextTabListeners.add(listener);
+	}
+
+	/**
+	 * Call the nextTab listeners.
+	 */
+	void callNextTabListeners() {
+		logger.trace("Calling " + nextTabListeners.size() +
+				" listeners to change to the next tab.");
+		for (BioVizEvent listener : nextTabListeners) {
+			listener.bioVizEvent();
+		}
+	}
+
+	/**
+	 * Add a listener for tab changes to the previous tab.
+	 * @param listener the listener
+	 */
+	public void addPreviousTabListener(BioVizEvent listener) {
+		previousTabListeners.add(listener);
+	}
+
+	/**
+	 * Call the previousTab listeners.
+	 */
+	void callPreviousTabListeners() {
+		logger.trace("Calling " + previousTabListeners.size() +
+				" listeners to change to the next tab.");
+		for (BioVizEvent listener : previousTabListeners) {
 			listener.bioVizEvent();
 		}
 	}
