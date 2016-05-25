@@ -1,31 +1,23 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-
 import de.bioviz.messages.MessageCenter;
 import de.bioviz.messages.MsgAppender;
+import de.bioviz.parser.BioParser;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Droplet;
-import de.bioviz.parser.BioParser;
 import de.bioviz.svg.SVGManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.*;
 
 
