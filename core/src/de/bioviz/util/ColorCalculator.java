@@ -37,8 +37,6 @@ public final class ColorCalculator {
 		result.g = vals[1];
 		result.b = vals[2];
 
-		System.out.println("calCol: " + result.toString());
-
 		return result;
 	}
 
