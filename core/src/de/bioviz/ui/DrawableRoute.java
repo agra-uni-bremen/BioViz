@@ -187,8 +187,8 @@ public class DrawableRoute extends DrawableSprite {
 					droplet.droplet.getFirstPosition().fst.floatValue(),
 					droplet.droplet.getFirstPosition().snd.floatValue());
 			Vector2 current = new Vector2
-					(droplet.droplet.smoothX,
-					 droplet.droplet.smoothY);
+					(droplet.smoothX,
+					 droplet.smoothY);
 
 			// draw to target
 			toTarget.from = current;

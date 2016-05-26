@@ -3,6 +3,7 @@ package de.bioviz.ui;
 import de.bioviz.structures.Droplet;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
@@ -17,13 +18,58 @@ public class DrawableDroplet extends DrawableSprite {
 
 	static Logger logger = LoggerFactory.getLogger(DrawableDroplet.class);
 
+	private static Random randnum = null;
+
+	/**
+	 * Time needed for a droplet to move a distance of one field in ms.
+	 */
+	private static int transitionDuration = 500;
+
 	public Droplet droplet;
 
 	public DrawableRoute route;
 
-	private static Random randnum = null;
-
 	public DrawableCircuit parentCircuit;
+
+	public float smoothX;
+	public float smoothY;
+	/**
+	 * The next x position the droplet moves to.
+	 */
+	private float targetX;
+
+	/**
+	 * The next y position the droplet moves to.
+	 */
+	private float targetY;
+
+
+	/**
+	 * The droplet's current x position.
+	 */
+	private float originX;
+
+	/**
+	 * The droplet's current y position.
+	 */
+	private float originY;
+
+	/**
+	 * Used for tracking whether updateCoords() ist called for the first time.
+	 */
+	private boolean firstUpdate = true;
+
+	/**
+	 * The time step in which the movement of the droplet begins.
+	 */
+	private long movementTransitionStartTime = 0;
+
+	/**
+	 * The time step in which the movement of the droplet ends.
+	 */
+	private long movementTransitionEndTime = 0;
+
+
 
 	private Color dropletColor;
 
@@ -44,6 +90,84 @@ public class DrawableDroplet extends DrawableSprite {
 		route = new DrawableRoute(this);
 		this.setZ(DisplayValues.DEFAULT_DROPLET_DEPTH);
 	}
+
+	public static int getTransitionDuration() {
+		return transitionDuration;
+	}
+
+	public static void setTransitionDuration(final int transitionDuration) {
+		DrawableDroplet.transitionDuration = transitionDuration;
+	}
+
+	public void updateCoords() {
+		if (firstUpdate) {
+			smoothX = getTargetX();
+			smoothY = getTargetY();
+			originX = getTargetX();
+			originY = getTargetY();
+			firstUpdate = false;
+		}
+
+		float totalProgress = 1;
+		if (movementTransitionStartTime != movementTransitionEndTime) {
+			float timeDiff = (float) (movementTransitionEndTime -
+									  movementTransitionStartTime);
+			float transitionProgress =
+					Math.max(0, Math.min(1, (float) (
+							new Date().getTime() - movementTransitionStartTime)
+											/ timeDiff));
+			totalProgress =
+					(float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
+		}
+
+		smoothX = this.originX * (1 - totalProgress) +
+				  this.targetX * totalProgress;
+		smoothY = this.originY * (1 - totalProgress) +
+				  this.targetY * totalProgress;
+	}
+
+	/**
+	 * Returns that target x position.
+	 *
+	 * @return The target x position
+	 */
+	public float getTargetX() {
+		return targetX;
+	}
+
+
+	/**
+	 * Returns that target y position.
+	 *
+	 * @return The target y position
+	 */
+	public float getTargetY() {
+		return targetY;
+	}
+
+	/**
+	 * Sets the target position of this droplet.
+	 *
+	 * The target position is the position the droplet will move to in the next
+	 * step. The actual movements takes place when the updateCoords() method is
+	 * called.
+	 *
+	 * @param x x position of the target cell.
+	 * @param y y position of the target cell.
+	 */
+	public void setTargetPosition(final float x, final float y) {
+		if (this.targetX != x || this.targetY != y) {
+			originX = this.smoothX;
+			originY = this.smoothY;
+			this.targetX = x;
+			this.targetY = y;
+			Date d = new Date();
+			this.movementTransitionStartTime = d.getTime();
+			this.movementTransitionEndTime =
+					d.getTime() + transitionDuration;
+		}
+	}
+
 
 	/**
 	 * Computes the droplet's color.
@@ -150,15 +274,15 @@ public class DrawableDroplet extends DrawableSprite {
 		this.setColor(getDisplayColor());
 
 		if (p != null) {
-			droplet.setTargetPosition(p.fst, p.snd);
-			droplet.update();
+			this.setTargetPosition(p.fst, p.snd);
+			this.updateCoords();
 			route.draw();
 
 			if (isVisible() && viz.currentCircuit.getDisplayOptions().
 					getOption(BDisplayOptions.Droplets)) {
 
-				float xCoord = circ.xCoordOnScreen(droplet.smoothX);
-				float yCoord = circ.yCoordOnScreen(droplet.smoothY);
+				float xCoord = circ.xCoordOnScreen(smoothX);
+				float yCoord = circ.yCoordOnScreen(smoothY);
 
 				this.setScaleX(circ.getSmoothScale());
 				this.setScaleY(circ.getSmoothScale());
@@ -172,7 +296,7 @@ public class DrawableDroplet extends DrawableSprite {
 					this.setScaleY(32f);
 
 					xCoord = Gdx.graphics.getWidth() / 2f
-							 - this.getScaleX() * (invisibleIndex + 1);
+								 - this.getScaleX() * (invisibleIndex + 1);
 					yCoord = Gdx.graphics.getHeight() / 2f - this.getScaleY();
 				}
 
@@ -202,7 +326,7 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 	}
 
-	public void setDropletColor(Color c) {
+	public void setDropletColor(final Color c) {
 		this.dropletColor = c;
 	}
 }

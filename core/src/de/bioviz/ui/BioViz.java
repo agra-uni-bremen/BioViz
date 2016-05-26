@@ -29,7 +29,7 @@ public class BioViz implements ApplicationListener {
 	 * Sets the duration of intermediate animations in ms.
 	 */
 	public static void setAnimationDuration(int value) {
-		Droplet.setTransitionDuration(value);
+		DrawableDroplet.setTransitionDuration(value);
 		DrawableSprite.setColorTransitionDuration(value);
 	}
 
@@ -38,7 +38,7 @@ public class BioViz implements ApplicationListener {
 	 * @return Duration of intermediate animations in ms.
 	 */
 	public static int getAnimationDuration() {
-		return Droplet.getTransitionDuration();
+		return DrawableDroplet.getTransitionDuration();
 	}
 
 
