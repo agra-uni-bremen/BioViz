@@ -16,9 +16,15 @@ import org.slf4j.LoggerFactory;
 
 public class DrawableDroplet extends DrawableSprite {
 
+	/**
+	 * Internal logger.
+	 */
 	private static Logger logger =
 			LoggerFactory.getLogger(DrawableDroplet.class);
 
+	/**
+	 * Random number generator used to determine the droplet's color.
+	 */
 	private static Random randnum = null;
 
 	/**
@@ -85,6 +91,11 @@ public class DrawableDroplet extends DrawableSprite {
 	 */
 	private Color dropletColor;
 
+	/**
+	 *
+	 * @param droplet The 'data' droplet that is to be visualized.
+	 * @param parent The circuit the droplet belongs to.
+	 */
 	public DrawableDroplet(final Droplet droplet,
 						   final DrawableCircuit parent) {
 		super(TextureE.Droplet, parent.getParent());
@@ -126,10 +137,18 @@ public class DrawableDroplet extends DrawableSprite {
 		originY = p.snd;
 	}
 
+	/**
+	 * Getter for the animation duration of the droplet movement.
+	 * @return The animation duration of the droplet movement..
+	 */
 	public static int getTransitionDuration() {
 		return transitionDuration;
 	}
 
+	/**
+	 * Sets the duration of the droplet movement animation.
+	 * @param transitionDuration The new duration for the movement.
+	 */
 	public static void setTransitionDuration(final int transitionDuration) {
 		DrawableDroplet.transitionDuration = transitionDuration;
 	}
@@ -151,25 +170,6 @@ public class DrawableDroplet extends DrawableSprite {
 				  this.targetX * totalProgress;
 		smoothY = this.originY * (1 - totalProgress) +
 				  this.targetY * totalProgress;
-	}
-
-	/**
-	 * Returns that target x position.
-	 *
-	 * @return The target x position
-	 */
-	public float getTargetX() {
-		return targetX;
-	}
-
-
-	/**
-	 * Returns that target y position.
-	 *
-	 * @return The target y position
-	 */
-	public float getTargetY() {
-		return targetY;
 	}
 
 	/**
@@ -280,6 +280,17 @@ public class DrawableDroplet extends DrawableSprite {
 	}
 
 	@Override
+	/**
+	 * Draws the droplet.
+	 *
+	 * It performs the following necessary computations
+	 * - determine the position depending on the current time
+	 *   depending on the 'hidden' status of the droplet, it might get updated
+	 *   to reflect this fact.
+	 * - determine the color of the droplet
+	 * - determine the text that is displayed on top of the droplet
+	 *   (e.g. ID or fluid type)
+	 */
 	public void draw() {
 
 		DrawableCircuit circ = parentCircuit;
@@ -346,6 +357,9 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 	}
 
+	/**
+	 * Toggles the visibility of the droplet.
+	 */
 	public void toggleGridVisibility() {
 		if (parentCircuit.isHidden(this)) {
 			parentCircuit.unHideDroplet(this);
@@ -355,6 +369,10 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 	}
 
+	/**
+	 * Sets the droplet's color.
+	 * @param c New color of the droplet.
+	 */
 	public void setDropletColor(final Color c) {
 		this.dropletColor = c;
 	}
