@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 
 public class DrawableDroplet extends DrawableSprite {
 
-	static Logger logger = LoggerFactory.getLogger(DrawableDroplet.class);
+	private static Logger logger =
+			LoggerFactory.getLogger(DrawableDroplet.class);
 
 	private static Random randnum = null;
 
@@ -25,10 +26,23 @@ public class DrawableDroplet extends DrawableSprite {
 	 */
 	private static int transitionDuration = 500;
 
+	/**
+	 * The droplet that is to be drawn.
+	 * <p>
+	 * This variable contains the 'data' of the droplet.
+	 */
 	public Droplet droplet;
 
+
+	/**
+	 * The route of the droplet.
+	 */
 	public DrawableRoute route;
 
+
+	/**
+	 * The circuit the droplet belongs to.
+	 */
 	public DrawableCircuit parentCircuit;
 
 	public float smoothX;
@@ -54,10 +68,6 @@ public class DrawableDroplet extends DrawableSprite {
 	 */
 	private float originY;
 
-	/**
-	 * Used for tracking whether updateCoords() ist called for the first time.
-	 */
-	private boolean firstUpdate = true;
 
 	/**
 	 * The time step in which the movement of the droplet begins.
@@ -70,25 +80,50 @@ public class DrawableDroplet extends DrawableSprite {
 	private long movementTransitionEndTime = 0;
 
 
-
+	/**
+	 * The droplet's color.
+	 */
 	private Color dropletColor;
 
-	public DrawableDroplet(Droplet droplet, DrawableCircuit parent) {
+	public DrawableDroplet(final Droplet droplet,
+						   final DrawableCircuit parent) {
 		super(TextureE.Droplet, parent.getParent());
+
+
 		this.parentCircuit = parent;
+		this.droplet = droplet;
+
+
+		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
+		super.setZ(DisplayValues.DEFAULT_DROPLET_DEPTH);
+
+
+
+		/*
+		Compute the droplet's color
+		 */
 		if (randnum == null) {
 			randnum = new Random();
 		}
-		this.droplet = droplet;
-		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
 		randnum.setSeed(droplet.getID());
 		super.setColor(new Color(randnum.nextInt()));
 		Color c = super.getColor();
 		c.a = 1f;
 		super.setColor(c);
 		this.dropletColor = c;
+		///////////////////////////
+
+
 		route = new DrawableRoute(this);
-		this.setZ(DisplayValues.DEFAULT_DROPLET_DEPTH);
+
+		/*
+		Set the initial coordinates for the droplet
+		 */
+		Point p = droplet.getFirstPosition();
+		smoothX = p.fst;
+		smoothY = p.snd;
+		originX = p.fst;
+		originY = p.snd;
 	}
 
 	public static int getTransitionDuration() {
@@ -100,14 +135,6 @@ public class DrawableDroplet extends DrawableSprite {
 	}
 
 	public void updateCoords() {
-		if (firstUpdate) {
-			smoothX = getTargetX();
-			smoothY = getTargetY();
-			originX = getTargetX();
-			originY = getTargetY();
-			firstUpdate = false;
-		}
-
 		float totalProgress = 1;
 		if (movementTransitionStartTime != movementTransitionEndTime) {
 			float timeDiff = (float) (movementTransitionEndTime -
@@ -147,13 +174,15 @@ public class DrawableDroplet extends DrawableSprite {
 
 	/**
 	 * Sets the target position of this droplet.
-	 *
+	 * <p>
 	 * The target position is the position the droplet will move to in the next
 	 * step. The actual movements takes place when the updateCoords() method is
 	 * called.
 	 *
-	 * @param x x position of the target cell.
-	 * @param y y position of the target cell.
+	 * @param x
+	 * 		x position of the target cell.
+	 * @param y
+	 * 		y position of the target cell.
 	 */
 	public void setTargetPosition(final float x, final float y) {
 		if (this.targetX != x || this.targetY != y) {
@@ -296,7 +325,7 @@ public class DrawableDroplet extends DrawableSprite {
 					this.setScaleY(32f);
 
 					xCoord = Gdx.graphics.getWidth() / 2f
-								 - this.getScaleX() * (invisibleIndex + 1);
+							 - this.getScaleX() * (invisibleIndex + 1);
 					yCoord = Gdx.graphics.getHeight() / 2f - this.getScaleY();
 				}
 
