@@ -32,13 +32,13 @@ public class MessageCenter {
 	/**
 	 * Default size for the messages.
 	 */
-	private static final float defaultMsgSize = 8f;
+	private static final float DEFAULT_MSG_SIZE = 8f;
 
 
 	/**
 	 * Default size for the HUD messages.
 	 */
-	private static final float defaultHUDSize = 16f;
+	private static final float DEFAULT_HUD_SIZE = 16f;
 
 	/**
 	 * The central logging device for this class.
@@ -403,11 +403,11 @@ public class MessageCenter {
 	}
 
 	public void resetMsgScale() {
-		setmsgTextRenderResolution(defaultMsgSize);
+		setmsgTextRenderResolution(DEFAULT_MSG_SIZE);
 	}
 
 	public void resetHUDScale() {
-		setTextRenderResolution(defaultHUDSize);
+		setTextRenderResolution(DEFAULT_HUD_SIZE);
 	}
 
 	public void incScales() {
