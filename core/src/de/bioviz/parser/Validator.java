@@ -1,11 +1,26 @@
 package de.bioviz.parser;
 
-import de.bioviz.structures.*;
+
+
+import de.bioviz.structures.Biochip;
+import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.Pin;
+import de.bioviz.structures.Actuation;
+import de.bioviz.structures.ActuationVector;
+import de.bioviz.structures.Detector;
+import de.bioviz.structures.Direction;
+import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Point;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -18,7 +33,7 @@ import java.util.stream.Collectors;
  *
  * @author Oliver Keszocze
  */
-public class Validator {
+public final class Validator {
 	/**
 	 * Logger used for debugging purposes.
 	 */
@@ -26,7 +41,7 @@ public class Validator {
 
 
 	/**
-	 * Private constructor to prevent instantiation of this class
+	 * Private constructor to prevent instantiation of this class.
 	 */
 	private Validator() {
 
