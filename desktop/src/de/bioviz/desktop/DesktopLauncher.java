@@ -586,12 +586,12 @@ public class DesktopLauncher extends JFrame {
 			System.exit(0);
 		}
 		if (opts.version) {
-			System.out.println("This is BioViz version " + BioVizInfo.version);
+			System.out.println("This is BioViz version " + BioVizInfo.VERSION);
 		}
 
 		if (opts.authors) {
 			System.out.println("BioViz is written by:");
-			for (String author : BioVizInfo.authors) {
+			for (String author : BioVizInfo.authors()) {
 				System.out.println("\t" + author);
 			}
 		}

@@ -32,7 +32,7 @@ public class HUDMessage extends MessageBase {
 	 * @param x The x-position for the message
 	 * @param y The y-position for the message
 	 */
-	public HUDMessage(String message, float x, float y) {
+	public HUDMessage(final String message, final float x, final float y) {
 		super(message);
 		this.x = x;
 		this.y = y;

@@ -1,8 +1,5 @@
 package de.bioviz.structures;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -11,21 +8,22 @@ import java.util.Date;
  * This includes basic facts such as a unique ID as well as information about
  * the movement on the chip.
  *
- * @author Oliver Keszocze
+ * @author Jannis Stoppe, Oliver Keszocze
  */
 public class Droplet {
-
 
 	/**
 	 * Time needed for a droplet to move a distance of one field in ms.
 	 */
-	public static int movementTransitionDuration = 500;
-	static Logger logger = LoggerFactory.getLogger(Droplet.class);
+	private static int transitionDuration = 500;
 
 	public float smoothX;
 	public float smoothY;
 
 
+	/**
+	 * Used for tracking whether update() ist called for the first time.
+	 */
 	private boolean firstUpdate = true;
 
 
@@ -45,12 +43,13 @@ public class Droplet {
 	 * variable.
 	 * <p>
 	 * Combined with the length of the vector, this also implicitly defines
-	 * when the droplet vanishes from the chip.
+	 * when
+	 * the droplet vanishes from the chip.
 	 */
 	private ArrayList<Point> positions = new ArrayList<>();
 
 	/**
-	 * The unique ID of the droplet
+	 * The unique ID of the droplet.
 	 */
 	private int id = 0;
 
@@ -62,12 +61,36 @@ public class Droplet {
 	 */
 	private int spawnTime = 1;
 
+	/**
+	 * The next x position the droplet moves to.
+	 */
 	private float targetX;
+
+	/**
+	 * The next y position the droplet moves to.
+	 */
 	private float targetY;
+
+
+	/**
+	 * The droplet's current x position.
+	 */
 	private float originX;
+
+	/**
+	 * The droplet's current y position.
+	 */
 	private float originY;
 
+
+	/**
+	 * The time step in which the movement of the droplet begins.
+	 */
 	private long movementTransitionStartTime = 0;
+
+	/**
+	 * The time step in which the movement of the droplet ends.
+	 */
 	private long movementTransitionEndTime = 0;
 
 
@@ -104,9 +127,18 @@ public class Droplet {
 		this.spawnTime = spawnTime;
 	}
 
+	public static int getTransitionDuration() {
+		return transitionDuration;
+	}
+
+	public static void setTransitionDuration(final int transitionDuration) {
+		Droplet.transitionDuration = transitionDuration;
+	}
+
 
 	/**
 	 * Checks whether this droplet belongs to a net.
+	 *
 	 * @return true if the droplet belongs to a net; false otherwise.
 	 */
 	public boolean hasNet() {
@@ -142,13 +174,6 @@ public class Droplet {
 	 */
 	public ArrayList<Point> getPositions() {
 		return positions;
-	}
-
-	/**
-	 * @return Length of the route of this droplet.
-	 */
-	public int getRouteLength() {
-		return positions.size();
 	}
 
 
@@ -211,8 +236,7 @@ public class Droplet {
 	/**
 	 * @return First position of the droplet
 	 * @throws IndexOutOfBoundsException
-	 * 	if list of positions is empty
-	 *
+	 * 		if list of positions is empty
 	 */
 	public Point getFirstPosition() {
 		return positions.get(0);
@@ -225,7 +249,7 @@ public class Droplet {
 	 * 		if list of positions is empty
 	 */
 	public Point getLastPosition() {
-		return positions.get(positions.size()-1);
+		return positions.get(positions.size() - 1);
 	}
 
 
@@ -265,11 +289,12 @@ public class Droplet {
 
 		float totalProgress = 1;
 		if (movementTransitionStartTime != movementTransitionEndTime) {
-			float transitionProgress = Math.max(0, Math.min(1, (float) (
-					new Date().getTime() - movementTransitionStartTime) /
-															   (float) (
-																	   movementTransitionEndTime -
-																	   movementTransitionStartTime)));
+			float timeDiff = (float) (movementTransitionEndTime -
+									  movementTransitionStartTime);
+			float transitionProgress =
+					Math.max(0, Math.min(1, (float) (
+							new Date().getTime() - movementTransitionStartTime)
+											/ timeDiff));
 			totalProgress =
 					(float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
 		}
@@ -294,6 +319,11 @@ public class Droplet {
 	}
 
 	/**
+	 * Compares an object to this Droplet.
+	 *
+	 * The object is equal to this Droplet instance if it is an instance of the
+	 * droplet class and has the same ID.
+	 *
 	 * @param o
 	 * 		The object to compare against
 	 * @return true if both objects reference the same droplet
@@ -342,25 +372,53 @@ public class Droplet {
 		return this.id;
 	}
 
+	/**
+	 * Returns that target x position.
+	 *
+	 * @return The target x position
+	 */
 	public float getTargetX() {
 		return targetX;
 	}
 
+
+	/**
+	 * Returns that target y position.
+	 *
+	 * @return The target y position
+	 */
 	public float getTargetY() {
 		return targetY;
 	}
 
-	public void setTargetPosition(final float targetX, final float targetY) {
-		if (this.targetX != targetX || this.targetY != targetY) {
+
+	/**
+	 * Sets the target position of this droplet.
+	 *
+	 * The target position is the position the droplet will move to in the next
+	 * step. The actual movements takes place when the update() method is
+	 * called.
+	 *
+	 * @param x x position of the target cell.
+	 * @param y y position of the target cell.
+	 */
+	public void setTargetPosition(final float x, final float y) {
+		if (this.targetX != x || this.targetY != y) {
 			originX = this.smoothX;
 			originY = this.smoothY;
-			this.targetX = targetX;
-			this.targetY = targetY;
+			this.targetX = x;
+			this.targetY = y;
 			Date d = new Date();
 			this.movementTransitionStartTime = d.getTime();
 			this.movementTransitionEndTime =
-					d.getTime() + movementTransitionDuration;
+					d.getTime() + transitionDuration;
 		}
 	}
 
+	/**
+	 * @return Length of the route of this droplet.
+	 */
+	int getRouteLength() {
+		return positions.size();
+	}
 }

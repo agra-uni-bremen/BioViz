@@ -21,7 +21,6 @@ import de.bioviz.parser.generated.Bio.MixerIDContext;
 import de.bioviz.parser.generated.Bio.TimeRangeContext;
 import de.bioviz.parser.generated.BioBaseListener;
 import de.bioviz.structures.*;
-import de.bioviz.ui.BioViz;
 import de.bioviz.util.Pair;
 
 import org.antlr.v4.runtime.misc.NotNull;
@@ -59,7 +58,6 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 
-
 	private Biochip chip;
 
 	private ArrayList<String> errors;
@@ -72,23 +70,23 @@ public class BioParserListener extends BioBaseListener {
 		return chip;
 	}
 
-	private int getTimeConstraint(TimeConstraintContext ctx) {
+	private int getTimeConstraint(final TimeConstraintContext ctx) {
 		return Integer.parseInt(ctx.Integer().getText());
 	}
 
-	private Point getPosition(PositionContext ctx) {
+	private Point getPosition(final PositionContext ctx) {
 		Integer x = Integer.parseInt(ctx.xpos().getText());
 		Integer y = Integer.parseInt(ctx.ypos().getText());
 		return new Point(x, y);
 	}
 
-	private int getDropletID(DropletIDContext ctx) {
+	private int getDropletID(final DropletIDContext ctx) {
 		return Integer.parseInt(ctx.Integer().getText());
 	}
 
 
 	// TODO remove this code dublicity!
-	private int getFluidID(FluidIDContext ctx) {
+	private int getFluidID(final FluidIDContext ctx) {
 		if (ctx == null) {
 			return 0;
 		}
@@ -97,7 +95,7 @@ public class BioParserListener extends BioBaseListener {
 		}
 	}
 
-	private int getPinID(PinIDContext ctx) {
+	private int getPinID(final PinIDContext ctx) {
 		if (ctx == null) {
 			return 0;
 		}
@@ -106,7 +104,7 @@ public class BioParserListener extends BioBaseListener {
 		}
 	}
 
-	private int getMixerID(MixerIDContext ctx) {
+	private int getMixerID(final MixerIDContext ctx) {
 		if (ctx == null) {
 			return 0;
 		}
@@ -115,7 +113,7 @@ public class BioParserListener extends BioBaseListener {
 		}
 	}
 
-	private Source getSource(SourceContext ctx) {
+	private Source getSource(final SourceContext ctx) {
 		Point pos = getPosition(ctx.position());
 		int id = getDropletID(ctx.dropletID());
 		if (ctx.timeConstraint() != null) {
@@ -129,7 +127,7 @@ public class BioParserListener extends BioBaseListener {
 
 
 	@Override
-	public void enterDispenser(@NotNull DispenserContext ctx) {
+	public void enterDispenser(@NotNull final DispenserContext ctx) {
 		int fluidID = getFluidID(ctx.fluidID());
 
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
@@ -145,17 +143,17 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Nullable
-	private Direction getDirection(String dir) {
-		if (dir.equals("N") || dir.equals("U")) {
+	private Direction getDirection(final String dir) {
+		if ("N".equals(dir) || "U".equals(dir)) {
 			return Direction.NORTH;
 		}
-		if (dir.equals("E") || dir.equals("R")) {
+		if ("E".equals(dir) || "R".equals(dir)) {
 			return Direction.EAST;
 		}
-		if (dir.equals("S") || dir.equals("D")) {
+		if ("S".equals(dir) || "D".equals(dir)) {
 			return Direction.SOUTH;
 		}
-		if (dir.equals("W") || dir.equals("L")) {
+		if ("W".equals(dir) || "L".equals(dir)) {
 			return Direction.WEST;
 		}
 
@@ -163,7 +161,7 @@ public class BioParserListener extends BioBaseListener {
 		return null;
 	}
 
-	private Pair<Point, Direction> getIOPort(Bio.IoportContext ctx) {
+	private Pair<Point, Direction> getIOPort(final Bio.IoportContext ctx) {
 		Point pos = getPosition(ctx.position());
 		Direction dir = getDirection(ctx.Direction().getText());
 		if (dir == null) {
@@ -173,23 +171,23 @@ public class BioParserListener extends BioBaseListener {
 		return new Pair<Point, Direction>(pos, dir);
 	}
 
-	private void updateMaxDimension(Point p) {
+	private void updateMaxDimension(final Point p) {
 		maxX = Math.max(p.fst + 1, maxX);
 		maxY = Math.max(p.snd + 1, maxY);
 	}
 
-	private void updateMaxDimension(Point p1, Point p2) {
+	private void updateMaxDimension(final Point p1, final Point p2) {
 		updateMaxDimension(p1);
 		updateMaxDimension(p2);
 	}
 
 	@Override
-	public void enterGrid(Bio.GridContext ctx) {
+	public void enterGrid(final Bio.GridContext ctx) {
 		++nGrids;
 	}
 
 	@Override
-	public void enterSink(@NotNull Bio.SinkContext ctx) {
+	public void enterSink(@NotNull final Bio.SinkContext ctx) {
 		Pair<Point, Direction> sinkDef = getIOPort(ctx.ioport());
 		if (sinkDef != null) {
 			updateMaxDimension(sinkDef.fst);
@@ -202,7 +200,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterAssignment(@NotNull Bio.AssignmentContext ctx) {
+	public void enterAssignment(@NotNull final Bio.AssignmentContext ctx) {
 		Point pos = getPosition(ctx.position());
 		int pinID = getPinID(ctx.pinID());
 
@@ -215,7 +213,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterDetector(@NotNull Bio.DetectorContext ctx) {
+	public void enterDetector(@NotNull final Bio.DetectorContext ctx) {
 		Point pos = getPosition(ctx.position());
 		int duration = 0;
 		int fluidType = 0;
@@ -232,7 +230,7 @@ public class BioParserListener extends BioBaseListener {
 
 
 	@Override
-	public void enterDropToFluid(@NotNull Bio.DropToFluidContext ctx) {
+	public void enterDropToFluid(@NotNull final Bio.DropToFluidContext ctx) {
 		int dropID = getDropletID(ctx.dropletID());
 		int fluidID = getFluidID(ctx.fluidID());
 		logger.debug("Adding droplet ID to fluid ID mapping: {} -> {}", dropID,
@@ -241,7 +239,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterNet(@NotNull Bio.NetContext ctx) {
+	public void enterNet(@NotNull final Bio.NetContext ctx) {
 		Point target = getPosition(ctx.target().position());
 
 		ArrayList<Source> sources = new ArrayList<Source>();
@@ -257,7 +255,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterBlockage(@NotNull BlockageContext ctx) {
+	public void enterBlockage(@NotNull final BlockageContext ctx) {
 		Point p1 = getPosition((PositionContext) ctx.getChild(0));
 		Point p2 = getPosition((PositionContext) ctx.getChild(1));
 		Rectangle rect = new Rectangle(p1, p2);
@@ -268,7 +266,7 @@ public class BioParserListener extends BioBaseListener {
 		blockages.add(new Pair<Rectangle, Range>(rect, timing));
 	}
 
-	private Range getTiming(TimingContext ctx) {
+	private Range getTiming(final TimingContext ctx) {
 		if (ctx == null) {
 			return new Range(Range.DONTCARE, Range.DONTCARE);
 		}
@@ -289,7 +287,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterGridblock(GridblockContext ctx) {
+	public void enterGridblock(final GridblockContext ctx) {
 
 
 		Point p1 = getPosition((PositionContext) ctx.getChild(0));
@@ -303,7 +301,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterFluiddef(@NotNull FluiddefContext ctx) {
+	public void enterFluiddef(@NotNull final FluiddefContext ctx) {
 		int fluidID = Integer.parseInt(ctx.fluidID().getText());
 		String fluid = ctx.Identifier().getText();
 		logger.debug("Adding fluid identifier: {} -> {}", fluidID, fluid);
@@ -312,7 +310,7 @@ public class BioParserListener extends BioBaseListener {
 
 
 	@Override
-	public void enterPinActuation(@NotNull PinActuationContext ctx) {
+	public void enterPinActuation(@NotNull final PinActuationContext ctx) {
 		int pinID = getPinID(ctx.pinID());
 		ActuationVector actVec =
 				new ActuationVector(ctx.ActuationVector().getText());
@@ -321,7 +319,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterCellActuation(@NotNull CellActuationContext ctx) {
+	public void enterCellActuation(@NotNull final CellActuationContext ctx) {
 		Point pos = getPosition(ctx.position());
 		ActuationVector actVec =
 				new ActuationVector(ctx.ActuationVector().getText());
@@ -329,7 +327,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterRoute(RouteContext ctx) {
+	public void enterRoute(final RouteContext ctx) {
 		int dropletID = Integer.parseInt(ctx.dropletID().getText());
 		int spawnTime = 1;
 		if (ctx.timeConstraint() != null) {
@@ -348,7 +346,7 @@ public class BioParserListener extends BioBaseListener {
 
 	}
 
-	Range getTimeRange(TimeRangeContext ctx) {
+	Range getTimeRange(final TimeRangeContext ctx) {
 		Integer fst = Integer.parseInt(ctx.Integer(0).getText());
 		Integer snd = Integer.parseInt(ctx.Integer(1).getText());
 		logger.debug("Time range from {} to {}", ctx.Integer(0),
@@ -358,7 +356,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterMixer(@NotNull Bio.MixerContext ctx) {
+	public void enterMixer(@NotNull final Bio.MixerContext ctx) {
 
 		int id = getMixerID(ctx.mixerID());
 		Rectangle rect = new Rectangle(getPosition(ctx.position(0)),
@@ -371,7 +369,7 @@ public class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void exitBio(BioContext ctx) {
+	public void exitBio(final BioContext ctx) {
 
 		chip = new Biochip();
 		errors = new ArrayList<String>();
@@ -404,7 +402,8 @@ public class BioParserListener extends BioBaseListener {
 				int dropID = src.dropletID;
 
 				/*
-				kind of weird code to set the net of a droplet. But this happens
+				kind of weird code to set the net of a droplet. But this
+				happens
 				when the Java people think that they have a clever idea for
 				'stream' when normal people would simply directly operate on
 				lists, maps etc.
@@ -413,8 +412,8 @@ public class BioParserListener extends BioBaseListener {
 						it -> it.getID() == dropID).findFirst();
 				drop.ifPresent(it -> it.setNet(net));
 
-				chip.getFieldAt(target).target_ids.add(dropID);
-				chip.getFieldAt(src.startPosition).source_ids.add(dropID);
+				chip.getFieldAt(target).targetIDs.add(dropID);
+				chip.getFieldAt(src.startPosition).sourceIDs.add(dropID);
 			});
 		});
 
@@ -447,7 +446,7 @@ public class BioParserListener extends BioBaseListener {
 
 		});
 
-		for (Pair<Rectangle, Range> b : blockages) {
+		for (final Pair<Rectangle, Range> b : blockages) {
 			Rectangle rect = b.fst;
 			Range rng = b.snd;
 			rect.positions().forEach(
@@ -499,9 +498,10 @@ public class BioParserListener extends BioBaseListener {
 			});
 		});
 
-		Set<FluidicConstraintViolation> badFields = chip.getAdjacentActivations();
+		Set<FluidicConstraintViolation> badFields =
+				chip.getAdjacentActivations();
 
-		for (FluidicConstraintViolation violation: badFields) {
+		for (final FluidicConstraintViolation violation : badFields) {
 			errors.add(violation.toString());
 		}
 

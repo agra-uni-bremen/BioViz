@@ -23,8 +23,42 @@ import java.util.Vector;
  * @author Jannis Stoppe, Oliver Keszocze
  */
 public class MessageCenter {
-	
 
+	/**
+	 * The maximal amount of messages that are displayed at once.
+	 */
+	public static final int MAX_MESSAGES_IN_UI = 32;
+
+	/**
+	 * Default size for the messages.
+	 */
+	private static final float DEFAULT_MSG_SIZE = 8f;
+
+
+	/**
+	 * Default size for the HUD messages.
+	 */
+	private static final float DEFAULT_HUD_SIZE = 16f;
+
+	/**
+	 * The central logging device for this class.
+	 */
+	private static Logger logger = LoggerFactory.getLogger(MessageCenter
+																   .class);
+
+	/**
+	 * Whether messages are to be displayed.
+	 */
+	public boolean hidden = false;
+
+	/**
+	 * The parent visualization.
+	 */
+	BioViz parent;
+
+	/**
+	 * The list of messages.
+	 */
 	private Vector<Message> messages;
 
 	/**
@@ -39,26 +73,15 @@ public class MessageCenter {
 	private BitmapFont messageFont;
 
 	/**
-	 * Whether messages are to be displayed.
-	 */
-	public boolean hidden = false;
-
-
-	/**
-	 * The maximal amount of messages that are displayed at once.
-	 */
-	public static final int MAX_MESSAGES_IN_UI = 32;
-
-	/**
 	 * The step width at which the scale is increased.
 	 */
 	private final float SCALEINCSTEP = 2f;
 
 	/**
-	 * The text rendering resolution.
-	 * In order to avoid artifacts when zooming with text, the text is instead
-	 * redrawn for the given size each time the zoom factor changes.
-	 * This value is the current text size for HUD messages.
+	 * The text rendering resolution. In order to avoid artifacts when zooming
+	 * with text, the text is instead redrawn for the given size each time the
+	 * zoom factor changes. This value is the current text size for HUD
+	 * messages.
 	 */
 	private float textRenderResolution = 16;
 
@@ -68,33 +91,10 @@ public class MessageCenter {
 	private float textRenderResolutionMinimum = 4f;
 
 	/**
-	 * The text rendering resolution.
-	 * In order to avoid artifacts when zooming with text, the text is instead
-	 * redrawn for the given size each time the zoom factor changes.
-	 * This value is the current text size for HUD messages.
-	 */
-	public float getTextRenderResolution() {return textRenderResolution;}
-
-	/**
-	 * Sets the resolution at which the HUD messages should be rendered and
-	 * resets the fontInvalidated flag to toggle a recalculation of the text
-	 * graphics before the next frame.
-	 * @param value the new text resolution.
-	 */
-	public void setTextRenderResolution(float value) {
-		this.textRenderResolution = Math.max(
-				textRenderResolutionMinimum,
-				value);
-		fontInvalidated = true;
-		logger.debug("setting HUD font size to " +
-				this.textRenderResolution);
-	}
-
-	/**
-	 * The text rendering resolution.
-	 * In order to avoid artifacts when zooming with text, the text is instead
-	 * redrawn for the given size each time the zoom factor changes.
-	 * This value is the current text size for text messages.
+	 * The text rendering resolution. In order to avoid artifacts when zooming
+	 * with text, the text is instead redrawn for the given size each time the
+	 * zoom factor changes. This value is the current text size for text
+	 * messages.
 	 */
 	private float msgTextRenderResolution = 8f;
 
@@ -103,28 +103,6 @@ public class MessageCenter {
 	 */
 	private float msgTextRenderResolutionMinimum = 4f;
 
-	/**
-	 * The text rendering resolution.
-	 * In order to avoid artifacts when zooming with text, the text is instead
-	 * redrawn for the given size each time the zoom factor changes.
-	 * This value is the current text size for text messages.
-	 */
-	public float getmsgTextRenderResolution() {return msgTextRenderResolution;}
-
-	/**
-	 * Sets the resolution at which the text messages should be rendered and
-	 * resets the fontInvalidated flag to toggle a recalculation of the text
-	 * graphics before the next frame.
-	 * @param value the new text resolution.
-	 */
-	public void setmsgTextRenderResolution(float value) {
-		this.msgTextRenderResolution = Math.max(
-				msgTextRenderResolutionMinimum,
-				value);
-		fontInvalidated = true;
-		logger.debug("setting message font size to " +
-				this.msgTextRenderResolution);
-	}
 
 	/**
 	 * The messages that should be displayed on top of the circuit, mapped from
@@ -142,17 +120,6 @@ public class MessageCenter {
 
 
 	/**
-	 * The central logging device for this class.
-	 */
-	static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
-
-	/**
-	 * The parent visualization.
-	 */
-	BioViz parent;
-
-
-	/**
 	 * Creates a new message center that will pass messages to a BioViz
 	 * instance.
 	 *
@@ -163,6 +130,60 @@ public class MessageCenter {
 		this.parent = parent;
 		messages = new Vector<Message>();
 	}
+
+	/**
+	 * The text rendering resolution. In order to avoid artifacts when zooming
+	 * with text, the text is instead redrawn for the given size each time the
+	 * zoom factor changes. This value is the current text size for HUD
+	 * messages.
+	 */
+	public float getTextRenderResolution() { return textRenderResolution; }
+
+	/**
+	 * Sets the resolution at which the HUD messages should be rendered and
+	 * resets the fontInvalidated flag to toggle a recalculation of the text
+	 * graphics before the next frame.
+	 *
+	 * @param value
+	 * 		the new text resolution.
+	 */
+	public void setTextRenderResolution(final float value) {
+		this.textRenderResolution = Math.max(
+				textRenderResolutionMinimum,
+				value);
+		fontInvalidated = true;
+		logger.debug("setting HUD font size to " +
+					 this.textRenderResolution);
+	}
+
+
+	/**
+	 * The text rendering resolution. In order to avoid artifacts when zooming
+	 * with text, the text is instead redrawn for the given size each time the
+	 * zoom factor changes. This value is the current text size for text
+	 * messages.
+	 */
+	public float getmsgTextRenderResolution() {
+		return msgTextRenderResolution;
+	}
+
+	/**
+	 * Sets the resolution at which the text messages should be rendered and
+	 * resets the fontInvalidated flag to toggle a recalculation of the text
+	 * graphics before the next frame.
+	 *
+	 * @param value
+	 * 		the new text resolution.
+	 */
+	public void setmsgTextRenderResolution(final float value) {
+		this.msgTextRenderResolution = Math.max(
+				msgTextRenderResolutionMinimum,
+				value);
+		fontInvalidated = true;
+		logger.debug("setting message font size to " +
+					 this.msgTextRenderResolution);
+	}
+
 
 	/**
 	 * Retrives the font that is used to display stuff on top of
@@ -176,7 +197,7 @@ public class MessageCenter {
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
 					Gdx.files.internal("images/FreeUniversal-Regular.ttf"));
 			FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-			parameter.size = (int)textRenderResolution;
+			parameter.size = (int) textRenderResolution;
 			parameter.color = Color.WHITE.cpy();
 			parameter.borderWidth = 2;
 			parameter.borderColor = Color.BLACK.cpy();
@@ -189,7 +210,7 @@ public class MessageCenter {
 			generator = new FreeTypeFontGenerator(
 					Gdx.files.internal("images/Anonymous_Pro.ttf"));
 			parameter = new FreeTypeFontParameter();
-			parameter.size = (int)msgTextRenderResolution;
+			parameter.size = (int) msgTextRenderResolution;
 			parameter.color = Color.BLACK.cpy();
 			this.messageFont = generator.generateFont(parameter);
 			generator.dispose();
@@ -199,9 +220,6 @@ public class MessageCenter {
 		}
 		return font;
 	}
-
-
-
 
 
 	/**
@@ -216,7 +234,7 @@ public class MessageCenter {
 		// Meh. libgdx doesn't draw line breaks...
 		if (message.contains("\n")) {
 			String[] lines = message.split("\n");
-			for (String line : lines) {
+			for (final String line : lines) {
 				addMessage(line);
 			}
 		}
@@ -239,9 +257,9 @@ public class MessageCenter {
 					new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
 											   Gdx.graphics.getHeight());
 
-			int spacing = 2 + (int)getmsgTextRenderResolution();
+			int spacing = 2 + (int) getmsgTextRenderResolution();
 			int yCoord = Gdx.graphics.getHeight() - spacing;
-			for (Message m : this.messages) {
+			for (final Message m : this.messages) {
 				if (m.color != null) {
 					messageFont.setColor(m.color);
 				}
@@ -256,7 +274,7 @@ public class MessageCenter {
 				yCoord -= spacing;
 			}
 
-			for (HUDMessage s : this.HUDMessages.values()) {
+			for (final HUDMessage s : this.HUDMessages.values()) {
 				Color targetColor = s.color.cpy();
 
 				float hideAt = textRenderResolution;
@@ -275,7 +293,8 @@ public class MessageCenter {
 					else {
 						targetColor.a = 1;
 					}
-				} else { 
+				}
+				else {
 					targetColor.a = 1;
 				}
 
@@ -292,7 +311,7 @@ public class MessageCenter {
 									Gdx.graphics.getHeight() / 2f;
 
 				parent.batch.drawMessage(font, layout, fontX, fontY,
-						normalProjection);
+										 normalProjection);
 			}
 
 			while (this.messages.size() > 0 &&
@@ -316,8 +335,8 @@ public class MessageCenter {
 	 * @param y
 	 * 		the y coordinate to show the message at
 	 */
-	public void addHUDMessage(final int key, final String message, final float
-			x, final float y) {
+	public void addHUDMessage(final int key, final String message,
+							  final float x, final float y) {
 		addHUDMessage(key, message, x, y, null, -1f);
 	}
 
@@ -336,9 +355,12 @@ public class MessageCenter {
 	 * 		the y coordinate to show the message at
 	 * @param col
 	 * 		the color of the message
+	 * @param size
+	 * 		the size of the HUD message
 	 */
-	public void addHUDMessage(final int key, final String message, final float
-			x, final float y, final Color col, final float size) {
+	public void addHUDMessage(final int key, final String message,
+							  final float x, final float y,
+							  final Color col, final float size) {
 		HUDMessage hm;
 		if (!this.HUDMessages.containsKey(key)) {
 			hm = new HUDMessage(message, x, y);
@@ -357,8 +379,10 @@ public class MessageCenter {
 	}
 
 	/**
-	 *  Removes a message from the HUD message queue.
-	 * @param key ID of the message to be removed.
+	 * Removes a message from the HUD message queue.
+	 *
+	 * @param key
+	 * 		ID of the message to be removed.
 	 */
 	public void removeHUDMessage(final int key) {
 		if (this.HUDMessages.containsKey(key)) {
@@ -379,11 +403,11 @@ public class MessageCenter {
 	}
 
 	public void resetMsgScale() {
-		setmsgTextRenderResolution(8f);
+		setmsgTextRenderResolution(DEFAULT_MSG_SIZE);
 	}
 
 	public void resetHUDScale() {
-		setTextRenderResolution(16f);
+		setTextRenderResolution(DEFAULT_HUD_SIZE);
 	}
 
 	public void incScales() {
@@ -396,7 +420,8 @@ public class MessageCenter {
 	}
 
 	public void incScaleMsg() {
-		setmsgTextRenderResolution(getmsgTextRenderResolution() + SCALEINCSTEP);
+		setmsgTextRenderResolution(getmsgTextRenderResolution() +
+								   SCALEINCSTEP);
 	}
 
 	public void decScales() {
@@ -409,7 +434,8 @@ public class MessageCenter {
 	}
 
 	public void decScaleMsg() {
-		setmsgTextRenderResolution(getmsgTextRenderResolution() - SCALEINCSTEP);
+		setmsgTextRenderResolution(getmsgTextRenderResolution() -
+								   SCALEINCSTEP);
 	}
 
 	public void setScales(final float scale) {

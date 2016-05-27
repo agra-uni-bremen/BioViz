@@ -11,56 +11,62 @@ import java.util.List;
 
 /**
  * Class that collects error messages.
- *
- * This class also serves as hack to check whether any parsing problems occurred.
- * Most likely there is a better way to do so.
- *
- * @note Due to the fact that this class stores state (i.e. the errors that occurred during
- * the parse), it does not make sense to re-use instances of this class. There may be use
- * cases for that but most likely it is a bug.
+ * <p>
+ * This class also serves as hack to check whether any parsing problems
+ * occurred. Most likely there is a better way to do so.
  *
  * @author Oliver Keszocze
+ * @note Due to the fact that this class stores state (i.e. the errors that
+ * occurred during the parse), it does not make sense to re-use instances of
+ * this class. There may be use cases for that but most likely it is a bug.
  */
 public class BioErrorListener extends BaseErrorListener {
 
-    /**
-     * @brief List storing all error messages thrown during a parse
-     */
-    private ArrayList<String> errors;
+	/**
+	 * @brief List storing all error messages thrown during a parse
+	 */
+	private ArrayList<String> errors;
 
-    /**
-     * Calls the superconstructor and initializes an empty list of errors.
-     */
-    public BioErrorListener() {
-        super();
-        errors = new ArrayList<String>();
-    }
+	/**
+	 * Calls the superconstructor and initializes an empty list of errors.
+	 */
+	public BioErrorListener() {
+		super();
+		errors = new ArrayList<>();
+	}
 
-    @Override
-    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-        List<String> stack = ((Parser)recognizer).getRuleInvocationStack();
-        Collections.reverse(stack);
-        String stackMsg = "rule stack: "+stack;
-        String lineMsg = "line "+line+":"+charPositionInLine+": "+msg;
-        //System.err.println(stackMsg);
-        //System.err.println(lineMsg);
-        errors.add(lineMsg + " " + stackMsg);
-    }
+	@Override
+	public void syntaxError(
+			final Recognizer<?, ?> recognizer,
+			final Object offendingSymbol,
+			final int line,
+			final int charPositionInLine,
+			final String msg,
+			final RecognitionException e) {
+		List<String> stack = ((Parser) recognizer).getRuleInvocationStack();
+		Collections.reverse(stack);
+		String stackMsg = "rule stack: " + stack;
+		String lineMsg = "line " + line + ":" + charPositionInLine + ": " +
+						 msg;
+		//System.err.println(stackMsg);
+		//System.err.println(lineMsg);
+		errors.add(lineMsg + " " + stackMsg);
+	}
 
-    /**
-     * @brief Checks whether errors occured
-     * @note It does not make sense to call this method prior to parsing
-     * @return true if errors were present, false otherwise
-     */
-    public boolean hasErrors() {
-        return !errors.isEmpty();
-    }
+	/**
+	 * Checks whether errors occured.
+	 *
+	 * @return true if errors were present, false otherwise
+	 * @note It does not make sense to call this method prior to parsing
+	 */
+	protected boolean hasErrors() {
+		return !errors.isEmpty();
+	}
 
-    /**
-     *
-     * @return The list of errors, may be empty (but not null)
-     */
-    public ArrayList<String> getErrors() {
-        return errors;
-    }
+	/**
+	 * @return The list of errors, may be empty (but not null)
+	 */
+	protected ArrayList<String> getErrors() {
+		return errors;
+	}
 }
