@@ -24,7 +24,10 @@ import org.slf4j.LoggerFactory;
 public class Biochip {
 
 
-	static Logger logger = LoggerFactory.getLogger(Biochip.class);
+	/**
+	 * The internal logging device.
+	 */
+	private static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
 
 	public final ArrayList<Pair<Rectangle, Range>> blockages =
@@ -37,12 +40,12 @@ public class Biochip {
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<>();
 	public ArrayList<String> errors = new ArrayList<>();
+	public boolean recalculateAdjacency = false;
 
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 
-	public HashMap<Integer, String> fluidTypes = new HashMap<>();
+	private HashMap<Integer, String> fluidTypes = new HashMap<>();
 
-	public boolean recalculateAdjacency = false;
 
 	/**
 	 * Caching data that does not need to be recalculated with each frame.
@@ -50,22 +53,42 @@ public class Biochip {
 	private Set<FluidicConstraintViolation> adjacencyCache = null;
 
 
+	/**
+	 * The latest time step in the operation of this biochip.
+	 * <p>
+	 * The initial value of -1 indicates that the maximal amount of time steps
+	 * has not been computed yet.
+	 */
 	private int maxT = -1;
+
+	/**
+	 * The length of the longest route.
+	 * <p>
+	 * The initial value of -1 indicates that the length has not been computed
+	 * yet.
+	 */
 	private int maxRouteLength = -1;
 
 	/**
 	 * Caches the maximum usage of all fields to save computation time.
+	 * <p>
+	 * The initial value of -1 indicates that the max usage has not been
+	 * computed yet.
 	 */
 	private int maxUsageCache = -1;
 
 	private HashMap<Point, BiochipField> field = new HashMap<>();
 
 	/**
-	 * All droplets of this chip. Use the get-method to retrieve them from
-	 * other
-	 * classes.
+	 * All droplets of this chip.
+	 * <p>
+	 * Use the get-method to retrieve them from other classes.
 	 */
 	private HashSet<Droplet> droplets = new HashSet<>();
+
+	/**
+	 * The nets of this chip.
+	 */
 	private ArrayList<Net> nets = new ArrayList<>();
 
 
@@ -110,7 +133,7 @@ public class Biochip {
 	public Set<Net> getNetsOf(final BiochipField biochipField) {
 		HashSet<Net> result = new HashSet<>();
 
-		for (Net net : nets) {
+		for (final Net net : nets) {
 			if (net.containsField(biochipField)) {
 				result.add(net);
 			}
@@ -144,23 +167,42 @@ public class Biochip {
 		return dropletIDsToFluidTypes.get(dropletID);
 	}
 
+
+	/**
+	 * Determines the fluid type of the given fluid ID.
+	 *
+	 * @param fluidID
+	 * 		The fluid ID of the droplet whose fluid type is to be deterined.
+	 * @return The fluid type of the given droplet. Might be NULL.
+	 */
 	public String fluidType(final Integer fluidID) {
 		return fluidTypes.get(fluidID);
 	}
 
 
+	/**
+	 * Adds a droplet to the chip.
+	 *
+	 * @param drop
+	 * 		The droplet that is added.
+	 */
 	public void addDroplet(final Droplet drop) {
 		this.droplets.add(drop);
 	}
 
 	/**
 	 * Returns all droplets that are part of this chip.
+	 *
+	 * @return The set of all droplets of this chip, might be NULL.
 	 */
 	public Set<Droplet> getDroplets() {
 		return this.droplets;
 	}
 
 
+	/**
+	 * Computes the cell usage for every cell of this chip.
+	 */
 	public void computeCellUsage() {
 		logger.debug("Computing cell usage");
 
@@ -188,7 +230,7 @@ public class Biochip {
 	 * 		The time step to test for the presence.
 	 * @return True iff there is a droplet present in the time step.
 	 */
-	public boolean dropletOnPosition(final Point pos, final int t) {
+	boolean dropletOnPosition(final Point pos, final int t) {
 
 		for (final Droplet d : droplets) {
 			Point p = d.getPositionAt(t);
@@ -213,12 +255,12 @@ public class Biochip {
 		if (nets != null) {
 			// first find the net of one of the droplets
 			Net net = null;
-			for (Net n : nets) {
+			for (final Net n : nets) {
 				if (n.containsDroplet(d1)) {
 					net = n;
 				}
 			}
-			return net == null ? false : net.containsDroplet(d2);
+			return net != null && net.containsDroplet(d2);
 		}
 		// when there are no nets stored, they can't be from the same net
 		else {
@@ -316,26 +358,25 @@ public class Biochip {
 	 * Calculates the last timestamp at which a droplet is moved
 	 *
 	 * @return the last timestamp of the currently loaded simulation
-	 * @author Oliver Keszocze
 	 */
 	public int getMaxT() {
 		if (maxT != -1) {
 			return maxT;
 		}
 
-		for (Droplet d : droplets) {
+		for (final Droplet d : droplets) {
 			maxT = Math.max(maxT, d.getMaxTime());
 		}
-		for (Mixer m : mixers) {
+		for (final Mixer m : mixers) {
 			maxT = Math.max(maxT, m.timing.end);
 		}
-		for (Pair<Rectangle, Range> b : blockages) {
+		for (final Pair<Rectangle, Range> b : blockages) {
 			maxT = Math.max(maxT, b.snd.end);
 		}
-		for (ActuationVector a : pinActuations.values()) {
+		for (final ActuationVector a : pinActuations.values()) {
 			maxT = Math.max(maxT, a.size());
 		}
-		for (ActuationVector a : cellActuations.values()) {
+		for (final ActuationVector a : cellActuations.values()) {
 			maxT = Math.max(maxT, a.size());
 		}
 		return maxT;
@@ -344,8 +385,9 @@ public class Biochip {
 
 
 	/**
+	 * Determines the length of the longest route.
+	 *
 	 * @return Length of the longest route
-	 * @author Oliver Keszocze
 	 */
 	public int getMaxRouteLength() {
 		if (maxRouteLength == -1) {
@@ -379,18 +421,19 @@ public class Biochip {
 
 
 	/**
+	 * Checks whether there is a field ad the given position.
+	 *
 	 * @param coords
 	 * 		The coordinates to check for a field
 	 * @return true if there is a field at the specified positions, false
 	 * otherwise
-	 * @brief Checks whether there is a field ad the given position.
 	 */
 	public boolean hasFieldAt(final Point coords) {
 		return this.field.containsKey(coords);
 	}
 
 	/**
-	 * Retrieves the coordinates of all the fields that are currently set
+	 * Retrieves the coordinates of all the fields that are currently set.
 	 *
 	 * @return all valid coordinates
 	 */
@@ -399,7 +442,7 @@ public class Biochip {
 	}
 
 	/**
-	 * Retrieves all fields of this chip
+	 * Retrieves all fields of this chip.
 	 *
 	 * @return all field instances being used on this chip
 	 */
@@ -433,7 +476,8 @@ public class Biochip {
 	}
 
 	public Point getMaxCoord() {
-		int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int maxY = Integer.MIN_VALUE;
 		for (Point coord : this.field.keySet()) {
 			if (maxX < coord.fst) {
 				maxX = coord.fst;
@@ -447,7 +491,7 @@ public class Biochip {
 
 	public Point getMinCoord() {
 		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
-		for (Point coord : this.field.keySet()) {
+		for (final Point coord : this.field.keySet()) {
 			if (minX > coord.fst) {
 				minX = coord.fst;
 			}
@@ -458,6 +502,15 @@ public class Biochip {
 		return new Point(minX, minY);
 	}
 
+	/**
+	 * Determines the maximal amount of usages of the cells.
+	 *
+	 * The result is cached.
+	 *
+	 * @return The maximal amount of times a cell is actuated.
+	 */
+	// TODO we need to set maxUsageCache to -1 if anything was changed.
+	// this includes things like adding cells or changing anything on the routes.
 	public int getMaxUsage() {
 		if (this.maxUsageCache <= 0) {
 			for (final BiochipField f : this.field.values()) {
