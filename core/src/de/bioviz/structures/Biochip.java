@@ -551,9 +551,6 @@ public class Biochip {
 	public void computeCellUsage() {
 		logger.debug("Computing cell usage");
 
-		// TODO make BiochipField.usage private and create a method in the
-		// field
-		// itself to compute the usage #168
 		for (final BiochipField f : field.values()) {
 			f.computeUsage(getMaxT());
 		}
