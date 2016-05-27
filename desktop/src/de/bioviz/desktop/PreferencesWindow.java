@@ -5,8 +5,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+
+
+import java.awt.HeadlessException;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.WindowEvent;
 
 
@@ -18,7 +27,7 @@ import java.awt.event.WindowEvent;
  *
  * @author Jannis Stoppe, Oliver Keszocze
  */
-public class PreferencesWindow extends JFrame {
+class PreferencesWindow extends JFrame {
 
 	/**
 	 * Used to handle feedback for the user about the program behaviour (and of
@@ -32,16 +41,18 @@ public class PreferencesWindow extends JFrame {
 	 * @param viz
 	 * 		Reference to the {@see BioViz} instance that opened the window.
 	 * @throws HeadlessException
-	 * @author Jannis Stoppe, Oliver Keszocze
 	 */
-	public PreferencesWindow(final BioViz viz) throws HeadlessException {
+	PreferencesWindow(final BioViz viz) throws HeadlessException {
 		super("Preferences");
+
 
 
 		final int minAnimationDuration = 0;
 		final int maxAnimationDuration = 1000;
 		final int defaultAnimationDuration = BioViz.getAnimationDuration();
 
+
+		// TODO can these '1000's be replaced by maxAnimationDuration?
 		final int minDurationBetweenSteps = 1 * 1000;
 		final int maxDurationBetweenSteps = 10 * 1000;
 		final int defaultDurationBetweenSteps =
