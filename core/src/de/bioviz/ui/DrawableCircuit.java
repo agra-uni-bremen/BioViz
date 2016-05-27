@@ -211,7 +211,8 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * Creates a drawable entity based on the data given.
 	 *
-	 * @param toDraw the data to draw
+	 * @param toDraw
+	 * 		the data to draw
 	 */
 	public DrawableCircuit(Biochip toDraw, BioViz parent) {
 		LOGGER.debug("Creating new drawable chip based on " + toDraw);
@@ -219,7 +220,8 @@ public class DrawableCircuit implements Drawable {
 		this.setParent(parent);
 		this.initializeDrawables();
 		this.getDisplayOptions().addOptionChangedEvent(e -> {
-			if (e.equals(BDisplayOptions.CellUsage)) {
+			if (e.equals(BDisplayOptions.CellUsage) ||
+				e.equals(BDisplayOptions.CellUsageCount)) {
 				boolean doIt = getDisplayOptions().getOption(e);
 				if (doIt) {
 					getData().computeCellUsage();
