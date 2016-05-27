@@ -558,10 +558,6 @@ public class Biochip {
 	 *
 	 * @return The maximal amount of times a cell is actuated.
 	 */
-	// TODO we need to set maxUsageCache to -1 if anything was changed.
-	// this includes things like adding cells or changing anything on the
-	// routes.
-	// Documented in #167
 	public int getMaxUsage() {
 		if (this.maxUsageCache <= 0) {
 			for (final BiochipField f : this.field.values()) {
