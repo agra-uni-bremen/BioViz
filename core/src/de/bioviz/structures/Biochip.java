@@ -77,6 +77,9 @@ public class Biochip {
 	 */
 	private int maxUsageCache = -1;
 
+	/**
+	 * The fields of this chip.
+	 */
 	private HashMap<Point, BiochipField> field = new HashMap<>();
 
 	/**
@@ -210,6 +213,9 @@ public class Biochip {
 		field.values().forEach(f -> f.usage = 0);
 
 
+		// TODO make BiochipField.usage private and create a method in the
+		// field
+		// itself to compute the usage #168
 		for (int t = 1; t <= getMaxT(); t++) {
 			for (final BiochipField f : field.values()) {
 				if (f.isActuated(t)) {
@@ -288,7 +294,7 @@ public class Biochip {
 				for (final Droplet d1 : droplets) {
 					Point p1 = d1.getPositionAt(timestep);
 					Point pp1 = d1.getPositionAt(timestep + 1);
-					for (Droplet d2 : droplets) {
+					for (final Droplet d2 : droplets) {
 
 						logger.trace("Comparing droplets {} and {}", d1, d2);
 
@@ -355,7 +361,7 @@ public class Biochip {
 	}
 
 	/**
-	 * Calculates the last timestamp at which a droplet is moved
+	 * Calculates the last timestamp at which a droplet is moved.
 	 *
 	 * @return the last timestamp of the currently loaded simulation
 	 */
@@ -392,7 +398,7 @@ public class Biochip {
 	public int getMaxRouteLength() {
 		if (maxRouteLength == -1) {
 
-			for (Droplet d : droplets) {
+			for (final Droplet d : droplets) {
 				maxRouteLength = Math.max(maxRouteLength, d.getRouteLength());
 			}
 		}
@@ -450,6 +456,14 @@ public class Biochip {
 		return this.field.values();
 	}
 
+
+	/**
+	 * Returns the fields connected via a pin.
+	 *
+	 * @param pinID
+	 * 		The ID of the pin
+	 * @return The fields connected via the specified pin. Might be NULL.
+	 */
 	public List<BiochipField> getFieldsForPin(final Integer pinID) {
 
 		List<BiochipField> fields;
@@ -461,24 +475,43 @@ public class Biochip {
 		return fields;
 	}
 
-	public void addField(Point coordinates, final BiochipField field) {
-		if (field.x() != coordinates.fst || field.y() != coordinates.snd) {
+	/**
+	 * Adds a field to the chip.
+	 *
+	 * @param coordinates
+	 * 		The coordinates to which the field is to be added.
+	 * @param biochipField
+	 * 		The field to be added.
+	 */
+	// TODO why the heck do we provide the coordinates twice? --> check the
+	// parsing procedure.
+	public void addField(Point coordinates, final BiochipField biochipField) {
+		if (biochipField.x() != coordinates.fst ||
+			biochipField.y() != coordinates.snd) {
 			logger.error(
 					"Field coordinates differ from those transmitted to the " +
 					"chip for this instance");
-			coordinates = new Point(field.x(), field.y());
+			coordinates = new Point(biochipField.x(), biochipField.y());
 		}
 		if (this.field.containsKey(coordinates)) {
 			logger.trace("Field added twice at " + coordinates +
 						 ", removed older instance");
 		}
-		this.field.put(coordinates, field);
+		this.field.put(coordinates, biochipField);
 	}
 
+
+	/**
+	 * Determines the maximal coordinate of the biochip.
+	 * <p>
+	 * This corresponds to the  upper right corner of the chip.
+	 *
+	 * @return The maximal (i.e. upper right) coordinate of the biochip.
+	 */
 	public Point getMaxCoord() {
 		int maxX = Integer.MIN_VALUE;
 		int maxY = Integer.MIN_VALUE;
-		for (Point coord : this.field.keySet()) {
+		for (final Point coord : this.field.keySet()) {
 			if (maxX < coord.fst) {
 				maxX = coord.fst;
 			}
@@ -489,8 +522,16 @@ public class Biochip {
 		return new Point(maxX, maxY);
 	}
 
+	/**
+	 * Determines the minimal coordinate of the biochip.
+	 * <p>
+	 * This corresponds to the lower left corner of the chip.
+	 *
+	 * @return The minimal (i.e. lower left) coordinate of the biochip.
+	 */
 	public Point getMinCoord() {
-		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+		int minX = Integer.MAX_VALUE;
+		int minY = Integer.MAX_VALUE;
 		for (final Point coord : this.field.keySet()) {
 			if (minX > coord.fst) {
 				minX = coord.fst;
@@ -504,13 +545,15 @@ public class Biochip {
 
 	/**
 	 * Determines the maximal amount of usages of the cells.
-	 *
+	 * <p>
 	 * The result is cached.
 	 *
 	 * @return The maximal amount of times a cell is actuated.
 	 */
 	// TODO we need to set maxUsageCache to -1 if anything was changed.
-	// this includes things like adding cells or changing anything on the routes.
+	// this includes things like adding cells or changing anything on the
+	// routes.
+	// Documented in #167
 	public int getMaxUsage() {
 		if (this.maxUsageCache <= 0) {
 			for (final BiochipField f : this.field.values()) {
