@@ -21,7 +21,6 @@ import de.bioviz.parser.generated.Bio.MixerIDContext;
 import de.bioviz.parser.generated.Bio.TimeRangeContext;
 import de.bioviz.parser.generated.BioBaseListener;
 import de.bioviz.structures.*;
-import de.bioviz.ui.BioViz;
 import de.bioviz.util.Pair;
 
 import org.antlr.v4.runtime.misc.NotNull;
@@ -413,8 +412,8 @@ public class BioParserListener extends BioBaseListener {
 						it -> it.getID() == dropID).findFirst();
 				drop.ifPresent(it -> it.setNet(net));
 
-				chip.getFieldAt(target).target_ids.add(dropID);
-				chip.getFieldAt(src.startPosition).source_ids.add(dropID);
+				chip.getFieldAt(target).targetIDs.add(dropID);
+				chip.getFieldAt(src.startPosition).sourceIDs.add(dropID);
 			});
 		});
 
