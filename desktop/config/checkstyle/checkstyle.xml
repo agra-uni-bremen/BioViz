@@ -205,7 +205,9 @@
             "My_Sweet_String".equals(nullString);
         -->
         <module name="EqualsAvoidNull"/>
-        <module name="IllegalToken"/>
+		<module name="IllegalToken">
+			    <property name="tokens" value="LITERAL_NATIVE"/>
+		</module>
         <!-- Disallow labels -->
 
         <!--

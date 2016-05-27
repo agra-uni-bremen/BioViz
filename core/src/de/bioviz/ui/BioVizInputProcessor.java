@@ -8,26 +8,34 @@ import com.badlogic.gdx.math.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 public class BioVizInputProcessor implements InputProcessor {
-	boolean isMoving = false;
-	boolean multiTouchZoom = false;
-	private int oldX, oldY, oldX2, oldY2, oldDistanceX, oldDistanceY;
-
-	private boolean ctrl, shift, alt;
 
 	static Logger logger =
-			LoggerFactory.getLogger((BioVizInputProcessor.class));
+			LoggerFactory.getLogger(BioVizInputProcessor.class);
+
+
+	boolean isMoving = false;
+	boolean multiTouchZoom = false;
 
 	BioViz parentViz;
 
-	public BioVizInputProcessor(BioViz parentVisualization) {
+	private int oldX;
+	private int oldY;
+	private int oldX2;
+	private int oldY2;
+	private int oldDistanceX;
+	private int oldDistanceY;
+
+	private boolean ctrl;
+	private boolean shift;
+	private boolean alt;
+
+	public BioVizInputProcessor(final BioViz parentVisualization) {
 		this.parentViz = parentVisualization;
 	}
 
 	@Override
-	public boolean keyDown(int keycode) {
+	public boolean keyDown(final int keycode) {
 		if (keycode == Keys.CONTROL_LEFT || keycode == Keys.CONTROL_RIGHT) {
 			ctrl = true;
 		}
@@ -41,7 +49,7 @@ public class BioVizInputProcessor implements InputProcessor {
 	}
 
 	@Override
-	public boolean keyUp(int keycode) {
+	public boolean keyUp(final int keycode) {
 		if (keycode == Keys.CONTROL_LEFT || keycode == Keys.CONTROL_RIGHT) {
 			ctrl = false;
 		}
@@ -104,19 +112,20 @@ public class BioVizInputProcessor implements InputProcessor {
 		return false;
 	}
 
-	void toggleOptions(int keycode) {
+	void toggleOptions(final int keycode) {
 		BDisplayOptions.findOption(keycode, ctrl, shift, alt).ifPresent(
 				it -> parentViz.currentCircuit.getDisplayOptions().toggleOption
 						(it));
 	}
 
 	@Override
-	public boolean keyTyped(char character) {
+	public boolean keyTyped(final char character) {
 		return false;
 	}
 
 	@Override
-	public boolean touchDown(int x, int y, int pointer, int button) {
+	public boolean touchDown(final int x, final int y, final int pointer,
+							 final int button) {
 		if (pointer == 0) {
 			oldX = x;
 			oldY = y;
@@ -132,7 +141,8 @@ public class BioVizInputProcessor implements InputProcessor {
 	}
 
 	@Override
-	public boolean touchUp(int x, int y, int pointer, int button) {
+	public boolean touchUp(final int x, final int y, final int pointer, final
+	int button) {
 		if (pointer == 0) {
 			isMoving = false;
 		}
@@ -141,7 +151,8 @@ public class BioVizInputProcessor implements InputProcessor {
 			multiTouchZoom = false;
 		}
 
-		for (DrawableDroplet d : parentViz.currentCircuit.getDroplets()) {
+		for (final DrawableDroplet d :
+				parentViz.currentCircuit.getDroplets()) {
 			if (d.isHovered()) {
 				if (button == Buttons.LEFT) {
 					d.toggleGridVisibility();
@@ -160,7 +171,7 @@ public class BioVizInputProcessor implements InputProcessor {
 	}
 
 	@Override
-	public boolean touchDragged(int x, int y, int pointer) {
+	public boolean touchDragged(final int x, final int y, final int pointer) {
 		if (isMoving) {
 			parentViz.currentCircuit.setOffsetX(
 					parentViz.currentCircuit.getOffsetX() +
@@ -191,13 +202,13 @@ public class BioVizInputProcessor implements InputProcessor {
 					float zoomFactorX = (float) zoomX / Math.abs(oldX - oldX2);
 					parentViz.currentCircuit.setScaleX(
 							parentViz.currentCircuit.getScaleX()
-							* Math.max(1 - (zoomFactorX), 0.01f));
+							* Math.max(1 - zoomFactorX, 0.01f));
 				}
 				if (oldY - oldY2 != 0) {
 					float zoomFactorY = (float) zoomY / Math.abs(oldY - oldY2);
 					parentViz.currentCircuit.setScaleY(
 							parentViz.currentCircuit.getScaleY()
-							* Math.max(1 - (zoomFactorY), 0.01f));
+							* Math.max(1 - zoomFactorY, 0.01f));
 				}
 			}
 		}
@@ -205,7 +216,7 @@ public class BioVizInputProcessor implements InputProcessor {
 	}
 
 	@Override
-	public boolean scrolled(int amount) {
+	public boolean scrolled(final int amount) {
 		float mouseAtWidth = (float) oldX / Gdx.graphics.getWidth();
 		float mouseAtHeight = (float) oldY / Gdx.graphics.getHeight();
 
@@ -231,7 +242,7 @@ public class BioVizInputProcessor implements InputProcessor {
 	}
 
 	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
+	public boolean mouseMoved(final int screenX, final int screenY) {
 		oldX = screenX;
 		oldY = screenY;
 		return false;

@@ -216,9 +216,11 @@
             "My_Sweet_String".equals(nullString);
         -->
         <module name="EqualsAvoidNull"/>
-        <module name="IllegalToken"/>
-        <!-- Disallow labels -->
 
+        <!-- Disallow labels -->
+		<module name="IllegalToken">
+			    <property name="tokens" value="LITERAL_NATIVE"/>
+		</module>
         <!--
         this module checks whether parameters or variables shadow class fields.
         see http://checkstyle.sourceforge.net/apidocs/com/puppycrawl/tools/checkstyle/checks/coding/HiddenFieldCheck.html

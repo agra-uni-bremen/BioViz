@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -163,7 +161,7 @@ public class DrawableField extends DrawableSprite {
 			}
 
 			if (getOption(SourceTargetIDs)) {
-				ArrayList<Integer> sources = field.source_ids;
+				ArrayList<Integer> sources = field.sourceIDs;
 				fieldHUDMsg = sources.get(0).toString();
 				if (sources.size() > 1) {
 					for (int i = 2; i < sources.size(); i++) {
@@ -177,7 +175,7 @@ public class DrawableField extends DrawableSprite {
 				texture = TextureE.Target;
 			}
 			if (getOption(SourceTargetIDs)) {
-				ArrayList<Integer> targets = field.target_ids;
+				ArrayList<Integer> targets = field.targetIDs;
 				fieldHUDMsg = targets.get(0).toString();
 				if (targets.size() > 1) {
 					for (int i = 1; i < targets.size(); i++) {
