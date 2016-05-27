@@ -419,9 +419,7 @@ public class BioViz implements ApplicationListener {
 	void callPreviousTabListeners() {
 		logger.trace("Calling " + previousTabListeners.size() +
 				" listeners to change to the next tab.");
-		for (BioVizEvent listener : previousTabListeners) {
-			listener.bioVizEvent();
-		}
+		previousTabListeners.forEach(BioVizEvent::bioVizEvent);
 	}
 
 	public void saveSVG(String path, int timeStep) {
@@ -441,12 +439,12 @@ public class BioViz implements ApplicationListener {
 		}
 	}
 
-	static public ShaderProgram createDefaultShader() {
+	static private ShaderProgram createDefaultShader() {
 		FileHandle vertexShaderHandle = Gdx.files.internal("vertexShader.shd");
 		FileHandle fragmentShaderHandle = Gdx.files.internal("fragmentShader.shd");
 
 		ShaderProgram shader = new ShaderProgram(vertexShaderHandle, fragmentShaderHandle);
-		if (shader.isCompiled() == false) {
+		if (!shader.isCompiled()) {
 			throw new IllegalArgumentException(
 					"Error compiling shader: " + shader.getLog());
 		}
@@ -468,14 +466,6 @@ public class BioViz implements ApplicationListener {
 		}
 		logger.debug("Setting application icon to " + handle.name());
 		return handle;
-	}
-
-	public void addDrawbale(Drawable d) {
-		this.drawables.add(d);
-	}
-
-	public void removeDrawable(Drawable d) {
-		this.drawables.remove(d);
 	}
 
 }
