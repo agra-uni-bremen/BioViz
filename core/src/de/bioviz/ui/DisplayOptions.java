@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- *
  * Stores the current display options/settings.
  * <p>
  * It loads all options as defined in {@link BDisplayOptions} and initially sets
  * them to false. It provides method for getting/setting/toggling these
  * options.
  * <p>
- * @author keszocze
+ *
+ * @author Oliver Keszocze
  */
 public class DisplayOptions {
 
@@ -31,7 +31,7 @@ public class DisplayOptions {
 	/**
 	 * Collects all methods that should be called when a value changes.
 	 */
-	private HashSet<DisplayOptions.displayOptionEvent> optionChangedEvents =
+	private HashSet<DisplayOptionEvent> optionChangedEvents =
 			new HashSet<>();
 
 
@@ -60,6 +60,8 @@ public class DisplayOptions {
 
 
 	/**
+	 * Returns whether an option is set.
+	 *
 	 * @param opt
 	 * 		Option to check
 	 * @return true if the option opt is turned on, false otherwise
@@ -96,17 +98,43 @@ public class DisplayOptions {
 		return val;
 	}
 
-	public interface displayOptionEvent {
-		void e(BDisplayOptions value);
+
+
+
+	/**
+	 * Adds an event that will be called when the options are changed.
+	 *
+	 * @param event
+	 * 		Event that should be performed when an option was changed.
+	 */
+	public void addOptionChangedEvent(final DisplayOptionEvent event) {
+		optionChangedEvents.add(event);
 	}
 
-	public void addOptionChangedEvent(displayOptionEvent e) {
-		optionChangedEvents.add(e);
-	}
-
-	private void callOptionChangedEvents(BDisplayOptions opt) {
-		for (displayOptionEvent displayOptionEvent : optionChangedEvents) {
+	/**
+	 * Calls the displayOptionEvents for the change of the given options.
+	 *
+	 * @param opt
+	 * 		The option that was changed.
+	 */
+	private void callOptionChangedEvents(final BDisplayOptions opt) {
+		for (final DisplayOptionEvent displayOptionEvent :
+				optionChangedEvents) {
 			displayOptionEvent.e(opt);
 		}
+	}
+
+	/**
+	 * Interface for 'callbacks' for listening to changes in options.
+	 */
+	public interface DisplayOptionEvent {
+
+		/**
+		 * Callback function that listens on the change of options.
+		 *
+		 * @param option
+		 * 		The option that was changed.
+		 */
+		void e(BDisplayOptions option);
 	}
 }
