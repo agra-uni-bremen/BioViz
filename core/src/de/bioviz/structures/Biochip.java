@@ -1,6 +1,12 @@
 package de.bioviz.structures;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import de.bioviz.util.Pair;
@@ -20,33 +26,39 @@ public class Biochip {
 
 	static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
-	private HashMap<Point, BiochipField> field =
-			new HashMap<Point, BiochipField>();
+
+	public final ArrayList<Pair<Rectangle, Range>> blockages =
+			new ArrayList<>();
+	public final ArrayList<Detector> detectors = new ArrayList<>();
+	public final HashMap<Integer, Pin> pins = new HashMap<>();
+	public final HashMap<Integer, ActuationVector> pinActuations =
+			new HashMap<>();
+	public final HashMap<Point, ActuationVector> cellActuations =
+			new HashMap<>();
+	public final ArrayList<Mixer> mixers = new ArrayList<>();
+	public ArrayList<String> errors = new ArrayList<>();
+
+	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
+
+	public HashMap<Integer, String> fluidTypes = new HashMap<>();
+
+	public boolean recalculateAdjacency = false;
+
+	/**
+	 * Caching data that does not need to be recalculated with each frame.
+	 */
+	private Set<FluidicConstraintViolation> adjacencyCache = null;
+
+
+	private int maxT = -1;
+	private int maxRouteLength = -1;
 
 	/**
 	 * Caches the maximum usage of all fields to save computation time.
 	 */
 	private int maxUsageCache = -1;
 
-	public final ArrayList<Pair<Rectangle, Range>> blockages =
-			new ArrayList<Pair<Rectangle, Range>>();
-	public final ArrayList<Detector> detectors = new ArrayList<Detector>();
-	public final HashMap<Integer, Pin> pins = new HashMap<>();
-	public final HashMap<Integer, ActuationVector> pinActuations =
-			new HashMap<>();
-	public final HashMap<Point, ActuationVector> cellActuations =
-			new HashMap<>();
-	public final ArrayList<Mixer> mixers = new ArrayList<Mixer>();
-	public ArrayList<String> errors = new ArrayList<>();
-
-	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
-
-	public HashMap<Integer, String> fluidTypes =
-			new HashMap<Integer, String>();
-
-	private int maxT = -1;
-	private int maxRouteLength = -1;
-
+	private HashMap<Point, BiochipField> field = new HashMap<>();
 
 	/**
 	 * All droplets of this chip. Use the get-method to retrieve them from
@@ -54,40 +66,52 @@ public class Biochip {
 	 * classes.
 	 */
 	private HashSet<Droplet> droplets = new HashSet<>();
-	private ArrayList<Net> nets = new ArrayList<Net>();
+	private ArrayList<Net> nets = new ArrayList<>();
 
-	public void addFluidType(int fluidID, String fluidDescription) {
-		fluidTypes.put(fluidID, fluidDescription);
-	}
 
-	public void addFluidTypes(HashMap<Integer, String> types) {
+	/**
+	 * Adds an amount of fluid types to the biochip.
+	 *
+	 * @param types
+	 * 		the types to add.
+	 */
+	public void addFluidTypes(final HashMap<Integer, String> types) {
 		fluidTypes.putAll(types);
 	}
 
-	public void addNet(Net n) {
-		nets.add(n);
-	}
 
-	public void addNets(Collection<Net> nets) {
-		this.nets.addAll(nets);
-	}
-
-	public Set<Net> getNets() {
-		return new HashSet<Net>(this.nets);
+	/**
+	 * Adds a collection of nets to this biochip.
+	 *
+	 * @param netCollection
+	 * 		Collection of nets
+	 */
+	public void addNets(final Collection<Net> netCollection) {
+		this.nets.addAll(netCollection);
 	}
 
 	/**
-	 * Returns all nets that a field belongs to
+	 * Returns a set of all nets of this biochip.
 	 *
-	 * @param field
+	 * @return Set of all nets of this biochip field. Might be empty (but not
+	 * NULL)
+	 */
+	public Set<Net> getNets() {
+		return new HashSet<>(this.nets);
+	}
+
+	/**
+	 * Returns all nets that a field belongs to.
+	 *
+	 * @param biochipField
 	 * 		the field to be tested
 	 * @return the nets that this field is a part of
 	 */
-	public Set<Net> getNetsOf(BiochipField field) {
-		HashSet<Net> result = new HashSet<Net>();
+	public Set<Net> getNetsOf(final BiochipField biochipField) {
+		HashSet<Net> result = new HashSet<>();
 
 		for (Net net : nets) {
-			if (net.containsField(field)) {
+			if (net.containsField(biochipField)) {
 				result.add(net);
 			}
 		}
@@ -95,47 +119,38 @@ public class Biochip {
 		return result;
 	}
 
-
-	public void addDropToFluid(int dropletID, int fluidID) {
+	/**
+	 * Assigns a fluid type to a droplet.
+	 *
+	 * @param dropletID
+	 * 		The droplet that is now of the given fluid type.
+	 * @param fluidID
+	 * 		The fluid type
+	 */
+	public void addDropToFluid(final int dropletID, final int fluidID) {
 		dropletIDsToFluidTypes.put(dropletID, fluidID);
 	}
 
-	public Integer fluidID(int dropletID) {
+	/**
+	 * Determines the fluid ID of a droplet.
+	 * <p>
+	 * The result might be NULL if the droplet has no assigned fluid.
+	 *
+	 * @param dropletID
+	 * 		The droplet whose fluid ID is queried
+	 * @return The fluid ID of the given droplet
+	 */
+	public Integer fluidID(final int dropletID) {
 		return dropletIDsToFluidTypes.get(dropletID);
 	}
 
-	public String fluidType(Integer fluidID) {
+	public String fluidType(final Integer fluidID) {
 		return fluidTypes.get(fluidID);
 	}
 
 
-	/**
-	 * Caching data that does not need to be recalculated with each frame.
-	 */
-	private Set<FluidicConstraintViolation> adjacencyCache = null;
-
-	public boolean recalculateAdjacency = false;
-
-	public Biochip() {
-	}
-
-
-	public void addDroplet(Droplet drop) {
+	public void addDroplet(final Droplet drop) {
 		this.droplets.add(drop);
-	}
-
-	/**
-	 * <p>Removes a blob from this chip.</p> <p>This does <i>not</i> mean that
-	 * the blob is removed at a certain time or something. Instead, this blob
-	 * and its according data is removed from the circuit altogether.</p>
-	 *
-	 * @param drop
-	 * 		The droplet that will be removed
-	 */
-	public void removeBlob(Droplet drop) {
-		if (this.droplets.contains(drop)) {
-			this.droplets.remove(drop);
-		}
 	}
 
 	/**
@@ -154,7 +169,7 @@ public class Biochip {
 
 
 		for (int t = 1; t <= getMaxT(); t++) {
-			for (BiochipField f : field.values()) {
+			for (final BiochipField f : field.values()) {
 				if (f.isActuated(t)) {
 					f.usage++;
 				}
@@ -162,9 +177,20 @@ public class Biochip {
 		}
 	}
 
-	public boolean dropletOnPosition(Point pos, int t) {
 
-		for (Droplet d : droplets) {
+	/**
+	 * Checks whether any droplet is present on a position in a given time
+	 * step.
+	 *
+	 * @param pos
+	 * 		Position to check for the presence of a droplet.
+	 * @param t
+	 * 		The time step to test for the presence.
+	 * @return True iff there is a droplet present in the time step.
+	 */
+	public boolean dropletOnPosition(final Point pos, final int t) {
+
+		for (final Droplet d : droplets) {
 			Point p = d.getPositionAt(t);
 			if (p != null && p.equals(pos)) {
 				return true;
@@ -175,12 +201,15 @@ public class Biochip {
 
 
 	/**
+	 * Checks whether two droplets are from the same net.
+	 *
 	 * @param d1
+	 * 		First droplet to test.
 	 * @param d2
+	 * 		Second droplet to test.
 	 * @return true iff the droplets are from the same net
-	 * @brief Checks whether two droplets are from the same nat
 	 */
-	private boolean sameNet(Droplet d1, Droplet d2) {
+	private boolean sameNet(final Droplet d1, final Droplet d2) {
 		if (nets != null) {
 			// first find the net of one of the droplets
 			Net net = null;
@@ -214,7 +243,7 @@ public class Biochip {
 			HashSet<FluidicConstraintViolation> result = new HashSet<>();
 
 			for (int timestep = 1; timestep <= getMaxT(); timestep++) {
-				for (Droplet d1 : droplets) {
+				for (final Droplet d1 : droplets) {
 					Point p1 = d1.getPositionAt(timestep);
 					Point pp1 = d1.getPositionAt(timestep + 1);
 					for (Droplet d2 : droplets) {
@@ -338,7 +367,7 @@ public class Biochip {
 	 * @throws RuntimeException
 	 * 		if there is no field at given coordinates
 	 */
-	public BiochipField getFieldAt(Point coords) {
+	public BiochipField getFieldAt(final Point coords) {
 		if (hasFieldAt(coords)) {
 			return this.field.get(coords);
 		}
@@ -356,7 +385,7 @@ public class Biochip {
 	 * otherwise
 	 * @brief Checks whether there is a field ad the given position.
 	 */
-	public boolean hasFieldAt(Point coords) {
+	public boolean hasFieldAt(final Point coords) {
 		return this.field.containsKey(coords);
 	}
 
@@ -378,9 +407,9 @@ public class Biochip {
 		return this.field.values();
 	}
 
-	public List<BiochipField> getFieldsForPin(Integer pinID) {
+	public List<BiochipField> getFieldsForPin(final Integer pinID) {
 
-		List<BiochipField> fields = new ArrayList<BiochipField>();
+		List<BiochipField> fields;
 		fields = field.values().
 				parallelStream().
 				filter(f -> f.pin != null && f.pin.pinID == pinID).
@@ -389,7 +418,7 @@ public class Biochip {
 		return fields;
 	}
 
-	public void addField(Point coordinates, BiochipField field) {
+	public void addField(Point coordinates, final BiochipField field) {
 		if (field.x() != coordinates.fst || field.y() != coordinates.snd) {
 			logger.error(
 					"Field coordinates differ from those transmitted to the " +
@@ -431,7 +460,7 @@ public class Biochip {
 
 	public int getMaxUsage() {
 		if (this.maxUsageCache <= 0) {
-			for (BiochipField f : this.field.values()) {
+			for (final BiochipField f : this.field.values()) {
 				if (f.usage > this.maxUsageCache) {
 					this.maxUsageCache = f.usage;
 				}
