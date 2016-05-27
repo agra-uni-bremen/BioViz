@@ -114,6 +114,7 @@ public class Biochip {
 	 */
 	public void addNets(final Collection<Net> netCollection) {
 		this.nets.addAll(netCollection);
+		resetCaches();
 	}
 
 	/**
@@ -191,6 +192,7 @@ public class Biochip {
 	 */
 	public void addDroplet(final Droplet drop) {
 		this.droplets.add(drop);
+		resetCaches();
 	}
 
 	/**
@@ -204,7 +206,33 @@ public class Biochip {
 
 
 
+	/**
+	 * Resets all the caches and re-computes the corresponding values.
+	 * <p>
+	 * This means that after calling this method, the latest time step, the
+	 * maximal route length and the maximal use of cells are not set anymore.
+	 * You need to manually call the reCompute() method.
+	 */
+	public void resetCaches() {
+		maxT = -1;
+		maxRouteLength = -1;
+		maxUsageCache = -1;
+	}
 
+
+	/**
+	 * Re-compute internal values.
+	 * <p>
+	 * The values are the maximal cell usage, the max route length and the
+	 * latest time step.
+	 */
+	public void reCompute() {
+		resetCaches();
+		computeCellUsage();
+		getMaxT();
+		getMaxRouteLength();
+		getMaxUsage();
+	}
 
 	/**
 	 * Checks whether any droplet is present on a position in a given time
