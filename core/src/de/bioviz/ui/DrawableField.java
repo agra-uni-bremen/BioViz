@@ -310,10 +310,11 @@ public class DrawableField extends DrawableSprite {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
 			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
+			int usage = field.getUsage();
 			result.add(new Color(
-					field.usage / scalingFactor,
-					field.usage / scalingFactor,
-					field.usage / scalingFactor,
+					usage / scalingFactor,
+					usage / scalingFactor,
+					usage / scalingFactor,
 					0));
 			++colorOverlayCount;
 		}

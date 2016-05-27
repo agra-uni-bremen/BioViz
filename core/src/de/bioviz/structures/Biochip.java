@@ -203,27 +203,7 @@ public class Biochip {
 	}
 
 
-	/**
-	 * Computes the cell usage for every cell of this chip.
-	 */
-	public void computeCellUsage() {
-		logger.debug("Computing cell usage");
 
-		// first we set the usage of each field to zero
-		field.values().forEach(f -> f.usage = 0);
-
-
-		// TODO make BiochipField.usage private and create a method in the
-		// field
-		// itself to compute the usage #168
-		for (int t = 1; t <= getMaxT(); t++) {
-			for (final BiochipField f : field.values()) {
-				if (f.isActuated(t)) {
-					f.usage++;
-				}
-			}
-		}
-	}
 
 
 	/**
@@ -557,11 +537,25 @@ public class Biochip {
 	public int getMaxUsage() {
 		if (this.maxUsageCache <= 0) {
 			for (final BiochipField f : this.field.values()) {
-				if (f.usage > this.maxUsageCache) {
-					this.maxUsageCache = f.usage;
+				if (f.getUsage() > this.maxUsageCache) {
+					this.maxUsageCache = f.getUsage();
 				}
 			}
 		}
 		return maxUsageCache;
+	}
+
+	/**
+	 * Computes the cell usage for every cell of this chip.
+	 */
+	public void computeCellUsage() {
+		logger.debug("Computing cell usage");
+
+		// TODO make BiochipField.usage private and create a method in the
+		// field
+		// itself to compute the usage #168
+		for (final BiochipField f : field.values()) {
+			f.computeUsage(getMaxT());
+		}
 	}
 }
