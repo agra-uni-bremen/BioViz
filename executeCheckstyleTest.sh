@@ -1,4 +1,4 @@
-maxCheckstyleErrors=800
+maxCheckstyleErrors=700
 
 ./gradlew core:checkstyleMain > checkstyleOutput 2>&1
 grep -o "WARN" checkstyleOutput | wc -w > wcResult
