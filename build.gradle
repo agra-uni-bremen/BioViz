@@ -39,6 +39,7 @@ allprojects {
       toolVersion = "6.19"
       ignoreFailures = false
       showViolations = true
+      configFile = rootProject.file('config/checkstyle/checkstyle.xml')
     }
 
     version = '1.0'
