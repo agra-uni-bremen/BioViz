@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE module PUBLIC
         "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
-        "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+        "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
 <!--
 
@@ -225,9 +225,9 @@
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber">
-			<property name="ignoreFieldDeclaration" value="true"/>
-			<property name="ignoreAnnotation" value="true"/>
-		</module>
+          <property name="ignoreFieldDeclaration" value="true"/>
+          <property name="ignoreAnnotation" value="true"/>
+		    </module>
         <module name="MissingSwitchDefault"/>
         <!-- basically disallow changing loop variables (usually i,j, etc.) -->
         <module name="ModifiedControlVariable">
@@ -236,7 +236,7 @@
             -->
             <property name="severity" value="error"/>
         </module>
-        <module name="RedundantThrows"/>
+        <!--<module name="RedundantThrows"/>-->
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
         <module name="StringLiteralEquality"/>

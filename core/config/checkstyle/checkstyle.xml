@@ -236,8 +236,8 @@
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
 		<module name="MagicNumber">
-			<property name="ignoreFieldDeclaration" value="true"/>
-			<property name="ignoreAnnotation" value="true"/>
+      <property name="ignoreFieldDeclaration" value="true"/>
+      <property name="ignoreAnnotation" value="true"/>
 		</module>
         <module name="MissingSwitchDefault"/>
         <!-- basically disallow changing loop variables (usually i,j, etc.) -->
@@ -247,7 +247,7 @@
             -->
             <property name="severity" value="error"/>
         </module>
-        <module name="RedundantThrows"/>
+        <!--<module name="RedundantThrows"/>-->
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
         <module name="StringLiteralEquality"/>
