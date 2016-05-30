@@ -469,5 +469,7 @@ public class MessageCenter {
 	 */
 	public void setDefaultTextTransparency(float defaultTextTransparency) {
 		this.defaultTextTransparency = defaultTextTransparency;
+		logger.debug("Default font transparency is now "
+				+ this.defaultTextTransparency);
 	}
 }
