@@ -244,7 +244,7 @@ public class DesktopLauncher extends JFrame {
 		saveCB = new SaveFileCallback();
 		currentViz.addSaveFileListener(saveCB);
 
-		currentViz.addPickColourListener(new colourPickCallback());
+		currentViz.addPickColourListener(new ColourPickCallback());
 
 		String iconPath = "";
 		try {
@@ -681,7 +681,7 @@ public class DesktopLauncher extends JFrame {
 	 * Starts the BioViz GUI.
 	 * @param args CLI arguments to BioViz when starting the GUI.
 	 */
-	static void startGUI(final String args[]) {
+	static void startGUI(final String[] args) {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -843,6 +843,10 @@ public class DesktopLauncher extends JFrame {
 
 	}
 
+	/**
+	 * Displays the settings window.
+	 * @param viz The parent of the settings window.
+	 */
 	private static void showSettings(final BioViz viz) {
 		logger.debug("Opening preferences window...");
 		PreferencesWindow pw = new PreferencesWindow(viz);
@@ -1176,7 +1180,10 @@ public class DesktopLauncher extends JFrame {
 		}
 	}
 
-	private class colourPickCallback implements BioVizEvent {
+	/**
+	 * The callback for picking colors.
+	 */
+	private class ColourPickCallback implements BioVizEvent {
 
 		@Override
 		public void bioVizEvent() {
@@ -1468,6 +1475,7 @@ public class DesktopLauncher extends JFrame {
 		}
 	}
 
+
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
 		private BDisplayOptions option;
 
@@ -1486,6 +1494,9 @@ public class DesktopLauncher extends JFrame {
 			});
 		}
 
+		/**
+		 * Updates the state of the selected option.
+		 */
 		public void updateState() {
 			setState(currentViz.currentCircuit.
 					getDisplayOptions().getOption(option));
