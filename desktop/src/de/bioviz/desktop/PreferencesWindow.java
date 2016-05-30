@@ -51,10 +51,8 @@ class PreferencesWindow extends JFrame {
 		final int maxAnimationDuration = 1000;
 		final int defaultAnimationDuration = BioViz.getAnimationDuration();
 
-
-		// TODO can these '1000's be replaced by maxAnimationDuration?
-		final int minDurationBetweenSteps = 1 * 1000;
-		final int maxDurationBetweenSteps = 10 * 1000;
+		final int minDurationBetweenSteps = maxAnimationDuration;
+		final int maxDurationBetweenSteps = maxAnimationDuration * 10;
 		final int defaultDurationBetweenSteps =
 				Math.round(viz.currentCircuit.getAutoDelay() * 1000);
 
