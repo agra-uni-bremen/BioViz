@@ -56,26 +56,26 @@ public class Biochip {
 	/**
 	 * The latest time step in the operation of this biochip.
 	 * <p>
-	 * The initial value of -1 indicates that the maximal amount of time steps
+	 * The initial value of null indicates that the maximal amount of time steps
 	 * has not been computed yet.
 	 */
-	private int maxT = -1;
+	private Integer maxT = null;
 
 	/**
 	 * The length of the longest route.
 	 * <p>
-	 * The initial value of -1 indicates that the length has not been computed
+	 * The initial value of null indicates that the length has not been computed
 	 * yet.
 	 */
-	private int maxRouteLength = -1;
+	private Integer maxRouteLength = null;
 
 	/**
 	 * Caches the maximum usage of all fields to save computation time.
 	 * <p>
-	 * The initial value of -1 indicates that the max usage has not been
+	 * The initial value of null indicates that the max usage has not been
 	 * computed yet.
 	 */
-	private int maxUsageCache = -1;
+	private Integer maxUsageCache = null;
 
 	/**
 	 * The fields of this chip.
@@ -214,9 +214,9 @@ public class Biochip {
 	 * You need to manually call the reCompute() method.
 	 */
 	public void resetCaches() {
-		maxT = -1;
-		maxRouteLength = -1;
-		maxUsageCache = -1;
+		maxT = null;
+		maxRouteLength = null;
+		maxUsageCache = null;
 	}
 
 
@@ -374,10 +374,11 @@ public class Biochip {
 	 * @return the last timestamp of the currently loaded simulation
 	 */
 	public int getMaxT() {
-		if (maxT != -1) {
+		if (maxT != null) {
 			return maxT;
 		}
 
+		maxT=0;
 		for (final Droplet d : droplets) {
 			maxT = Math.max(maxT, d.getMaxTime());
 		}
@@ -404,8 +405,8 @@ public class Biochip {
 	 * @return Length of the longest route
 	 */
 	public int getMaxRouteLength() {
-		if (maxRouteLength == -1) {
-
+		if (maxRouteLength == null) {
+			maxRouteLength=0;
 			for (final Droplet d : droplets) {
 				maxRouteLength = Math.max(maxRouteLength, d.getRouteLength());
 			}
@@ -559,7 +560,8 @@ public class Biochip {
 	 * @return The maximal amount of times a cell is actuated.
 	 */
 	public int getMaxUsage() {
-		if (this.maxUsageCache <= 0) {
+		if (maxUsageCache == null) {
+			maxUsageCache=0;
 			for (final BiochipField f : this.field.values()) {
 				if (f.getUsage() > this.maxUsageCache) {
 					this.maxUsageCache = f.getUsage();

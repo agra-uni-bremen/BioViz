@@ -66,7 +66,7 @@ public class BiochipField {
 	/**
 	 * How often the field was actuated.
 	 */
-	private int usage = -1;
+	private Integer usage = null;
 
 	/**
 	 * Stores the detector that is present at this field.
@@ -250,10 +250,10 @@ public class BiochipField {
 	/**
 	 * Returns the usage of this field.
 	 * <p>
-	 * Note that the value will be -1 if the usage has not been calculated
+	 * Note that the value will be null if the usage has not been calculated
 	 * before calling this method.
 	 *
-	 * @return The usage of this field or -1 if the usage wasn't computed.
+	 * @return The usage of this field or null if the usage wasn't computed.
 	 */
 	public int getUsage() {
 		return usage;
