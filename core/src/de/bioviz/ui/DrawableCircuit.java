@@ -17,7 +17,8 @@ import org.slf4j.Logger;
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
  * Create a ReversibleCircuit first (e.g. by loading a given .real file), then
- * create a DrawableCircuit instance for the ReversibleCircuit to draw the latter.
+ * create a DrawableCircuit instance for the ReversibleCircuit to draw the
+ * latter.
  *
  * @author Jannis Stoppe
  */
@@ -62,8 +63,8 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * The "smooth" scaling factor. Unlike the scale values, this does not
-	 * represent the scale value that the user has last set but the one that
-	 * is actually drawn. This is used for a smooth camera zoom, e.g. the user
+	 * represent the scale value that the user has last set but the one that is
+	 * actually drawn. This is used for a smooth camera zoom, e.g. the user
 	 * zooms in, which sets the scale value to a specific value and the
 	 * smoothScale value is then over the duration of several frames slowly
 	 * adjusted to the scale value in order to have a smoother cam movement.
@@ -71,31 +72,30 @@ public class DrawableCircuit implements Drawable {
 	private float smoothScale = 1;
 
 	/**
-	 * The "smooth" offset. Unlike the offset values, this does not
-	 * represent the offset value that the user has last set but the one that
-	 * is actually drawn. This is used for a smooth camera movement, e.g. the
-	 * user pans, which sets the offset value to a specific value and the
-	 * smoothOffset value is then over the duration of several frames slowly
-	 * adjusted to the offset value in order to have a smoother cam movement.
+	 * The "smooth" offset. Unlike the offset values, this does not represent
+	 * the offset value that the user has last set but the one that is actually
+	 * drawn. This is used for a smooth camera movement, e.g. the user pans,
+	 * which sets the offset value to a specific value and the smoothOffset
+	 * value is then over the duration of several frames slowly adjusted to the
+	 * offset value in order to have a smoother cam movement.
 	 */
 	private float smoothOffsetX = 0;
 
 	/**
-	 * The "smooth" offset. Unlike the offset values, this does not
-	 * represent the offset value that the user has last set but the one that
-	 * is actually drawn. This is used for a smooth camera movement, e.g. the
-	 * user pans, which sets the offset value to a specific value and the
-	 * smoothOffset value is then over the duration of several frames slowly
-	 * adjusted to the offset value in order to have a smoother cam movement.
+	 * The "smooth" offset. Unlike the offset values, this does not represent
+	 * the offset value that the user has last set but the one that is actually
+	 * drawn. This is used for a smooth camera movement, e.g. the user pans,
+	 * which sets the offset value to a specific value and the smoothOffset
+	 * value is then over the duration of several frames slowly adjusted to the
+	 * offset value in order to have a smoother cam movement.
 	 */
 	private float smoothOffsetY = 0;
 
 	/**
-	 * The delay that is applied to the smooth cam movement.
-	 * The value is altered every frame by a value of
-	 * (offset - smoothOffset) / scalingDelay (respectively scale), so
-	 * <b>increasing</b> this value results in <b>slower movement</b> of the
-	 * camera.
+	 * The delay that is applied to the smooth cam movement. The value is
+	 * altered every frame by a value of (offset - smoothOffset) / scalingDelay
+	 * (respectively scale), so <b>increasing</b> this value results in
+	 * <b>slower movement</b> of the camera.
 	 */
 	private float scalingDelay = DEFAULT_SCALING_DELAY;
 
@@ -139,8 +139,8 @@ public class DrawableCircuit implements Drawable {
 	private Vector<DrawableDroplet> droplets = new Vector<>();
 
 	/**
-	 * The droplets that are present on this circuit but should not be drawn
-	 * at this moment.
+	 * The droplets that are present on this circuit but should not be drawn at
+	 * this moment.
 	 */
 	private Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
 
@@ -156,15 +156,16 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * This is a helper member that is incremented as soon as the time of the
-	 * circuit advances beyond the maximum time. This value can then be compared
+	 * circuit advances beyond the maximum time. This value can then be
+	 * compared
 	 * to an arbitrary value and the whole circuit be reset to time 0 after a
 	 * certain grace period of being already past its final timestamp.
 	 */
 	private int autoloopOvertimeCounter = 0;
 
 	/**
-	 * The field that is currently hovered by the mouse.
-	 * May be null, so be careful.
+	 * The field that is currently hovered by the mouse. May be null, so be
+	 * careful.
 	 */
 	private DrawableField hoveredField = null;
 
@@ -194,7 +195,9 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Jump to a specific timestep.
-	 * @param timeStep the timestep to jump to.
+	 *
+	 * @param timeStep
+	 * 		the timestep to jump to.
 	 */
 	public void setCurrentTime(final int timeStep) {
 		if (getParent() != null) {
@@ -202,7 +205,8 @@ public class DrawableCircuit implements Drawable {
 				currentTime = timeStep;
 				getParent().callTimeChangedListeners();
 			}
-		} else {
+		}
+		else {
 			throw new RuntimeException("circuit parent is null");
 		}
 	}
@@ -211,7 +215,8 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * Creates a drawable entity based on the data given.
 	 *
-	 * @param toDraw the data to draw
+	 * @param toDraw
+	 * 		the data to draw
 	 */
 	public DrawableCircuit(Biochip toDraw, BioViz parent) {
 		LOGGER.debug("Creating new drawable chip based on " + toDraw);
@@ -219,7 +224,8 @@ public class DrawableCircuit implements Drawable {
 		this.setParent(parent);
 		this.initializeDrawables();
 		this.getDisplayOptions().addOptionChangedEvent(e -> {
-			if (e.equals(BDisplayOptions.CellUsage)) {
+			if (e.equals(BDisplayOptions.CellUsage) ||
+				e.equals(BDisplayOptions.CellUsageCount)) {
 				boolean doIt = getDisplayOptions().getOption(e);
 				if (doIt) {
 					getData().computeCellUsage();
@@ -228,23 +234,26 @@ public class DrawableCircuit implements Drawable {
 		});
 		LOGGER.debug("New DrawableCircuit created successfully.");
 	}
+
 	/**
-	 * Initializes the drawables according to the circuit stored in the data field
+	 * Initializes the drawables according to the circuit stored in the data
+	 * field
 	 */
 	private void initializeDrawables() {
 		// clear remaining old data first, if any
 		this.getFields().clear();
 		this.getDroplets().clear();
 
-		LOGGER.debug("Initializing drawables: {} fields, {} droplets", getData().getAllCoordinates().size(), getData().getDroplets().size());
+		LOGGER.debug("Initializing drawables: {} fields, {} droplets", getData
+				().getAllCoordinates().size(), getData().getDroplets().size());
 
 		//setup fields
 		getData().getAllFields().forEach(fld -> {
 			if (fld instanceof Sink) {
-				fields.add(new DrawableSink((Sink)fld,this));
+				fields.add(new DrawableSink((Sink) fld, this));
 			}
 			else if (fld instanceof Dispenser) {
-				fields.add(new DrawableDispenser((Dispenser)fld,this));
+				fields.add(new DrawableDispenser((Dispenser) fld, this));
 			}
 			else {
 				DrawableField f = new DrawableField(fld, this);
@@ -268,9 +277,12 @@ public class DrawableCircuit implements Drawable {
 
 	@Override
 	public void draw() {
-		setSmoothScale(getSmoothScale() + (getScaleX() - getSmoothScale()) / scalingDelay);
-		setSmoothOffsetX(getSmoothOffsetX() + (getOffsetX() - getSmoothOffsetX()) / scalingDelay);
-		setSmoothOffsetY(getSmoothOffsetY() + (getOffsetY() - getSmoothOffsetY()) / scalingDelay);
+		setSmoothScale(getSmoothScale() +
+					   (getScaleX() - getSmoothScale()) / scalingDelay);
+		setSmoothOffsetX(getSmoothOffsetX() +
+						 (getOffsetX() - getSmoothOffsetX()) / scalingDelay);
+		setSmoothOffsetY(getSmoothOffsetY() +
+						 (getOffsetY() - getSmoothOffsetY()) / scalingDelay);
 
 		if (getDisplayOptions().getOption(BDisplayOptions.Coordinates)) {
 			displayCoordinates();
@@ -284,14 +296,16 @@ public class DrawableCircuit implements Drawable {
 
 		if (isAutoAdvance()) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long) ((this.getAutoDelay()) * 1000) < current) {
+			if (lastAutoStepAt + (long) ((this.getAutoDelay()) * 1000) <
+				current) {
 				lastAutoStepAt = current;
 
-				LOGGER.trace("data.getMaxT: {}\tcurrentTime: {}",getData().getMaxT(), getCurrentTime());
-				setCurrentTime(getCurrentTime() +1);
+				LOGGER.trace("data.getMaxT: {}\tcurrentTime: {}",
+							 getData().getMaxT(), getCurrentTime());
+				setCurrentTime(getCurrentTime() + 1);
 				if (getCurrentTime() >= getData().getMaxT() &&
-						this.getDisplayOptions().getOption(
-								BDisplayOptions.LoopAutoplay)) {
+					this.getDisplayOptions().getOption(
+							BDisplayOptions.LoopAutoplay)) {
 					++autoloopOvertimeCounter;
 					if (autoloopOvertimeCounter > 5) { //todo magic number
 						setCurrentTime(1);
@@ -311,7 +325,7 @@ public class DrawableCircuit implements Drawable {
 		for (DrawableDroplet d : this.getDroplets()) {
 			d.draw();
 		}
-	
+
 	}
 
 
@@ -319,7 +333,7 @@ public class DrawableCircuit implements Drawable {
 	 * Draws the coordinates of the grid on top of and to the left of the grid.
 	 * This in fact uses the message center to display the numbers, so the
 	 * actual drawing will be done after the rest has been drawn.
-	 * 
+	 *
 	 * @author Jannis Stoppe
 	 */
 	private void displayCoordinates() {
@@ -330,7 +344,7 @@ public class DrawableCircuit implements Drawable {
 		int minX = Integer.MAX_VALUE;
 		int minY = Integer.MAX_VALUE;
 		int maxX = Integer.MIN_VALUE;
-		int	maxY = Integer.MIN_VALUE;
+		int maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.getFields()) {
 			if (minX > f.getField().x()) {
@@ -346,7 +360,7 @@ public class DrawableCircuit implements Drawable {
 				maxY = f.getField().y();
 			}
 		}
-		
+
 		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
 		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
 			topYCoord = this.yCoordOnScreen(maxY + 1);
@@ -355,56 +369,59 @@ public class DrawableCircuit implements Drawable {
 		if (leftXCoord < this.xCoordOnScreen(minX - 1)) {
 			leftXCoord = this.xCoordOnScreen(minX - 1);
 		}
-		
+
 		// Defines when numbers should start fading and be completely hidden
 		float startFadingAtScale = 32f;
 		float endFadingAtScale = 24f;
-		
+
 		Color col = Color.WHITE.cpy();
 		if (this.getSmoothScale() < startFadingAtScale) {
 			if (this.getSmoothScale() > endFadingAtScale) {
-				float alpha = 1f - ((startFadingAtScale - getSmoothScale()) / (startFadingAtScale - endFadingAtScale));
+				float alpha = 1f - ((startFadingAtScale - getSmoothScale()) /
+									(startFadingAtScale - endFadingAtScale));
 				col.a = alpha;
-			} else {
+			}
+			else {
 				// TODO: don't draw!
 				col.a = 0;
 			}
 		}
-		
+
 		// scale text
 		float scale = Math.min(
 				this.parent.messageCenter.getTextRenderResolution(),
 				getSmoothScale() / 2f);
-		
+
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
 			this.getParent().messageCenter.addHUDMessage(
-					this.hashCode() + i,	// unique ID for each message
-					Integer.toString(i).trim(),	// message
-					this.xCoordOnScreen(i),	// x
-					topYCoord, 				// y
-					col,					// message color, used for fading
+					this.hashCode() + i,    // unique ID for each message
+					Integer.toString(i).trim(),    // message
+					this.xCoordOnScreen(i),    // x
+					topYCoord,                // y
+					col,                    // message color, used for fading
 					scale);
 		}
-		
+
 		for (int i = minY; i < maxY + 1; i++) {
 			this.getParent().messageCenter.addHUDMessage(
 					this.hashCode() + maxX + Math.abs(minY) + 1 + i,
-				// unique ID for each message, starting after the previous ids
+					// unique ID for each message, starting after the previous
+					// ids
 
-					Integer.toString(i).trim(),	// message
-					leftXCoord,				// x
+					Integer.toString(i).trim(),    // message
+					leftXCoord,                // x
 					this.yCoordOnScreen(i), // y
-					col,					// message color, used for fading
+					col,                    // message color, used for fading
 					scale);
 		}
 	}
-	
+
 	private void removeDisplayedCoordinates() {
 		int minX = Integer.MAX_VALUE,
-			minY = Integer.MAX_VALUE,
-			maxX = Integer.MIN_VALUE,
-			maxY = Integer.MIN_VALUE;
+				minY = Integer.MAX_VALUE,
+				maxX = Integer.MIN_VALUE,
+				maxY = Integer.MIN_VALUE;
 
 		for (DrawableField f : this.getFields()) {
 			if (minX > f.getField().x()) {
@@ -420,17 +437,19 @@ public class DrawableCircuit implements Drawable {
 				maxY = f.getField().y();
 			}
 		}
-		
+
 		// remove all HUD messages
 		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
-			this.getParent().messageCenter.removeHUDMessage(this.hashCode() + i);
+			this.getParent().messageCenter.removeHUDMessage(
+					this.hashCode() + i);
 		}
 	}
 
 	/**
 	 * Calculates the x coordinate of a given cell
 	 *
-	 * @param i the cell index
+	 * @param i
+	 * 		the cell index
 	 * @return the x coordinate on screen
 	 */
 	protected float xCoordOnScreen(int i) {
@@ -438,11 +457,13 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the x coordinate of a given value. Keep in mind that
-	 * this is still in cell-space, so a value of 0 would be at the center
-	 * of the chip's first cell.
+	 * Calculates the x coordinate of a given value. Keep in mind that this is
+	 * still in cell-space, so a value of 0 would be at the center of the
+	 * chip's
+	 * first cell.
 	 *
-	 * @param i the value to translate
+	 * @param i
+	 * 		the value to translate
 	 * @return the x coordinate on screen
 	 */
 	protected float xCoordOnScreen(float i) {
@@ -478,13 +499,14 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * If the two scaling factors aren't equal, this sets the larger scaling factor to
-	 * the smaller one in order to display square elements on screen
+	 * If the two scaling factors aren't equal, this sets the larger scaling
+	 * factor to the smaller one in order to display square elements on screen
 	 */
 	public void shrinkToSquareAlignment() {
 		if (getScaleY() < getScaleX()) {
 			setScaleX(getScaleY());
-		} else {
+		}
+		else {
 			setScaleY(getScaleX());
 		}
 	}
@@ -498,16 +520,15 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * sets the current x scaling factor
-	 * Keep in mind that the value used for actually drawing the
-	 * circuit is successively approaching the given value for a
-	 * smooth camera movement. Use setScaleImmediately if the viewport
-	 * is supposed to skip those inbetween steps.
+	 * sets the current x scaling factor Keep in mind that the value used for
+	 * actually drawing the circuit is successively approaching the given value
+	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
+	 * supposed to skip those inbetween steps.
 	 */
 	public void setScaleX(float scaleX) {
 		this.scale = scaleX;
 	}
-	
+
 	/**
 	 * Retrieves the current x scaling factor that is used for the smooth
 	 * animated camera.
@@ -524,11 +545,10 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Sets the current y scaling factor.
-	 * Keep in mind that the value used for actually drawing the
-	 * circuit is successively approaching the given value for a
-	 * smooth camera movement. Use setScaleImmediately if the viewport
-	 * is supposed to skip those inbetween steps.
+	 * Sets the current y scaling factor. Keep in mind that the value used for
+	 * actually drawing the circuit is successively approaching the given value
+	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
+	 * supposed to skip those inbetween steps.
 	 */
 	public void setScaleY(final float scaleY) {
 		this.scaleY = scaleY;
@@ -546,14 +566,16 @@ public class DrawableCircuit implements Drawable {
 		float width = Gdx.graphics.getWidth() * (1f / scale);
 		float centerY = getOffsetY();
 		float height = Gdx.graphics.getHeight() * (1f / scaleY);
-		result.set(centerX - (width / 2f), centerY - (height / 2f), width, height);
+		result.set(centerX - (width / 2f), centerY - (height / 2f), width,
+				   height);
 		return result;
 	}
 
 	/**
 	 * Sets the screen bounds
 	 *
-	 * @param bounds the area the viewport is supposed to show.
+	 * @param bounds
+	 * 		the area the viewport is supposed to show.
 	 */
 	public void setViewBounds(final Rectangle bounds) {
 		float targetHeight = Gdx.graphics.getHeight() / bounds.height;
@@ -596,12 +618,14 @@ public class DrawableCircuit implements Drawable {
 		this.setOffsetY((max.snd) / -2f + min.snd / -2f);
 
 
-		LOGGER.debug("Offset now at " + this.getOffsetX() + "/" + this.getOffsetY());
+		LOGGER.debug(
+				"Offset now at " + this.getOffsetX() + "/" + this.getOffsetY
+						());
 	}
 
 	/**
-	 * Resets the zoom so that the whole circuit is shown without
-	 * smoothly zooming to those settings.
+	 * Resets the zoom so that the whole circuit is shown without smoothly
+	 * zooming to those settings.
 	 */
 	public void zoomExtentsImmediately() {
 		zoomExtents();
@@ -609,8 +633,8 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Sets the zoom to the given values without smoothly approaching
-	 * those target values (instead sets them immediately).
+	 * Sets the zoom to the given values without smoothly approaching those
+	 * target values (instead sets them immediately).
 	 */
 	public void setScaleImmediately(float scale) {
 		this.scale = scale;
@@ -623,6 +647,7 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Retrieves the field that is currently being hovered.
+	 *
 	 * @return the currently hovered field.
 	 */
 	public DrawableField getHoveredField() {
@@ -715,11 +740,12 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Checks whether a certain droplet is hidden.
-	 *
+	 * <p>
 	 * 'Hidden' means that the droplet is not present on the field as such but
 	 * displayed on the top right corner.
 	 *
-	 * @param drop Droplet to test
+	 * @param drop
+	 * 		Droplet to test
 	 * @return true if the droplet is hidden, false otherwise.
 	 */
 	public boolean isHidden(final DrawableDroplet drop) {
@@ -728,8 +754,9 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Hides a droplet.
-
-	 * @param drop Droplet to hide
+	 *
+	 * @param drop
+	 * 		Droplet to hide
 	 */
 	public void hideDroplet(final DrawableDroplet drop) {
 		hiddenDroplets.add(drop);
@@ -737,7 +764,9 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Unhides a droplet.
-	 * @param drop The droplet to unhide.
+	 *
+	 * @param drop
+	 * 		The droplet to unhide.
 	 */
 	public void unHideDroplet(final DrawableDroplet drop) {
 		hiddenDroplets.remove(drop);

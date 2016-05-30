@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * The abstraction of a field on a biochip.
- *
+ * <p>
  * This class stores the position and whether a detector is present as well as
  * some meta information such as e.g. the actuation vector and the usage count.
  *
@@ -19,13 +19,8 @@ public class BiochipField {
 	public final Point pos;
 
 	/**
-	 * How often the field was actuated.
-	 */
-	public int usage;
-
-	/**
 	 * The pin that is assigned to this field.
-	 *
+	 * <p>
 	 * Note that this variable might be NULL as there might be BioGram files
 	 * that do not specify a pin assignment.
 	 */
@@ -33,7 +28,7 @@ public class BiochipField {
 
 	/**
 	 * The actuation vector of this field.
-	 *
+	 * <p>
 	 * Note that this variable might be NULL.
 	 */
 	public ActuationVector actVec;
@@ -60,9 +55,18 @@ public class BiochipField {
 	private Biochip parent;
 
 	/**
-	 *
+	 * The time range in which the field is blocked.
+	 * <p>
+	 * Note that a field can only be blocked for a single range. This means
+	 * that
+	 * if a field has been unblocked it will never be blocked again later on.
 	 */
 	private Range blockage;
+
+	/**
+	 * How often the field was actuated.
+	 */
+	private Integer usage = null;
 
 	/**
 	 * Stores the detector that is present at this field.
@@ -242,5 +246,39 @@ public class BiochipField {
 
 		return act == Actuation.ON;
 	}
+
+	/**
+	 * Returns the usage of this field.
+	 * <p>
+	 * Note that the value will be null if the usage has not been calculated
+	 * before calling this method.
+	 *
+	 * @return The usage of this field or null if the usage wasn't computed.
+	 */
+	public int getUsage() {
+		return usage;
+	}
+
+	/**
+	 * Computes the usage of the field.
+	 *
+	 * The usage is considered up to a specified position in time.
+	 *
+	 * @param T
+	 * 		The upper bound for the time steps to consider when computing the
+	 * 		usage.
+	 * 	@return The usage of this field up to time step T.
+	 */
+	int computeUsage(int T) {
+		usage = 0;
+		for (int t = 1; t <= T; t++) {
+			if (isActuated(t)) {
+				usage++;
+			}
+		}
+		return usage;
+	}
+
+
 
 }

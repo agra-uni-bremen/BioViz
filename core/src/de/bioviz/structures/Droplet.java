@@ -13,21 +13,6 @@ import java.util.Date;
 public class Droplet {
 
 	/**
-	 * Time needed for a droplet to move a distance of one field in ms.
-	 */
-	private static int transitionDuration = 500;
-
-	public float smoothX;
-	public float smoothY;
-
-
-	/**
-	 * Used for tracking whether update() ist called for the first time.
-	 */
-	private boolean firstUpdate = true;
-
-
-	/**
 	 * The net the droplet belongs to. Note that not every droplet necessarily
 	 * is part of a net as for a plain routing solution this information is not
 	 * vital.
@@ -62,39 +47,6 @@ public class Droplet {
 	private int spawnTime = 1;
 
 	/**
-	 * The next x position the droplet moves to.
-	 */
-	private float targetX;
-
-	/**
-	 * The next y position the droplet moves to.
-	 */
-	private float targetY;
-
-
-	/**
-	 * The droplet's current x position.
-	 */
-	private float originX;
-
-	/**
-	 * The droplet's current y position.
-	 */
-	private float originY;
-
-
-	/**
-	 * The time step in which the movement of the droplet begins.
-	 */
-	private long movementTransitionStartTime = 0;
-
-	/**
-	 * The time step in which the movement of the droplet ends.
-	 */
-	private long movementTransitionEndTime = 0;
-
-
-	/**
 	 * Creates an 'empty' droplet.
 	 * <p>
 	 * Empty means that there is no additional information besides the ID
@@ -126,15 +78,6 @@ public class Droplet {
 		this.id = id;
 		this.spawnTime = spawnTime;
 	}
-
-	public static int getTransitionDuration() {
-		return transitionDuration;
-	}
-
-	public static void setTransitionDuration(final int transitionDuration) {
-		Droplet.transitionDuration = transitionDuration;
-	}
-
 
 	/**
 	 * Checks whether this droplet belongs to a net.
@@ -278,33 +221,6 @@ public class Droplet {
 		return result;
 	}
 
-	public void update() {
-		if (firstUpdate) {
-			smoothX = getTargetX();
-			smoothY = getTargetY();
-			originX = getTargetX();
-			originY = getTargetY();
-			firstUpdate = false;
-		}
-
-		float totalProgress = 1;
-		if (movementTransitionStartTime != movementTransitionEndTime) {
-			float timeDiff = (float) (movementTransitionEndTime -
-									  movementTransitionStartTime);
-			float transitionProgress =
-					Math.max(0, Math.min(1, (float) (
-							new Date().getTime() - movementTransitionStartTime)
-											/ timeDiff));
-			totalProgress =
-					(float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
-		}
-
-		smoothX = this.originX * (1 - totalProgress) +
-				  this.targetX * totalProgress;
-		smoothY = this.originY * (1 - totalProgress) +
-				  this.targetY * totalProgress;
-	}
-
 	/**
 	 * Computes and returns the hash code of this droplet.
 	 * <p>
@@ -372,48 +288,6 @@ public class Droplet {
 		return this.id;
 	}
 
-	/**
-	 * Returns that target x position.
-	 *
-	 * @return The target x position
-	 */
-	public float getTargetX() {
-		return targetX;
-	}
-
-
-	/**
-	 * Returns that target y position.
-	 *
-	 * @return The target y position
-	 */
-	public float getTargetY() {
-		return targetY;
-	}
-
-
-	/**
-	 * Sets the target position of this droplet.
-	 *
-	 * The target position is the position the droplet will move to in the next
-	 * step. The actual movements takes place when the update() method is
-	 * called.
-	 *
-	 * @param x x position of the target cell.
-	 * @param y y position of the target cell.
-	 */
-	public void setTargetPosition(final float x, final float y) {
-		if (this.targetX != x || this.targetY != y) {
-			originX = this.smoothX;
-			originY = this.smoothY;
-			this.targetX = x;
-			this.targetY = y;
-			Date d = new Date();
-			this.movementTransitionStartTime = d.getTime();
-			this.movementTransitionEndTime =
-					d.getTime() + transitionDuration;
-		}
-	}
 
 	/**
 	 * @return Length of the route of this droplet.
