@@ -114,6 +114,7 @@ public class Biochip {
 	 */
 	public void addNets(final Collection<Net> netCollection) {
 		this.nets.addAll(netCollection);
+		resetCaches();
 	}
 
 	/**
@@ -191,6 +192,7 @@ public class Biochip {
 	 */
 	public void addDroplet(final Droplet drop) {
 		this.droplets.add(drop);
+		resetCaches();
 	}
 
 	/**
@@ -203,28 +205,34 @@ public class Biochip {
 	}
 
 
+
 	/**
-	 * Computes the cell usage for every cell of this chip.
+	 * Resets all the caches and re-computes the corresponding values.
+	 * <p>
+	 * This means that after calling this method, the latest time step, the
+	 * maximal route length and the maximal use of cells are not set anymore.
+	 * You need to manually call the reCompute() method.
 	 */
-	public void computeCellUsage() {
-		logger.debug("Computing cell usage");
-
-		// first we set the usage of each field to zero
-		field.values().forEach(f -> f.usage = 0);
-
-
-		// TODO make BiochipField.usage private and create a method in the
-		// field
-		// itself to compute the usage #168
-		for (int t = 1; t <= getMaxT(); t++) {
-			for (final BiochipField f : field.values()) {
-				if (f.isActuated(t)) {
-					f.usage++;
-				}
-			}
-		}
+	public void resetCaches() {
+		maxT = -1;
+		maxRouteLength = -1;
+		maxUsageCache = -1;
 	}
 
+
+	/**
+	 * Re-compute internal values.
+	 * <p>
+	 * The values are the maximal cell usage, the max route length and the
+	 * latest time step.
+	 */
+	public void reCompute() {
+		resetCaches();
+		computeCellUsage();
+		getMaxT();
+		getMaxRouteLength();
+		getMaxUsage();
+	}
 
 	/**
 	 * Checks whether any droplet is present on a position in a given time
@@ -550,18 +558,25 @@ public class Biochip {
 	 *
 	 * @return The maximal amount of times a cell is actuated.
 	 */
-	// TODO we need to set maxUsageCache to -1 if anything was changed.
-	// this includes things like adding cells or changing anything on the
-	// routes.
-	// Documented in #167
 	public int getMaxUsage() {
 		if (this.maxUsageCache <= 0) {
 			for (final BiochipField f : this.field.values()) {
-				if (f.usage > this.maxUsageCache) {
-					this.maxUsageCache = f.usage;
+				if (f.getUsage() > this.maxUsageCache) {
+					this.maxUsageCache = f.getUsage();
 				}
 			}
 		}
 		return maxUsageCache;
+	}
+
+	/**
+	 * Computes the cell usage for every cell of this chip.
+	 */
+	public void computeCellUsage() {
+		logger.debug("Computing cell usage");
+
+		for (final BiochipField f : field.values()) {
+			f.computeUsage(getMaxT());
+		}
 	}
 }

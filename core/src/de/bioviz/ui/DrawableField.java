@@ -190,11 +190,17 @@ public class DrawableField extends DrawableSprite {
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show
 		// what
-		if (circ.getDisplayOptions().getOption(BDisplayOptions.Pins)) {
+		if (getOption(Pins)) {
 			if (field.pin != null) {
 				fieldHUDMsg = Integer.toString(field.pin.pinID);
 			}
 		}
+
+		if (getOption(CellUsageCount)) {
+			fieldHUDMsg = Integer.toString(field.getUsage());
+		}
+
+
 
 		return Pair.mkPair(fieldHUDMsg, texture);
 	}
@@ -310,10 +316,11 @@ public class DrawableField extends DrawableSprite {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
 			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
+			int usage = field.getUsage();
 			result.add(new Color(
-					field.usage / scalingFactor,
-					field.usage / scalingFactor,
-					field.usage / scalingFactor,
+					usage / scalingFactor,
+					usage / scalingFactor,
+					usage / scalingFactor,
 					0));
 			++colorOverlayCount;
 		}
