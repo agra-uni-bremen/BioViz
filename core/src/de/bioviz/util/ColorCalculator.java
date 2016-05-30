@@ -7,7 +7,7 @@ import de.bioviz.ui.Color;
  * simply provide some static methods that help people with color calculation
  * stuff.
  *
- * @author jannis
+ * @author Jannis Stoppe
  */
 public final class ColorCalculator {
 
@@ -36,8 +36,6 @@ public final class ColorCalculator {
 		result.r = vals[0];
 		result.g = vals[1];
 		result.b = vals[2];
-
-		System.out.println("calCol: " + result.toString());
 
 		return result;
 	}
@@ -136,9 +134,9 @@ public final class ColorCalculator {
 				return new float[]{value, p, q, 1};
 			default:
 				throw new RuntimeException(
-						"Something went wrong when converting from HSV to RGB." +
-						" Input was " +
-						hue + ", " + saturation + ", " + value);
+						"Something went wrong when converting from HSV to " +
+						"RGB. Input was " + hue + ", " + saturation + ", " +
+						value);
 		}
 	}
 }

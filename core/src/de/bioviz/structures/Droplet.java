@@ -1,8 +1,5 @@
 package de.bioviz.structures;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -11,23 +8,9 @@ import java.util.Date;
  * This includes basic facts such as a unique ID as well as information about
  * the movement on the chip.
  *
- * @author Oliver Keszocze
+ * @author Jannis Stoppe, Oliver Keszocze
  */
 public class Droplet {
-
-
-	/**
-	 * Time needed for a droplet to move a distance of one field in ms.
-	 */
-	public static int movementTransitionDuration = 500;
-	static Logger logger = LoggerFactory.getLogger(Droplet.class);
-
-	public float smoothX;
-	public float smoothY;
-
-
-	private boolean firstUpdate = true;
-
 
 	/**
 	 * The net the droplet belongs to. Note that not every droplet necessarily
@@ -45,12 +28,13 @@ public class Droplet {
 	 * variable.
 	 * <p>
 	 * Combined with the length of the vector, this also implicitly defines
-	 * when the droplet vanishes from the chip.
+	 * when
+	 * the droplet vanishes from the chip.
 	 */
 	private ArrayList<Point> positions = new ArrayList<>();
 
 	/**
-	 * The unique ID of the droplet
+	 * The unique ID of the droplet.
 	 */
 	private int id = 0;
 
@@ -61,15 +45,6 @@ public class Droplet {
 	 * droplet is where.
 	 */
 	private int spawnTime = 1;
-
-	private float targetX;
-	private float targetY;
-	private float originX;
-	private float originY;
-
-	private long movementTransitionStartTime = 0;
-	private long movementTransitionEndTime = 0;
-
 
 	/**
 	 * Creates an 'empty' droplet.
@@ -104,9 +79,9 @@ public class Droplet {
 		this.spawnTime = spawnTime;
 	}
 
-
 	/**
 	 * Checks whether this droplet belongs to a net.
+	 *
 	 * @return true if the droplet belongs to a net; false otherwise.
 	 */
 	public boolean hasNet() {
@@ -142,13 +117,6 @@ public class Droplet {
 	 */
 	public ArrayList<Point> getPositions() {
 		return positions;
-	}
-
-	/**
-	 * @return Length of the route of this droplet.
-	 */
-	public int getRouteLength() {
-		return positions.size();
 	}
 
 
@@ -211,8 +179,7 @@ public class Droplet {
 	/**
 	 * @return First position of the droplet
 	 * @throws IndexOutOfBoundsException
-	 * 	if list of positions is empty
-	 *
+	 * 		if list of positions is empty
 	 */
 	public Point getFirstPosition() {
 		return positions.get(0);
@@ -225,7 +192,7 @@ public class Droplet {
 	 * 		if list of positions is empty
 	 */
 	public Point getLastPosition() {
-		return positions.get(positions.size()-1);
+		return positions.get(positions.size() - 1);
 	}
 
 
@@ -254,32 +221,6 @@ public class Droplet {
 		return result;
 	}
 
-	public void update() {
-		if (firstUpdate) {
-			smoothX = getTargetX();
-			smoothY = getTargetY();
-			originX = getTargetX();
-			originY = getTargetY();
-			firstUpdate = false;
-		}
-
-		float totalProgress = 1;
-		if (movementTransitionStartTime != movementTransitionEndTime) {
-			float transitionProgress = Math.max(0, Math.min(1, (float) (
-					new Date().getTime() - movementTransitionStartTime) /
-															   (float) (
-																	   movementTransitionEndTime -
-																	   movementTransitionStartTime)));
-			totalProgress =
-					(float) (-(Math.pow((transitionProgress - 1), 4)) + 1);
-		}
-
-		smoothX = this.originX * (1 - totalProgress) +
-				  this.targetX * totalProgress;
-		smoothY = this.originY * (1 - totalProgress) +
-				  this.targetY * totalProgress;
-	}
-
 	/**
 	 * Computes and returns the hash code of this droplet.
 	 * <p>
@@ -294,6 +235,11 @@ public class Droplet {
 	}
 
 	/**
+	 * Compares an object to this Droplet.
+	 *
+	 * The object is equal to this Droplet instance if it is an instance of the
+	 * droplet class and has the same ID.
+	 *
 	 * @param o
 	 * 		The object to compare against
 	 * @return true if both objects reference the same droplet
@@ -342,25 +288,11 @@ public class Droplet {
 		return this.id;
 	}
 
-	public float getTargetX() {
-		return targetX;
-	}
 
-	public float getTargetY() {
-		return targetY;
+	/**
+	 * @return Length of the route of this droplet.
+	 */
+	int getRouteLength() {
+		return positions.size();
 	}
-
-	public void setTargetPosition(final float targetX, final float targetY) {
-		if (this.targetX != targetX || this.targetY != targetY) {
-			originX = this.smoothX;
-			originY = this.smoothY;
-			this.targetX = targetX;
-			this.targetY = targetY;
-			Date d = new Date();
-			this.movementTransitionStartTime = d.getTime();
-			this.movementTransitionEndTime =
-					d.getTime() + movementTransitionDuration;
-		}
-	}
-
 }

@@ -5,8 +5,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+
+
+import java.awt.HeadlessException;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.WindowEvent;
 
 
@@ -18,7 +27,7 @@ import java.awt.event.WindowEvent;
  *
  * @author Jannis Stoppe, Oliver Keszocze
  */
-public class PreferencesWindow extends JFrame {
+class PreferencesWindow extends JFrame {
 
 	/**
 	 * Used to handle feedback for the user about the program behaviour (and of
@@ -32,16 +41,18 @@ public class PreferencesWindow extends JFrame {
 	 * @param viz
 	 * 		Reference to the {@see BioViz} instance that opened the window.
 	 * @throws HeadlessException
-	 * @author Jannis Stoppe, Oliver Keszocze
 	 */
-	public PreferencesWindow(final BioViz viz) throws HeadlessException {
+	PreferencesWindow(final BioViz viz) throws HeadlessException {
 		super("Preferences");
+
 
 
 		final int minAnimationDuration = 0;
 		final int maxAnimationDuration = 1000;
 		final int defaultAnimationDuration = BioViz.getAnimationDuration();
 
+
+		// TODO can these '1000's be replaced by maxAnimationDuration?
 		final int minDurationBetweenSteps = 1 * 1000;
 		final int maxDurationBetweenSteps = 10 * 1000;
 		final int defaultDurationBetweenSteps =
@@ -49,7 +60,9 @@ public class PreferencesWindow extends JFrame {
 
 		try {
 			this.setIconImage(
-					ImageIO.read(viz.getApplicationIcon().file()));
+					ImageIO.read(DesktopLauncher.getFileFromStream("/" + viz
+							.getApplicationIcon()
+							.path())));
 		} catch (final Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage());
 		}
@@ -69,14 +82,15 @@ public class PreferencesWindow extends JFrame {
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.LINE_END;
 		JLabel timestepLabel =
-				new JLabel(Float.toString(defaultDurationBetweenSteps/1000f));
+				new JLabel(Float.toString(defaultDurationBetweenSteps
+										  / 1000f));
 		this.add(timestepLabel, c);
 
 
 		c.gridx = 2;
 		c.gridy = 0;
-		c.anchor =GridBagConstraints.LINE_START;
-		this.add(new JLabel("s"),c);
+		c.anchor = GridBagConstraints.LINE_START;
+		this.add(new JLabel("s"), c);
 
 		JSlider animSlider =
 				new JSlider(SwingConstants.HORIZONTAL, minDurationBetweenSteps,
@@ -92,7 +106,6 @@ public class PreferencesWindow extends JFrame {
 								newSpeed);
 					viz.currentCircuit.setAutoDelay(newSpeed);
 					timestepLabel.setText(Float.toString(newSpeed));
-					;
 				});
 
 		c.gridx = 0;
@@ -108,8 +121,6 @@ public class PreferencesWindow extends JFrame {
 		this.add(new JLabel("Animation duration:"), c);
 
 
-
-
 		c.gridx = 1;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.LINE_END;
@@ -121,7 +132,7 @@ public class PreferencesWindow extends JFrame {
 		c.gridx = 2;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.LINE_START;
-		this.add(new JLabel("ms"),c);
+		this.add(new JLabel("ms"), c);
 
 		JSlider dropMovementSpeedSlider =
 				new JSlider(SwingConstants.HORIZONTAL, minAnimationDuration,

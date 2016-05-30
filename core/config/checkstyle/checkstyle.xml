@@ -216,9 +216,11 @@
             "My_Sweet_String".equals(nullString);
         -->
         <module name="EqualsAvoidNull"/>
-        <module name="IllegalToken"/>
-        <!-- Disallow labels -->
 
+        <!-- Disallow labels -->
+		<module name="IllegalToken">
+			    <property name="tokens" value="LITERAL_NATIVE"/>
+		</module>
         <!--
         this module checks whether parameters or variables shadow class fields.
         see http://checkstyle.sourceforge.net/apidocs/com/puppycrawl/tools/checkstyle/checks/coding/HiddenFieldCheck.html
@@ -233,7 +235,12 @@
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
+		<module name="MagicNumber">
+			<!--
+			<property name="ignoreFieldDeclaration" value="true"/>
+			<property name="ignoreAnnotation" value="true"/>
+			-->
+		</module>
         <module name="MissingSwitchDefault"/>
         <!-- basically disallow changing loop variables (usually i,j, etc.) -->
         <module name="ModifiedControlVariable">

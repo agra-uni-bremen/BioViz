@@ -1,8 +1,5 @@
 package de.bioviz.ui;
 
-import java.util.Date;
-import java.util.HashMap;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -10,12 +7,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.NumberUtils;
-
 import de.bioviz.messages.MessageCenter;
-import de.bioviz.util.Pair;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * This is a wrapper for the 2d drawing methods.
@@ -85,6 +82,11 @@ public abstract class DrawableSprite implements Drawable {
 	 * The y coordinate of this sprite.
 	 */
 	private float y = 0;
+
+	/**
+	 * The depth drawing order.
+	 */
+	private float z = 0;
 
 	/**
 	 * The x scaling factor of this sprite.
@@ -210,6 +212,10 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	public void draw() {
+		draw(this.z);
+	}
+
+	public void draw(float z) {
 
 		if (isVisible()) {
 
@@ -276,8 +282,7 @@ public abstract class DrawableSprite implements Drawable {
 					}
 				}
 			}
-			
-			this.sprite.draw(viz.batch);
+			viz.batch.draw(this.sprite, this.viz.camera.combined, z);
 		}
 	}
 
@@ -408,6 +413,13 @@ public abstract class DrawableSprite implements Drawable {
 		this.y = y;
 	}
 
+	public float getZ() {
+		return z;
+	}
+
+	public void setZ(float z) {
+		this.z = z;
+	}
 	public float getScaleX() {
 		return scaleX;
 	}

@@ -4,11 +4,18 @@ import java.util.ArrayList;
 
 /**
  * @author Oliver Keszocze
- * @brief Created by keszocze on 22.07.15.
+
  */
 public class Rectangle {
 
+	/**
+	 * The lower left corner of the rectangle.
+	 */
 	Point lowerLeft;
+
+	/**
+	 * The upper right corner of the rectangle.
+	 */
 	Point upperRight;
 
 
@@ -26,7 +33,7 @@ public class Rectangle {
 	 * <p>
 	 * The two corners of the rectangle may be identical.
 	 */
-	public Rectangle(Point p1, Point p2) {
+	public Rectangle(final Point p1, final Point p2) {
 		this(p1.fst, p1.snd, p2.fst, p2.snd);
 	}
 
@@ -49,7 +56,7 @@ public class Rectangle {
 	 * <p>
 	 * The two corners of the rectangle may be identical.
 	 */
-	public Rectangle(int x1, int y1, int x2, int y2) {
+	public Rectangle(final int x1, final int y1, final int x2, final int y2) {
 
 
 		int minX = Math.min(x1, x2);
@@ -70,7 +77,7 @@ public class Rectangle {
 	 * @brief Checks whether a given point is within the boundaries of the
 	 * rectangle
 	 */
-	public boolean contains(Point p) {
+	public boolean contains(final Point p) {
 		return contains(p.fst, p.snd);
 	}
 
@@ -84,7 +91,7 @@ public class Rectangle {
 	 * @brief Checks whether a given point is within the boundaries of the
 	 * rectangle
 	 */
-	public boolean contains(int x, int y) {
+	public boolean contains(final int x, final int y) {
 
 		return lowerLeft.fst <= x && x <= upperRight.fst &&
 			   lowerLeft.snd <= y && y <= upperRight.snd;

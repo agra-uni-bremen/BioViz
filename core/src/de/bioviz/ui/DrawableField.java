@@ -1,6 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 
 import de.bioviz.structures.*;
 import de.bioviz.util.Pair;
@@ -27,6 +28,37 @@ import java.util.ArrayList;
 public class DrawableField extends DrawableSprite {
 
 	/**
+	 * The default color used for fields.
+	 */
+	public static final Color FIELD_DEFAULT_COLOR = Colors.FIELD_COLOR;
+
+	/**
+	 * The default color used for sinks.
+	 */
+	public static final Color SINK_DEFAULT_COLOR = Colors.SINK_COLOR;
+
+	/**
+	 * The default color used for sources.
+	 */
+	public static final Color SOURCE_DEFAULT_COLOR = Colors.SOURCE_COLOR;
+
+	/**
+	 * The default color used for mixers.
+	 */
+	public static final Color MIXER_DEFAULT_COLOR = Colors.MIXER_COLOR;
+
+	/**
+	 * The default color used for blockages.
+	 */
+	public static final Color BLOCKED_COLOR = Colors.BLOCKED_COLOR;
+
+	/**
+	 * Overlay color used for fields that have adjacent activations.
+	 */
+	public static final Color ADJACENT_ACTIVATION_COLOR =
+			new Color(0.5f, -0.5f, -0.5f, 0);
+
+	/**
 	 * The zoom level at which fields resort to drawing boxes instead of actual
 	 * structures.
 	 */
@@ -51,8 +83,11 @@ public class DrawableField extends DrawableSprite {
 	 */
 	protected BiochipField field;
 
+	private DrawableLine netIndicator = null;
+
 	/**
-	 * <p>Creates an object that draws a given field for a biochip.</p>
+	 * Creates an object that draws a given field for a biochip.
+	 *
 	 * <p>Notice that we separate the structure from the drawing, hence the
 	 * separation of Drawable-something vs structural classes. This class needs
 	 * the structural information what it's supposed to draw (given via the
@@ -74,6 +109,7 @@ public class DrawableField extends DrawableSprite {
 		this.setParentCircuit(parent);
 		this.setField(field);
 		super.addLOD(PIXELIZED_ZOOM_LEVEL, TextureE.BlackPixel);
+		this.setZ(DisplayValues.DEFAULT_FIELD_DEPTH);
 		//adjacencyOverlay = new AdjacencyOverlay("AdjacencyMarker.png");
 	}
 
@@ -125,7 +161,7 @@ public class DrawableField extends DrawableSprite {
 			}
 
 			if (getOption(SourceTargetIDs)) {
-				ArrayList<Integer> sources = field.source_ids;
+				ArrayList<Integer> sources = field.sourceIDs;
 				fieldHUDMsg = sources.get(0).toString();
 				if (sources.size() > 1) {
 					for (int i = 2; i < sources.size(); i++) {
@@ -139,7 +175,7 @@ public class DrawableField extends DrawableSprite {
 				texture = TextureE.Target;
 			}
 			if (getOption(SourceTargetIDs)) {
-				ArrayList<Integer> targets = field.target_ids;
+				ArrayList<Integer> targets = field.targetIDs;
 				fieldHUDMsg = targets.get(0).toString();
 				if (targets.size() > 1) {
 					for (int i = 1; i < targets.size(); i++) {
@@ -154,11 +190,17 @@ public class DrawableField extends DrawableSprite {
 		// note: this overwrites any previous message
 		// TODO we really need some kind of mechanism of deciding when to show
 		// what
-		if (circ.getDisplayOptions().getOption(BDisplayOptions.Pins)) {
+		if (getOption(Pins)) {
 			if (field.pin != null) {
 				fieldHUDMsg = Integer.toString(field.pin.pinID);
 			}
 		}
+
+		if (getOption(CellUsageCount)) {
+			fieldHUDMsg = Integer.toString(field.getUsage());
+		}
+
+
 
 		return Pair.mkPair(fieldHUDMsg, texture);
 	}
@@ -171,8 +213,15 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public Color getColor() {
 
-		// TODO document what this variable is good for.
+		/**
+		 * This value stores the amount of colors being overlaid in the process
+		 * of computing the color. This is currently required to calculate the
+		 * average value of all colors at the end of the process (e.g. if three
+		 * different colors are being added, the final result needs to be
+		 * divided by three).
+		 */
 		int colorOverlayCount = 0;
+
 		/*
 		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
 		final
@@ -267,10 +316,11 @@ public class DrawableField extends DrawableSprite {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
 			// Usage verwenden)
 			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
+			int usage = field.getUsage();
 			result.add(new Color(
-					field.usage / scalingFactor,
-					field.usage / scalingFactor,
-					field.usage / scalingFactor,
+					usage / scalingFactor,
+					usage / scalingFactor,
+					usage / scalingFactor,
 					0));
 			++colorOverlayCount;
 		}
@@ -289,7 +339,7 @@ public class DrawableField extends DrawableSprite {
 							d2.droplet.getPositionAt(
 									this.parentCircuit.getCurrentTime())
 									.equals(
-									this.field.pos)) {
+											this.field.pos)) {
 							result.add(
 									Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 							++colorOverlayCount;
@@ -349,7 +399,7 @@ public class DrawableField extends DrawableSprite {
 		if (getOption(Adjacency) &&
 			getParentCircuit().getData().getAdjacentActivations().contains(
 					this.getField())) {
-			result.add(Colors.ADJACENT_ACTIVATION_COLOR);
+			result.add(ADJACENT_ACTIVATION_COLOR);
 		}
 
 		if (colorOverlayCount > 0) {
@@ -389,21 +439,28 @@ public class DrawableField extends DrawableSprite {
 		super.draw();
 
 		if (getOption(LongNetIndicatorsOnFields)) {
-			for (Net net : this.parentCircuit.getData().getNetsOf(this.field)) {
+			for (Net net : this.parentCircuit.getData().getNetsOf(this
+																		  .field)) {
 				for (Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
-						Pair<Float, Float> target = new Pair<Float, Float>(
+						Vector2 target = new Vector2(
 								net.getTarget().fst.floatValue(),
 								net.getTarget().snd.floatValue());
 
-						Pair<Float, Float> source = new Pair<Float, Float>(
+						Vector2 source = new Vector2(
 								s.startPosition.fst.floatValue(),
 								s.startPosition.snd.floatValue());
 
 
 						// draw to target
-						DrawableLine.draw(source, target,Color.BLACK.cpy().sub(
-								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR));
+						if (netIndicator == null) {
+							netIndicator = new DrawableLine(this.viz);
+						}
+						netIndicator.from = source;
+						netIndicator.to = target;
+						netIndicator.setColor(
+								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
+						netIndicator.draw();
 					}
 				}
 			}

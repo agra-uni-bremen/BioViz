@@ -1,42 +1,35 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-
 import de.bioviz.messages.MessageCenter;
 import de.bioviz.messages.MsgAppender;
+import de.bioviz.parser.BioParser;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Droplet;
-import de.bioviz.parser.BioParser;
 import de.bioviz.svg.SVGManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.*;
 
 
 public class BioViz implements ApplicationListener {
 	public OrthographicCamera camera;
-	public SpriteBatch batch;
+	public BioVizSpriteBatch batch;
 	
 	/**
 	 * Sets the duration of intermediate animations in ms.
 	 */
 	public static void setAnimationDuration(int value) {
-		Droplet.movementTransitionDuration = value;
+		DrawableDroplet.setTransitionDuration(value);
 		DrawableSprite.setColorTransitionDuration(value);
 	}
 
@@ -45,7 +38,7 @@ public class BioViz implements ApplicationListener {
 	 * @return Duration of intermediate animations in ms.
 	 */
 	public static int getAnimationDuration() {
-		return Droplet.movementTransitionDuration;
+		return DrawableDroplet.getTransitionDuration();
 	}
 
 
@@ -144,12 +137,13 @@ public class BioViz implements ApplicationListener {
 		float h = Gdx.graphics.getHeight();
 
 		camera = new OrthographicCamera(1, h / w);
-		batch = new SpriteBatch(1000, this.createDefaultShader());
+		batch = new BioVizSpriteBatch(
+				new SpriteBatch(1000, this.createDefaultShader()));
 
 		inputProcessor = new BioVizInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);
 		
-		DrawableLine.singleton = new DrawableLine(this);
+		//DrawableLine.singleton = new DrawableLine(this);
 
 		//this.menu = new Menu();
 		//this.drawables.add(menu);
@@ -190,7 +184,7 @@ public class BioViz implements ApplicationListener {
 			drawable.draw();
 		}
 		
-		DrawableLine.drawNow();
+		//DrawableLine.drawNow();
 
 		messageCenter.render();
 
@@ -225,76 +219,6 @@ public class BioViz implements ApplicationListener {
 	public void resume() {
 	}
 
-
-	private static int screenshotCount = 0;
-
-	public void saveScreenshotFull(String prefix) {
-		render();
-		FileHandle fh = Gdx.files.getFileHandle(
-				"screenshots/" + prefix + "" + new Date().getTime() + "_" +
-				screenshotCount + ".png", FileType.Local);
-		screenshotCount++;
-		saveScreenshot(fh, 0, 0, Gdx.graphics.getWidth(),
-					   Gdx.graphics.getHeight());
-		logger.info("Saved screenshot to \"{}\"", fh.path());
-	}
-
-	public void saveScreenshotFull() {
-		saveScreenshotFull("");
-	}
-
-	/**
-	 * Taken from http://code.google.com/p/libgdx-users/wiki/Screenshots
-	 *
-	 * @param file
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 */
-	private void saveScreenshot(FileHandle file, int x, int y, int w, int h) {
-		Pixmap pixmap = getScreenshot(x, y, w, h, true);
-		PixmapIO.writePNG(file, pixmap);
-		pixmap.dispose();
-	}
-
-	/**
-	 * Taken from http://code.google.com/p/libgdx-users/wiki/Screenshots
-	 *
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
-	 * @param flipY
-	 * @return
-	 */
-	private Pixmap getScreenshot(int x, int y, int w, int h, boolean flipY) {
-		Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
-
-		final Pixmap pixmap = new Pixmap(w, h, Format.RGBA8888);
-		ByteBuffer pixels = pixmap.getPixels();
-		Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE,
-							pixels);
-
-		final int numBytes = w * h * 4;
-		byte[] lines = new byte[numBytes];
-		if (flipY) {
-			final int numBytesPerLine = w * 4;
-			for (int i = 0; i < h; i++) {
-				pixels.position((h - i - 1) * numBytesPerLine);
-				pixels.get(lines, i * numBytesPerLine, numBytesPerLine);
-			}
-			pixels.clear();
-			pixels.put(lines);
-		}
-		else {
-			pixels.clear();
-			pixels.get(lines);
-		}
-
-		return pixmap;
-	}
-
 	public void unloadFile(File f) {
 		try {
 			String path = f.getCanonicalPath();
@@ -311,7 +235,7 @@ public class BioViz implements ApplicationListener {
 				this.loadedCircuits.remove(path);
 			}
 		} catch (Exception e) {
-			logger.error("Could not unload file \"" + f+"\"");
+			logger.error("Could not unload file \"{}\"",f);
 		}
 	}
 
@@ -332,7 +256,7 @@ public class BioViz implements ApplicationListener {
 				}
 				else {
 					logger.debug("Loading \"{}\"", bioFile);
-					bc = BioParser.parseFile(bioFile, this);
+					bc = BioParser.parseFile(bioFile);
 
 					if (bc == null) {
 						logger.error("Could not parse file {}",bioFile);
@@ -359,7 +283,9 @@ public class BioViz implements ApplicationListener {
 						logger.info("Done loading file {}", bioFile);
 					}
 				}
-
+				else {
+					logger.info("Done loading file {}", bioFile);
+				}
 			} else {
 				logger.debug(
 						"File to be set is empty, setting empty " +
@@ -373,6 +299,8 @@ public class BioViz implements ApplicationListener {
 
 		// clear on screen messages as they would otherwise remain visible
 		messageCenter.clearHUDMessages();
+
+
 		this.callLoadedFileListeners();
 	}
 
@@ -491,9 +419,7 @@ public class BioViz implements ApplicationListener {
 	void callPreviousTabListeners() {
 		logger.trace("Calling " + previousTabListeners.size() +
 				" listeners to change to the next tab.");
-		for (BioVizEvent listener : previousTabListeners) {
-			listener.bioVizEvent();
-		}
+		previousTabListeners.forEach(BioVizEvent::bioVizEvent);
 	}
 
 	public void saveSVG(String path, int timeStep) {
@@ -513,12 +439,12 @@ public class BioViz implements ApplicationListener {
 		}
 	}
 
-	static public ShaderProgram createDefaultShader() {
+	static private ShaderProgram createDefaultShader() {
 		FileHandle vertexShaderHandle = Gdx.files.internal("vertexShader.shd");
 		FileHandle fragmentShaderHandle = Gdx.files.internal("fragmentShader.shd");
 
 		ShaderProgram shader = new ShaderProgram(vertexShaderHandle, fragmentShaderHandle);
-		if (shader.isCompiled() == false) {
+		if (!shader.isCompiled()) {
 			throw new IllegalArgumentException(
 					"Error compiling shader: " + shader.getLog());
 		}
@@ -541,6 +467,5 @@ public class BioViz implements ApplicationListener {
 		logger.debug("Setting application icon to " + handle.name());
 		return handle;
 	}
-
 
 }

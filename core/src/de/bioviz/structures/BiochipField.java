@@ -1,39 +1,134 @@
 package de.bioviz.structures;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
-import java.util.EnumSet;
 
+/**
+ * The abstraction of a field on a biochip.
+ * <p>
+ * This class stores the position and whether a detector is present as well as
+ * some meta information such as e.g. the actuation vector and the usage count.
+ *
+ * @author Oliver Keszocze
+ */
 public class BiochipField {
+
+
+	/**
+	 * The field's position.
+	 */
 	public final Point pos;
-	private Range blockage;
-	private Detector detector;
-	public int usage;
+
+	/**
+	 * The pin that is assigned to this field.
+	 * <p>
+	 * Note that this variable might be NULL as there might be BioGram files
+	 * that do not specify a pin assignment.
+	 */
 	public Pin pin;
+
+	/**
+	 * The actuation vector of this field.
+	 * <p>
+	 * Note that this variable might be NULL.
+	 */
 	public ActuationVector actVec;
 
-	public ArrayList<Integer> source_ids = new ArrayList<Integer>();
-	public ArrayList<Integer> target_ids = new ArrayList<Integer>();
-	public ArrayList<Mixer> mixers = new ArrayList<Mixer>();
-	static private Logger logger = LoggerFactory.getLogger(BiochipField.class);
+	/**
+	 * List of droplet IDs that belong to a net starting at this field.
+	 */
+	public ArrayList<Integer> sourceIDs = new ArrayList<>();
 
-	Biochip parent;
+	/**
+	 * List of droplet IDs that belong to a net ending at this field.
+	 */
+	public ArrayList<Integer> targetIDs = new ArrayList<>();
 
+	/**
+	 * List of mixing operations performed on top of this field.
+	 */
+	public ArrayList<Mixer> mixers = new ArrayList<>();
+
+
+	/**
+	 * The biochip this field belongs to.
+	 */
+	private Biochip parent;
+
+	/**
+	 * The time range in which the field is blocked.
+	 * <p>
+	 * Note that a field can only be blocked for a single range. This means
+	 * that
+	 * if a field has been unblocked it will never be blocked again later on.
+	 */
+	private Range blockage;
+
+	/**
+	 * How often the field was actuated.
+	 */
+	private Integer usage = null;
+
+	/**
+	 * Stores the detector that is present at this field.
+	 * <p>
+	 * This variable might be null as not every field must have a detecting
+	 * device.
+	 */
+	private Detector detector;
+
+	/**
+	 * Creates an empty field at given position on the specified biochip.
+	 *
+	 * @param p
+	 * 		The position of the field.
+	 * @param parent
+	 * 		The biochip this field belongs to.
+	 */
+	public BiochipField(final Point p, final Biochip parent) {
+		this.pos = p;
+		this.parent = parent;
+	}
+
+	/**
+	 * Returns the x position of this field.
+	 *
+	 * @return The x position of this field
+	 */
 	public int x() {
 		return pos.fst;
 	}
 
+	/**
+	 * Returns the y position of this field.
+	 *
+	 * @return The y position of this field
+	 */
 	public int y() {
 		return pos.snd;
 	}
 
 
-	public void setDetector(Detector det) {
+	/**
+	 * Sets the detector of this field.
+	 * <p>
+	 * Note that we do not check whether a detector is added to a field that is
+	 * blocked and vice versa.
+	 *
+	 * @param det
+	 * 		The detector that is placed at this field.
+	 */
+	public void setDetector(final Detector det) {
 		detector = det;
 	}
 
+	/**
+	 * Returns the detector of this field.
+	 * <p>
+	 * Note that the result may by NULL as not every field must have a
+	 * detector.
+	 *
+	 * @return The detector, if present, NULL otherwise
+	 */
 	public Detector getDetector() {
 		return detector;
 	}
@@ -44,7 +139,7 @@ public class BiochipField {
 	 * @return true if the field is the destination of a net.
 	 */
 	public boolean isTarget() {
-		return !target_ids.isEmpty();
+		return !targetIDs.isEmpty();
 	}
 
 	/**
@@ -53,7 +148,7 @@ public class BiochipField {
 	 * @return true if the field is the source of a net.
 	 */
 	public boolean isSource() {
-		return !source_ids.isEmpty();
+		return !sourceIDs.isEmpty();
 	}
 
 	/**
@@ -66,31 +161,26 @@ public class BiochipField {
 	}
 
 
-	// ############################################################################################################
 	/**
 	 * Sets the time, this field is blocked.
 	 *
-	 * @param blockage
+	 * @param blockageRange
 	 * 		The {@link Range} describing the time the field is blocked.
 	 */
-	public void attachBlockage(Range blockage) {
-		this.blockage = blockage;
+	public void attachBlockage(final Range blockageRange) {
+		this.blockage = blockageRange;
 	}
 
 	/**
 	 * Checks whether the field is blocked at the specified time step.
 	 *
-	 * @param timeStep The time step to check.
+	 * @param timeStep
+	 * 		The time step to check.
 	 * @return true if the field is blocked at timeStep, false otherwise.
 	 */
-	public boolean isBlocked(int timeStep) {
+	public boolean isBlocked(final int timeStep) {
 
-		if (isPotentiallyBlocked()) {
-			return blockage.inRange(timeStep);
-		}
-		else {
-			return false;
-		}
+		return isPotentiallyBlocked() && blockage.inRange(timeStep);
 	}
 
 	/**
@@ -128,7 +218,7 @@ public class BiochipField {
 	 * 		The time step to check for actuation of this field.
 	 * @return true if the field is actuated, false otherwise.
 	 */
-	public boolean isActuated(int timeStep) {
+	public boolean isActuated(final int timeStep) {
 
 		Biochip circ = parent;
 		Actuation act = Actuation.OFF;
@@ -148,7 +238,7 @@ public class BiochipField {
 			}
 		}
 
-		for (Mixer m : mixers) {
+		for (final Mixer m : mixers) {
 			if (m.positions.contains(pos) && m.timing.inRange(timeStep)) {
 				act = Actuation.ON;
 			}
@@ -157,17 +247,38 @@ public class BiochipField {
 		return act == Actuation.ON;
 	}
 
-
-	// end of TODO
-	// ############################################################################################################
-	public BiochipField(int x, int y, Biochip parent) {
-		this.pos = new Point(x, y);
-		this.parent = parent;
+	/**
+	 * Returns the usage of this field.
+	 * <p>
+	 * Note that the value will be null if the usage has not been calculated
+	 * before calling this method.
+	 *
+	 * @return The usage of this field or null if the usage wasn't computed.
+	 */
+	public int getUsage() {
+		return usage;
 	}
 
-	public BiochipField(Point p, Biochip parent) {
-		this.pos = p;
-		this.parent = parent;
+	/**
+	 * Computes the usage of the field.
+	 *
+	 * The usage is considered up to a specified position in time.
+	 *
+	 * @param T
+	 * 		The upper bound for the time steps to consider when computing the
+	 * 		usage.
+	 * 	@return The usage of this field up to time step T.
+	 */
+	int computeUsage(int T) {
+		usage = 0;
+		for (int t = 1; t <= T; t++) {
+			if (isActuated(t)) {
+				usage++;
+			}
+		}
+		return usage;
 	}
+
+
 
 }
