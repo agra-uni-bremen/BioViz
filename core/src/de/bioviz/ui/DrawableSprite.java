@@ -12,8 +12,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.NumberUtils;
 
 import de.bioviz.messages.MessageCenter;
-import de.bioviz.util.Pair;
-import javafx.scene.Parent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
