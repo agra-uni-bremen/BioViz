@@ -164,8 +164,7 @@ public class DesktopLauncher extends JFrame {
 
 		if (file == null) {
 			currentViz = new BioViz();
-		}
-		else {
+		} else {
 			currentViz = new BioViz(file);
 		}
 		canvas = new LwjglAWTCanvas(currentViz);
@@ -220,7 +219,7 @@ public class DesktopLauncher extends JFrame {
 					ImageIO.read(getFileFromStream(iconPath)));
 		} catch (final Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage() +
-					" with path: " + iconPath);
+						 " with path: " + iconPath);
 		}
 
 		pack();
@@ -418,7 +417,7 @@ public class DesktopLauncher extends JFrame {
 				() -> {
 					int nextIndex = visualizationTabs.getSelectedIndex() + 1;
 					// wrap around at the end
-					if (nextIndex > visualizationTabs.getTabCount() - 1){
+					if (nextIndex > visualizationTabs.getTabCount() - 1) {
 						nextIndex = 0;
 					}
 					// load new file
@@ -437,12 +436,13 @@ public class DesktopLauncher extends JFrame {
 				() -> {
 					int prevIndex = visualizationTabs.getSelectedIndex() - 1;
 					// wrap around at the beginning
-					if (prevIndex < 0){
+					if (prevIndex < 0) {
 						prevIndex = visualizationTabs.getTabCount() - 1;
 					}
 					// load new file
 					currentViz.scheduleLoadingOfNewFile(
-							tabsToFilenames.get(visualizationTabs.getComponentAt(prevIndex)
+							tabsToFilenames.get(
+									visualizationTabs.getComponentAt(prevIndex)
 							)
 					);
 					// change to the correct tab in the ui
@@ -547,8 +547,7 @@ public class DesktopLauncher extends JFrame {
 			currentViz.unloadFile(file);
 			tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
 			visualizationTabs.removeTabAt(index);
-		}
-		else {
+		} else {
 			logger.info("Nothing to close");
 		}
 	}
@@ -608,7 +607,8 @@ public class DesktopLauncher extends JFrame {
 
 
 		//#########################
-		// The following stuff resets the logger so that no unnecessary messages
+		// The following stuff resets the logger so that no unnecessary
+		// messages
 		// are printed
 
 		// assume SLF4J is bound to logback in the current environment
@@ -662,8 +662,7 @@ public class DesktopLauncher extends JFrame {
 					File file;
 					if (args.length <= 0) {
 						file = askForFile("lastFilePath", true);
-					}
-					else {
+					} else {
 						file = new File(args[0]);
 					}
 					JFrame frame = new DesktopLauncher(file);
@@ -707,8 +706,7 @@ public class DesktopLauncher extends JFrame {
 
 		if (load) {
 			choice = fileDialog.showOpenDialog(null);
-		}
-		else {
+		} else {
 			choice = fileDialog.showSaveDialog(null);
 		}
 
@@ -724,10 +722,11 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	/**
-	 * Returns a File object for the given path.
-	 * The path must start with a '/' also when it is a local path.
+	 * Returns a File object for the given path. The path must start with a '/'
+	 * also when it is a local path.
 	 *
-	 * @param fileName the fileName
+	 * @param fileName
+	 * 		the fileName
 	 * @return A File Object if the file exists. Null otherwise.
 	 */
 	public static File getFileFromStream(String fileName) {
@@ -736,7 +735,7 @@ public class DesktopLauncher extends JFrame {
 			InputStream in = DesktopLauncher.class.getResourceAsStream
 					(fileName);
 
-			if(in != null) {
+			if (in != null) {
 				file = File.createTempFile(fileName, ".BioViz_tmp");
 				file.deleteOnExit();
 
@@ -746,7 +745,7 @@ public class DesktopLauncher extends JFrame {
 
 				int length;
 				//copy the file content in bytes
-				while ((length = in.read(buffer)) > 0){
+				while ((length = in.read(buffer)) > 0) {
 
 					fout.write(buffer, 0, length);
 
@@ -1273,8 +1272,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + d.programName);
-			}
-			else {
+			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
 				d.timeSlider.setMaximum(1);
@@ -1349,8 +1347,7 @@ public class DesktopLauncher extends JFrame {
 								// restore time from start
 								currentViz.currentCircuit.setCurrentTime(
 										oldTime);
-							}
-							else {
+							} else {
 								currentViz.saveSVG(f.getAbsolutePath(),
 												   currentViz
 														   .currentCircuit
@@ -1407,12 +1404,10 @@ public class DesktopLauncher extends JFrame {
 				if (e.getID() == KeyEvent.KEY_PRESSED) {
 					currentViz.getInputProcessor().keyDown(
 							translateKeyCode(e.getKeyCode()));
-				}
-				else if (e.getID() == KeyEvent.KEY_RELEASED) {
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
 					currentViz.getInputProcessor().keyUp(
 							translateKeyCode(e.getKeyCode()));
-				}
-				else if (e.getID() == KeyEvent.KEY_TYPED) {
+				} else if (e.getID() == KeyEvent.KEY_TYPED) {
 					// That thing might not have been initiliazed yet
 					if (currentViz.getInputProcessor() != null) {
 						currentViz.getInputProcessor().keyTyped(e.getKeyChar

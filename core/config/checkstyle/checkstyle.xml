@@ -183,7 +183,6 @@
             <property name="severity" value="error"/>
         </module>
         <module name="RightCurly">
-            <!-- TODO allow the option 'alone_or_singleline' after updating to newer checkstyle version -->
             <property name="option" value="same"/>
         </module>
 
@@ -242,9 +241,7 @@
         <module name="MissingSwitchDefault"/>
         <!-- basically disallow changing loop variables (usually i,j, etc.) -->
         <module name="ModifiedControlVariable">
-            <!-- TODO this property, hopefully, will be in the next release of ubuntu
             <property name="skipEnhancedForLoopVariable" value="true"/>
-            -->
             <property name="severity" value="error"/>
         </module>
         <!--<module name="RedundantThrows"/>-->
