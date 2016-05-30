@@ -7,7 +7,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.NumberUtils;
+
 import de.bioviz.messages.MessageCenter;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,18 +161,19 @@ public abstract class DrawableSprite implements Drawable {
 	 */
 	private float forcedLOD = -1f;
 
-	/**
-	 * This constructor checks if the given texture has been loaded before and
-	 * does so if that's not the case. A sprite is initialized accordingly.
-	 *
-	 * @param texture
-	 * 		the texture to use
-	 */
-	public DrawableSprite(TextureE texture, float sizeX, float sizeY, BioViz
-			parent) {
-		if (parent == null) {
-			throw new RuntimeException("sprite parent must not be null");
-		}
+    /**
+     * This constructor checks if the given texture has been loaded before and
+     * does so if that's not the case. A sprite is initialized accordingly.
+     *
+     * @param texture the texture to use
+     */
+    public DrawableSprite(final TextureE texture,
+                          final float sizeX,
+                          final float sizeY, BioViz
+            parent) {
+        if (parent == null) {
+            throw new RuntimeException("sprite parent must not be null");
+        }
 
 
 		if (textures == null) {
@@ -184,38 +188,37 @@ public abstract class DrawableSprite implements Drawable {
 		this.viz = parent;
 	}
 
-	private void initializeSprite(float sizeX, float sizeY, TextureRegion
-			region) {
-		sprite = new Sprite(region);
-		sprite.setSize(sizeX, sizeY);
-		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
-		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
-	}
+    private void initializeSprite(final float sizeX,
+                                  final float sizeY,
+                                  final TextureRegion region) {
+        sprite = new Sprite(region);
+        sprite.setSize(sizeX, sizeY);
+        sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
+        sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
+    }
 
-	public DrawableSprite(TextureE texture, BioViz parent) {
-		this(texture, 1, 1, parent);
-	}
+    public DrawableSprite(final TextureE texture, final BioViz parent) {
+        this(texture, 1, 1, parent);
+    }
 
-	/**
-	 * @param msg
-	 * 		Message to be displayed
-	 * @brief Displays a text above the sprite
-	 */
-	public void displayText(String msg) {
-		MessageCenter mc = viz.messageCenter;
-		if (msg != null) {
-			mc.addHUDMessage(this.hashCode(), msg, this.getX(), this.getY());
-		}
-		else {
-			mc.removeHUDMessage(this.hashCode());
-		}
-	}
+    /**
+     * @param msg Message to be displayed
+     * @brief Displays a text above the sprite
+     */
+    public void displayText(final String msg) {
+        MessageCenter mc = viz.messageCenter;
+        if (msg != null) {
+            mc.addHUDMessage(this.hashCode(), msg, this.getX(), this.getY());
+        } else {
+            mc.removeHUDMessage(this.hashCode());
+        }
+    }
 
 	public void draw() {
 		draw(this.z);
 	}
 
-	public void draw(float z) {
+    public void draw(final float z) {
 
 		if (isVisible()) {
 
@@ -290,7 +293,6 @@ public abstract class DrawableSprite implements Drawable {
 		this.setScaleX(dimX / this.sprite.getWidth());
 		this.setScaleY(dimY / this.sprite.getHeight());
 	}
-
 
 	// TODO what is the rationale of this method?
 	private void setTexture() {
