@@ -58,7 +58,7 @@ project(":desktop") {
     checkstyle.ignoreFailures = false
     checkstyle.showViolations = true
     checkstyle {
-        toolVersion = "6.0"
+        toolVersion = "6.19"
     }
     task checkstyleHtml << {
         ant.xslt(in: checkstyleMain.reports.xml.destination,
@@ -113,7 +113,7 @@ project(":core") {
     checkstyle.ignoreFailures = false
     checkstyle.showViolations = true
     checkstyle {
-        toolVersion = "6.0"
+        toolVersion = "6.19"
     }
 
     sourceSets{
