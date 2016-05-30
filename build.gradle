@@ -2,15 +2,17 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://plugins.gradle.org/m2/" }
         jcenter()
     }
     dependencies {
         classpath 'me.champeau.gradle:antlr4-gradle-plugin:0.1'
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.0.1"
     }
 }
 
 apply plugin: 'me.champeau.gradle.antlr4'
-apply plugin: "sonar"
+apply plugin: 'org.sonarqube'
 
 antlr4.source = file('lib/parser')
 antlr4.output = file('core/src/de/bioviz/parser/generated')
@@ -24,7 +26,7 @@ configurations {
 
 
 // configuration is done in the sonar-project.properties file
-apply plugin: "sonar-runner"
+// apply plugin: "sonar-runner"
 
 
 allprojects {
@@ -48,6 +50,22 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+
+    sonarqube {
+      properties {
+        // Required metadata
+        property "sonar.projectKey", "de.dfki.bioviz"
+        property "sonar.projectName", "BioViz"
+        property "sonar.projectVersion", "1.0"
+        // Comma-separated paths to directories with sources (required)
+        //property "sonar.sources", "core/src,desktop/src"
+        //property "sonar.exclusions", "core/src/de/bioviz/parser/generated/*"
+        // Language
+        property "sonar.language", "java"
+        // Encoding of the source files
+        property "sonar.sourceEncoding", "UTF-8"
+      }
     }
 }
 
@@ -74,6 +92,14 @@ project(":desktop") {
             }
         }
     }
+
+    sonarqube {
+      properties {
+        property "sonar.sources", "src/"
+        property "sonar.exclusions", "src/de/bioviz/parser/generated/*"
+      }
+    }
+
     antlr4.source = file('../lib/parser')
     antlr4.output = file('../core/src/de/bioviz/parser/generated')
     antlr4.extraArgs = ['-package', 'de.bioviz.parser.generated']
@@ -130,6 +156,13 @@ project(":core") {
                 srcDir 'tests/'
             }
         }
+    }
+
+    sonarqube {
+      properties {
+        property "sonar.sources", "src/"
+        property "sonar.exclusions", "src/de/bioviz/parser/generated/*"
+      }
     }
 
     dependencies {
