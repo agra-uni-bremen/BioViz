@@ -659,14 +659,7 @@ public class DesktopLauncher extends JFrame {
 									 + e.getStackTrace());
 					}
 
-					File file;
-					if (args.length <= 0) {
-						file = askForFile("lastFilePath", true);
-					}
-					else {
-						file = new File(args[0]);
-					}
-					JFrame frame = new DesktopLauncher(file);
+					JFrame frame = new DesktopLauncher();
 
 
 					singleton.addWindowListener(new WindowAdapter() {
