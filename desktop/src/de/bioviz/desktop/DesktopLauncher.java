@@ -219,7 +219,7 @@ public class DesktopLauncher extends JFrame {
 					ImageIO.read(getFileFromStream(iconPath)));
 		} catch (final Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage() +
-						 " with path: " + iconPath);
+					" with path: " + iconPath);
 		}
 
 		pack();
@@ -564,7 +564,7 @@ public class DesktopLauncher extends JFrame {
 	 * Starting point for the application.
 	 *
 	 * @param args
-	 * 		console arguments, currently unused
+	 * 		console arguments, parsed using the {@link Options} class.
 	 */
 	public static void main(final String[] args) {
 		Options opts = new Options();
@@ -608,8 +608,7 @@ public class DesktopLauncher extends JFrame {
 
 		//#########################
 		// The following stuff resets the logger so that no unnecessary
-		// messages
-		// are printed
+		// messages are printed
 
 		// assume SLF4J is bound to logback in the current environment
 		LoggerContext context =
@@ -659,13 +658,7 @@ public class DesktopLauncher extends JFrame {
 									 + e.getStackTrace());
 					}
 
-					File file;
-					if (args.length <= 0) {
-						file = askForFile("lastFilePath", true);
-					} else {
-						file = new File(args[0]);
-					}
-					JFrame frame = new DesktopLauncher(file);
+					JFrame frame = new DesktopLauncher();
 
 
 					singleton.addWindowListener(new WindowAdapter() {
@@ -699,15 +692,16 @@ public class DesktopLauncher extends JFrame {
 																	   .class);
 		File path = new File(prefs.get(pathPrefName, "."));
 		File selectedPath = null;
-		logger.debug("Open file choose with path {}", path);
+		logger.debug("Open file choose with path {}", path.getParent());
 
 		JFileChooser fileDialog = new JFileChooser(path);
 		int choice = JFileChooser.CANCEL_OPTION;
 
 		if (load) {
-			choice = fileDialog.showOpenDialog(null);
-		} else {
-			choice = fileDialog.showSaveDialog(null);
+			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
+		}
+		else {
+			choice = fileDialog.showSaveDialog(DesktopLauncher.singleton);
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -722,11 +716,10 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	/**
-	 * Returns a File object for the given path. The path must start with a '/'
-	 * also when it is a local path.
+	 * Returns a File object for the given path.
+	 * The path must start with a '/' also when it is a local path.
 	 *
-	 * @param fileName
-	 * 		the fileName
+	 * @param fileName the fileName
 	 * @return A File Object if the file exists. Null otherwise.
 	 */
 	public static File getFileFromStream(String fileName) {
