@@ -699,10 +699,10 @@ public class DesktopLauncher extends JFrame {
 		int choice = JFileChooser.CANCEL_OPTION;
 
 		if (load) {
-			choice = fileDialog.showOpenDialog(null);
+			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
 		}
 		else {
-			choice = fileDialog.showSaveDialog(null);
+			choice = fileDialog.showSaveDialog(DesktopLauncher.singleton);
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
