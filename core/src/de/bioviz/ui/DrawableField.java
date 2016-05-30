@@ -2,16 +2,31 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-
-import de.bioviz.structures.*;
+import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.Dispenser;
+import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Mixer;
+import de.bioviz.structures.Net;
+import de.bioviz.structures.Point;
+import de.bioviz.structures.Sink;
+import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
-
-import static de.bioviz.ui.BDisplayOptions.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+
+import static de.bioviz.ui.BDisplayOptions.Actuations;
+import static de.bioviz.ui.BDisplayOptions.Adjacency;
+import static de.bioviz.ui.BDisplayOptions.CellUsage;
+import static de.bioviz.ui.BDisplayOptions.CellUsageCount;
+import static de.bioviz.ui.BDisplayOptions.DetectorIcon;
+import static de.bioviz.ui.BDisplayOptions.InterferenceRegion;
+import static de.bioviz.ui.BDisplayOptions.LongNetIndicatorsOnFields;
+import static de.bioviz.ui.BDisplayOptions.NetColorOnFields;
+import static de.bioviz.ui.BDisplayOptions.Pins;
+import static de.bioviz.ui.BDisplayOptions.SourceTargetIDs;
+import static de.bioviz.ui.BDisplayOptions.SourceTargetIcons;
 
 
 /**
