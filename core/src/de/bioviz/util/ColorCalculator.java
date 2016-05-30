@@ -61,7 +61,6 @@ public final class ColorCalculator {
 		float s;
 		float l;
 		h = (max + min) / 2;
-		s = h;
 		l = h;
 
 		if (max == min) {
