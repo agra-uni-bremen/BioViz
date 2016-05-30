@@ -10,7 +10,7 @@ import static de.bioviz.ui.BDisplayOptions.DispenserFluidName;
 import static de.bioviz.ui.BDisplayOptions.DispenserIcon;
 
 /**
- * Specialization of a DrawableField for dispensers
+ * Specialization of a DrawableField for dispensers.
  *
  * @author Oliver Keszocze
  */
@@ -20,6 +20,11 @@ public class DrawableDispenser extends DrawableField {
 	 * \copydoc DrawableField::DrawableField()
 	 * <p>
 	 * Note that the field must be of type Dispenser!
+	 *
+	 * @param dispenser
+	 * 		The dispenser data object this drawable represents.
+	 * @param parent
+	 * 		The parent circuit, i.e. the circuit this dispenser belongs to.
 	 */
 	public DrawableDispenser(final Dispenser dispenser,
 							 final DrawableCircuit parent) {
