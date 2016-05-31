@@ -228,11 +228,9 @@ public class BiochipField {
 			if (vec != null) {
 				act = vec.get(timeStep - 1);
 			}
-		}
-		else if (actVec != null && !actVec.isEmpty()) {
+		} else if (actVec != null && !actVec.isEmpty()) {
 			act = actVec.get(timeStep - 1);
-		}
-		else {
+		} else {
 			if (circ.dropletOnPosition(pos, timeStep)) {
 				act = Actuation.ON;
 			}
@@ -261,13 +259,13 @@ public class BiochipField {
 
 	/**
 	 * Computes the usage of the field.
-	 *
+	 * <p>
 	 * The usage is considered up to a specified position in time.
 	 *
 	 * @param T
 	 * 		The upper bound for the time steps to consider when computing the
 	 * 		usage.
-	 * 	@return The usage of this field up to time step T.
+	 * @return The usage of this field up to time step T.
 	 */
 	int computeUsage(int T) {
 		usage = 0;
@@ -278,7 +276,6 @@ public class BiochipField {
 		}
 		return usage;
 	}
-
 
 
 }
