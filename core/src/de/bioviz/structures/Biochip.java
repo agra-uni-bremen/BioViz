@@ -56,7 +56,8 @@ public class Biochip {
 	/**
 	 * The latest time step in the operation of this biochip.
 	 * <p>
-	 * The initial value of null indicates that the maximal amount of time steps
+	 * The initial value of null indicates that the maximal amount of time
+	 * steps
 	 * has not been computed yet.
 	 */
 	private Integer maxT = null;
@@ -64,7 +65,8 @@ public class Biochip {
 	/**
 	 * The length of the longest route.
 	 * <p>
-	 * The initial value of null indicates that the length has not been computed
+	 * The initial value of null indicates that the length has not been
+	 * computed
 	 * yet.
 	 */
 	private Integer maxRouteLength = null;
@@ -205,7 +207,6 @@ public class Biochip {
 	}
 
 
-
 	/**
 	 * Resets all the caches and re-computes the corresponding values.
 	 * <p>
@@ -275,9 +276,8 @@ public class Biochip {
 				}
 			}
 			return net != null && net.containsDroplet(d2);
-		}
-		// when there are no nets stored, they can't be from the same net
-		else {
+		} else {
+			// when there are no nets stored, they can't be from the same net
 			return false;
 		}
 	}
@@ -292,8 +292,7 @@ public class Biochip {
 
 		if (adjacencyCache != null && !recalculateAdjacency) {
 			return adjacencyCache;
-		}
-		else {
+		} else {
 			logger.debug("Recalculating adjacency");
 			recalculateAdjacency = false;
 			HashSet<FluidicConstraintViolation> result = new HashSet<>();
@@ -378,7 +377,7 @@ public class Biochip {
 			return maxT;
 		}
 
-		maxT=0;
+		maxT = 0;
 		for (final Droplet d : droplets) {
 			maxT = Math.max(maxT, d.getMaxTime());
 		}
@@ -406,7 +405,7 @@ public class Biochip {
 	 */
 	public int getMaxRouteLength() {
 		if (maxRouteLength == null) {
-			maxRouteLength=0;
+			maxRouteLength = 0;
 			for (final Droplet d : droplets) {
 				maxRouteLength = Math.max(maxRouteLength, d.getRouteLength());
 			}
@@ -427,8 +426,7 @@ public class Biochip {
 	public BiochipField getFieldAt(final Point coords) {
 		if (hasFieldAt(coords)) {
 			return this.field.get(coords);
-		}
-		else {
+		} else {
 			throw new RuntimeException("Could not retrieve field at " +
 									   coords);
 		}
@@ -561,7 +559,7 @@ public class Biochip {
 	 */
 	public int getMaxUsage() {
 		if (maxUsageCache == null) {
-			maxUsageCache=0;
+			maxUsageCache = 0;
 			for (final BiochipField f : this.field.values()) {
 				if (f.getUsage() > this.maxUsageCache) {
 					this.maxUsageCache = f.getUsage();
