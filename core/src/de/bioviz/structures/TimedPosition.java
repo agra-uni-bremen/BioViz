@@ -2,7 +2,7 @@ package de.bioviz.structures;
 
 /**
  * @author Jannis Stoppe
- * @note This class has a natural ordering that is inconsistent with equals.
+ * Note: This class has a natural ordering that is inconsistent with equals.
  */
 class TimedPosition implements Comparable<TimedPosition> {
 	/** The timing of this position. */
@@ -19,7 +19,7 @@ class TimedPosition implements Comparable<TimedPosition> {
 	 * @param x x-coordinate of the position
 	 * @param y y-coorinate of the position
 	 */
-	public TimedPosition(final long t, final int x, final int y) {
+	TimedPosition(final long t, final int x, final int y) {
 		this.time = t;
 		this.x = x;
 		this.y = y;
