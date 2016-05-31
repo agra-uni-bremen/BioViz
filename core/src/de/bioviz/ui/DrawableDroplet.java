@@ -92,9 +92,10 @@ public class DrawableDroplet extends DrawableSprite {
 	private Color dropletColor;
 
 	/**
-	 *
-	 * @param droplet The 'data' droplet that is to be visualized.
-	 * @param parent The circuit the droplet belongs to.
+	 * @param droplet
+	 * 		The 'data' droplet that is to be visualized.
+	 * @param parent
+	 * 		The circuit the droplet belongs to.
 	 */
 	public DrawableDroplet(final Droplet droplet,
 						   final DrawableCircuit parent) {
@@ -139,6 +140,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 	/**
 	 * Getter for the animation duration of the droplet movement.
+	 *
 	 * @return The animation duration of the droplet movement..
 	 */
 	public static int getTransitionDuration() {
@@ -147,7 +149,9 @@ public class DrawableDroplet extends DrawableSprite {
 
 	/**
 	 * Sets the duration of the droplet movement animation.
-	 * @param transitionDuration The new duration for the movement.
+	 *
+	 * @param transitionDuration
+	 * 		The new duration for the movement.
 	 */
 	public static void setTransitionDuration(final int transitionDuration) {
 		DrawableDroplet.transitionDuration = transitionDuration;
@@ -222,12 +226,10 @@ public class DrawableDroplet extends DrawableSprite {
 		if (p == null) {
 			color.sub(Color.BLACK).clamp();
 
-		}
-		else {
+		} else {
 			if (parentCircuit.getHiddenDroplets().contains(this)) {
 				color.a = 0.25f;
-			}
-			else {
+			} else {
 				color.add(Color.BLACK).clamp();
 			}
 		}
@@ -302,12 +304,10 @@ public class DrawableDroplet extends DrawableSprite {
 
 			if (circ.getCurrentTime() < droplet.getSpawnTime()) {
 				p = droplet.getFirstPosition();
-			}
-			else if (circ.getCurrentTime() > droplet.getMaxTime()) {
+			} else if (circ.getCurrentTime() > droplet.getMaxTime()) {
 				p = droplet.getLastPosition();
 			}
-		}
-		else {
+		} else {
 			withinTimeRange = true;
 		}
 
@@ -363,15 +363,16 @@ public class DrawableDroplet extends DrawableSprite {
 	public void toggleGridVisibility() {
 		if (parentCircuit.isHidden(this)) {
 			parentCircuit.unHideDroplet(this);
-		}
-		else {
+		} else {
 			parentCircuit.hideDroplet(this);
 		}
 	}
 
 	/**
 	 * Sets the droplet's color.
-	 * @param c New color of the droplet.
+	 *
+	 * @param c
+	 * 		New color of the droplet.
 	 */
 	public void setDropletColor(final Color c) {
 		this.dropletColor = c;
