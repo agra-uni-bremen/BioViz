@@ -197,8 +197,7 @@ public class DesktopLauncher extends JFrame {
 
 		if (file == null) {
 			currentViz = new BioViz();
-		}
-		else {
+		} else {
 			currentViz = new BioViz(file);
 		}
 		canvas = new LwjglAWTCanvas(currentViz);
@@ -582,8 +581,7 @@ public class DesktopLauncher extends JFrame {
 			currentViz.unloadFile(file);
 			tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
 			visualizationTabs.removeTabAt(index);
-		}
-		else {
+		} else {
 			logger.info("Nothing to close");
 		}
 	}
@@ -641,7 +639,9 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Checks a BioGram file for errors and prints them to STDOUT.
-	 * @param f The file to check.
+	 *
+	 * @param f
+	 * 		The file to check.
 	 */
 	static void startErrorChecker(final File f) {
 
@@ -679,7 +679,9 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Starts the BioViz GUI.
-	 * @param args CLI arguments to BioViz when starting the GUI.
+	 *
+	 * @param args
+	 * 		CLI arguments to BioViz when starting the GUI.
 	 */
 	static void startGUI(final String[] args) {
 		try {
@@ -706,8 +708,7 @@ public class DesktopLauncher extends JFrame {
 					File file;
 					if (args.length <= 0) {
 						file = askForFile("lastFilePath", true);
-					}
-					else {
+					} else {
 						file = new File(args[0]);
 					}
 					JFrame frame = new DesktopLauncher(file);
@@ -752,8 +753,7 @@ public class DesktopLauncher extends JFrame {
 
 		if (load) {
 			choice = fileDialog.showOpenDialog(null);
-		}
-		else {
+		} else {
 			choice = fileDialog.showSaveDialog(null);
 		}
 
@@ -845,7 +845,9 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Displays the settings window.
-	 * @param viz The parent of the settings window.
+	 *
+	 * @param viz
+	 * 		The parent of the settings window.
 	 */
 	private static void showSettings(final BioViz viz) {
 		logger.debug("Opening preferences window...");
@@ -1132,7 +1134,6 @@ public class DesktopLauncher extends JFrame {
 	/**
 	 * Used for communicating time changes between visualization core and the
 	 * desktop UI.
-
 	 */
 	private class TimerCallback implements BioVizEvent {
 		/**
@@ -1324,8 +1325,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + d.programName);
-			}
-			else {
+			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
 				d.timeSlider.setMaximum(1);
@@ -1400,8 +1400,7 @@ public class DesktopLauncher extends JFrame {
 								// restore time from start
 								currentViz.currentCircuit.setCurrentTime(
 										oldTime);
-							}
-							else {
+							} else {
 								currentViz.saveSVG(f.getAbsolutePath(),
 												   currentViz
 														   .currentCircuit
@@ -1458,12 +1457,10 @@ public class DesktopLauncher extends JFrame {
 				if (e.getID() == KeyEvent.KEY_PRESSED) {
 					currentViz.getInputProcessor().keyDown(
 							translateKeyCode(e.getKeyCode()));
-				}
-				else if (e.getID() == KeyEvent.KEY_RELEASED) {
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
 					currentViz.getInputProcessor().keyUp(
 							translateKeyCode(e.getKeyCode()));
-				}
-				else if (e.getID() == KeyEvent.KEY_TYPED) {
+				} else if (e.getID() == KeyEvent.KEY_TYPED) {
 					// That thing might not have been initiliazed yet
 					if (currentViz.getInputProcessor() != null) {
 						currentViz.getInputProcessor().keyTyped(e.getKeyChar

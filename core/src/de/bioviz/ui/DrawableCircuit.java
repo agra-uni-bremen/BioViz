@@ -170,6 +170,31 @@ public class DrawableCircuit implements Drawable {
 	private DrawableField hoveredField = null;
 
 	/**
+	 * Creates a drawable entity based on the data given.
+	 *
+	 * @param toDraw
+	 * 		the data to draw
+	 * @param parent
+	 * 		The visualization this circuit belongs to.
+	 */
+	DrawableCircuit(final Biochip toDraw, final BioViz parent) {
+		LOGGER.debug("Creating new drawable chip based on " + toDraw);
+		this.setData(toDraw);
+		this.setParent(parent);
+		this.initializeDrawables();
+		this.getDisplayOptions().addOptionChangedEvent(e -> {
+			if (e.equals(BDisplayOptions.CellUsage) ||
+				e.equals(BDisplayOptions.CellUsageCount)) {
+				boolean doIt = getDisplayOptions().getOption(e);
+				if (doIt) {
+					getData().computeCellUsage();
+				}
+			}
+		});
+		LOGGER.debug("New DrawableCircuit created successfully.");
+	}
+
+	/**
 	 * Skip to the previous timestep.
 	 */
 	public void prevStep() {
@@ -210,31 +235,6 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-
-	/**
-	 * Creates a drawable entity based on the data given.
-	 *
-	 * @param toDraw
-	 * 		the data to draw
-	 * @param parent
-	 * 		The visualization this circuit belongs to.
-	 */
-	DrawableCircuit(final Biochip toDraw, final BioViz parent) {
-		LOGGER.debug("Creating new drawable chip based on " + toDraw);
-		this.setData(toDraw);
-		this.setParent(parent);
-		this.initializeDrawables();
-		this.getDisplayOptions().addOptionChangedEvent(e -> {
-			if (e.equals(BDisplayOptions.CellUsage) ||
-				e.equals(BDisplayOptions.CellUsageCount)) {
-				boolean doIt = getDisplayOptions().getOption(e);
-				if (doIt) {
-					getData().computeCellUsage();
-				}
-			}
-		});
-		LOGGER.debug("New DrawableCircuit created successfully.");
-	}
 
 	/**
 	 * Initializes the drawables according to the circuit stored in the data
@@ -412,10 +412,10 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	private void removeDisplayedCoordinates() {
-		int minX = Integer.MAX_VALUE,
-				minY = Integer.MAX_VALUE,
-				maxX = Integer.MIN_VALUE,
-				maxY = Integer.MIN_VALUE;
+		int minX = Integer.MAX_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int maxY = Integer.MIN_VALUE;
 
 		for (final DrawableField f : this.getFields()) {
 			if (minX > f.getField().x()) {
@@ -440,7 +440,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the x coordinate of a given cell
+	 * Calculates the x coordinate of a given cell.
 	 *
 	 * @param i
 	 * 		the cell index
@@ -531,7 +531,9 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * retrieves the current y scaling factor
+	 * Retrieves the current y scaling factor.
+	 *
+	 * @return The scaling factor for the y axis.
 	 */
 	public float getScaleY() {
 		return scaleY;
@@ -541,14 +543,16 @@ public class DrawableCircuit implements Drawable {
 	 * Sets the current y scaling factor. Keep in mind that the value used for
 	 * actually drawing the circuit is successively approaching the given value
 	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
-	 * supposed to skip those inbetween steps.
+	 * supposed to skip those in between steps.
+	 *
+	 * @param scaleY The new scaling factor for the y axis.
 	 */
 	public void setScaleY(final float scaleY) {
 		this.scaleY = scaleY;
 	}
 
 	/**
-	 * Calculates the screen bounds
+	 * Calculates the screen bounds.
 	 *
 	 * @return the screen bounds
 	 */
@@ -565,7 +569,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Sets the screen bounds
+	 * Sets the screen bounds.
 	 *
 	 * @param bounds
 	 * 		the area the viewport is supposed to show.
@@ -583,7 +587,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Resets the zoom to 1 px per element
+	 * Resets the zoom to 1 px per element.
 	 */
 	public void zoomTo1Px() {
 		this.scale = 1;
@@ -600,8 +604,8 @@ public class DrawableCircuit implements Drawable {
 		Point min = this.getData().getMinCoord();
 		LOGGER.debug("Auto zoom around " + min + " <--/--> " + max);
 
-		float x = (1f / (max.fst - min.fst + 2));
-		float y = (1f / (max.snd - min.snd + 2));
+		float x = 1f / (max.fst - min.fst + 2);
+		float y = 1f / (max.snd - min.snd + 2);
 		float xFactor = Gdx.graphics.getWidth();
 		float yFactor = Gdx.graphics.getHeight();
 		float maxScale = Math.min(x * xFactor, y * yFactor);
@@ -612,8 +616,8 @@ public class DrawableCircuit implements Drawable {
 
 
 		LOGGER.debug(
-				"Offset now at " + this.getOffsetX() + "/" + this.getOffsetY
-						());
+				"Offset now at " +
+				this.getOffsetX() + "/" + this.getOffsetY());
 	}
 
 	/**
@@ -628,10 +632,13 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * Sets the zoom to the given values without smoothly approaching those
 	 * target values (instead sets them immediately).
+	 *
+	 * @param newScale
+	 * 		The new immediate scale.
 	 */
-	public void setScaleImmediately(final float scale) {
-		this.scale = scale;
-		this.setSmoothScale(scale);
+	public void setScaleImmediately(final float newScale) {
+		this.scale = newScale;
+		this.setSmoothScale(newScale);
 	}
 
 	public void addTimeChangedListener(final BioVizEvent listener) {
@@ -675,7 +682,7 @@ public class DrawableCircuit implements Drawable {
 		return smoothScale;
 	}
 
-	protected void setSmoothScale(float smoothScale) {
+	protected void setSmoothScale(final float smoothScale) {
 		this.smoothScale = smoothScale;
 	}
 
