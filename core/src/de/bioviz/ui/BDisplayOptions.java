@@ -86,12 +86,14 @@ public enum BDisplayOptions {
 	 * Option for displaying the fluid ID dispensed by the given dispenser.
 	 * Please note that this is not the ID of the dispensing unit!
 	 */
-	DispenserFluidID("Show fluid IDs on dispensers", Input.Keys.D, true, false, false),
+	DispenserFluidID("Show fluid IDs on dispensers",
+					 Input.Keys.D, true, false, false),
 
 	/**
 	 * Option for displaying the fluid name dispensed by the given dispenser.
 	 */
-	DispenserFluidName("Show fluid names on dispensers",Input.Keys.N,true,false,false),
+	DispenserFluidName("Show fluid names on dispensers",
+					   Input.Keys.N, true, false, false),
 	/**
 	 * Option for displaying the icon of a dispenser.
 	 */
@@ -147,7 +149,7 @@ public enum BDisplayOptions {
 	LoopAutoplay("Loop the autoplayed animation"),
 
 	/**
-	 * When zooming out, hide the on screen text elements. 
+	 * When zooming out, hide the on screen text elements.
 	 */
 	HideTextOnZoom("Hide text for small zoom factors");
 
@@ -155,7 +157,7 @@ public enum BDisplayOptions {
 	 * The description that is used in the menus to display this option.
 	 */
 	private final String description;
-	
+
 	/**
 	 * Stores the hotkey used to toggle the option.
 	 * <p>
