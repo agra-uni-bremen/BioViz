@@ -25,15 +25,14 @@ import java.util.Random;
 import java.util.Vector;
 
 
+
+
 public class BioViz implements ApplicationListener {
 
 	/**
 	 * The internal logger.
 	 */
 	static Logger logger = LoggerFactory.getLogger(BioViz.class);
-
-
-
 
 
 	public OrthographicCamera camera;
@@ -48,13 +47,9 @@ public class BioViz implements ApplicationListener {
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 
 
-
 	private File bioFile;
 	private BioVizInputProcessor inputProcessor;
 	private SVGManager svgManager;
-
-
-
 
 
 	/**
@@ -69,14 +64,12 @@ public class BioViz implements ApplicationListener {
 	private int targetFramerate = 60;
 
 
-
-
-	private Vector<BioVizEvent> timeChangedListeners = new Vector<>();
-	private Vector<BioVizEvent> loadFileListeners = new Vector<>();
-	private Vector<BioVizEvent> loadedFileListeners = new Vector<>();
-	private Vector<BioVizEvent> saveFileListeners = new Vector<>();
-	private Vector<BioVizEvent> closeFileListeners = new Vector<>();
-	private Vector<BioVizEvent> pickColorListeners = new Vector<>();
+	private List<BioVizEvent> timeChangedListeners = new ArrayList<>();
+	private List<BioVizEvent> loadFileListeners = new ArrayList<>();
+	private List<BioVizEvent> loadedFileListeners = new ArrayList<>();
+	private List<BioVizEvent> saveFileListeners = new ArrayList<>();
+	private List<BioVizEvent> closeFileListeners = new ArrayList<>();
+	private List<BioVizEvent> pickColorListeners = new ArrayList<>();
 	private List<BioVizEvent> nextTabListeners = new ArrayList<>();
 	private List<BioVizEvent> previousTabListeners = new ArrayList<>();
 
@@ -107,7 +100,8 @@ public class BioViz implements ApplicationListener {
 	/**
 	 * Sets the duration of intermediate animations in ms.
 	 *
-	 * @param newDuration The new animation duration.
+	 * @param newDuration
+	 * 		The new animation duration.
 	 */
 	public static void setAnimationDuration(final int newDuration) {
 		DrawableDroplet.setTransitionDuration(newDuration);
@@ -217,7 +211,6 @@ public class BioViz implements ApplicationListener {
 			e.printStackTrace();
 		}
 	}
-
 
 
 	@Override
@@ -336,25 +329,22 @@ public class BioViz implements ApplicationListener {
 	}
 
 
-
 	public void addLoadFileListener(final BioVizEvent listener) {
 		loadFileListeners.add(listener);
 	}
 
+
+	// TODO why does this call 'loadedFileListeners??
 	void callTimeChangedListeners() {
-		logger.trace("Calling " + this.loadedFileListeners.size() +
+		logger.trace("Calling " + loadedFileListeners.size() +
 					 " listeners for timeChanged");
-		for (final BioVizEvent listener : this.timeChangedListeners) {
-			listener.bioVizEvent();
-		}
+		callListeners(loadedFileListeners);
 	}
 
 	void callLoadFileListeners() {
-		logger.trace("Calling " + this.loadFileListeners.size() +
+		logger.trace("Calling " + loadFileListeners.size() +
 					 " listeners for load");
-		for (final BioVizEvent listener : this.loadFileListeners) {
-			listener.bioVizEvent();
-		}
+		callListeners(loadFileListeners);
 	}
 
 	public void addLoadedFileListener(final BioVizEvent listener) {
@@ -362,11 +352,9 @@ public class BioViz implements ApplicationListener {
 	}
 
 	void callLoadedFileListeners() {
-		logger.trace("Calling " + this.loadedFileListeners.size() +
+		logger.trace("Calling " + loadedFileListeners.size() +
 					 " listeners for loaded");
-		for (final BioVizEvent listener : this.loadedFileListeners) {
-			listener.bioVizEvent();
-		}
+		callListeners(loadedFileListeners);
 	}
 
 	public void addSaveFileListener(final BioVizEvent listener) {
@@ -374,11 +362,9 @@ public class BioViz implements ApplicationListener {
 	}
 
 	void callSaveFileListeners() {
-		logger.trace("Calling " + this.saveFileListeners.size() +
+		logger.trace("Calling " + saveFileListeners.size() +
 					 " listeners for save");
-		for (final BioVizEvent listener : this.saveFileListeners) {
-			listener.bioVizEvent();
-		}
+		callListeners(saveFileListeners);
 	}
 
 	public void addCloseFileListener(final BioVizEvent listener) {
@@ -386,11 +372,9 @@ public class BioViz implements ApplicationListener {
 	}
 
 	void callCloseFileListeners() {
-		logger.trace("Calling " + this.closeFileListeners.size() +
+		logger.trace("Calling " + closeFileListeners.size() +
 					 " listeners for close");
-		for (final BioVizEvent listener : this.closeFileListeners) {
-			listener.bioVizEvent();
-		}
+		callListeners(closeFileListeners);
 	}
 
 	public void addPickColourListener(final BioVizEvent listener) {
@@ -398,11 +382,43 @@ public class BioViz implements ApplicationListener {
 	}
 
 	void callPickColourListeners() {
-		logger.trace("Calling " + this.closeFileListeners.size() +
+		logger.trace("Calling " + closeFileListeners.size() +
 					 " listeners for picking a colour");
-		for (final BioVizEvent listener : this.pickColorListeners) {
-			listener.bioVizEvent();
+		callListeners(closeFileListeners);
+
+	}
+
+	public void saveSVG(final String path, final int timeStep) {
+		spawnSVGManager();
+		logger.debug("[SVG] Within saveSVG(String) method");
+		logger.debug("[SVG] svgManager: {}", svgManager);
+
+		try {
+			String svg = svgManager.toSVG(currentCircuit, timeStep);
+			//logger.debug("[SVG] generated SVG: {}",svg);
+			FileHandle handle = Gdx.files.absolute(path);
+			logger.debug("[SVG] File handle for storing the SVG: {}", handle);
+			handle.writeString(svg, false);
+			logger.info("[SVG] Stored SVG at {}", handle.path());
+		} catch (final Exception e) {
+			logger.error("[SVG] Could not store SVG; exception message: {}",
+						 e);
 		}
+	}
+
+	public FileHandle getApplicationIcon() {
+		Random rnd = new Random();
+		int r = rnd.nextInt(3);
+		FileHandle handle;
+		if (r == 0) {
+			handle = textures.getFileHandle(TextureE.Droplet);
+		} else if (r == 1) {
+			handle = textures.getFileHandle(TextureE.Dispenser);
+		} else {
+			handle = textures.getFileHandle(TextureE.Sink);
+		}
+		logger.debug("Setting application icon to " + handle.name());
+		return handle;
 	}
 
 	/**
@@ -421,9 +437,7 @@ public class BioViz implements ApplicationListener {
 	void callNextTabListeners() {
 		logger.trace("Calling " + nextTabListeners.size() +
 					 " listeners to change to the next tab.");
-		for (final BioVizEvent listener : nextTabListeners) {
-			listener.bioVizEvent();
-		}
+		callListeners(nextTabListeners);
 	}
 
 	/**
@@ -445,23 +459,6 @@ public class BioViz implements ApplicationListener {
 		previousTabListeners.forEach(BioVizEvent::bioVizEvent);
 	}
 
-	public void saveSVG(final String path, final int timeStep) {
-		spawnSVGManager();
-		logger.debug("[SVG] Within saveSVG(String) method");
-		logger.debug("[SVG] svgManager: {}", svgManager);
-
-		try {
-			String svg = svgManager.toSVG(currentCircuit, timeStep);
-			//logger.debug("[SVG] generated SVG: {}",svg);
-			FileHandle handle = Gdx.files.absolute(path);
-			logger.debug("[SVG] File handle for storing the SVG: {}", handle);
-			handle.writeString(svg, false);
-			logger.info("[SVG] Stored SVG at {}", handle.path());
-		} catch (final Exception e) {
-			logger.error("[SVG] Could not store SVG; exception message: {}",
-						 e);
-		}
-	}
 
 	private static ShaderProgram createDefaultShader() {
 		FileHandle vertexShaderHandle = Gdx.files.internal("vertexShader.shd");
@@ -477,19 +474,15 @@ public class BioViz implements ApplicationListener {
 		return shader;
 	}
 
-	public FileHandle getApplicationIcon() {
-		Random rnd = new Random();
-		int r = rnd.nextInt(3);
-		FileHandle handle;
-		if (r == 0) {
-			handle = textures.getFileHandle(TextureE.Droplet);
-		} else if (r == 1) {
-			handle = textures.getFileHandle(TextureE.Dispenser);
-		} else {
-			handle = textures.getFileHandle(TextureE.Sink);
-		}
-		logger.debug("Setting application icon to " + handle.name());
-		return handle;
+
+	/**
+	 * Calls the listeners of a list of events.
+	 *
+	 * @param events
+	 * 		The events that are to be called/triggered.
+	 */
+	private void callListeners(final List<BioVizEvent> events) {
+		events.forEach(listener -> listener.bioVizEvent());
 	}
 
 }
