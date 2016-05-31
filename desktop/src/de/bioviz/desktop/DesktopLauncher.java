@@ -598,7 +598,7 @@ public class DesktopLauncher extends JFrame {
 	 * Starting point for the application.
 	 *
 	 * @param args
-	 * 		console arguments, currently unused
+	 * 		console arguments, parsed using the {@link Options} class.
 	 */
 	public static void main(final String[] args) {
 		Options opts = new Options();
@@ -647,8 +647,7 @@ public class DesktopLauncher extends JFrame {
 
 
 		//#########################
-		// The following stuff resets the logger so that no unnecessary
-		// messages
+		// The following stuff resets the logger so that no unnecessary messages
 		// are printed
 
 		// assume SLF4J is bound to logback in the current environment
@@ -705,13 +704,7 @@ public class DesktopLauncher extends JFrame {
 									 + e.getStackTrace());
 					}
 
-					File file;
-					if (args.length <= 0) {
-						file = askForFile("lastFilePath", true);
-					} else {
-						file = new File(args[0]);
-					}
-					JFrame frame = new DesktopLauncher(file);
+					JFrame frame = new DesktopLauncher();
 
 
 					singleton.addWindowListener(new WindowAdapter() {
@@ -752,9 +745,10 @@ public class DesktopLauncher extends JFrame {
 		int choice;
 
 		if (load) {
-			choice = fileDialog.showOpenDialog(null);
-		} else {
-			choice = fileDialog.showSaveDialog(null);
+			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
+		}
+		else {
+			choice = fileDialog.showSaveDialog(DesktopLauncher.singleton);
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -1249,9 +1243,7 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Used to retrieve any close-file actions from the visualization and
-	 * closes
-	 * <p>
-	 * the currently opened tab.
+	 * closes the currently opened tab.
 	 *
 	 * @author jannis
 	 */
@@ -1471,7 +1463,6 @@ public class DesktopLauncher extends JFrame {
 			return false;
 		}
 	}
-
 
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
 		private BDisplayOptions option;
