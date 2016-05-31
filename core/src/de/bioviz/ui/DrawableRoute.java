@@ -16,183 +16,183 @@ import org.slf4j.LoggerFactory;
  */
 public class DrawableRoute extends DrawableSprite {
 
-    /**
-     * What length of the route will be displayed.
-     */
-    public static int routeDisplayLength = 0;
-    
-    /**
-     * Class-wide logging facility.
-     */
-    private static Logger logger = LoggerFactory.getLogger(DrawableRoute
-            .class);
+	/**
+	 * What length of the route will be displayed.
+	 */
+	public static int routeDisplayLength = 0;
 
-    /**
-     * Non magic number version for turning off transparency.
-     */
-    private static float noTransparency = 1;
+	/**
+	 * Class-wide logging facility.
+	 */
+	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
+																   .class);
 
-
-    /**
-     * The droplet this route belongs to.
-     */
-    public DrawableDroplet droplet;
+	/**
+	 * Non magic number version for turning off transparency.
+	 */
+	private static float noTransparency = 1;
 
 
-    DrawableLine toTarget;
-    DrawableLine fromSource;
-
-    /**
-     * The color the route is drawn in of not superseeded by another option.
-     * <p/>
-     * Currently that color is black.
-     */
-    private Color baseColor = Color.BLACK;
-
-    /**
-     * Creates a route for a given droplet.
-     *
-     * @param droplet The droplet this route belongs to.
-     */
-    public DrawableRoute(final DrawableDroplet droplet) {
-        super(TextureE.StepMarker, droplet.viz);
-        this.droplet = droplet;
-        super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
-        toTarget = new DrawableLine(droplet.viz);
-        fromSource = new DrawableLine(droplet.viz);
-        this.setZ(DisplayValues.DEFAULT_ROUTE_DEPTH);
-    }
-
-    /**
-     * Returns the color used for drawingf the route.
-     * <p/>
-     * The color depends on the {@link BDisplayOptions} option ColorfulRoutes.
-     * If it is set to true, the droplet's color is used instead of black.
-     *
-     * @return The color of the route
-     */
-    public Color getColor() {
-        Color c = baseColor.cpy();
-        if (droplet.parentCircuit.getDisplayOptions().getOption(
-                BDisplayOptions.ColorfulRoutes)) {
-            c = droplet.getColor();
-        }
-        return c;
-    }
-
-    @Override
-    /**
-     * Actually draws the route on the canvas.
-     *
-     * This includes computing the length of the route to show (i.e. how many
-     * steps in time you go backwards and/or forward), the color of the route
-     * and the transparency.
-     */
-    public void draw() {
-        DrawableCircuit circ = droplet.parentCircuit;
-        int currentTime = circ.getCurrentTime();
-        int displayAt;
-
-        disableForcedLOD();
-
-        int hoverTimesteps = 2 * routeDisplayLength + 8;
-
-        int stepsToUse = routeDisplayLength;
-        if (droplet.isHovered()) {
-            stepsToUse = hoverTimesteps;
-        }
-
-        for (int i = -stepsToUse; i < stepsToUse; i++) {
-
-            Color c = getColor();
+	/**
+	 * The droplet this route belongs to.
+	 */
+	public DrawableDroplet droplet;
 
 
-            if (circ.getDisplayOptions().getOption(
-                    BDisplayOptions.SolidPaths)) {
-                c.a = noTransparency;
-            } else {
-                if (i >= 0) {
-                    c.a = 1 -
-                            (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
-                } else {
-                    c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
-                }
-            }
+	DrawableLine toTarget;
+	DrawableLine fromSource;
 
-            setColorImmediately(c);
+	/**
+	 * The color the route is drawn in of not superseeded by another option.
+	 * <p/>
+	 * Currently that color is black.
+	 */
+	private Color baseColor = Color.BLACK;
+
+	/**
+	 * Creates a route for a given droplet.
+	 *
+	 * @param droplet
+	 * 		The droplet this route belongs to.
+	 */
+	public DrawableRoute(final DrawableDroplet droplet) {
+		super(TextureE.StepMarker, droplet.viz);
+		this.droplet = droplet;
+		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
+		toTarget = new DrawableLine(droplet.viz);
+		fromSource = new DrawableLine(droplet.viz);
+		this.setZ(DisplayValues.DEFAULT_ROUTE_DEPTH);
+	}
+
+	/**
+	 * Returns the color used for drawingf the route.
+	 * <p/>
+	 * The color depends on the {@link BDisplayOptions} option ColorfulRoutes.
+	 * If it is set to true, the droplet's color is used instead of black.
+	 *
+	 * @return The color of the route
+	 */
+	public Color getColor() {
+		Color c = baseColor.cpy();
+		if (droplet.parentCircuit.getDisplayOptions().getOption(
+				BDisplayOptions.ColorfulRoutes)) {
+			c = droplet.getColor();
+		}
+		return c;
+	}
+
+	@Override
+	/**
+	 * Actually draws the route on the canvas.
+	 *
+	 * This includes computing the length of the route to show (i.e. how many
+	 * steps in time you go backwards and/or forward), the color of the route
+	 * and the transparency.
+	 */
+	public void draw() {
+		DrawableCircuit circ = droplet.parentCircuit;
+		int currentTime = circ.getCurrentTime();
+		int displayAt;
+
+		disableForcedLOD();
+
+		int hoverTimesteps = 2 * routeDisplayLength + 8;
+
+		int stepsToUse = routeDisplayLength;
+		if (droplet.isHovered()) {
+			stepsToUse = hoverTimesteps;
+		}
+
+		for (int i = -stepsToUse; i < stepsToUse; i++) {
+
+			Color c = getColor();
 
 
-            displayAt = currentTime + i;
-            Point p1 = droplet.droplet.getSafePositionAt(displayAt);
-            Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
+			if (circ.getDisplayOptions().getOption(
+					BDisplayOptions.SolidPaths)) {
+				c.a = noTransparency;
+			} else {
+				if (i >= 0) {
+					c.a = 1 -
+						  (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
+				} else {
+					c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
+				}
+			}
 
-            logger.trace("Point p1: {} (timestep {})", p1, displayAt);
-            logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
+			setColorImmediately(c);
 
-            int x1 = p1.fst;
-            int x2 = p2.fst;
-            int y1 = p1.snd;
-            int y2 = p2.snd;
 
-            float xCoord;
-            float yCoord;
+			displayAt = currentTime + i;
+			Point p1 = droplet.droplet.getSafePositionAt(displayAt);
+			Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
 
-            if (y1 == y2 && x2 > x1) {
-                xCoord = circ.xCoordOnScreen(x1 + 0.5f);
-                yCoord = circ.yCoordOnScreen(y1);
-                setRotation(0);
-            } else if (y1 == y2 && x2 < x1) {
-                xCoord = circ.xCoordOnScreen(x1 - 0.5f);
-                yCoord = circ.yCoordOnScreen(y1);
-                setRotation(180);
-            } else if (x1 == x2 && y2 > y1) {
-                xCoord = circ.xCoordOnScreen(x1);
-                yCoord = circ.yCoordOnScreen(y1 + 0.5f);
-                setRotation(90);
-            } else if (x1 == x2 && y2 < y1) {
-                xCoord = circ.xCoordOnScreen(x1);
-                yCoord = circ.yCoordOnScreen(y1 - 0.5f);
-                setRotation(270);
-            } else {
-                continue;
-            }
+			logger.trace("Point p1: {} (timestep {})", p1, displayAt);
+			logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
 
-            setX(xCoord);
-            setY(yCoord);
-            setScaleX(circ.getSmoothScale());
-            setScaleY(circ.getSmoothScale());
+			int x1 = p1.fst;
+			int x2 = p2.fst;
+			int y1 = p1.snd;
+			int y2 = p2.snd;
 
-            super.draw();
-        }
+			float xCoord;
+			float yCoord;
 
-        boolean dropletLongIndicator = circ
-                .getDisplayOptions()
-                .getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
-        if (dropletLongIndicator && droplet.droplet.hasNet()) {
-            setForcedLOD(1f);
-            Vector2 target = new Vector2(
-                    droplet.droplet.getNet().getTarget().fst.floatValue(),
-                    droplet.droplet.getNet().getTarget().snd.floatValue
-                            ());
-            Vector2 source = new Vector2(
-                    droplet.droplet.getFirstPosition().fst.floatValue(),
-                    droplet.droplet.getFirstPosition().snd.floatValue());
-            Vector2 current = new Vector2
-                    (droplet.smoothX,
-                            droplet.smoothY);
+			if (y1 == y2 && x2 > x1) {
+				xCoord = circ.xCoordOnScreen(x1 + 0.5f);
+				yCoord = circ.yCoordOnScreen(y1);
+				setRotation(0);
+			} else if (y1 == y2 && x2 < x1) {
+				xCoord = circ.xCoordOnScreen(x1 - 0.5f);
+				yCoord = circ.yCoordOnScreen(y1);
+				setRotation(180);
+			} else if (x1 == x2 && y2 > y1) {
+				xCoord = circ.xCoordOnScreen(x1);
+				yCoord = circ.yCoordOnScreen(y1 + 0.5f);
+				setRotation(90);
+			} else if (x1 == x2 && y2 < y1) {
+				xCoord = circ.xCoordOnScreen(x1);
+				yCoord = circ.yCoordOnScreen(y1 - 0.5f);
+				setRotation(270);
+			} else {
+				continue;
+			}
 
-            // draw to target
-            toTarget.from = current;
-            toTarget.to = target;
-            toTarget.setColor(droplet.getColor().add(
-                    Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
-            toTarget.draw();
+			setX(xCoord);
+			setY(yCoord);
+			setScaleX(circ.getSmoothScale());
+			setScaleY(circ.getSmoothScale());
 
-            fromSource.from = source;
-            fromSource.to = current;
-            fromSource.setColor(droplet.getColor().sub(
-                    Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
-            fromSource.draw();
-        }
-    }
+			super.draw();
+		}
+
+		boolean dropletLongIndicator = circ
+				.getDisplayOptions()
+				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
+		if (dropletLongIndicator && droplet.droplet.hasNet()) {
+			setForcedLOD(1f);
+			final Point targetPoint = droplet.droplet.getNet().getTarget();
+			Vector2 target = new Vector2(targetPoint.fst.floatValue(),
+										 targetPoint.snd.floatValue());
+
+			final Point sourcePoint = droplet.droplet.getFirstPosition();
+			Vector2 source = new Vector2(
+					sourcePoint.fst.floatValue(),
+					sourcePoint.snd.floatValue());
+			Vector2 current = new Vector2(droplet.smoothX, droplet.smoothY);
+
+			// draw to target
+			toTarget.from = current;
+			toTarget.to = target;
+			toTarget.setColor(droplet.getColor().add(
+					Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
+			toTarget.draw();
+
+			fromSource.from = source;
+			fromSource.to = current;
+			fromSource.setColor(droplet.getColor().sub(
+					Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
+			fromSource.draw();
+		}
+	}
 }
