@@ -1,8 +1,5 @@
 package de.bioviz.structures;
 
-import de.bioviz.ui.TextureE;
-import de.bioviz.util.Pair;
-
 /**
  * @author Oliver Keszocze
  */
@@ -12,11 +9,27 @@ public class Dispenser extends BiochipField {
 	 * The fluid ID that is dispensed by this dispenser.
 	 */
 	public final int fluidID;
+
+	/**
+	 * The direction the liquid is dispensed from.
+	 */
 	public final Direction direction;
 
-	public Dispenser(Point pos, int fluidID, Direction dispenseFrom, Biochip parent) {
-		super(pos,parent);
+	/**
+	 * Creates a Dispenser on a biochip.
+	 *
+	 * Note that the direction from which the fluid is dispensed must not be
+	 * part of the grid.
+	 *
+	 * @param pos The position to which droplet are dispensed
+	 * @param fluidID The fluid ID of the liquid that is dispensed.
+	 * @param dispenseFrom The direction from which the fluid is dispensed.
+	 * @param parent The biochip this dispenser belongs to.
+	 */
+	public Dispenser(final Point pos, final int fluidID,
+					 final Direction dispenseFrom, final Biochip parent) {
+		super(pos, parent);
 		this.fluidID = fluidID;
-		this.direction=dispenseFrom;
+		this.direction = dispenseFrom;
 	}
 }
