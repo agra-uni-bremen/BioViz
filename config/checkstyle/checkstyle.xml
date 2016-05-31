@@ -192,8 +192,12 @@
 
         <!-- If arrays are initialized over severy lines, every line containing a values must end
         with a comma. That allows for easy reordering. If the initialization is on a single line,
-        no trailing comma is needed -->
-        <module name="ArrayTrailingComma"/>
+		no trailing comma is needed 
+		
+		This option is obviously annoying -> turn it off-->
+		<!--<module name="ArrayTrailingComma"/> -->
+
+
         <!-- I quote "Rationale: Some developers find inline conditionals hard to read, so their
         employer's coding standards forbid them." :D -->
         <module name="AvoidInlineConditionals">
@@ -203,8 +207,8 @@
         The point is that people tend to implement FooClass.equals(FooClass f) only -->
         <module name="CovariantEquals"/>
         <module name=" EmptyStatement"/>
-        <module name="EqualsHashCode"/>
         <!-- force overriding of hashCode() if equals() is overridden -->
+        <module name="EqualsHashCode"/>
         <!-- This is nice:
             String nullString = null;
             nullString.equals("My_Sweet_String");
