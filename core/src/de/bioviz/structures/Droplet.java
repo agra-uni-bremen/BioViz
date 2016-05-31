@@ -212,8 +212,7 @@ public class Droplet {
 
 		if (current > 0 && current < positions.size() - 1) {
 			result = current + 1;
-		}
-		else {
+		} else {
 			result = positions.size();
 		}
 
@@ -236,7 +235,7 @@ public class Droplet {
 
 	/**
 	 * Compares an object to this Droplet.
-	 *
+	 * <p>
 	 * The object is equal to this Droplet instance if it is an instance of the
 	 * droplet class and has the same ID.
 	 *
@@ -248,8 +247,7 @@ public class Droplet {
 	public boolean equals(final Object o) {
 		if (o instanceof Droplet) {
 			return ((Droplet) o).getID() == this.getID();
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
