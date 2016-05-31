@@ -2,38 +2,56 @@ package de.bioviz.parser;
 
 
 import de.bioviz.parser.generated.Bio;
+import de.bioviz.parser.generated.Bio.BioContext;
 import de.bioviz.parser.generated.Bio.BlockageContext;
-import de.bioviz.parser.generated.Bio.PositionContext;
-import de.bioviz.parser.generated.Bio.TimeConstraintContext;
+import de.bioviz.parser.generated.Bio.CellActuationContext;
+import de.bioviz.parser.generated.Bio.DispenserContext;
 import de.bioviz.parser.generated.Bio.DropletIDContext;
 import de.bioviz.parser.generated.Bio.FluidIDContext;
-import de.bioviz.parser.generated.Bio.PinIDContext;
-import de.bioviz.parser.generated.Bio.SourceContext;
-import de.bioviz.parser.generated.Bio.DispenserContext;
-import de.bioviz.parser.generated.Bio.TimingContext;
-import de.bioviz.parser.generated.Bio.GridblockContext;
 import de.bioviz.parser.generated.Bio.FluiddefContext;
-import de.bioviz.parser.generated.Bio.PinActuationContext;
-import de.bioviz.parser.generated.Bio.CellActuationContext;
-import de.bioviz.parser.generated.Bio.RouteContext;
-import de.bioviz.parser.generated.Bio.BioContext;
+import de.bioviz.parser.generated.Bio.GridblockContext;
 import de.bioviz.parser.generated.Bio.MixerIDContext;
+import de.bioviz.parser.generated.Bio.PinActuationContext;
+import de.bioviz.parser.generated.Bio.PinIDContext;
+import de.bioviz.parser.generated.Bio.PositionContext;
+import de.bioviz.parser.generated.Bio.RouteContext;
+import de.bioviz.parser.generated.Bio.SourceContext;
+import de.bioviz.parser.generated.Bio.TimeConstraintContext;
 import de.bioviz.parser.generated.Bio.TimeRangeContext;
+import de.bioviz.parser.generated.Bio.TimingContext;
 import de.bioviz.parser.generated.BioBaseListener;
-import de.bioviz.structures.*;
+import de.bioviz.structures.ActuationVector;
+import de.bioviz.structures.Biochip;
+import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.Detector;
+import de.bioviz.structures.Direction;
+import de.bioviz.structures.Dispenser;
+import de.bioviz.structures.Droplet;
+import de.bioviz.structures.FluidicConstraintViolation;
+import de.bioviz.structures.Mixer;
+import de.bioviz.structures.Net;
+import de.bioviz.structures.Pin;
+import de.bioviz.structures.Point;
+import de.bioviz.structures.Range;
+import de.bioviz.structures.Rectangle;
+import de.bioviz.structures.Sink;
+import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
-
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Nullable;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 
-@SuppressWarnings("Convert2Diamond")
-public class BioParserListener extends BioBaseListener {
+
+class BioParserListener extends BioBaseListener {
 	private static Logger logger =
 			LoggerFactory.getLogger(BioParserListener.class);
 
@@ -58,8 +76,15 @@ public class BioParserListener extends BioBaseListener {
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
 
 
+	/**
+	 * The biochip that will be filled with the stuff that was parsed.
+	 */
 	private Biochip chip;
 
+	/**
+	 * Stores the textual representation of all errors that were found during
+	 * the parsing process.
+	 */
 	private ArrayList<String> errors;
 
 	public ArrayList<String> getErrors() {
@@ -89,8 +114,7 @@ public class BioParserListener extends BioBaseListener {
 	private int getFluidID(final FluidIDContext ctx) {
 		if (ctx == null) {
 			return 0;
-		}
-		else {
+		} else {
 			return Integer.parseInt(ctx.Integer().getText());
 		}
 	}
@@ -98,8 +122,7 @@ public class BioParserListener extends BioBaseListener {
 	private int getPinID(final PinIDContext ctx) {
 		if (ctx == null) {
 			return 0;
-		}
-		else {
+		} else {
 			return Integer.parseInt(ctx.Integer().getText());
 		}
 	}
@@ -107,8 +130,7 @@ public class BioParserListener extends BioBaseListener {
 	private int getMixerID(final MixerIDContext ctx) {
 		if (ctx == null) {
 			return 0;
-		}
-		else {
+		} else {
 			return Integer.parseInt(ctx.Integer().getText());
 		}
 	}
@@ -119,8 +141,7 @@ public class BioParserListener extends BioBaseListener {
 		if (ctx.timeConstraint() != null) {
 			return new Source(id, pos, getTimeConstraint(ctx.timeConstraint
 					()));
-		}
-		else {
+		} else {
 			return new Source(id, pos);
 		}
 	}
@@ -133,10 +154,8 @@ public class BioParserListener extends BioBaseListener {
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
 		if (dispenser != null) {
 			updateMaxDimension(dispenser.fst);
-			dispensers.add(new Pair<Integer, Pair<Point, Direction>>(fluidID,
-																	 dispenser));
-		}
-		else {
+			dispensers.add(new Pair<>(fluidID, dispenser));
+		} else {
 			logger.error("Skipping definition of dispenser");
 		}
 
@@ -168,7 +187,7 @@ public class BioParserListener extends BioBaseListener {
 			return null;
 		}
 
-		return new Pair<Point, Direction>(pos, dir);
+		return new Pair<>(pos, dir);
 	}
 
 	private void updateMaxDimension(final Point p) {
@@ -192,8 +211,7 @@ public class BioParserListener extends BioBaseListener {
 		if (sinkDef != null) {
 			updateMaxDimension(sinkDef.fst);
 			sinks.add(sinkDef);
-		}
-		else {
+		} else {
 			logger.error("Skipping definition of sink");
 		}
 
@@ -206,8 +224,7 @@ public class BioParserListener extends BioBaseListener {
 
 		if (pins.containsKey(pinID)) {
 			pins.get(pinID).cells.add(pos);
-		}
-		else {
+		} else {
 			pins.put(pinID, new Pin(pinID, pos));
 		}
 	}
@@ -242,7 +259,7 @@ public class BioParserListener extends BioBaseListener {
 	public void enterNet(@NotNull final Bio.NetContext ctx) {
 		Point target = getPosition(ctx.target().position());
 
-		ArrayList<Source> sources = new ArrayList<Source>();
+		ArrayList<Source> sources = new ArrayList<>();
 
 		ctx.children.stream().filter(
 				child -> child instanceof Bio.SourceContext).forEach(child -> {
@@ -263,14 +280,13 @@ public class BioParserListener extends BioBaseListener {
 
 		logger.trace("Found blockage {} with timing {}", rect, timing);
 
-		blockages.add(new Pair<Rectangle, Range>(rect, timing));
+		blockages.add(new Pair<>(rect, timing));
 	}
 
 	private Range getTiming(final TimingContext ctx) {
 		if (ctx == null) {
 			return new Range(Range.DONTCARE, Range.DONTCARE);
-		}
-		else {
+		} else {
 			int begin = Range.DONTCARE;
 			int end = Range.DONTCARE;
 
@@ -346,7 +362,7 @@ public class BioParserListener extends BioBaseListener {
 
 	}
 
-	Range getTimeRange(final TimeRangeContext ctx) {
+	private Range getTimeRange(final TimeRangeContext ctx) {
 		Integer fst = Integer.parseInt(ctx.Integer(0).getText());
 		Integer snd = Integer.parseInt(ctx.Integer(1).getText());
 		logger.debug("Time range from {} to {}", ctx.Integer(0),
@@ -372,10 +388,10 @@ public class BioParserListener extends BioBaseListener {
 	public void exitBio(final BioContext ctx) {
 
 		chip = new Biochip();
-		errors = new ArrayList<String>();
+		errors = new ArrayList<>();
 
-		for (Rectangle rect : rectangles) {
-			for (Point cell : rect.positions()) {
+		for (final Rectangle rect : rectangles) {
+			for (final Point cell : rect.positions()) {
 				chip.addField(cell, new BiochipField(cell, chip));
 			}
 		}
@@ -389,9 +405,10 @@ public class BioParserListener extends BioBaseListener {
 
 		droplets.forEach(chip::addDroplet);
 		errors.addAll(Validator.checkPathsForJumps(droplets));
-		errors.addAll(Validator.checkPathsForPositions(droplets,
-													   chip.getAllCoordinates
-															   ()));
+		errors.addAll(Validator.checkPathsForPositions(
+				droplets,
+				chip.getAllCoordinates())
+		);
 
 		chip.addFluidTypes(fluidTypes);
 		chip.addNets(nets);
