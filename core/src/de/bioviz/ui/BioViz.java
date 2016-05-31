@@ -12,47 +12,50 @@ import de.bioviz.messages.MessageCenter;
 import de.bioviz.messages.MsgAppender;
 import de.bioviz.parser.BioParser;
 import de.bioviz.structures.Biochip;
-import de.bioviz.structures.Droplet;
 import de.bioviz.svg.SVGManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.Vector;
 
 
 public class BioViz implements ApplicationListener {
-	public OrthographicCamera camera;
-	public BioVizSpriteBatch batch;
-	
-	/**
-	 * Sets the duration of intermediate animations in ms.
-	 */
-	public static void setAnimationDuration(int value) {
-		DrawableDroplet.setTransitionDuration(value);
-		DrawableSprite.setColorTransitionDuration(value);
-	}
 
 	/**
-	 * Returns the duration of intermediate animations in ms.
-	 * @return Duration of intermediate animations in ms.
+	 * The internal logger.
 	 */
-	public static int getAnimationDuration() {
-		return DrawableDroplet.getTransitionDuration();
-	}
+	static Logger logger = LoggerFactory.getLogger(BioViz.class);
+
+
+
+
+
+	public OrthographicCamera camera;
+	public BioVizSpriteBatch batch;
+	public TextureManager textures;
+	public MessageCenter messageCenter;
+	public DrawableDroplet selectedDroplet;
 
 
 	public DrawableCircuit currentCircuit;
 	private HashMap<String, DrawableCircuit> loadedCircuits;
 	private Vector<Drawable> drawables = new Vector<Drawable>();
 
-	public TextureManager textures;
-	public MessageCenter messageCenter;
+
 
 	private File bioFile;
 	private BioVizInputProcessor inputProcessor;
 	private SVGManager svgManager;
-	public DrawableDroplet selectedDroplet;
+
+
+
+
 
 	/**
 	 * This stores the last time a frame was rendered. Used to limit the
@@ -65,11 +68,65 @@ public class BioViz implements ApplicationListener {
 	 */
 	private int targetFramerate = 60;
 
+
+
+
+	private Vector<BioVizEvent> timeChangedListeners = new Vector<>();
+	private Vector<BioVizEvent> loadFileListeners = new Vector<>();
+	private Vector<BioVizEvent> loadedFileListeners = new Vector<>();
+	private Vector<BioVizEvent> saveFileListeners = new Vector<>();
+	private Vector<BioVizEvent> closeFileListeners = new Vector<>();
+	private Vector<BioVizEvent> pickColorListeners = new Vector<>();
+	private List<BioVizEvent> nextTabListeners = new ArrayList<>();
+	private List<BioVizEvent> previousTabListeners = new ArrayList<>();
+
+	private boolean loadFileOnUpdate = true;
+	private boolean firstRun = true;
+
+	public BioViz() {
+		super();
+		logger.info(
+				"Starting withouth filename being specified; loading example");
+		logger.info("Usage: java -jar BioViz.jar <filename>");
+		this.bioFile = null;
+		loadedCircuits = new HashMap<>();
+		textures = new TextureManager();
+
+		// Weird static assignment needed to enable parameterless construction
+		// of appender in order to allow its creation from logger framework
+		MsgAppender.setMessageViz(this);
+	}
+
+	public BioViz(final File bioFile) {
+		this();
+		logger.info("Starting with file \"{}\"", bioFile.getAbsolutePath());
+		this.bioFile = bioFile;
+	}
+
+
+	/**
+	 * Sets the duration of intermediate animations in ms.
+	 *
+	 * @param newDuration The new animation duration.
+	 */
+	public static void setAnimationDuration(final int newDuration) {
+		DrawableDroplet.setTransitionDuration(newDuration);
+		DrawableSprite.setColorTransitionDuration(newDuration);
+	}
+
+	/**
+	 * Returns the duration of intermediate animations in ms.
+	 *
+	 * @return Duration of intermediate animations in ms.
+	 */
+	public static int getAnimationDuration() {
+		return DrawableDroplet.getTransitionDuration();
+	}
+
 	public String getFileName() {
 		if (bioFile == null) {
 			return "Default example";
-		}
-		else {
+		} else {
 			return bioFile.getName();
 		}
 	}
@@ -90,44 +147,6 @@ public class BioViz implements ApplicationListener {
 		}
 	}
 
-	boolean runFullPresetScreenshots = false;
-	float fullPresetScreenshotsScaling = 6f;
-
-
-	private Vector<BioVizEvent> timeChangedListeners =
-			new Vector<BioVizEvent>();
-	private Vector<BioVizEvent> loadFileListeners = new Vector<BioVizEvent>();
-	private Vector<BioVizEvent> loadedFileListeners = new
-			Vector<BioVizEvent>();
-	private Vector<BioVizEvent> saveFileListeners = new Vector<BioVizEvent>();
-	private Vector<BioVizEvent> closeFileListeners = new Vector<BioVizEvent>();
-	private Vector<BioVizEvent> pickColorListeners = new Vector<BioVizEvent>();
-	private List<BioVizEvent> nextTabListeners = new ArrayList<>();
-	private List<BioVizEvent> previousTabListeners = new ArrayList<>();
-	static Logger logger = LoggerFactory.getLogger(BioViz.class);
-
-	private boolean loadFileOnUpdate = true;
-
-	public BioViz() {
-		super();
-		logger.info(
-				"Starting withouth filename being specified; loading example");
-		logger.info("Usage: java -jar BioViz.jar <filename>");
-		this.bioFile = null;
-		loadedCircuits = new HashMap<>();
-		textures = new TextureManager();
-		
-		// Weird static assignment needed to enable parameterless construction
-		// of appender in order to allow its creation from logger framework
-		MsgAppender.setMessageViz(this);
-	}
-
-	public BioViz(File bioFile) {
-		this();
-		logger.info("Starting with file \"{}\"", bioFile.getAbsolutePath());
-		this.bioFile = bioFile;
-	}
-
 	@Override
 	public void create() {
 		messageCenter = new MessageCenter(this);
@@ -142,7 +161,7 @@ public class BioViz implements ApplicationListener {
 
 		inputProcessor = new BioVizInputProcessor(this);
 		Gdx.input.setInputProcessor(inputProcessor);
-		
+
 		//DrawableLine.singleton = new DrawableLine(this);
 
 		//this.menu = new Menu();
@@ -183,7 +202,7 @@ public class BioViz implements ApplicationListener {
 		for (Drawable drawable : drawables) {
 			drawable.draw();
 		}
-		
+
 		//DrawableLine.drawNow();
 
 		messageCenter.render();
@@ -199,10 +218,10 @@ public class BioViz implements ApplicationListener {
 		}
 	}
 
-	private boolean firstRun = true;
+
 
 	@Override
-	public void resize(int width, int height) {
+	public void resize(final int width, final int height) {
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;
 		if (firstRun && currentCircuit != null) {
@@ -219,7 +238,7 @@ public class BioViz implements ApplicationListener {
 	public void resume() {
 	}
 
-	public void unloadFile(File f) {
+	public void unloadFile(final File f) {
 		try {
 			String path = f.getCanonicalPath();
 			if (this.loadedCircuits.containsKey(path)) {
@@ -231,17 +250,17 @@ public class BioViz implements ApplicationListener {
 					currentCircuit = new DrawableCircuit(
 							new Biochip(), this);
 				}
-				logger.info("Removing {}",path);
+				logger.info("Removing {}", path);
 				this.loadedCircuits.remove(path);
 			}
-		} catch (Exception e) {
-			logger.error("Could not unload file \"{}\"",f);
+		} catch (final Exception e) {
+			logger.error("Could not unload file \"{}\"", f);
 		}
 	}
 
 	private void loadNewFile() {
 		Biochip bc;
-		boolean error=false;
+		boolean error = false;
 
 		try {
 			drawables.remove(currentCircuit);
@@ -251,15 +270,14 @@ public class BioViz implements ApplicationListener {
 					logger.debug("re-fetching previously loaded file " +
 								 bioFile.getCanonicalPath());
 					currentCircuit =
-							this.loadedCircuits.get(bioFile.getCanonicalPath
-									());
-				}
-				else {
+							this.loadedCircuits.get(
+									bioFile.getCanonicalPath());
+				} else {
 					logger.debug("Loading \"{}\"", bioFile);
 					bc = BioParser.parseFile(bioFile);
 
 					if (bc == null) {
-						logger.error("Could not parse file {}",bioFile);
+						logger.error("Could not parse file {}", bioFile);
 						logger.info("Creating empty Biochip to display");
 						bc = new Biochip();
 						error = true;
@@ -268,7 +286,7 @@ public class BioViz implements ApplicationListener {
 					DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
 					currentCircuit = newCircuit;
 					this.loadedCircuits.put(bioFile.getCanonicalPath(),
-							newCircuit);
+											newCircuit);
 					currentCircuit.zoomExtents();
 				}
 				logger.debug("Drawable created, replacing old elements...");
@@ -278,12 +296,10 @@ public class BioViz implements ApplicationListener {
 				if (!error) {
 					if (bioFile == null) {
 						logger.info("Done loading default file");
-					}
-					else {
+					} else {
 						logger.info("Done loading file {}", bioFile);
 					}
-				}
-				else {
+				} else {
 					logger.info("Done loading file {}", bioFile);
 				}
 			} else {
@@ -293,8 +309,9 @@ public class BioViz implements ApplicationListener {
 						".");
 				currentCircuit = new DrawableCircuit(new Biochip(), this);
 			}
-		} catch (Exception e) {
-			logger.error("Error when parsing {}:\n{}",bioFile,e.getMessage());
+		} catch (final Exception e) {
+			logger.error("Error when parsing {}:\n{}", bioFile, e.getMessage
+					());
 		}
 
 		// clear on screen messages as they would otherwise remain visible
@@ -314,83 +331,87 @@ public class BioViz implements ApplicationListener {
 		}
 	}
 
-	public void addTimeChangedListener(BioVizEvent listener) {
+	public void addTimeChangedListener(final BioVizEvent listener) {
 		timeChangedListeners.add(listener);
 	}
 
-	public void callTimeChangedListeners() {
-		logger.trace("Calling " + this.loadedFileListeners.size() +
-					 " listeners for timeChanged");
-		for (BioVizEvent listener : this.timeChangedListeners) {
-			listener.bioVizEvent();
-		}
+
+
+	public void addLoadFileListener(final BioVizEvent listener) {
+		loadFileListeners.add(listener);
 	}
 
-	public void addLoadFileListener(BioVizEvent listener) {
-		loadFileListeners.add(listener);
+	void callTimeChangedListeners() {
+		logger.trace("Calling " + this.loadedFileListeners.size() +
+					 " listeners for timeChanged");
+		for (final BioVizEvent listener : this.timeChangedListeners) {
+			listener.bioVizEvent();
+		}
 	}
 
 	void callLoadFileListeners() {
 		logger.trace("Calling " + this.loadFileListeners.size() +
 					 " listeners for load");
-		for (BioVizEvent listener : this.loadFileListeners) {
+		for (final BioVizEvent listener : this.loadFileListeners) {
 			listener.bioVizEvent();
 		}
 	}
 
-	public void addLoadedFileListener(BioVizEvent listener) {
+	public void addLoadedFileListener(final BioVizEvent listener) {
 		loadedFileListeners.add(listener);
 	}
 
 	void callLoadedFileListeners() {
 		logger.trace("Calling " + this.loadedFileListeners.size() +
 					 " listeners for loaded");
-		for (BioVizEvent listener : this.loadedFileListeners) {
+		for (final BioVizEvent listener : this.loadedFileListeners) {
 			listener.bioVizEvent();
 		}
 	}
 
-	public void addSaveFileListener(BioVizEvent listener) {
+	public void addSaveFileListener(final BioVizEvent listener) {
 		saveFileListeners.add(listener);
 	}
 
 	void callSaveFileListeners() {
 		logger.trace("Calling " + this.saveFileListeners.size() +
 					 " listeners for save");
-		for (BioVizEvent listener : this.saveFileListeners) {
+		for (final BioVizEvent listener : this.saveFileListeners) {
 			listener.bioVizEvent();
 		}
 	}
 
-	public void addCloseFileListener(BioVizEvent listener) {
+	public void addCloseFileListener(final BioVizEvent listener) {
 		closeFileListeners.add(listener);
 	}
 
 	void callCloseFileListeners() {
 		logger.trace("Calling " + this.closeFileListeners.size() +
 					 " listeners for close");
-		for (BioVizEvent listener : this.closeFileListeners) {
+		for (final BioVizEvent listener : this.closeFileListeners) {
 			listener.bioVizEvent();
 		}
 	}
-	
-	public void addPickColourListener(BioVizEvent listener) {
+
+	public void addPickColourListener(final BioVizEvent listener) {
 		pickColorListeners.add(listener);
 	}
 
 	void callPickColourListeners() {
 		logger.trace("Calling " + this.closeFileListeners.size() +
-				" listeners for picking a colour");
-		for (BioVizEvent listener : this.pickColorListeners) {
+					 " listeners for picking a colour");
+		for (final BioVizEvent listener : this.pickColorListeners) {
 			listener.bioVizEvent();
 		}
 	}
 
 	/**
 	 * Add a listener for tab changes to the next tab.
-	 * @param listener the listener
+	 *
+	 * @param listener
+	 * 		the listener
 	 */
-	public void addNextTabListener(BioVizEvent listener) {
+	public void addNextTabListener(final BioVizEvent listener) {
 		nextTabListeners.add(listener);
 	}
 
@@ -399,17 +420,19 @@ public class BioViz implements ApplicationListener {
 	 */
 	void callNextTabListeners() {
 		logger.trace("Calling " + nextTabListeners.size() +
-				" listeners to change to the next tab.");
-		for (BioVizEvent listener : nextTabListeners) {
+					 " listeners to change to the next tab.");
+		for (final BioVizEvent listener : nextTabListeners) {
 			listener.bioVizEvent();
 		}
 	}
 
 	/**
 	 * Add a listener for tab changes to the previous tab.
-	 * @param listener the listener
+	 *
+	 * @param listener
+	 * 		the listener
 	 */
-	public void addPreviousTabListener(BioVizEvent listener) {
+	public void addPreviousTabListener(final BioVizEvent listener) {
 		previousTabListeners.add(listener);
 	}
 
@@ -418,32 +441,35 @@ public class BioViz implements ApplicationListener {
 	 */
 	void callPreviousTabListeners() {
 		logger.trace("Calling " + previousTabListeners.size() +
-				" listeners to change to the next tab.");
+					 " listeners to change to the next tab.");
 		previousTabListeners.forEach(BioVizEvent::bioVizEvent);
 	}
 
-	public void saveSVG(String path, int timeStep) {
+	public void saveSVG(final String path, final int timeStep) {
 		spawnSVGManager();
 		logger.debug("[SVG] Within saveSVG(String) method");
-		logger.debug("[SVG] svgManager: {}",svgManager);
+		logger.debug("[SVG] svgManager: {}", svgManager);
 
 		try {
 			String svg = svgManager.toSVG(currentCircuit, timeStep);
 			//logger.debug("[SVG] generated SVG: {}",svg);
 			FileHandle handle = Gdx.files.absolute(path);
-			logger.debug("[SVG] File handle for storing the SVG: {}",handle);
+			logger.debug("[SVG] File handle for storing the SVG: {}", handle);
 			handle.writeString(svg, false);
 			logger.info("[SVG] Stored SVG at {}", handle.path());
-		} catch (Exception e) {
-			logger.error("[SVG] Could not store SVG; exception message: {}", e);
+		} catch (final Exception e) {
+			logger.error("[SVG] Could not store SVG; exception message: {}",
+						 e);
 		}
 	}
 
-	static private ShaderProgram createDefaultShader() {
+	private static ShaderProgram createDefaultShader() {
 		FileHandle vertexShaderHandle = Gdx.files.internal("vertexShader.shd");
-		FileHandle fragmentShaderHandle = Gdx.files.internal("fragmentShader.shd");
+		FileHandle fragmentShaderHandle =
+				Gdx.files.internal("fragmentShader.shd");
 
-		ShaderProgram shader = new ShaderProgram(vertexShaderHandle, fragmentShaderHandle);
+		ShaderProgram shader =
+				new ShaderProgram(vertexShaderHandle, fragmentShaderHandle);
 		if (!shader.isCompiled()) {
 			throw new IllegalArgumentException(
 					"Error compiling shader: " + shader.getLog());
@@ -457,11 +483,9 @@ public class BioViz implements ApplicationListener {
 		FileHandle handle;
 		if (r == 0) {
 			handle = textures.getFileHandle(TextureE.Droplet);
-		}
-		else if (r == 1) {
+		} else if (r == 1) {
 			handle = textures.getFileHandle(TextureE.Dispenser);
-		}
-		else {
+		} else {
 			handle = textures.getFileHandle(TextureE.Sink);
 		}
 		logger.debug("Setting application icon to " + handle.name());
