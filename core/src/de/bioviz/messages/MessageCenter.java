@@ -41,6 +41,11 @@ public class MessageCenter {
 	private static final float DEFAULT_HUD_SIZE = 16f;
 
 	/**
+	 * The step width at which the scale is increased.
+	 */
+	private static final float SCALEINCSTEP = 2f;
+
+	/**
 	 * The central logging device for this class.
 	 */
 	private static Logger logger = LoggerFactory.getLogger(MessageCenter
@@ -72,10 +77,6 @@ public class MessageCenter {
 	 */
 	private BitmapFont messageFont;
 
-	/**
-	 * The step width at which the scale is increased.
-	 */
-	private final float SCALEINCSTEP = 2f;
 
 	/**
 	 * The text rendering resolution. In order to avoid artifacts when zooming
@@ -108,8 +109,7 @@ public class MessageCenter {
 	 * The messages that should be displayed on top of the circuit, mapped from
 	 * their specific id to the message itself.
 	 */
-	private HashMap<Integer, HUDMessage> HUDMessages =
-			new HashMap<Integer, HUDMessage>();
+	private HashMap<Integer, HUDMessage> HUDMessages = new HashMap<>();
 
 	/**
 	 * If this flag is set to true, the font bitmaps will be re-rendered before
@@ -128,7 +128,7 @@ public class MessageCenter {
 	 */
 	public MessageCenter(final BioViz parent) {
 		this.parent = parent;
-		messages = new Vector<Message>();
+		messages = new Vector<>();
 	}
 
 	/**
@@ -136,6 +136,8 @@ public class MessageCenter {
 	 * with text, the text is instead redrawn for the given size each time the
 	 * zoom factor changes. This value is the current text size for HUD
 	 * messages.
+	 *
+	 * @return The text rendering resolution.
 	 */
 	public float getTextRenderResolution() { return textRenderResolution; }
 
@@ -148,9 +150,8 @@ public class MessageCenter {
 	 * 		the new text resolution.
 	 */
 	public void setTextRenderResolution(final float value) {
-		this.textRenderResolution = Math.max(
-				textRenderResolutionMinimum,
-				value);
+		this.textRenderResolution =
+				Math.max(textRenderResolutionMinimum, value);
 		fontInvalidated = true;
 		logger.debug("setting HUD font size to " +
 					 this.textRenderResolution);
@@ -162,6 +163,8 @@ public class MessageCenter {
 	 * with text, the text is instead redrawn for the given size each time the
 	 * zoom factor changes. This value is the current text size for text
 	 * messages.
+	 *
+	 * @return The text rendering resolution.
 	 */
 	public float getmsgTextRenderResolution() {
 		return msgTextRenderResolution;
@@ -176,9 +179,8 @@ public class MessageCenter {
 	 * 		the new text resolution.
 	 */
 	public void setmsgTextRenderResolution(final float value) {
-		this.msgTextRenderResolution = Math.max(
-				msgTextRenderResolutionMinimum,
-				value);
+		this.msgTextRenderResolution =
+				Math.max(msgTextRenderResolutionMinimum, value);
 		fontInvalidated = true;
 		logger.debug("setting message font size to " +
 					 this.msgTextRenderResolution);
@@ -237,8 +239,7 @@ public class MessageCenter {
 			for (final String line : lines) {
 				addMessage(line);
 			}
-		}
-		else {
+		} else {
 			this.messages.add(m);
 		}
 
@@ -262,8 +263,7 @@ public class MessageCenter {
 			for (final Message m : this.messages) {
 				if (m.color != null) {
 					messageFont.setColor(m.color);
-				}
-				else {
+				} else {
 					messageFont.setColor(Color.WHITE);
 				}
 				int startX = spacing;
@@ -284,17 +284,15 @@ public class MessageCenter {
 					// Hide when zoomed out
 					if (this.parent.currentCircuit.getScaleX() < hideAt) {
 						targetColor.a = 0;
-					}
-					else if (this.parent.currentCircuit.getScaleX() < showAt) {
+					} else if (this.parent.currentCircuit.getScaleX() <
+							   showAt) {
 						float val = this.parent.currentCircuit.getScaleX();
 						val = (val - hideAt) / (showAt - hideAt);
 						targetColor.a = val;
-					}
-					else {
+					} else {
 						targetColor.a = 1;
 					}
-				}
-				else {
+				} else {
 					targetColor.a = 1;
 				}
 
@@ -365,8 +363,7 @@ public class MessageCenter {
 		if (!this.HUDMessages.containsKey(key)) {
 			hm = new HUDMessage(message, x, y);
 			HUDMessages.put(key, hm);
-		}
-		else {
+		} else {
 			hm = HUDMessages.get(key);
 			hm.message = message;
 			hm.x = x;
