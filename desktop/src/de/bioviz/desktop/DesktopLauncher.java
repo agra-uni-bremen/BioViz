@@ -91,6 +91,18 @@ public class DesktopLauncher extends JFrame {
 	private static SVGExportSettings svgExportSettings =
 			SVGExportSettings.getInstance();
 
+
+	/**
+	 * The default x width for the BioViz window.
+	 */
+	private static final int DEFAULT_X_WIDTH = 800;
+
+	/**
+	 * The default x width for the BioViz window.
+	 */
+	private static final int DEFAULT_Y_WIDTH = 600;
+
+
 	/**
 	 * Whether hotkeys can by used.
 	 * <p>
@@ -258,7 +270,7 @@ public class DesktopLauncher extends JFrame {
 		pack();
 		setVisible(true);
 
-		setSize(800, 600);
+		setSize(DEFAULT_X_WIDTH, DEFAULT_Y_WIDTH);
 	}
 
 	/**
@@ -324,39 +336,44 @@ public class DesktopLauncher extends JFrame {
 		final int sliderHeight = new JSlider().getPreferredSize().height;
 
 		JButton autoplaytButton = new JButton("Autoplay");
-		autoplaytButton.setPreferredSize(new Dimension(buttonWidth,
-													   autoplaytButton
-															   .getPreferredSize().height));
+		autoplaytButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  autoplaytButton.getPreferredSize().height)
+		);
 		autoplaytButton.addActionListener(
 				e -> currentViz.currentCircuit.toggleAutoAdvance());
 
 		JButton openButton = new JButton("Open File");
-		openButton.setPreferredSize(new Dimension(buttonWidth,
-												  openButton.getPreferredSize
-														  ().height));
+		openButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  openButton.getPreferredSize().height)
+		);
 		loadCB = new LoadFileCallback();
 		openButton.addActionListener(e -> loadCB.bioVizEvent());
 		currentViz.addLoadFileListener(loadCB);
 
 		JButton preferencesButton = new JButton("Preferences");
-		preferencesButton.setPreferredSize(new Dimension(buttonWidth,
-														 openButton
-																 .getPreferredSize().height));
+		preferencesButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  openButton.getPreferredSize().height)
+		);
 		preferencesButton.addActionListener(e -> {
 			showSettings(currentViz);
 		});
 
 		JButton saveButton = new JButton("Save SVG");
-		saveButton.setPreferredSize(new Dimension(buttonWidth,
-												  saveButton.getPreferredSize
-														  ().height));
+		saveButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  saveButton.getPreferredSize().height)
+		);
 		saveCB = new SaveFileCallback();
 		saveButton.addActionListener(e -> saveCB.bioVizEvent());
 
 		JButton zoomButton = new JButton("Center");
-		zoomButton.setPreferredSize(new Dimension(buttonWidth,
-												  zoomButton.getPreferredSize
-														  ().height));
+		zoomButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  zoomButton.getPreferredSize().height)
+		);
 		zoomButton.addActionListener(
 				e -> currentViz.currentCircuit.zoomExtents());
 
@@ -444,7 +461,8 @@ public class DesktopLauncher extends JFrame {
 				l -> currentViz.scheduleLoadingOfNewFile(
 						tabsToFilenames.get(
 								((JTabbedPane) l.getSource())
-										.getSelectedComponent())));
+										.getSelectedComponent()))
+		);
 
 		// nextTabListener
 		currentViz.addNextTabListener(
@@ -574,8 +592,8 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private void closeTab(final int index) {
 		logger.info("Closing file (" + index + ")");
-		File file = tabsToFilenames.get(visualizationTabs.getSelectedComponent
-				());
+		File file = tabsToFilenames.get(
+				visualizationTabs.getSelectedComponent());
 
 		if (file != null) {
 			currentViz.unloadFile(file);
@@ -647,7 +665,8 @@ public class DesktopLauncher extends JFrame {
 
 
 		//#########################
-		// The following stuff resets the logger so that no unnecessary messages
+		// The following stuff resets the logger so that no unnecessary
+		// messages
 		// are printed
 
 		// assume SLF4J is bound to logback in the current environment
@@ -693,15 +712,13 @@ public class DesktopLauncher extends JFrame {
 						UIManager.setLookAndFeel(
 								UIManager.getSystemLookAndFeelClassName());
 					} catch (final UnsupportedLookAndFeelException e) {
-						logger.error("System look and feel is " +
-									 "unsupported: "
-
-									 + e.getMessage() + "\n" +
+						logger.error("System look and feel is unsupported: " +
+									 e.getMessage() + "\n" +
 									 e.getStackTrace());
 					} catch (final Exception e) {
-						logger.error("Cannot set look and feel: " +
-									 e.getMessage() + "\n"
-									 + e.getStackTrace());
+						logger.error(
+								"Cannot set look and feel: " + e.getMessage() +
+								"\n" + e.getStackTrace());
 					}
 
 					JFrame frame = new DesktopLauncher();
@@ -746,8 +763,7 @@ public class DesktopLauncher extends JFrame {
 
 		if (load) {
 			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
-		}
-		else {
+		} else {
 			choice = fileDialog.showSaveDialog(DesktopLauncher.singleton);
 		}
 
@@ -773,8 +789,8 @@ public class DesktopLauncher extends JFrame {
 	public static File getFileFromStream(final String fileName) {
 		File file = null;
 		try {
-			InputStream in = DesktopLauncher.class.getResourceAsStream
-					(fileName);
+			InputStream in =
+					DesktopLauncher.class.getResourceAsStream(fileName);
 
 			if (in != null) {
 				file = File.createTempFile(fileName, ".BioViz_tmp");
@@ -826,12 +842,13 @@ public class DesktopLauncher extends JFrame {
 			// configuration. For multi-step configuration, omit calling
 			// context.reset().
 			context.reset();
-			configurator.doConfigure(DesktopLauncher.class.getResourceAsStream
-					("/config/logback.xml"));
+			configurator.doConfigure(
+					DesktopLauncher.class.getResourceAsStream(
+							"/config/logback.xml"));
 		} catch (final JoranException je) {
 			// StatusPrinter will handle this
-			System.err.println("Error setting up logger: "
-							   + je.getStackTrace());
+			System.err.println(
+					"Error setting up logger: " + je.getStackTrace());
 		}
 		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
 
@@ -1152,7 +1169,7 @@ public class DesktopLauncher extends JFrame {
 		 * @param info
 		 * 		the label that should give information about the time
 		 */
-		public TimerCallback(final JSlider slider, final JLabel info) {
+		TimerCallback(final JSlider slider, final JLabel info) {
 			this.time = slider;
 			this.timeInfo = info;
 			currentViz.addTimeChangedListener(this);
@@ -1165,12 +1182,12 @@ public class DesktopLauncher extends JFrame {
 		 */
 		@Override
 		public void bioVizEvent() {
-			logger.trace("Received timer event ("
-						 + currentViz.currentCircuit.getCurrentTime() + ")");
+			logger.trace("Received timer event (" +
+						 currentViz.currentCircuit.getCurrentTime() + ")");
 			this.time.setValue(currentViz.currentCircuit.getCurrentTime());
 			this.timeInfo.setText(
-					Integer.toString(currentViz.currentCircuit.getCurrentTime
-							()));
+					Integer.toString(
+							currentViz.currentCircuit.getCurrentTime()));
 
 		}
 	}
@@ -1186,9 +1203,8 @@ public class DesktopLauncher extends JFrame {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Color c =
-								JColorChooser.showDialog(null, "Choose a " +
-															   "Color",
-														 Color.red);
+								JColorChooser.showDialog(
+										null, "Choose a Color", Color.red);
 						currentViz.selectedDroplet.setDropletColor(
 								new com.badlogic.gdx.graphics.Color(
 										c.getRed() / 255f, c.getGreen() / 255f,
@@ -1196,8 +1212,9 @@ public class DesktopLauncher extends JFrame {
 					}
 				});
 			} catch (final Exception e) {
-				logger.error("Could not start colour picker:\n"
-							 + e.getStackTrace());
+				logger.error(
+						"Could not start colour picker:\n" +
+						e.getStackTrace());
 			}
 
 		}
@@ -1218,7 +1235,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Default constructor, does nothing.
 		 */
-		public LoadFileCallback() {
+		LoadFileCallback() {
 		}
 
 		/**
@@ -1243,7 +1260,8 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Used to retrieve any close-file actions from the visualization and
-	 * closes the currently opened tab.
+	 * closes
+	 * the currently opened tab.
 	 *
 	 * @author jannis
 	 */
@@ -1252,7 +1270,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Default constructor, does nothing.
 		 */
-		public CloseFileCallback() {
+		CloseFileCallback() {
 		}
 
 		/**
@@ -1276,7 +1294,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Default constructor, does nothing.
 		 */
-		public LoadedFileCallback() {
+		LoadedFileCallback() {
 		}
 
 		/**
@@ -1306,8 +1324,7 @@ public class DesktopLauncher extends JFrame {
 				d.timeSlider.setMaximum(
 						currentViz.currentCircuit.getData().getMaxT());
 				d.timeSlider.setMinimum(1);
-				logger.trace("setting time slider to "
-							 + oldTime);
+				logger.trace("setting time slider to " + oldTime);
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
@@ -1336,8 +1353,6 @@ public class DesktopLauncher extends JFrame {
 	/**
 	 * Used to communicate the intent of saving the currently open file as a
 	 * printable file somewhere.
-	 *
-	 * @author jannis
 	 */
 	private class SaveFileCallback implements BioVizEvent {
 
@@ -1377,8 +1392,9 @@ public class DesktopLauncher extends JFrame {
 								// without a suffix
 								if (svgPosition != -1) {
 									pathWithoutSuffix =
-											f.getAbsolutePath().substring(0,
-																		  svgPosition);
+											f.getAbsolutePath().
+													substring(0,
+															  svgPosition);
 								}
 								// create a series of files
 								for (int t = 1; t <=
@@ -1467,7 +1483,7 @@ public class DesktopLauncher extends JFrame {
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
 		private BDisplayOptions option;
 
-		public BioCheckboxMenuItem(final String label,
+		BioCheckboxMenuItem(final String label,
 								   final BDisplayOptions option) {
 			super(label);
 			this.option = option;
@@ -1485,7 +1501,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Updates the state of the selected option.
 		 */
-		public void updateState() {
+		void updateState() {
 			setState(currentViz.currentCircuit.
 					getDisplayOptions().getOption(option));
 		}
