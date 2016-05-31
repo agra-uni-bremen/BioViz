@@ -36,17 +36,25 @@ import java.util.Map;
  */
 public class SVGCoreCreator {
 
-	/** logger. */
+	/**
+	 * logger.
+	 */
 	private static final Logger LOGGER =
 			LoggerFactory.getLogger(SVGCoreCreator.class);
 
-	/** path of the svg core folder. */
+	/**
+	 * path of the svg core folder.
+	 */
 	private String svgCoreFolder = "";
 
-	/** path of the image folder. */
+	/**
+	 * path of the image folder.
+	 */
 	private String baseFolder = "images";
 
-	/** the length of the color string without alpha. */
+	/**
+	 * the length of the color string without alpha.
+	 */
 	private final int colorDigits = 6;
 
 	/**
@@ -56,8 +64,9 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * @param folder The name of the folder containing the theme,
-	 *               relative to the assets folder
+	 * @param folder
+	 * 		The name of the folder containing the theme, relative to the assets
+	 * 		folder
 	 * @brief Tells the manager where to find the svgs (i.e. .svg images).
 	 * <p>
 	 * The location is relative to the assets folder.
@@ -71,7 +80,8 @@ public class SVGCoreCreator {
 	/**
 	 * Return the svg core without color.
 	 *
-	 * @param type The type of the core.
+	 * @param type
+	 * 		The type of the core.
 	 * @return the svg code for the given type as a string
 	 */
 	private String getSVGCode(final TextureE type) {
@@ -87,20 +97,23 @@ public class SVGCoreCreator {
 	}
 
 	/**
-	 * Returns a string containing the svg core data with the given
-	 * fill and stroke color.
+	 * Returns a string containing the svg core data with the given fill and
+	 * stroke color.
 	 *
-	 * @param type        The type of the core.
-	 * @param fillColor   The fill color.
-	 * @param strokeColor The stroke color.
+	 * @param type
+	 * 		The type of the core.
+	 * @param fillColor
+	 * 		The fill color.
+	 * @param strokeColor
+	 * 		The stroke color.
 	 * @return String containing svg core data.
 	 */
 	public String getSVGCode(final TextureE type, final Color fillColor,
-													 final Color strokeColor) {
+							 final Color strokeColor) {
 		String uncoloredCore = getSVGCode(type);
 		String coloredCore = uncoloredCore;
 
-		DocumentBuilderFactory factory =	DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		ByteArrayInputStream input;
 		Document doc;
@@ -112,7 +125,8 @@ public class SVGCoreCreator {
 
 			doc.getDocumentElement().normalize();
 
-			// every svg should contain a group which contains the needed elements
+			// every svg should contain a group which contains the needed
+			// elements
 			Node group = null;
 			NodeList gList = doc.getElementsByTagName("g");
 			if (gList.getLength() > 0) {
@@ -124,17 +138,18 @@ public class SVGCoreCreator {
 
 			if (fillColor != null) {
 				LOGGER.debug("[SVG] Changing fillColor to {}.",
-						SVGUtils.colorToSVG(fillColor));
+							 SVGUtils.colorToSVG(fillColor));
 				// set new id for this node if there is a fillColor
-					if (group.getNodeType() == Node.ELEMENT_NODE) {
-						Element elem = (Element) group;
-						elem.setAttribute("id", SVGUtils.generateColoredID(type.toString(),
-								fillColor));
-					}
+				if (group.getNodeType() == Node.ELEMENT_NODE) {
+					Element elem = (Element) group;
+					elem.setAttribute("id", SVGUtils.generateColoredID(
+							type.toString(),
+							fillColor));
+				}
 			}
 			if (strokeColor != null) {
 				LOGGER.debug("[SVG] Changing strokeColor to {}.",
-						SVGUtils.colorToSVG(strokeColor));
+							 SVGUtils.colorToSVG(strokeColor));
 			}
 
 			if (fillColor != null || strokeColor != null) {
@@ -147,28 +162,28 @@ public class SVGCoreCreator {
 					case GridMarker:
 						// change fillColor of the rectangle
 						setStyleForElement((Element) group, "rect",
-								fillColor, strokeColor);
+										   fillColor, strokeColor);
 						break;
 					case Blockage:
 						// change fillColor of the rectangle
 						setStyleForElement((Element) group, "rect",
-								fillColor, strokeColor);
+										   fillColor, strokeColor);
 						// change fillColor of the circle
 						setStyleForElement((Element) group, "circle",
-								fillColor, strokeColor);
+										   fillColor, strokeColor);
 
 						break;
 					case Droplet:
 						// change fillColor of the first path element
 						setStyleForElement((Element) group, "path",
-								fillColor, strokeColor);
+										   fillColor, strokeColor);
 						break;
 					case AdjacencyMarker:
 						break;
 					case StepMarker:
 						// change fillColor of the first path element
 						setStyleForElement((Element) group, "path",
-								fillColor, strokeColor);
+										   fillColor, strokeColor);
 						break;
 					default:
 						break;
@@ -197,30 +212,40 @@ public class SVGCoreCreator {
 	/**
 	 * Get the svg code for an arrowhead with the specified color.
 	 *
-	 * @param color the color for the arrowhead
-	 * @param id the id for the arrowHead
+	 * @param color
+	 * 		the color for the arrowhead
+	 * @param id
+	 * 		the id for the arrowHead
 	 * @return a svg marker string
 	 */
 	public String getArrowHead(final String id, final Color color) {
 		return "<marker id=\"" + id + "\" " +
-				"markerWidth=\"10\" " +	"markerHeight=\"10\" " +
-				"refX=\"7\" " +	"refY=\"3\"	" +
-				"orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path d=\"M0,0 C 1,1" +
-				" 1,5 0,6 L9,3  z\" " +
-				"fill=\"#" + SVGUtils.colorToSVG(color) + "\" />\n</marker>\n";
+			   "markerWidth=\"10\" " + "markerHeight=\"10\" " +
+			   "refX=\"7\" " + "refY=\"3\"	" +
+			   "orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path d=\"M0," +
+			   "0" +
+			   " C 1,1" +
+			   " 1,5 0,6 L9,3  z\" " +
+			   "fill=\"#" + SVGUtils.colorToSVG(color) + "\" />\n</marker>\n";
 	}
 
 	/**
 	 * Returns a string representing a linear gradient definition with the
-	 * given id, direction and colors.
+	 * given
+	 * id, direction and colors.
 	 *
-	 * @param id of the resulting gradient
-	 * @param dir direction of the resulting gradient
-	 * @param color first color of the resulting gradient
+	 * @param id
+	 * 		of the resulting gradient
+	 * @param dir
+	 * 		direction of the resulting gradient
+	 * @param color
+	 * 		first color of the resulting gradient
 	 * @return a string
 	 */
 	public String getSVGLinearGradient(final String id, final GradDir dir,
-																		 final Color color) {
+									   final
+									   Color
+											   color) {
 		int x1 = dir.hasOrientation(Point.WEST) ? 1 : 0;
 		int x2 = dir.hasOrientation(Point.EAST) ? 1 : 0;
 
@@ -228,13 +253,16 @@ public class SVGCoreCreator {
 		int y2 = dir.hasOrientation(Point.SOUTH) ? 1 : 0;
 
 		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
-				"y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" >\n";
-		String offset1 = "<stop offset=\"0%\" " +	"style=\"stop-color:rgb(" +
-				color.r * 255 + "," + color.g * 255 + "," + color.b * 255 + ");" +
-				"stop-opacity:0\" />\n";
+					   "y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 +
+					   "\" >\n";
+		String offset1 = "<stop offset=\"0%\" " + "style=\"stop-color:rgb(" +
+						 color.r * 255 + "," + color.g * 255 + "," +
+						 color.b * 255 + ");" +
+						 "stop-opacity:0\" />\n";
 		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
-				color.r * 255 + "," + color.g * 255 + "," + color.b * 255 + ");" +
-				"stop-opacity:0.8\" />\n";
+						 color.r * 255 + "," + color.g * 255 + "," +
+						 color.b * 255 + ");" +
+						 "stop-opacity:0.8\" />\n";
 		String end = "</linearGradient>\n";
 		return begin + offset1 + offset2 + end;
 	}
@@ -242,14 +270,21 @@ public class SVGCoreCreator {
 	/**
 	 * Sets the style tag for the first tag occurrence.
 	 *
-	 * @param element xml top node
-	 * @param tagName the name of the tag to modify
-	 * @param fillColor the new fillColor
-	 * @param strokeColor the new strokeColor
+	 * @param element
+	 * 		xml top node
+	 * @param tagName
+	 * 		the name of the tag to modify
+	 * @param fillColor
+	 * 		the new fillColor
+	 * @param strokeColor
+	 * 		the new strokeColor
 	 */
 	private void setStyleForElement(final Element element,
-																	final String tagName, final Color fillColor,
-																	final Color strokeColor) {
+									final
+									String
+											tagName, final Color fillColor,
+									final
+									Color strokeColor) {
 
 		NodeList elements = element.getElementsByTagName(tagName);
 		if (elements.getLength() > 0) {
@@ -261,11 +296,16 @@ public class SVGCoreCreator {
 				for (final String split : style.split(";")) {
 					String styleType = split.split(":")[0];
 					if ("fill".equals(styleType) && fillColor != null) {
-						styleAfter +=	styleType + ":#" +
-								fillColor.toString().substring(0, colorDigits) + ";";
-					} else if ("stroke".equals(styleType) && strokeColor != null) {
 						styleAfter += styleType + ":#" +
-								strokeColor.toString().substring(0, colorDigits) + ";";
+									  fillColor.toString().substring(0,
+																	 colorDigits) +
+									  ";";
+					} else if ("stroke".equals(styleType) &&
+							   strokeColor != null) {
+						styleAfter += styleType + ":#" +
+									  strokeColor.toString().substring(0,
+																	   colorDigits) +
+									  ";";
 
 					} else {
 						styleAfter += split + ";";
@@ -280,7 +320,8 @@ public class SVGCoreCreator {
 	/**
 	 * Create string from xml representation.
 	 *
-	 * @param doc The xml document.
+	 * @param doc
+	 * 		The xml document.
 	 * @return String representing the xml document or null if the
 	 * transformation failed.
 	 */
@@ -292,7 +333,8 @@ public class SVGCoreCreator {
 			tFactory = TransformerFactory.newInstance();
 			transformer = tFactory.newTransformer();
 
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+										  "yes");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
 			DOMSource source = new DOMSource(doc.getElementsByTagName("g").
@@ -311,48 +353,65 @@ public class SVGCoreCreator {
 	/**
 	 * Puts the svg code for a field into the given map.
 	 *
-	 * @param svgs the map
-	 * @param field the field
+	 * @param svgs
+	 * 		the map
+	 * @param field
+	 * 		the field
 	 */
 	public void appendFieldSVG(final Map<String, String> svgs,
-														 final DrawableField field) {
+							   final DrawableField
+									   field) {
 
 		final String key = SVGUtils.generateColoredID(field.getDisplayValues()
-				.getTexture().toString(), SVGUtils.getUnhoveredColor(field));
+															  .getTexture()
+															  .toString(),
+													  SVGUtils
+															  .getUnhoveredColor(
+																	  field));
 		// don't create the svg core code twice
 		if (!svgs.containsKey(key)) {
 			svgs.put(key,
-					getSVGCode(field.getDisplayValues().getTexture(),
-							SVGUtils.getUnhoveredColor(field), null));
+					 getSVGCode(field.getDisplayValues().getTexture(),
+								SVGUtils.getUnhoveredColor(field), null));
 		}
 	}
 
 	/**
 	 * Puts the svg code for a gradient into the given map.
 	 *
-	 * @param svgs the map
-	 * @param net the net
-	 * @param dir the direction of the gradient
+	 * @param svgs
+	 * 		the map
+	 * @param net
+	 * 		the net
+	 * @param dir
+	 * 		the direction of the gradient
 	 */
 	public void appendGradSVG(final Map<String, String> svgs,
-														final Net net, final GradDir dir) {
-		final String key = SVGUtils.generateColoredID("Gradient-" + dir.toString(),
-				SVGUtils.getNetColor(net));
+							  final Net net, final
+							  GradDir dir) {
+		final String key =
+				SVGUtils.generateColoredID("Gradient-" + dir.toString(),
+										   SVGUtils.getNetColor(net));
 		if (!svgs.containsKey(key)) {
 			svgs.put(key, getSVGLinearGradient(key, dir,
-					SVGUtils.getNetColor(net)));
+											   SVGUtils.getNetColor(net)));
 		}
 	}
 
 	/**
 	 * Puts the svg code for a droplet into the given map.
 	 *
-	 * @param svgs the map to insert into
-	 * @param drop the droplet
+	 * @param svgs
+	 * 		the map to insert into
+	 * @param drop
+	 * 		the droplet
 	 */
 	public void appendDropletSVG(final Map<String, String> svgs,
-															 final DrawableDroplet drop) {
-		final String key = SVGUtils.generateColoredID("Droplet", drop.getColor());
+								 final
+								 DrawableDroplet
+										 drop) {
+		final String key =
+				SVGUtils.generateColoredID("Droplet", drop.getColor());
 		// don't create the svg core code twice
 		if (!svgs.containsKey(key)) {
 			svgs.put(key, getSVGCode(TextureE.Droplet, drop.getColor(), null));
@@ -362,13 +421,17 @@ public class SVGCoreCreator {
 	/**
 	 * Puts the svg code for arrowheads into the given map.
 	 *
-	 * @param svgs the map
-	 * @param dropColor the dropletColor
+	 * @param svgs
+	 * 		the map
+	 * @param dropColor
+	 * 		the dropletColor
 	 */
 	public void appendArrowheads(final Map<String, String> svgs,
-															 final Color dropColor) {
-		final Color[] colors = {SVGUtils.getLighterLongNetIndicatorColor(dropColor)
-										, SVGUtils.getDarkerLongNetIndicatorColor(dropColor)};
+								 final Color
+										 dropColor) {
+		final Color[] colors =
+				{SVGUtils.getLighterLongNetIndicatorColor(dropColor)
+						, SVGUtils.getDarkerLongNetIndicatorColor(dropColor), };
 		for (final Color color : colors) {
 			final String key = SVGUtils.generateColoredID("ArrowHead", color);
 			if (!svgs.containsKey(key)) {
@@ -380,7 +443,8 @@ public class SVGCoreCreator {
 	/**
 	 * Puts the svg code for a sourceTargetArrowHead into the given map.
 	 *
-	 * @param svgs the map
+	 * @param svgs
+	 * 		the map
 	 */
 	public void appendSourceTargetArrowHead(final Map<String, String> svgs) {
 		final Color color = Color.BLACK;
@@ -394,17 +458,19 @@ public class SVGCoreCreator {
 	 * Puts the svg code of a route into the given map.
 	 *
 	 * @param svgs
-	 * 					the map to append to
+	 * 		the map to append to
 	 * @param drop
-	 * 					the droplet
+	 * 		the droplet
 	 */
 	public void appendRoute(final Map<String, String> svgs,
-													final DrawableDroplet drop) {
+							final DrawableDroplet
+									drop) {
 		final Color routeColor = drop.route.getColor();
-		final String key = SVGUtils.generateColoredID("StepMarker", routeColor);
+		final String key = SVGUtils.generateColoredID("StepMarker",
+													  routeColor);
 		if (!svgs.containsKey(key)) {
 			svgs.put(key,
-					getSVGCode(TextureE.StepMarker,	routeColor, null));
+					 getSVGCode(TextureE.StepMarker, routeColor, null));
 		}
 	}
 
