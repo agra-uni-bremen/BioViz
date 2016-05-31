@@ -8,13 +8,17 @@ import com.badlogic.gdx.math.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BioVizInputProcessor implements InputProcessor {
+class BioVizInputProcessor implements InputProcessor {
 
+	/**
+	 * The internal logger.
+	 */
 	static Logger logger =
 			LoggerFactory.getLogger(BioVizInputProcessor.class);
 
 
 	boolean isMoving = false;
+
 	boolean multiTouchZoom = false;
 
 	BioViz parentViz;
@@ -26,8 +30,19 @@ public class BioVizInputProcessor implements InputProcessor {
 	private int oldDistanceX;
 	private int oldDistanceY;
 
+	/**
+	 * Whether ctrl was pushed.
+	 */
 	private boolean ctrl;
+
+	/**
+	 * Whether shift was pushed.
+	 */
 	private boolean shift;
+
+	/**
+	 * Whether alt was pushed.
+	 */
 	private boolean alt;
 
 	public BioVizInputProcessor(final BioViz parentVisualization) {
@@ -38,11 +53,9 @@ public class BioVizInputProcessor implements InputProcessor {
 	public boolean keyDown(final int keycode) {
 		if (keycode == Keys.CONTROL_LEFT || keycode == Keys.CONTROL_RIGHT) {
 			ctrl = true;
-		}
-		else if (keycode == Keys.ALT_LEFT || keycode == Keys.ALT_RIGHT) {
+		} else if (keycode == Keys.ALT_LEFT || keycode == Keys.ALT_RIGHT) {
 			alt = true;
-		}
-		else if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
+		} else if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
 			shift = true;
 		}
 		return false;
@@ -58,51 +71,38 @@ public class BioVizInputProcessor implements InputProcessor {
 		}
 		if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
 			shift = false;
-		}
-		else if ((keycode == Keys.RIGHT || keycode == Keys.UP) && !ctrl &&
-				 !alt) {
+		} else if ((keycode == Keys.RIGHT || keycode == Keys.UP)
+				   && !ctrl && !alt) {
 			parentViz.currentCircuit.nextStep();
-		}
-		else if ((keycode == Keys.LEFT || keycode == Keys.DOWN) && !ctrl &&
-				 !alt) {
+		} else if ((keycode == Keys.LEFT || keycode == Keys.DOWN)
+				   && !ctrl && !alt) {
 			parentViz.currentCircuit.prevStep();
-		}
-		else if ((keycode == Keys.PAGE_UP && ctrl) ||
-				 (keycode == Keys.LEFT && alt)) {
+		} else if ((keycode == Keys.PAGE_UP && ctrl) ||
+				   (keycode == Keys.LEFT && alt)) {
 			parentViz.callPreviousTabListeners();
-		}
-		else if (keycode == Keys.PAGE_DOWN && ctrl ||
-				 (keycode == Keys.RIGHT && alt)) {
+		} else if (keycode == Keys.PAGE_DOWN && ctrl ||
+				   (keycode == Keys.RIGHT && alt)) {
 			parentViz.callNextTabListeners();
-		}
-		else if (keycode == Keys.PLUS && ctrl) {
+		} else if (keycode == Keys.PLUS && ctrl) {
 			parentViz.messageCenter.incScales();
-		}
-		else if (keycode == Keys.MINUS && ctrl) {
+		} else if (keycode == Keys.MINUS && ctrl) {
 			parentViz.messageCenter.decScales();
-		}
-		else if (keycode == Keys.W && ctrl) {
+		} else if (keycode == Keys.W && ctrl) {
 			parentViz.callCloseFileListeners();
-		}
-		else if (keycode == Keys.O && ctrl) {
+		} else if (keycode == Keys.O && ctrl) {
 			parentViz.callLoadFileListeners();
-		}
-		else if (keycode == Keys.S) {
+		} else if (keycode == Keys.S) {
 			if (ctrl) {
 				parentViz.callSaveFileListeners();
-			}
-			else {
+			} else {
 				parentViz.currentCircuit.shrinkToSquareAlignment();
 			}
-		}
-		else if (keycode == Keys.T && ctrl) {
+		} else if (keycode == Keys.T && ctrl) {
 			parentViz.callLoadFileListeners();
-		}
-		else if (keycode == Keys.Z) {
+		} else if (keycode == Keys.Z) {
 			if (shift) {
 				parentViz.currentCircuit.zoomExtents();
-			}
-			else {
+			} else {
 				parentViz.currentCircuit.zoomTo1Px();
 			}
 		}
@@ -130,8 +130,7 @@ public class BioVizInputProcessor implements InputProcessor {
 			oldX = x;
 			oldY = y;
 			isMoving = true;
-		}
-		else if (pointer == 1) {
+		} else if (pointer == 1) {
 			isMoving = false;
 			multiTouchZoom = true;
 			oldX2 = x;
@@ -145,8 +144,7 @@ public class BioVizInputProcessor implements InputProcessor {
 	int button) {
 		if (pointer == 0) {
 			isMoving = false;
-		}
-		else if (pointer == 1) {
+		} else if (pointer == 1) {
 			isMoving = true;
 			multiTouchZoom = false;
 		}
@@ -156,8 +154,7 @@ public class BioVizInputProcessor implements InputProcessor {
 			if (d.isHovered()) {
 				if (button == Buttons.LEFT) {
 					d.toggleGridVisibility();
-				}
-				else if (button == Buttons.RIGHT) {
+				} else if (button == Buttons.RIGHT) {
 					parentViz.selectedDroplet = d;
 					parentViz.callPickColourListeners();
 				}
@@ -181,8 +178,7 @@ public class BioVizInputProcessor implements InputProcessor {
 					(y - oldY) / parentViz.currentCircuit.getScaleY());
 			oldX = x;
 			oldY = y;
-		}
-		else if (multiTouchZoom) {
+		} else if (multiTouchZoom) {
 			if (pointer == 0) {
 
 				oldDistanceX = Math.abs(oldX - oldX2);
@@ -190,8 +186,7 @@ public class BioVizInputProcessor implements InputProcessor {
 
 				oldX = x;
 				oldY = y;
-			}
-			else if (pointer == 1) {
+			} else if (pointer == 1) {
 				oldX2 = x;
 				oldY2 = y;
 
