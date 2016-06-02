@@ -6,3 +6,8 @@ checkstyle:
   script:
     - ./executeCheckstyleTest.sh
 
+sonar:
+  script:
+    - ./gradlew sonar
+  only:
+      - master
