@@ -46,6 +46,11 @@ public class MessageCenter {
 	private static final float SCALEINCSTEP = 2f;
 
 	/**
+	 * The default z order of text
+	 */
+	private static final float DEFAULT_Z = 100f;
+
+	/**
 	 * The central logging device for this class.
 	 */
 	private static Logger logger = LoggerFactory.getLogger(MessageCenter
@@ -275,7 +280,7 @@ public class MessageCenter {
 				int startY = yCoord;
 				parent.batch.drawMessage(
 						messageFont, m.message, startX, startY,
-						normalProjection);
+						normalProjection, DEFAULT_Z);
 				yCoord -= spacing;
 			}
 
@@ -314,7 +319,7 @@ public class MessageCenter {
 									Gdx.graphics.getHeight() / 2f;
 
 				parent.batch.drawMessage(font, layout, fontX, fontY,
-										 normalProjection);
+										 normalProjection, DEFAULT_Z);
 			}
 
 			while (this.messages.size() > 0 &&

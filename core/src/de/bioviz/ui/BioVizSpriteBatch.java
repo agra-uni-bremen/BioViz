@@ -107,9 +107,10 @@ public class BioVizSpriteBatch {
 			final String message,
 			final float startX,
 			final float startY,
-			final Matrix4 m) {
+			final Matrix4 m,
+			final float z) {
 		drawCalls.add(new Pair<>(
-				0f,
+				z,
 				() -> {
 					Matrix4 old = sb.getProjectionMatrix();
 					if (!(old.equals(m))) {
@@ -134,9 +135,10 @@ public class BioVizSpriteBatch {
 			final GlyphLayout message,
 			final float startX,
 			final float startY,
-			final Matrix4 m) {
+			final Matrix4 m,
+			final float z) {
 		drawCalls.add(new Pair<Float, Runnable>(
-				0f,
+				z,
 				() -> {
 					Matrix4 old = sb.getProjectionMatrix();
 					if (!(old.equals(m))) {
