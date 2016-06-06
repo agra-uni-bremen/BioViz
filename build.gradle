@@ -1,9 +1,10 @@
 buildscript {
     repositories {
-        mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+     //   mavenCentral()
+    //    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    //    maven { url "https://oss.sonatype.org/content/repositories/releases/"}
         maven { url "https://plugins.gradle.org/m2/" }
-        jcenter()
+        //  jcenter()
     }
     dependencies {
         classpath 'me.champeau.gradle:antlr4-gradle-plugin:0.1'
@@ -11,29 +12,23 @@ buildscript {
     }
 }
 
-apply plugin: 'me.champeau.gradle.antlr4'
-apply plugin: 'org.sonarqube'
-
-antlr4.source = file('lib/parser')
-antlr4.output = file('core/src/de/bioviz/parser/generated')
-antlr4.extraArgs = ['-package', 'de.bioviz.parser.generated']
-
-
-// add antlr4 to classpath
-configurations {
-    compile.extendsFrom antlr4
-}
-
-
-// configuration is done in the sonar-project.properties file
-// apply plugin: "sonar-runner"
-
+apply plugin: "org.sonarqube"
 
 allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: "me.champeau.gradle.antlr4"
     apply plugin: "checkstyle"
+
+    // set antlr srcSet
+    antlr4.source = file('../lib/parser')
+    antlr4.output = file('../core/src/de/bioviz/parser/generated')
+    antlr4.extraArgs = ['-package', 'de.bioviz.parser.generated']
+
+    // add antlr4 to classpath
+    configurations {
+        compile.extendsFrom antlr4
+    }
     
     checkstyle {
       toolVersion = "6.19"
@@ -55,9 +50,7 @@ allprojects {
     }
 
     repositories {
-        mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+      mavenCentral()
     }
 
     sonarqube {
@@ -66,9 +59,6 @@ allprojects {
         property "sonar.projectKey", "de.dfki.bioviz"
         property "sonar.projectName", "BioViz"
         property "sonar.projectVersion", "1.0"
-        // Comma-separated paths to directories with sources (required)
-        //property "sonar.sources", "core/src,desktop/src"
-        //property "sonar.exclusions", "core/src/de/bioviz/parser/generated/*"
         // Language
         property "sonar.language", "java"
         // Encoding of the source files
@@ -81,31 +71,6 @@ allprojects {
 project(":desktop") {
     apply plugin: "java"
 
-    task checkstyleHtml << {
-        ant.xslt(in: checkstyleMain.reports.xml.destination,
-                style: file('../config/checkstyle-noframes-sorted.xsl'),
-                out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
-    }
-    checkstyleMain.finalizedBy checkstyleHtml
-
-    sourceSets{
-        main{
-            java{
-                srcDir 'src/'
-            }
-        }
-    }
-
-    sonarqube {
-      properties {
-        property "sonar.sources", "src/"
-        property "sonar.exclusions", "src/de/bioviz/parser/generated/*"
-      }
-    }
-
-    antlr4.source = file('../lib/parser')
-    antlr4.output = file('../core/src/de/bioviz/parser/generated')
-    antlr4.extraArgs = ['-package', 'de.bioviz.parser.generated']
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -113,6 +78,28 @@ project(":desktop") {
         compile 'ch.qos.logback:logback-classic:1.1.3'
         compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
         compile "args4j:args4j:2.33"
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/'
+            }
+        }
+    }
+
+    task checkstyleHtml << {
+        ant.xslt(in: checkstyleMain.reports.xml.destination,
+                style: file('../config/checkstyle-noframes-sorted.xsl'),
+                out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
+    }
+    checkstyleMain.finalizedBy checkstyleHtml
+
+    sonarqube {
+      properties {
+        property "sonar.sources", "src/"
+        property "sonar.exclusions", "src/de/bioviz/parser/generated/*"
+      }
     }
 
     tasks.matching { task -> task.name == "checkstyleMain" }.all {
@@ -125,22 +112,18 @@ project(":desktop") {
 project(":core") {
     apply plugin: "java"
 
-    antlr4.source = file('../lib/parser')
-    antlr4.output = file('../core/src/de/bioviz/parser/generated')
-    antlr4.extraArgs = ['-package', 'de.bioviz.parser.generated']
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile 'ch.qos.logback:logback-classic:1.1.3'
+        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        testCompile 'junit:junit:4.12'
+    }
+
     // make the Java compile task depend on the antlr4 task
     compileJava.dependsOn antlr4
 
-    task checkstyleHtml << {
-        ant.xslt(in: checkstyleMain.reports.xml.destination,
-                style: file('../config/checkstyle-noframes-sorted.xsl'),
-                out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
-    }
-    checkstyleMain.finalizedBy checkstyleHtml
-    checkstyleMain.exclude '**/bioparser/**'
-
-    sourceSets{
-        main{
+    sourceSets {
+        main {
             java {
                 srcDir 'src/'
             }
@@ -155,18 +138,19 @@ project(":core") {
         }
     }
 
+    task checkstyleHtml << {
+        ant.xslt(in: checkstyleMain.reports.xml.destination,
+                style: file('../config/checkstyle-noframes-sorted.xsl'),
+                out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
+    }
+    checkstyleMain.finalizedBy checkstyleHtml
+    checkstyleMain.exclude '**/bioparser/**'
+
     sonarqube {
       properties {
         property "sonar.sources", "src/"
         property "sonar.exclusions", "src/de/bioviz/parser/generated/*"
       }
-    }
-
-    dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile 'ch.qos.logback:logback-classic:1.1.3'
-        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        testCompile 'junit:junit:4.12'
     }
 
     configurations {
@@ -176,7 +160,6 @@ project(":core") {
     tasks.matching { task -> task.name == "checkstyleMain" }.all {
         outputs.upToDateWhen { false }
     }
-
 
     test {
         testLogging.showStandardStreams = true
