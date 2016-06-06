@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 
 /**
  * Static class providing a parser for BioGram files.
+ *
  * @author Oliver Keszocze
  */
 public final class BioParser {
@@ -30,12 +31,14 @@ public final class BioParser {
 	/**
 	 * Empty constructor to prevent instantiation.
 	 */
-	private BioParser() {	}
+	private BioParser() { }
 
 
 	/**
 	 * Parses a file in BioGram format.
-	 * @param file File to parse into a biochip
+	 *
+	 * @param file
+	 * 		File to parse into a biochip
 	 * @return Biochip as described in the file, null if not parsable
 	 */
 	public static Biochip parseFile(final File file) {
@@ -51,7 +54,9 @@ public final class BioParser {
 
 	/**
 	 * Parses a String in BioGram format.
-	 * @param inputString String containing a BioGram description.
+	 *
+	 * @param inputString
+	 * 		String containing a BioGram description.
 	 * @return Biochip as described in the String, null if not parsable
 	 */
 	public static Biochip parse(final String inputString) {
@@ -73,8 +78,7 @@ public final class BioParser {
 					logger.error(msg);
 				}
 				return null;
-			}
-			else {
+			} else {
 				ParseTreeWalker walker = new ParseTreeWalker();
 				// Walk the tree created during the parse, trigger callbacks
 				BioParserListener listener = new BioParserListener();

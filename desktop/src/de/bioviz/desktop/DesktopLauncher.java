@@ -21,10 +21,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -56,8 +85,32 @@ public class DesktopLauncher extends JFrame {
 	private static Logger logger =
 			LoggerFactory.getLogger(DesktopLauncher.class);
 
+	/**
+	 * Stores the settings of the SVG exporter.
+	 */
 	private static SVGExportSettings svgExportSettings =
 			SVGExportSettings.getInstance();
+
+
+	/**
+	 * The default x width for the BioViz window.
+	 */
+	private static final int DEFAULT_X_WIDTH = 800;
+
+	/**
+	 * The default x width for the BioViz window.
+	 */
+	private static final int DEFAULT_Y_WIDTH = 600;
+
+
+	/**
+	 * Whether hotkeys can by used.
+	 * <p>
+	 * This is a workaround for the problem that fileChooser dialogs still
+	 * allow
+	 * for hotkeys to be used.
+	 */
+	private static boolean allowHotkeys = true;
 
 	/**
 	 * The label to display the current simulation time.
@@ -103,14 +156,6 @@ public class DesktopLauncher extends JFrame {
 	 */
 	BioViz currentViz;
 
-	/**
-	 * @brief If true, hotkeys can be used
-	 * <p>
-	 * This is a workaround for the problem that fileChooser dialogs still
-	 * allow
-	 * for hotkeys to be used.
-	 */
-	private static boolean allowHotkeys = true;
 
 	/**
 	 * This maps the tabs that are open in the visualizationTabs field to the
@@ -160,12 +205,11 @@ public class DesktopLauncher extends JFrame {
 	public DesktopLauncher(final File file) {
 		singleton = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		tabsToFilenames = new HashMap<Object, File>();
+		tabsToFilenames = new HashMap<>();
 
 		if (file == null) {
 			currentViz = new BioViz();
-		}
-		else {
+		} else {
 			currentViz = new BioViz(file);
 		}
 		canvas = new LwjglAWTCanvas(currentViz);
@@ -211,7 +255,7 @@ public class DesktopLauncher extends JFrame {
 		saveCB = new SaveFileCallback();
 		currentViz.addSaveFileListener(saveCB);
 
-		currentViz.addPickColourListener(new colourPickCallback());
+		currentViz.addPickColourListener(new ColourPickCallback());
 
 		String iconPath = "";
 		try {
@@ -220,17 +264,17 @@ public class DesktopLauncher extends JFrame {
 					ImageIO.read(getFileFromStream(iconPath)));
 		} catch (final Exception e) {
 			logger.error("Could not set application icon: " + e.getMessage() +
-					" with path: " + iconPath);
+						 " with path: " + iconPath);
 		}
 
 		pack();
 		setVisible(true);
 
-		setSize(800, 600);
+		setSize(DEFAULT_X_WIDTH, DEFAULT_Y_WIDTH);
 	}
 
 	/**
-	 * Initializes and returns the top menu bar
+	 * Initializes and returns the top menu bar.
 	 *
 	 * @return the menu bar to be displayed at the top of the window
 	 */
@@ -245,12 +289,13 @@ public class DesktopLauncher extends JFrame {
 
 		BDisplayOptions[] enumValues = BDisplayOptions.values();
 		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
-			public int compare(BDisplayOptions left, BDisplayOptions right) {
+			public int compare(final BDisplayOptions left,
+							   final BDisplayOptions right) {
 				return left.description().compareTo(
 						right.description()); //use your criteria here
 			}
 		});
-		for (BDisplayOptions option : enumValues) {
+		for (final BDisplayOptions option : enumValues) {
 			BioCheckboxMenuItem menuItem =
 					new BioCheckboxMenuItem(option.description(), option);
 			menu.add(menuItem);
@@ -291,39 +336,44 @@ public class DesktopLauncher extends JFrame {
 		final int sliderHeight = new JSlider().getPreferredSize().height;
 
 		JButton autoplaytButton = new JButton("Autoplay");
-		autoplaytButton.setPreferredSize(new Dimension(buttonWidth,
-													   autoplaytButton
-															   .getPreferredSize().height));
+		autoplaytButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  autoplaytButton.getPreferredSize().height)
+		);
 		autoplaytButton.addActionListener(
 				e -> currentViz.currentCircuit.toggleAutoAdvance());
 
 		JButton openButton = new JButton("Open File");
-		openButton.setPreferredSize(new Dimension(buttonWidth,
-												  openButton.getPreferredSize
-														  ().height));
+		openButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  openButton.getPreferredSize().height)
+		);
 		loadCB = new LoadFileCallback();
 		openButton.addActionListener(e -> loadCB.bioVizEvent());
 		currentViz.addLoadFileListener(loadCB);
 
 		JButton preferencesButton = new JButton("Preferences");
-		preferencesButton.setPreferredSize(new Dimension(buttonWidth,
-														 openButton
-																 .getPreferredSize().height));
+		preferencesButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  openButton.getPreferredSize().height)
+		);
 		preferencesButton.addActionListener(e -> {
 			showSettings(currentViz);
 		});
 
 		JButton saveButton = new JButton("Save SVG");
-		saveButton.setPreferredSize(new Dimension(buttonWidth,
-												  saveButton.getPreferredSize
-														  ().height));
+		saveButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  saveButton.getPreferredSize().height)
+		);
 		saveCB = new SaveFileCallback();
 		saveButton.addActionListener(e -> saveCB.bioVizEvent());
 
 		JButton zoomButton = new JButton("Center");
-		zoomButton.setPreferredSize(new Dimension(buttonWidth,
-												  zoomButton.getPreferredSize
-														  ().height));
+		zoomButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  zoomButton.getPreferredSize().height)
+		);
 		zoomButton.addActionListener(
 				e -> currentViz.currentCircuit.zoomExtents());
 
@@ -411,14 +461,15 @@ public class DesktopLauncher extends JFrame {
 				l -> currentViz.scheduleLoadingOfNewFile(
 						tabsToFilenames.get(
 								((JTabbedPane) l.getSource())
-										.getSelectedComponent())));
+										.getSelectedComponent()))
+		);
 
 		// nextTabListener
 		currentViz.addNextTabListener(
 				() -> {
 					int nextIndex = visualizationTabs.getSelectedIndex() + 1;
 					// wrap around at the end
-					if (nextIndex > visualizationTabs.getTabCount() - 1){
+					if (nextIndex > visualizationTabs.getTabCount() - 1) {
 						nextIndex = 0;
 					}
 					// load new file
@@ -437,12 +488,13 @@ public class DesktopLauncher extends JFrame {
 				() -> {
 					int prevIndex = visualizationTabs.getSelectedIndex() - 1;
 					// wrap around at the beginning
-					if (prevIndex < 0){
+					if (prevIndex < 0) {
 						prevIndex = visualizationTabs.getTabCount() - 1;
 					}
 					// load new file
 					currentViz.scheduleLoadingOfNewFile(
-							tabsToFilenames.get(visualizationTabs.getComponentAt(prevIndex)
+							tabsToFilenames.get(
+									visualizationTabs.getComponentAt(prevIndex)
 							)
 					);
 					// change to the correct tab in the ui
@@ -540,15 +592,14 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private void closeTab(final int index) {
 		logger.info("Closing file (" + index + ")");
-		File file = tabsToFilenames.get(visualizationTabs.getSelectedComponent
-				());
+		File file = tabsToFilenames.get(
+				visualizationTabs.getSelectedComponent());
 
 		if (file != null) {
 			currentViz.unloadFile(file);
 			tabsToFilenames.remove(visualizationTabs.getSelectedComponent());
 			visualizationTabs.removeTabAt(index);
-		}
-		else {
+		} else {
 			logger.info("Nothing to close");
 		}
 	}
@@ -565,14 +616,14 @@ public class DesktopLauncher extends JFrame {
 	 * Starting point for the application.
 	 *
 	 * @param args
-	 * 		console arguments, currently unused
+	 * 		console arguments, parsed using the {@link Options} class.
 	 */
 	public static void main(final String[] args) {
 		Options opts = new Options();
 		CmdLineParser parser = new CmdLineParser(opts);
 		try {
 			parser.parseArgument(args);
-		} catch (CmdLineException e) {
+		} catch (final CmdLineException e) {
 			String argsLine = String.join(" ", args);
 			System.err.println(
 					"Unable to parse arguments: \"" + argsLine + "\"");
@@ -591,7 +642,7 @@ public class DesktopLauncher extends JFrame {
 
 		if (opts.authors) {
 			System.out.println("BioViz is written by:");
-			for (String author : BioVizInfo.authors()) {
+			for (final String author : BioVizInfo.authors()) {
 				System.out.println("\t" + author);
 			}
 		}
@@ -604,11 +655,18 @@ public class DesktopLauncher extends JFrame {
 		startGUI(args);
 	}
 
+	/**
+	 * Checks a BioGram file for errors and prints them to STDOUT.
+	 *
+	 * @param f
+	 * 		The file to check.
+	 */
 	static void startErrorChecker(final File f) {
 
 
 		//#########################
-		// The following stuff resets the logger so that no unnecessary messages
+		// The following stuff resets the logger so that no unnecessary
+		// messages
 		// are printed
 
 		// assume SLF4J is bound to logback in the current environment
@@ -631,13 +689,19 @@ public class DesktopLauncher extends JFrame {
 		if (!chip.errors.isEmpty()) {
 			System.out.println(
 					"Found errors in file \"" + f.getAbsolutePath() + "\":");
-			for (String error : chip.errors) {
+			for (final String error : chip.errors) {
 				System.out.println(error);
 			}
 		}
 	}
 
-	static void startGUI(final String args[]) {
+	/**
+	 * Starts the BioViz GUI.
+	 *
+	 * @param args
+	 * 		CLI arguments to BioViz when starting the GUI.
+	 */
+	static void startGUI(final String[] args) {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -648,25 +712,16 @@ public class DesktopLauncher extends JFrame {
 						UIManager.setLookAndFeel(
 								UIManager.getSystemLookAndFeelClassName());
 					} catch (final UnsupportedLookAndFeelException e) {
-						logger.error("System look and feel is " +
-									 "unsupported: "
-
-									 + e.getMessage() + "\n" +
+						logger.error("System look and feel is unsupported: " +
+									 e.getMessage() + "\n" +
 									 e.getStackTrace());
 					} catch (final Exception e) {
-						logger.error("Cannot set look and feel: " +
-									 e.getMessage() + "\n"
-									 + e.getStackTrace());
+						logger.error(
+								"Cannot set look and feel: " + e.getMessage() +
+								"\n" + e.getStackTrace());
 					}
 
-					File file;
-					if (args.length <= 0) {
-						file = askForFile("lastFilePath", true);
-					}
-					else {
-						file = new File(args[0]);
-					}
-					JFrame frame = new DesktopLauncher(file);
+					JFrame frame = new DesktopLauncher();
 
 
 					singleton.addWindowListener(new WindowAdapter() {
@@ -676,7 +731,7 @@ public class DesktopLauncher extends JFrame {
 					});
 				}
 			});
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Could not start the application: " +
 						 e.getStackTrace());
 		}
@@ -692,7 +747,8 @@ public class DesktopLauncher extends JFrame {
 	 * @return File object pointing to the selected file or null
 	 * @author Oliver Keszocze
 	 */
-	private static File askForFile(String pathPrefName, boolean load) {
+	private static File askForFile(final String pathPrefName,
+								   final boolean load) {
 		allowHotkeys = false;
 
 		java.util.prefs.Preferences prefs =
@@ -703,13 +759,12 @@ public class DesktopLauncher extends JFrame {
 		logger.debug("Open file choose with path {}", path);
 
 		JFileChooser fileDialog = new JFileChooser(path);
-		int choice = JFileChooser.CANCEL_OPTION;
+		int choice;
 
 		if (load) {
-			choice = fileDialog.showOpenDialog(null);
-		}
-		else {
-			choice = fileDialog.showSaveDialog(null);
+			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
+		} else {
+			choice = fileDialog.showSaveDialog(DesktopLauncher.singleton);
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -724,19 +779,20 @@ public class DesktopLauncher extends JFrame {
 	}
 
 	/**
-	 * Returns a File object for the given path.
-	 * The path must start with a '/' also when it is a local path.
+	 * Returns a File object for the given path. The path must start with a '/'
+	 * also when it is a local path.
 	 *
-	 * @param fileName the fileName
+	 * @param fileName
+	 * 		the fileName
 	 * @return A File Object if the file exists. Null otherwise.
 	 */
-	public static File getFileFromStream(String fileName) {
+	public static File getFileFromStream(final String fileName) {
 		File file = null;
 		try {
-			InputStream in = DesktopLauncher.class.getResourceAsStream
-					(fileName);
+			InputStream in =
+					DesktopLauncher.class.getResourceAsStream(fileName);
 
-			if(in != null) {
+			if (in != null) {
 				file = File.createTempFile(fileName, ".BioViz_tmp");
 				file.deleteOnExit();
 
@@ -746,7 +802,7 @@ public class DesktopLauncher extends JFrame {
 
 				int length;
 				//copy the file content in bytes
-				while ((length = in.read(buffer)) > 0){
+				while ((length = in.read(buffer)) > 0) {
 
 					fout.write(buffer, 0, length);
 
@@ -760,7 +816,7 @@ public class DesktopLauncher extends JFrame {
 				//java.nio.file.Files.copy(in, file.toPath());
 			}
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logger.error("Could not even locate/create default file");
 		}
 
@@ -786,18 +842,25 @@ public class DesktopLauncher extends JFrame {
 			// configuration. For multi-step configuration, omit calling
 			// context.reset().
 			context.reset();
-			configurator.doConfigure(DesktopLauncher.class.getResourceAsStream
-					("/config/logback.xml"));
+			configurator.doConfigure(
+					DesktopLauncher.class.getResourceAsStream(
+							"/config/logback.xml"));
 		} catch (final JoranException je) {
 			// StatusPrinter will handle this
-			System.err.println("Error setting up logger: "
-							   + je.getStackTrace());
+			System.err.println(
+					"Error setting up logger: " + je.getStackTrace());
 		}
 		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
 
 	}
 
-	private static void showSettings(BioViz viz) {
+	/**
+	 * Displays the settings window.
+	 *
+	 * @param viz
+	 * 		The parent of the settings window.
+	 */
+	private static void showSettings(final BioViz viz) {
 		logger.debug("Opening preferences window...");
 		PreferencesWindow pw = new PreferencesWindow(viz);
 		logger.debug("Done opening preferences window.");
@@ -938,8 +1001,7 @@ public class DesktopLauncher extends JFrame {
 			return Input.Keys.COMMA;
 		}
 		if (keyCode == java.awt.event.KeyEvent.VK_DELETE) {
-			return Input.Keys
-					.DEL;
+			return Input.Keys.DEL;
 		}
 		if (keyCode == java.awt.event.KeyEvent.VK_LEFT) {
 			return Input.Keys.DPAD_LEFT;
@@ -948,8 +1010,7 @@ public class DesktopLauncher extends JFrame {
 			return Input.Keys.DPAD_RIGHT;
 		}
 		if (keyCode == java.awt.event.KeyEvent.VK_UP) {
-			return Input.Keys
-					.DPAD_UP;
+			return Input.Keys.DPAD_UP;
 		}
 		if (keyCode == java.awt.event.KeyEvent.VK_DOWN) {
 			return Input.Keys.DPAD_DOWN;
@@ -1084,8 +1145,6 @@ public class DesktopLauncher extends JFrame {
 	/**
 	 * Used for communicating time changes between visualization core and the
 	 * desktop UI.
-	 *
-	 * @author jannis
 	 */
 	private class TimerCallback implements BioVizEvent {
 		/**
@@ -1110,7 +1169,7 @@ public class DesktopLauncher extends JFrame {
 		 * @param info
 		 * 		the label that should give information about the time
 		 */
-		public TimerCallback(final JSlider slider, final JLabel info) {
+		TimerCallback(final JSlider slider, final JLabel info) {
 			this.time = slider;
 			this.timeInfo = info;
 			currentViz.addTimeChangedListener(this);
@@ -1123,17 +1182,20 @@ public class DesktopLauncher extends JFrame {
 		 */
 		@Override
 		public void bioVizEvent() {
-			logger.trace("Received timer event ("
-						 + currentViz.currentCircuit.getCurrentTime() + ")");
+			logger.trace("Received timer event (" +
+						 currentViz.currentCircuit.getCurrentTime() + ")");
 			this.time.setValue(currentViz.currentCircuit.getCurrentTime());
 			this.timeInfo.setText(
-					Integer.toString(currentViz.currentCircuit.getCurrentTime
-							()));
+					Integer.toString(
+							currentViz.currentCircuit.getCurrentTime()));
 
 		}
 	}
 
-	private class colourPickCallback implements BioVizEvent {
+	/**
+	 * The callback for picking colors.
+	 */
+	private class ColourPickCallback implements BioVizEvent {
 
 		@Override
 		public void bioVizEvent() {
@@ -1141,18 +1203,18 @@ public class DesktopLauncher extends JFrame {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Color c =
-								JColorChooser.showDialog(null, "Choose a " +
-															   "Color",
-														 Color.red);
+								JColorChooser.showDialog(
+										null, "Choose a Color", Color.red);
 						currentViz.selectedDroplet.setDropletColor(
 								new com.badlogic.gdx.graphics.Color(
 										c.getRed() / 255f, c.getGreen() / 255f,
 										c.getBlue() / 255f, 1f));
 					}
 				});
-			} catch (Exception e) {
-				logger.error("Could not start colour picker:\n"
-							 + e.getStackTrace());
+			} catch (final Exception e) {
+				logger.error(
+						"Could not start colour picker:\n" +
+						e.getStackTrace());
 			}
 
 		}
@@ -1173,7 +1235,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Default constructor, does nothing.
 		 */
-		public LoadFileCallback() {
+		LoadFileCallback() {
 		}
 
 		/**
@@ -1190,7 +1252,7 @@ public class DesktopLauncher extends JFrame {
 						}
 					}
 				});
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				logger.error("Could not load file: " + e.getStackTrace());
 			}
 		}
@@ -1208,7 +1270,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Default constructor, does nothing.
 		 */
-		public CloseFileCallback() {
+		CloseFileCallback() {
 		}
 
 		/**
@@ -1232,7 +1294,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Default constructor, does nothing.
 		 */
-		public LoadedFileCallback() {
+		LoadedFileCallback() {
 		}
 
 		/**
@@ -1262,8 +1324,7 @@ public class DesktopLauncher extends JFrame {
 				d.timeSlider.setMaximum(
 						currentViz.currentCircuit.getData().getMaxT());
 				d.timeSlider.setMinimum(1);
-				logger.trace("setting time slider to "
-							 + oldTime);
+				logger.trace("setting time slider to " + oldTime);
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
@@ -1273,8 +1334,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + d.programName);
-			}
-			else {
+			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
 				d.timeSlider.setMaximum(1);
@@ -1293,8 +1353,6 @@ public class DesktopLauncher extends JFrame {
 	/**
 	 * Used to communicate the intent of saving the currently open file as a
 	 * printable file somewhere.
-	 *
-	 * @author jannis
 	 */
 	private class SaveFileCallback implements BioVizEvent {
 
@@ -1334,8 +1392,9 @@ public class DesktopLauncher extends JFrame {
 								// without a suffix
 								if (svgPosition != -1) {
 									pathWithoutSuffix =
-											f.getAbsolutePath().substring(0,
-																		  svgPosition);
+											f.getAbsolutePath().
+													substring(0,
+															  svgPosition);
 								}
 								// create a series of files
 								for (int t = 1; t <=
@@ -1349,8 +1408,7 @@ public class DesktopLauncher extends JFrame {
 								// restore time from start
 								currentViz.currentCircuit.setCurrentTime(
 										oldTime);
-							}
-							else {
+							} else {
 								currentViz.saveSVG(f.getAbsolutePath(),
 												   currentViz
 														   .currentCircuit
@@ -1407,12 +1465,10 @@ public class DesktopLauncher extends JFrame {
 				if (e.getID() == KeyEvent.KEY_PRESSED) {
 					currentViz.getInputProcessor().keyDown(
 							translateKeyCode(e.getKeyCode()));
-				}
-				else if (e.getID() == KeyEvent.KEY_RELEASED) {
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
 					currentViz.getInputProcessor().keyUp(
 							translateKeyCode(e.getKeyCode()));
-				}
-				else if (e.getID() == KeyEvent.KEY_TYPED) {
+				} else if (e.getID() == KeyEvent.KEY_TYPED) {
 					// That thing might not have been initiliazed yet
 					if (currentViz.getInputProcessor() != null) {
 						currentViz.getInputProcessor().keyTyped(e.getKeyChar
@@ -1427,7 +1483,8 @@ public class DesktopLauncher extends JFrame {
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
 		private BDisplayOptions option;
 
-		public BioCheckboxMenuItem(String label, BDisplayOptions option) {
+		BioCheckboxMenuItem(final String label,
+								   final BDisplayOptions option) {
 			super(label);
 			this.option = option;
 
@@ -1441,7 +1498,10 @@ public class DesktopLauncher extends JFrame {
 			});
 		}
 
-		public void updateState() {
+		/**
+		 * Updates the state of the selected option.
+		 */
+		void updateState() {
 			setState(currentViz.currentCircuit.
 					getDisplayOptions().getOption(option));
 		}

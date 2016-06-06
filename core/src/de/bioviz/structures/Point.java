@@ -27,6 +27,9 @@ public class Point extends Pair<Integer, Integer> {
 	 */
 	public static final Point WEST = new Point(-1, 0);
 
+	/**
+	 * Collects all compass directions.
+	 */
 	public static final Point[] DIRECTIONS = {NORTH, EAST, SOUTH, WEST};
 
 

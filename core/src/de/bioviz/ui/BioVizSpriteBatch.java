@@ -34,31 +34,17 @@ public class BioVizSpriteBatch {
 	 * This field collects all draw calls and their associated priority.
 	 */
 	private ArrayList<Pair<Float, Runnable>> drawCalls =
-			new ArrayList<Pair<Float, Runnable>>();
+			new ArrayList<>();
 
 	/**
 	 * Creates a new batch to draw elements with.
 	 * @param sb the original libgdx batch to be wrapped.
 	 */
-	public BioVizSpriteBatch(final SpriteBatch sb) {
+	BioVizSpriteBatch(final SpriteBatch sb) {
 		this.sb = sb;
 	}
 
-	/**
-	 * Disposes this batch.
-	 */
-	public void dispose() {
-		sb.dispose();
-	}
 
-	/**
-	 * Sets a new projection matrix by calling the wrapped batch's
-	 * setProjectionMatrix method.
-	 * @param matrix the matrix to be used, retrieve from the camera.
-	 */
-	public void setProjectionMatrix(final Matrix4 matrix) {
-		sb.setProjectionMatrix(matrix);
-	}
 
 	/**
 	 * Draws a sprite using a given matrix.
@@ -79,7 +65,7 @@ public class BioVizSpriteBatch {
 	public void draw(final Sprite s, final Matrix4 m, final float z) {
 		float[] vertices = s.getVertices().clone();
 		Texture tex = s.getTexture();
-		drawCalls.add(new Pair<Float, Runnable>(
+		drawCalls.add(new Pair<>(
 					z,
 					() -> {
 						Matrix4 old = sb.getProjectionMatrix();
@@ -93,12 +79,7 @@ public class BioVizSpriteBatch {
 				));
 	}
 
-	/**
-	 * Starts a new bulk draw. Call this before calling any draw methods.
-	 */
-	public void begin() {
-		sb.begin();
-	}
+
 
 	/**
 	 * Ends the bulk draw. This sorts the given draw calls and executes the
@@ -127,7 +108,7 @@ public class BioVizSpriteBatch {
 			final float startX,
 			final float startY,
 			final Matrix4 m) {
-		drawCalls.add(new Pair<Float, Runnable>(
+		drawCalls.add(new Pair<>(
 				0f,
 				() -> {
 					Matrix4 old = sb.getProjectionMatrix();
@@ -173,5 +154,28 @@ public class BioVizSpriteBatch {
 	 */
 	public Matrix4 getProjectionMatrix() {
 		return sb.getProjectionMatrix();
+	}
+
+	/**
+	 * Disposes this batch.
+	 */
+	void dispose() {
+		sb.dispose();
+	}
+
+	/**
+	 * Starts a new bulk draw. Call this before calling any draw methods.
+	 */
+	void begin() {
+		sb.begin();
+	}
+
+	/**
+	 * Sets a new projection matrix by calling the wrapped batch's
+	 * setProjectionMatrix method.
+	 * @param matrix the matrix to be used, retrieve from the camera.
+	 */
+	void setProjectionMatrix(final Matrix4 matrix) {
+		sb.setProjectionMatrix(matrix);
 	}
 }

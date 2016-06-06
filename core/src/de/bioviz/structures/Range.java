@@ -48,8 +48,7 @@ public class Range {
 	public boolean inRange(final int i) {
 		if (i < 0) {
 			return false;
-		}
-		else {
+		} else {
 			return i >= begin && (end == DONTCARE || i <= end);
 		}
 	}

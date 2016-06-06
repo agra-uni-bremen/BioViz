@@ -2,32 +2,30 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-
 import de.bioviz.structures.Point;
-import de.bioviz.util.Pair;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Class responsible for drawing the routes that droplets may follow.
- * <p>
- * <p>
+ * <p/>
+ * <p/>
  * Note that there is no corresponding class in the structure package. The
  * path's positions are computed by queyring the positions of the parent droplet
  * for each time step.
  */
 public class DrawableRoute extends DrawableSprite {
-	/**
-	 * Class-wide logging facility.
-	 */
-	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
-																   .class);
 
 	/**
 	 * What length of the route will be displayed.
 	 */
 	public static int routeDisplayLength = 0;
+
+	/**
+	 * Class-wide logging facility.
+	 */
+	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
+																   .class);
 
 	/**
 	 * Non magic number version for turning off transparency.
@@ -41,15 +39,15 @@ public class DrawableRoute extends DrawableSprite {
 	public DrawableDroplet droplet;
 
 
+	DrawableLine toTarget;
+	DrawableLine fromSource;
+
 	/**
 	 * The color the route is drawn in of not superseeded by another option.
-	 * <p>
+	 * <p/>
 	 * Currently that color is black.
 	 */
 	private Color baseColor = Color.BLACK;
-
-	DrawableLine toTarget, fromSource;
-
 
 	/**
 	 * Creates a route for a given droplet.
@@ -68,7 +66,7 @@ public class DrawableRoute extends DrawableSprite {
 
 	/**
 	 * Returns the color used for drawingf the route.
-	 * <p>
+	 * <p/>
 	 * The color depends on the {@link BDisplayOptions} option ColorfulRoutes.
 	 * If it is set to true, the droplet's color is used instead of black.
 	 *
@@ -113,13 +111,11 @@ public class DrawableRoute extends DrawableSprite {
 			if (circ.getDisplayOptions().getOption(
 					BDisplayOptions.SolidPaths)) {
 				c.a = noTransparency;
-			}
-			else {
+			} else {
 				if (i >= 0) {
 					c.a = 1 -
 						  (Math.abs((float) i + 1) / ((float) stepsToUse + 1));
-				}
-				else {
+				} else {
 					c.a = 1 - (Math.abs((float) i) / ((float) stepsToUse + 1));
 				}
 			}
@@ -146,23 +142,19 @@ public class DrawableRoute extends DrawableSprite {
 				xCoord = circ.xCoordOnScreen(x1 + 0.5f);
 				yCoord = circ.yCoordOnScreen(y1);
 				setRotation(0);
-			}
-			else if (y1 == y2 && x2 < x1) {
+			} else if (y1 == y2 && x2 < x1) {
 				xCoord = circ.xCoordOnScreen(x1 - 0.5f);
 				yCoord = circ.yCoordOnScreen(y1);
 				setRotation(180);
-			}
-			else if (x1 == x2 && y2 > y1) {
+			} else if (x1 == x2 && y2 > y1) {
 				xCoord = circ.xCoordOnScreen(x1);
 				yCoord = circ.yCoordOnScreen(y1 + 0.5f);
 				setRotation(90);
-			}
-			else if (x1 == x2 && y2 < y1) {
+			} else if (x1 == x2 && y2 < y1) {
 				xCoord = circ.xCoordOnScreen(x1);
 				yCoord = circ.yCoordOnScreen(y1 - 0.5f);
 				setRotation(270);
-			}
-			else {
+			} else {
 				continue;
 			}
 
@@ -179,16 +171,15 @@ public class DrawableRoute extends DrawableSprite {
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
 		if (dropletLongIndicator && droplet.droplet.hasNet()) {
 			setForcedLOD(1f);
-			Vector2 target = new Vector2(
-					droplet.droplet.getNet().getTarget().fst.floatValue(),
-					droplet.droplet.getNet().getTarget().snd.floatValue
-							());
+			final Point targetPoint = droplet.droplet.getNet().getTarget();
+			Vector2 target = new Vector2(targetPoint.fst.floatValue(),
+										 targetPoint.snd.floatValue());
+
+			final Point sourcePoint = droplet.droplet.getFirstPosition();
 			Vector2 source = new Vector2(
-					droplet.droplet.getFirstPosition().fst.floatValue(),
-					droplet.droplet.getFirstPosition().snd.floatValue());
-			Vector2 current = new Vector2
-					(droplet.smoothX,
-					 droplet.smoothY);
+					sourcePoint.fst.floatValue(),
+					sourcePoint.snd.floatValue());
+			Vector2 current = new Vector2(droplet.smoothX, droplet.smoothY);
 
 			// draw to target
 			toTarget.from = current;
@@ -196,7 +187,7 @@ public class DrawableRoute extends DrawableSprite {
 			toTarget.setColor(droplet.getColor().add(
 					Colors.LONG_NET_INDICATORS_ON_DROPLET_DIFF));
 			toTarget.draw();
-			
+
 			fromSource.from = source;
 			fromSource.to = current;
 			fromSource.setColor(droplet.getColor().sub(

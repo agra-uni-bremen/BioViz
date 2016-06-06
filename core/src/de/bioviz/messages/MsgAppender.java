@@ -23,7 +23,7 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
 	/**
 	 * The "parent" MessageCenter.
 	 */
-	MessageCenter mc = null;
+	private MessageCenter mc = null;
 
 	@Override
 	/**
@@ -49,12 +49,10 @@ public class MsgAppender extends AppenderBase<ILoggingEvent> {
 			if (viz != null && viz.messageCenter != null) {
 				mc = viz.messageCenter;
 				return true;
-			}
-			else {
+			} else {
 				return false;
 			}
-		}
-		else {
+		} else {
 			return true;
 		}
 	}

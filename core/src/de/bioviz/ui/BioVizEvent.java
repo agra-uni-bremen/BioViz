@@ -17,14 +17,14 @@ package de.bioviz.ui;
  * calling the function inside the visualization that expects the according
  * data as its input.</p>
  *
- * @author jannis
+ * @author Jannis Stoppe
  *
  */
 public interface BioVizEvent {
 
 	/**
 	 * Implement this method in your structures, it is called when the according
-	 * even occurs and your instance has been added to the according sets of the
+	 * event occurs and your instance has been added to the according sets of the
 	 * BioViz instance.
 	 */
 	void bioVizEvent();

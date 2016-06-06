@@ -7,7 +7,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.NumberUtils;
+
 import de.bioviz.messages.MessageCenter;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +30,8 @@ public abstract class DrawableSprite implements Drawable {
 	public static final float COORDINATE_SHIFT = 0.5f;
 
 	/**
-	 * The default amount of time required to change from one color to the next.
+	 * The default amount of time required to change from one color to the
+	 * next.
 	 */
 	public static final int DEFAULT_COLOR_TRANSITION_DURATION = 500;
 
@@ -50,8 +54,8 @@ public abstract class DrawableSprite implements Drawable {
 			LoggerFactory.getLogger(DrawableSprite.class);
 
 	/**
-	 * The default alpha (i.e. visibility) value. Set to 0 because sprites
-	 * are supposed to "fade in".
+	 * The default alpha (i.e. visibility) value. Set to 0 because sprites are
+	 * supposed to "fade in".
 	 */
 	private static final float DEFAULT_ALPHA = 0f;
 
@@ -66,12 +70,12 @@ public abstract class DrawableSprite implements Drawable {
 	BioViz viz;
 
 	/**
-	 * The colors that are set to the four corners of this sprite.
-	 * This may be set to null if no specific per-corner colors are supposed to
-	 * be set. Any color that is equal to Color.BLACK will be ignored and the
-	 * currentColor will be used instead.
+	 * The colors that are set to the four corners of this sprite. This may be
+	 * set to null if no specific per-corner colors are supposed to be set. Any
+	 * color that is equal to Color.BLACK will be ignored and the currentColor
+	 * will be used instead.
 	 */
-	protected Color cornerColors[] = null;
+	protected Color[] cornerColors = null;
 
 	/**
 	 * The x coordinate of this sprite.
@@ -109,8 +113,8 @@ public abstract class DrawableSprite implements Drawable {
 	private boolean isVisible = true;
 
 	/**
-	 * The link back to libgdx: the sprite that is used to draw this
-	 * {@link DrawableSprite}.
+	 * The link back to libgdx: the sprite that is used to draw this {@link
+	 * DrawableSprite}.
 	 */
 	private Sprite sprite;
 
@@ -142,8 +146,8 @@ public abstract class DrawableSprite implements Drawable {
 	private long colorTransitionEndTime = 0;
 
 	/**
-	 * The textures that are being used at certain levels of detail.
-	 * The float specifies the zoom factor until which a texture should be used.
+	 * The textures that are being used at certain levels of detail. The float
+	 * specifies the zoom factor until which a texture should be used.
 	 */
 	private HashMap<Float, TextureE> levelOfDetailTextures = new HashMap<>();
 
@@ -165,8 +169,10 @@ public abstract class DrawableSprite implements Drawable {
 	 * @param texture
 	 * 		the texture to use
 	 */
-	public DrawableSprite(TextureE texture, float sizeX, float sizeY, BioViz
-			parent) {
+	public DrawableSprite(final TextureE texture,
+						  final float sizeX,
+						  final float sizeY,
+						  final BioViz parent) {
 		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
 		}
@@ -184,15 +190,16 @@ public abstract class DrawableSprite implements Drawable {
 		this.viz = parent;
 	}
 
-	private void initializeSprite(float sizeX, float sizeY, TextureRegion
-			region) {
+	private void initializeSprite(final float sizeX,
+								  final float sizeY,
+								  final TextureRegion region) {
 		sprite = new Sprite(region);
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
 		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
 	}
 
-	public DrawableSprite(TextureE texture, BioViz parent) {
+	public DrawableSprite(final TextureE texture, final BioViz parent) {
 		this(texture, 1, 1, parent);
 	}
 
@@ -201,12 +208,11 @@ public abstract class DrawableSprite implements Drawable {
 	 * 		Message to be displayed
 	 * @brief Displays a text above the sprite
 	 */
-	public void displayText(String msg) {
+	public void displayText(final String msg) {
 		MessageCenter mc = viz.messageCenter;
 		if (msg != null) {
 			mc.addHUDMessage(this.hashCode(), msg, this.getX(), this.getY());
-		}
-		else {
+		} else {
 			mc.removeHUDMessage(this.hashCode());
 		}
 	}
@@ -215,7 +221,7 @@ public abstract class DrawableSprite implements Drawable {
 		draw(this.z);
 	}
 
-	public void draw(float z) {
+	public void draw(final float z) {
 
 		if (isVisible()) {
 
@@ -233,7 +239,7 @@ public abstract class DrawableSprite implements Drawable {
 					targetLODFactor = this.forcedLOD;
 				}
 				boolean foundLOD = false;
-				for (Float factor : levelOfDetailTextures.keySet()) {
+				for (final Float factor : levelOfDetailTextures.keySet()) {
 					if (factor >= targetLODFactor && factor <= bestLODFactor) {
 						bestLODFactor = factor;
 						foundLOD = true;
@@ -254,31 +260,34 @@ public abstract class DrawableSprite implements Drawable {
 			this.sprite.setScale(getScaleX(), getScaleY());
 			this.sprite.setRotation(getRotation());
 			this.sprite.setColor(currentColor);
-			
 			float[] v = this.sprite.getVertices();
 
 			if (cornerColors != null) {
-				for(int i = 0; i < 4; i++) {
+				for (int i = 0; i < 4; i++) {
 					int intBits =
-						(int)(255 * cornerColors[i].a) << 24 |
-						(int)(255 * cornerColors[i].b) << 16 |
-						(int)(255 * cornerColors[i].g) << 8 |
-						(int)(255 * cornerColors[i].r);
+							(int) (255 * cornerColors[i].a) << 24 |
+							(int) (255 * cornerColors[i].b) << 16 |
+							(int) (255 * cornerColors[i].g) << 8 |
+							(int) (255 * cornerColors[i].r);
 					switch (i) {
-					case 0:
-						v[SpriteBatch.C1] = NumberUtils.intToFloatColor(intBits);
-						break;
-					case 1:
-						v[SpriteBatch.C2] = NumberUtils.intToFloatColor(intBits);
-						break;
-					case 2:
-						v[SpriteBatch.C3] = NumberUtils.intToFloatColor(intBits);
-						break;
-					case 3:
-						v[SpriteBatch.C4] = NumberUtils.intToFloatColor(intBits);
-						break;
-					default:
-						break;
+						case 0:
+							v[SpriteBatch.C1] =
+									NumberUtils.intToFloatColor(intBits);
+							break;
+						case 1:
+							v[SpriteBatch.C2] =
+									NumberUtils.intToFloatColor(intBits);
+							break;
+						case 2:
+							v[SpriteBatch.C3] =
+									NumberUtils.intToFloatColor(intBits);
+							break;
+						case 3:
+							v[SpriteBatch.C4] =
+									NumberUtils.intToFloatColor(intBits);
+							break;
+						default:
+							break;
 					}
 				}
 			}
@@ -290,7 +299,6 @@ public abstract class DrawableSprite implements Drawable {
 		this.setScaleX(dimX / this.sprite.getWidth());
 		this.setScaleY(dimY / this.sprite.getHeight());
 	}
-
 
 	// TODO what is the rationale of this method?
 	private void setTexture() {
@@ -318,8 +326,8 @@ public abstract class DrawableSprite implements Drawable {
 			Rectangle viewport = viz.currentCircuit.getViewBounds();
 
 			float viewMouseX =
-					(((float) mouseX / (float) resX) * viewport.width +
-					 viewport.x);
+					((float) mouseX / (float) resX) * viewport.width +
+					 viewport.x;
 			float viewMouseY =
 					-(((float) mouseY / (float) resY) * viewport.height +
 					  viewport.y);
@@ -344,14 +352,15 @@ public abstract class DrawableSprite implements Drawable {
 				new Date().getTime() - colorTransitionStartTime) / (float) (
 				colorTransitionEndTime - colorTransitionStartTime)));
 		float totalProgress =
-				(float) -(Math.pow((transitionProgress - 1), 4)) + 1;
+				(float) -Math.pow((transitionProgress - 1), 4) + 1;
 
-		currentColor = this.originColor.cpy().mul(1 - totalProgress).add(
-				this.targetColor.cpy().mul(totalProgress));
+		currentColor = originColor.cpy().mul(1 - totalProgress).add(
+				targetColor.cpy().mul(totalProgress));
 	}
 
 	/**
 	 * Returns a copy of the sprite's target color.
+	 *
 	 * @return Copy of the targetColor variable.
 	 */
 	public Color getColor() {
@@ -386,14 +395,16 @@ public abstract class DrawableSprite implements Drawable {
 		this.targetColor = color;
 		Date d = new Date();
 		this.colorTransitionStartTime = d.getTime();
-		this.colorTransitionEndTime = d.getTime() + getColorTransitionDuration();
+		this.colorTransitionEndTime = d.getTime() +
+									  getColorTransitionDuration();
 	}
 
 	public static int getColorTransitionDuration() {
 		return colorTransitionDuration;
 	}
 
-	public static void setColorTransitionDuration(int colorTransitionDuration) {
+	public static void setColorTransitionDuration(
+			final int colorTransitionDuration) {
 		DrawableSprite.colorTransitionDuration = colorTransitionDuration;
 	}
 
@@ -401,7 +412,7 @@ public abstract class DrawableSprite implements Drawable {
 		return x;
 	}
 
-	public void setX(float x) {
+	public void setX(final float x) {
 		this.x = x;
 	}
 
@@ -409,7 +420,7 @@ public abstract class DrawableSprite implements Drawable {
 		return y;
 	}
 
-	public void setY(float y) {
+	public void setY(final float y) {
 		this.y = y;
 	}
 
@@ -417,14 +428,15 @@ public abstract class DrawableSprite implements Drawable {
 		return z;
 	}
 
-	public void setZ(float z) {
+	public void setZ(final float z) {
 		this.z = z;
 	}
+
 	public float getScaleX() {
 		return scaleX;
 	}
 
-	public void setScaleX(float scaleX) {
+	public void setScaleX(final float scaleX) {
 		this.scaleX = scaleX;
 	}
 
@@ -432,7 +444,7 @@ public abstract class DrawableSprite implements Drawable {
 		return scaleY;
 	}
 
-	public void setScaleY(float scaleY) {
+	public void setScaleY(final float scaleY) {
 		this.scaleY = scaleY;
 	}
 
@@ -440,7 +452,7 @@ public abstract class DrawableSprite implements Drawable {
 		return rotation;
 	}
 
-	public void setRotation(float rotation) {
+	public void setRotation(final float rotation) {
 		this.rotation = rotation;
 	}
 
@@ -448,18 +460,18 @@ public abstract class DrawableSprite implements Drawable {
 		return isVisible;
 	}
 
-	public void setVisible(boolean isVisible) {
-		this.isVisible = isVisible;
+	public void setVisible(final boolean visibility) {
+		this.isVisible = visibility;
 	}
 
 	protected float getForcedLOD() {
 		return forcedLOD;
 	}
 
-	protected void setForcedLOD(float forcedLOD) {
+	protected void setForcedLOD(final float forcedLOD) {
 		this.forcedLOD = forcedLOD;
 	}
-	
+
 	protected void disableForcedLOD() {
 		this.forcedLOD = -1f;
 	}

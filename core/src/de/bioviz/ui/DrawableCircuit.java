@@ -1,18 +1,19 @@
 package de.bioviz.ui;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.Vector;
-
-import de.bioviz.messages.MessageCenter;
-import de.bioviz.structures.*;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
-
-import org.slf4j.LoggerFactory;
+import de.bioviz.structures.Biochip;
+import de.bioviz.structures.Dispenser;
+import de.bioviz.structures.DrawableSink;
+import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Point;
+import de.bioviz.structures.Sink;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.Vector;
 
 /**
  * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
@@ -125,8 +126,7 @@ public class DrawableCircuit implements Drawable {
 	 * This contains instances that need to be notified as soon as the
 	 * currentTime value is altered.
 	 */
-	private Vector<BioVizEvent> timeChangedListeners =
-			new Vector<BioVizEvent>();
+	private Vector<BioVizEvent> timeChangedListeners = new Vector<>();
 
 	/**
 	 * The fields that are present on this circuit.
@@ -170,6 +170,31 @@ public class DrawableCircuit implements Drawable {
 	private DrawableField hoveredField = null;
 
 	/**
+	 * Creates a drawable entity based on the data given.
+	 *
+	 * @param toDraw
+	 * 		the data to draw
+	 * @param parent
+	 * 		The visualization this circuit belongs to.
+	 */
+	DrawableCircuit(final Biochip toDraw, final BioViz parent) {
+		LOGGER.debug("Creating new drawable chip based on " + toDraw);
+		this.setData(toDraw);
+		this.setParent(parent);
+		this.initializeDrawables();
+		this.getDisplayOptions().addOptionChangedEvent(e -> {
+			if (e.equals(BDisplayOptions.CellUsage) ||
+				e.equals(BDisplayOptions.CellUsageCount)) {
+				boolean doIt = getDisplayOptions().getOption(e);
+				if (doIt) {
+					getData().computeCellUsage();
+				}
+			}
+		});
+		LOGGER.debug("New DrawableCircuit created successfully.");
+	}
+
+	/**
 	 * Skip to the previous timestep.
 	 */
 	public void prevStep() {
@@ -205,39 +230,15 @@ public class DrawableCircuit implements Drawable {
 				currentTime = timeStep;
 				getParent().callTimeChangedListeners();
 			}
-		}
-		else {
+		} else {
 			throw new RuntimeException("circuit parent is null");
 		}
 	}
 
 
 	/**
-	 * Creates a drawable entity based on the data given.
-	 *
-	 * @param toDraw
-	 * 		the data to draw
-	 */
-	public DrawableCircuit(Biochip toDraw, BioViz parent) {
-		LOGGER.debug("Creating new drawable chip based on " + toDraw);
-		this.setData(toDraw);
-		this.setParent(parent);
-		this.initializeDrawables();
-		this.getDisplayOptions().addOptionChangedEvent(e -> {
-			if (e.equals(BDisplayOptions.CellUsage) ||
-				e.equals(BDisplayOptions.CellUsageCount)) {
-				boolean doIt = getDisplayOptions().getOption(e);
-				if (doIt) {
-					getData().computeCellUsage();
-				}
-			}
-		});
-		LOGGER.debug("New DrawableCircuit created successfully.");
-	}
-
-	/**
 	 * Initializes the drawables according to the circuit stored in the data
-	 * field
+	 * field.
 	 */
 	private void initializeDrawables() {
 		// clear remaining old data first, if any
@@ -251,11 +252,9 @@ public class DrawableCircuit implements Drawable {
 		getData().getAllFields().forEach(fld -> {
 			if (fld instanceof Sink) {
 				fields.add(new DrawableSink((Sink) fld, this));
-			}
-			else if (fld instanceof Dispenser) {
+			} else if (fld instanceof Dispenser) {
 				fields.add(new DrawableDispenser((Dispenser) fld, this));
-			}
-			else {
+			} else {
 				DrawableField f = new DrawableField(fld, this);
 				fields.add(f);
 			}
@@ -265,7 +264,7 @@ public class DrawableCircuit implements Drawable {
 		LOGGER.debug("Fields set up.");
 
 		//setup droplets
-		for (Droplet d : getData().getDroplets()) {
+		for (final Droplet d : getData().getDroplets()) {
 			DrawableDroplet dd = new DrawableDroplet(d, this);
 			this.getDroplets().add(dd);
 		}
@@ -286,12 +285,8 @@ public class DrawableCircuit implements Drawable {
 
 		if (getDisplayOptions().getOption(BDisplayOptions.Coordinates)) {
 			displayCoordinates();
-		}
-		else {
+		} else {
 			removeDisplayedCoordinates();
-		}
-		if (getDisplayOptions().getOption(BDisplayOptions.CellUsage)) {
-
 		}
 
 		if (isAutoAdvance()) {
@@ -315,14 +310,14 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 
-		for (DrawableField f : this.getFields()) {
+		for (final DrawableField f : this.getFields()) {
 			if (f.isHovered()) {
 				this.hoveredField = f;
 			}
 			f.draw();
 		}
 
-		for (DrawableDroplet d : this.getDroplets()) {
+		for (final DrawableDroplet d : this.getDroplets()) {
 			d.draw();
 		}
 
@@ -346,7 +341,7 @@ public class DrawableCircuit implements Drawable {
 		int maxX = Integer.MIN_VALUE;
 		int maxY = Integer.MIN_VALUE;
 
-		for (DrawableField f : this.getFields()) {
+		for (final DrawableField f : this.getFields()) {
 			if (minX > f.getField().x()) {
 				minX = f.getField().x();
 			}
@@ -380,8 +375,7 @@ public class DrawableCircuit implements Drawable {
 				float alpha = 1f - ((startFadingAtScale - getSmoothScale()) /
 									(startFadingAtScale - endFadingAtScale));
 				col.a = alpha;
-			}
-			else {
+			} else {
 				// TODO: don't draw!
 				col.a = 0;
 			}
@@ -418,12 +412,12 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	private void removeDisplayedCoordinates() {
-		int minX = Integer.MAX_VALUE,
-				minY = Integer.MAX_VALUE,
-				maxX = Integer.MIN_VALUE,
-				maxY = Integer.MIN_VALUE;
+		int minX = Integer.MAX_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int maxY = Integer.MIN_VALUE;
 
-		for (DrawableField f : this.getFields()) {
+		for (final DrawableField f : this.getFields()) {
 			if (minX > f.getField().x()) {
 				minX = f.getField().x();
 			}
@@ -446,13 +440,13 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Calculates the x coordinate of a given cell
+	 * Calculates the x coordinate of a given cell.
 	 *
 	 * @param i
 	 * 		the cell index
 	 * @return the x coordinate on screen
 	 */
-	protected float xCoordOnScreen(int i) {
+	protected float xCoordOnScreen(final int i) {
 		return xCoordOnScreen((float) i);
 	}
 
@@ -466,32 +460,32 @@ public class DrawableCircuit implements Drawable {
 	 * 		the value to translate
 	 * @return the x coordinate on screen
 	 */
-	protected float xCoordOnScreen(float i) {
+	float xCoordOnScreen(final float i) {
 		float xCoord = i;
 		xCoord += getSmoothOffsetX();
 		xCoord *= getSmoothScale();
 		return xCoord;
 	}
 
-	protected float yCoordOnScreen(int i) {
+	float yCoordOnScreen(final int i) {
 		return yCoordOnScreen((float) i);
 	}
 
-	protected float yCoordOnScreen(float i) {
+	float yCoordOnScreen(final float i) {
 		float yCoord = i;
 		yCoord += getSmoothOffsetY();
 		yCoord *= getSmoothScale();
 		return yCoord;
 	}
 
-	protected float yCoordInCells(float i) {
+	protected float yCoordInCells(final float i) {
 		float yCoord = i;
 		yCoord /= getSmoothScale();
 		yCoord -= getSmoothOffsetY();
 		return yCoord;
 	}
 
-	protected float xCoordInCells(float i) {
+	protected float xCoordInCells(final float i) {
 		float xCoord = i;
 		xCoord /= getSmoothScale();
 		xCoord -= getSmoothOffsetX();
@@ -505,8 +499,7 @@ public class DrawableCircuit implements Drawable {
 	public void shrinkToSquareAlignment() {
 		if (getScaleY() < getScaleX()) {
 			setScaleX(getScaleY());
-		}
-		else {
+		} else {
 			setScaleY(getScaleX());
 		}
 	}
@@ -525,7 +518,7 @@ public class DrawableCircuit implements Drawable {
 	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
 	 * supposed to skip those inbetween steps.
 	 */
-	public void setScaleX(float scaleX) {
+	public void setScaleX(final float scaleX) {
 		this.scale = scaleX;
 	}
 
@@ -538,7 +531,9 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * retrieves the current y scaling factor
+	 * Retrieves the current y scaling factor.
+	 *
+	 * @return The scaling factor for the y axis.
 	 */
 	public float getScaleY() {
 		return scaleY;
@@ -548,14 +543,16 @@ public class DrawableCircuit implements Drawable {
 	 * Sets the current y scaling factor. Keep in mind that the value used for
 	 * actually drawing the circuit is successively approaching the given value
 	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
-	 * supposed to skip those inbetween steps.
+	 * supposed to skip those in between steps.
+	 *
+	 * @param scaleY The new scaling factor for the y axis.
 	 */
 	public void setScaleY(final float scaleY) {
 		this.scaleY = scaleY;
 	}
 
 	/**
-	 * Calculates the screen bounds
+	 * Calculates the screen bounds.
 	 *
 	 * @return the screen bounds
 	 */
@@ -572,7 +569,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Sets the screen bounds
+	 * Sets the screen bounds.
 	 *
 	 * @param bounds
 	 * 		the area the viewport is supposed to show.
@@ -590,7 +587,7 @@ public class DrawableCircuit implements Drawable {
 	}
 
 	/**
-	 * Resets the zoom to 1 px per element
+	 * Resets the zoom to 1 px per element.
 	 */
 	public void zoomTo1Px() {
 		this.scale = 1;
@@ -607,8 +604,8 @@ public class DrawableCircuit implements Drawable {
 		Point min = this.getData().getMinCoord();
 		LOGGER.debug("Auto zoom around " + min + " <--/--> " + max);
 
-		float x = (1f / (max.fst - min.fst + 2));
-		float y = (1f / (max.snd - min.snd + 2));
+		float x = 1f / (max.fst - min.fst + 2);
+		float y = 1f / (max.snd - min.snd + 2);
 		float xFactor = Gdx.graphics.getWidth();
 		float yFactor = Gdx.graphics.getHeight();
 		float maxScale = Math.min(x * xFactor, y * yFactor);
@@ -619,8 +616,8 @@ public class DrawableCircuit implements Drawable {
 
 
 		LOGGER.debug(
-				"Offset now at " + this.getOffsetX() + "/" + this.getOffsetY
-						());
+				"Offset now at " +
+				this.getOffsetX() + "/" + this.getOffsetY());
 	}
 
 	/**
@@ -635,10 +632,13 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * Sets the zoom to the given values without smoothly approaching those
 	 * target values (instead sets them immediately).
+	 *
+	 * @param newScale
+	 * 		The new immediate scale.
 	 */
-	public void setScaleImmediately(float scale) {
-		this.scale = scale;
-		this.setSmoothScale(scale);
+	public void setScaleImmediately(final float newScale) {
+		this.scale = newScale;
+		this.setSmoothScale(newScale);
 	}
 
 	public void addTimeChangedListener(final BioVizEvent listener) {
@@ -658,7 +658,7 @@ public class DrawableCircuit implements Drawable {
 		return data;
 	}
 
-	public void setData(Biochip data) {
+	public void setData(final Biochip data) {
 		this.data = data;
 	}
 
@@ -666,7 +666,7 @@ public class DrawableCircuit implements Drawable {
 		return offsetX;
 	}
 
-	public void setOffsetX(float offsetX) {
+	public void setOffsetX(final float offsetX) {
 		this.offsetX = offsetX;
 	}
 
@@ -674,7 +674,7 @@ public class DrawableCircuit implements Drawable {
 		return offsetY;
 	}
 
-	public void setOffsetY(float offsetY) {
+	public void setOffsetY(final float offsetY) {
 		this.offsetY = offsetY;
 	}
 
@@ -682,7 +682,7 @@ public class DrawableCircuit implements Drawable {
 		return smoothScale;
 	}
 
-	protected void setSmoothScale(float smoothScale) {
+	protected void setSmoothScale(final float smoothScale) {
 		this.smoothScale = smoothScale;
 	}
 
@@ -690,7 +690,7 @@ public class DrawableCircuit implements Drawable {
 		return smoothOffsetX;
 	}
 
-	protected void setSmoothOffsetX(float smoothOffsetX) {
+	protected void setSmoothOffsetX(final float smoothOffsetX) {
 		this.smoothOffsetX = smoothOffsetX;
 	}
 
@@ -698,7 +698,7 @@ public class DrawableCircuit implements Drawable {
 		return smoothOffsetY;
 	}
 
-	protected void setSmoothOffsetY(float smoothOffsetY) {
+	protected void setSmoothOffsetY(final float smoothOffsetY) {
 		this.smoothOffsetY = smoothOffsetY;
 	}
 
@@ -710,7 +710,7 @@ public class DrawableCircuit implements Drawable {
 		return autoAdvance;
 	}
 
-	public void setAutoAdvance(boolean autoAdvance) {
+	public void setAutoAdvance(final boolean autoAdvance) {
 		this.autoAdvance = autoAdvance;
 	}
 
@@ -718,7 +718,7 @@ public class DrawableCircuit implements Drawable {
 		return autoDelay;
 	}
 
-	public void setAutoDelay(float autoDelay) {
+	public void setAutoDelay(final float autoDelay) {
 		this.autoDelay = autoDelay;
 	}
 
@@ -726,7 +726,7 @@ public class DrawableCircuit implements Drawable {
 		return fields;
 	}
 
-	public void setFields(Vector<DrawableField> fields) {
+	public void setFields(final Vector<DrawableField> fields) {
 		this.fields = fields;
 	}
 
@@ -734,7 +734,7 @@ public class DrawableCircuit implements Drawable {
 		return droplets;
 	}
 
-	public void setDroplets(Vector<DrawableDroplet> droplets) {
+	public void setDroplets(final Vector<DrawableDroplet> droplets) {
 		this.droplets = droplets;
 	}
 
@@ -776,7 +776,8 @@ public class DrawableCircuit implements Drawable {
 		return hiddenDroplets;
 	}
 
-	public void setHiddenDroplets(Vector<DrawableDroplet> hiddenDroplets) {
+	public void setHiddenDroplets(final Vector<DrawableDroplet>
+										  hiddenDroplets) {
 		this.hiddenDroplets = hiddenDroplets;
 	}
 
@@ -784,7 +785,7 @@ public class DrawableCircuit implements Drawable {
 		return displayOptions;
 	}
 
-	public void setDisplayOptions(DisplayOptions displayOptions) {
+	public void setDisplayOptions(final DisplayOptions displayOptions) {
 		this.displayOptions = displayOptions;
 	}
 
@@ -792,7 +793,7 @@ public class DrawableCircuit implements Drawable {
 		return parent;
 	}
 
-	public void setParent(BioViz parent) {
+	public void setParent(final BioViz parent) {
 		this.parent = parent;
 	}
 }

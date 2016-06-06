@@ -1,7 +1,6 @@
 package de.bioviz.parser;
 
 
-
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Pin;
@@ -114,15 +113,14 @@ public final class Validator {
 	 */
 	static ArrayList<String> checkPathsForJumps(
 			final ArrayList<Droplet> drops) {
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 		for (final Droplet drop : drops) {
 			ArrayList<Point> points = drop.getPositions();
 
 			if (points.isEmpty()) {
 				errors.add("Droplet " + drop.getID() +
 						   " has no route attached to it!");
-			}
-			else {
+			} else {
 				if (points.size() >= 2) {
 					Point prev = points.get(0);
 					for (int i = 1; i < points.size(); i++) {
@@ -202,8 +200,7 @@ public final class Validator {
 				int len = pair.getValue().size();
 				if (cellActs == null) {
 					cellActs = len;
-				}
-				else {
+				} else {
 					if (len != cellActs && !addedCellError) {
 						errors.add("Different lengths in cell actuations");
 						addedCellError = true;
@@ -220,8 +217,7 @@ public final class Validator {
 				int len = pair.getValue().size();
 				if (pinActs == null) {
 					pinActs = len;
-				}
-				else {
+				} else {
 					if (cellActs != null && len != cellActs &&
 						!addedPinError) {
 						errors.add("Different lengths in pin actuations");
@@ -447,8 +443,7 @@ public final class Validator {
 						errors.add("Cell and pin actuations for " + what +
 								   " are not strongly compatible.");
 						break;
-					}
-					else {
+					} else {
 						if (a != Actuation.DONTCARE &&
 							b != Actuation.DONTCARE) {
 							errors.add("Cell and pin actuations for " + what +
