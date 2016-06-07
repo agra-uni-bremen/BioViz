@@ -66,6 +66,7 @@ public class BioViz implements ApplicationListener {
 
 	private List<BioVizEvent> timeChangedListeners = new ArrayList<>();
 	private List<BioVizEvent> loadFileListeners = new ArrayList<>();
+	private List<BioVizEvent> reloadFileListeners= new ArrayList<>();
 	private List<BioVizEvent> loadedFileListeners = new ArrayList<>();
 	private List<BioVizEvent> saveFileListeners = new ArrayList<>();
 	private List<BioVizEvent> closeFileListeners = new ArrayList<>();
@@ -331,6 +332,15 @@ public class BioViz implements ApplicationListener {
 
 	public void addLoadFileListener(final BioVizEvent listener) {
 		loadFileListeners.add(listener);
+	}
+
+
+	public void addReloadFileListener(final BioVizEvent listener) {
+		reloadFileListeners.add(listener);
+	}
+
+	void callReloadFileListeners() {
+		callListeners(reloadFileListeners);
 	}
 
 

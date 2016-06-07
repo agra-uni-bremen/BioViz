@@ -271,6 +271,11 @@ public class DesktopLauncher extends JFrame {
 		setVisible(true);
 
 		setSize(DEFAULT_X_WIDTH, DEFAULT_Y_WIDTH);
+
+
+		currentViz.addReloadFileListener(
+				() -> reloadTab()
+		);
 	}
 
 	/**
@@ -576,11 +581,28 @@ public class DesktopLauncher extends JFrame {
 		JPanel dummyPanel = new JPanel();
 		dummyPanel.setPreferredSize(new Dimension());
 		visualizationTabs.addTab(file.getName(), dummyPanel);
-		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() -
-										   1);
+		visualizationTabs.setSelectedIndex(
+				visualizationTabs.getTabCount() - 1);
 		tabsToFilenames.put(dummyPanel, file);
 		this.currentViz.scheduleLoadingOfNewFile(file);
 	}
+
+
+	private void reloadTab() {
+		int index = visualizationTabs.getSelectedIndex();
+		logger.info("Reloading Tab {}", index);
+		File file = tabsToFilenames.get(
+				visualizationTabs.getSelectedComponent());
+
+		if (file != null) {
+			currentViz.unloadFile(file);
+			currentViz.scheduleLoadingOfNewFile(file);
+
+		} else {
+			logger.info("Nothing to reload");
+		}
+	}
+
 
 	/**
 	 * Closes a tab at a given index. Notice that by closing tabs at given
@@ -591,7 +613,7 @@ public class DesktopLauncher extends JFrame {
 	 * 		the index to be closed
 	 */
 	private void closeTab(final int index) {
-		logger.info("Closing file (" + index + ")");
+		logger.info("Closing Tab {}", index);
 		File file = tabsToFilenames.get(
 				visualizationTabs.getSelectedComponent());
 
