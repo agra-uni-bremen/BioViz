@@ -333,12 +333,10 @@ public class BioViz implements ApplicationListener {
 		loadFileListeners.add(listener);
 	}
 
-
-	// TODO why does this call 'loadedFileListeners??
 	void callTimeChangedListeners() {
-		logger.trace("Calling " + loadedFileListeners.size() +
+		logger.trace("Calling " + timeChangedListeners.size() +
 					 " listeners for timeChanged");
-		callListeners(loadedFileListeners);
+		callListeners(timeChangedListeners);
 	}
 
 	void callLoadFileListeners() {
