@@ -1,9 +1,11 @@
 package de.bioviz.desktop;
 
 import de.bioviz.structures.Biochip;
+import de.bioviz.structures.BiochipField;
 import de.bioviz.ui.BioViz;
 import de.bioviz.ui.DrawableCircuit;
 import de.bioviz.ui.DrawableDroplet;
+import de.bioviz.ui.DrawableField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +66,15 @@ public class InfoPanel extends JPanel {
 
 	private JLabel dropletCountValue = new JLabel();
 	private JLabel experimentDurationValue = new JLabel();
+	private JLabel minUsageValue = new JLabel();
+	private JLabel maxUsageValue = new JLabel();
+	private JLabel avgUsageValue = new JLabel();
 	private JTable table = new JTable(model);
 	private JTable dropToFluidTable = new JTable(dropToFluidModel);
+
+	private int maxUsage;
+	private int minUsage;
+	private int avgUsage;
 
 	private BioViz bioViz;
 
@@ -73,40 +82,59 @@ public class InfoPanel extends JPanel {
 	public InfoPanel(final BioViz bioViz) {
 		int panelWidth = 200;
 		int panelHeight = 600;
+		int labelHeight = 20;
+		int labelWidth = 130;
+		int valueWidth = 50;
+		int internalWidth = 180;
 
 		this.bioViz = bioViz;
 
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		//this.setLayout(new FlowLayout());
+		JPanel panel = new JPanel();
 
-		this.setPreferredSize(new Dimension(panelWidth, panelHeight));
+		panel.setPreferredSize(new Dimension(panelWidth,panelHeight));
 
 		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setPreferredSize(new Dimension(internalWidth, 100));
 		JScrollPane dropToFluidScrollPane = new JScrollPane(dropToFluidTable);
+		dropToFluidScrollPane.setPreferredSize(new Dimension(internalWidth, 100));
 
-		JPanel dropCountPane = new JPanel();
-		dropCountPane.setLayout(new BoxLayout(dropCountPane, BoxLayout
-				.X_AXIS));
 		JLabel dropCountLabel = new JLabel("# of Droplets: ");
-		dropCountPane.add(dropCountLabel);
-		dropCountPane.add(dropletCountValue);
+		dropCountLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		dropletCountValue.setPreferredSize(new Dimension(valueWidth,labelHeight));
 
-		JPanel experimentDurationPane = new JPanel();
-		experimentDurationPane.setLayout(new BoxLayout(experimentDurationPane,
-													   BoxLayout.X_AXIS));
 		JLabel experimentDurationLabel = new JLabel("Max Duration: ");
-		experimentDurationPane.add(experimentDurationLabel);
-		experimentDurationPane.add(experimentDurationValue);
+		experimentDurationLabel.setPreferredSize(
+				new Dimension(labelWidth,	labelHeight));
+		experimentDurationValue.setPreferredSize(
+				new Dimension(valueWidth,	labelHeight));
+
+		JLabel minUsageLabel = new JLabel("Minimal Usage: ");
+		minUsageLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		minUsageValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+
+		JLabel maxUsageLabel = new JLabel("Maximal Usage: ");
+		maxUsageLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		maxUsageValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
 		JSeparator infoSep = new JSeparator(SwingConstants.HORIZONTAL);
-		infoSep.setMaximumSize(new Dimension(180, 5));
+		infoSep.setPreferredSize(new Dimension(internalWidth, 5));
 
-		this.add(new JLabel("Info"));
-		this.add(infoSep);
-		this.add(dropCountPane);
-		this.add(experimentDurationPane);
-		this.add(scrollPane);
-		this.add(dropToFluidScrollPane);
+		JLabel infoLabel = new JLabel("Info");
+		infoLabel.setPreferredSize(new Dimension(internalWidth, 15));
+
+		panel.add(infoLabel);
+		panel.add(infoSep);
+		panel.add(dropCountLabel);
+		panel.add(dropletCountValue);
+		panel.add(experimentDurationLabel);
+		panel.add(experimentDurationValue);
+		panel.add(minUsageLabel);
+		panel.add(minUsageValue);
+		panel.add(maxUsageLabel);
+		panel.add(maxUsageValue);
+		panel.add(scrollPane);
+		panel.add(dropToFluidScrollPane);
+		this.add(panel);
 	}
 
 	public void refreshPanelData() {
@@ -116,30 +144,14 @@ public class InfoPanel extends JPanel {
 			DrawableCircuit currentCircuit = bioViz.currentCircuit;
 			if (currentCircuit != null) {
 
-				updateDropToFluid();
-				final int animationDuration = bioViz.getAnimationDuration();
 				final int maxT = currentCircuit.getData().getMaxT();
 				final int dropletCount = currentCircuit.getDroplets().size();
 				dropletCountValue.setText(String.valueOf(dropletCount));
 				experimentDurationValue.setText(String.valueOf(maxT));
 
-				// final int cellUsage = currentCircuit.getData()
-				// .computeCellUsage();
-
-				Biochip data = currentCircuit.getData();
-				for (final DrawableDroplet droplet : currentCircuit
-						.getDroplets()) {
-					final int dropletID = droplet.droplet.getID();
-					if (data != null) {
-						logger.debug("Adding rowData");
-						final Integer fluidID = data.fluidID(dropletID);
-						if (!currentCircuit.isHidden(droplet) &&
-							droplet.getColor().a > 0.1 && fluidID != null) {
-							final String fluidName = data.fluidType(fluidID);
-							model.addRow(new Object[]{fluidID, fluidName});
-						}
-					}
-				}
+				calculateUsage();
+				fillFluidTable();
+				updateDropToFluid();
 			}
 		}
 	}
@@ -164,6 +176,44 @@ public class InfoPanel extends JPanel {
 		if (dropToFluidTable != null) {
 			dropToFluidTable.repaint();
 		}
+	}
+
+	public void fillFluidTable(){
+		Biochip data = bioViz.currentCircuit.getData();
+		for (final DrawableDroplet droplet : bioViz.currentCircuit.getDroplets()) {
+			final int dropletID = droplet.droplet.getID();
+			if (data != null) {
+				final Integer fluidID = data.fluidID(dropletID);
+				if(!bioViz.currentCircuit.isHidden(droplet) &&
+						droplet.getColor().a > 0.1 && fluidID != null) {
+					final String fluidName = data.fluidType(fluidID);
+					model.addRow(new Object[]{fluidID, fluidName});
+				}
+			}
+		}
+	}
+
+	public void calculateUsage(){
+		bioViz.currentCircuit.getData().computeCellUsage();
+
+		minUsage = Integer.MAX_VALUE;
+		maxUsage = 0;
+		//avgUsage = 0;
+
+		for (final DrawableField f : bioViz.currentCircuit.getFields()){
+			BiochipField field = f.getField();
+			if(maxUsage < field.getUsage()){
+				maxUsage = field.getUsage();
+			}
+			if(minUsage > field.getUsage()){
+				minUsage = field.getUsage();
+			}
+		}
+		//avgUsage = maxUsage / minUsage;
+
+		//avgUsageValue.setText(String.valueOf(avgUsage));
+		minUsageValue.setText(String.valueOf(minUsage));
+		maxUsageValue.setText(String.valueOf(maxUsage));
 	}
 
 	@Override
