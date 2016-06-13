@@ -330,8 +330,6 @@ public class DrawableCircuit implements Drawable {
 	 * Draws the coordinates of the grid on top of and to the left of the grid.
 	 * This in fact uses the message center to display the numbers, so the
 	 * actual drawing will be done after the rest has been drawn.
-	 *
-	 * @author Jannis Stoppe
 	 */
 	private void displayCoordinates() {
 
@@ -665,28 +663,24 @@ public class DrawableCircuit implements Drawable {
 		this.data = data;
 	}
 
-	public float getOffsetX() {
+	float getOffsetX() {
 		return offsetX;
 	}
 
-	public void setOffsetX(final float offsetX) {
+	void setOffsetX(final float offsetX) {
 		this.offsetX = offsetX;
 	}
 
-	public float getOffsetY() {
+	float getOffsetY() {
 		return offsetY;
 	}
 
-	public void setOffsetY(final float offsetY) {
+	void setOffsetY(final float offsetY) {
 		this.offsetY = offsetY;
 	}
 
-	protected float getSmoothScale() {
+	float getSmoothScale() {
 		return smoothScale;
-	}
-
-	protected void setSmoothScale(final float smoothScale) {
-		this.smoothScale = smoothScale;
 	}
 
 	protected float getSmoothOffsetX() {
@@ -798,5 +792,9 @@ public class DrawableCircuit implements Drawable {
 
 	public void setParent(final BioViz parent) {
 		this.parent = parent;
+	}
+
+	private void setSmoothScale(final float smoothScale) {
+		this.smoothScale = smoothScale;
 	}
 }
