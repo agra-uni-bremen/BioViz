@@ -51,15 +51,10 @@ public class BioViz implements ApplicationListener {
 	private BioVizInputProcessor inputProcessor;
 	private SVGManager svgManager;
 
-
-	/**
-	 * This stores the last time a frame was rendered. Used to limit the
-	 * framerate on faster systems to save resources.
-	 */
-	private long lastRenderTimestamp = 0;
-
 	/**
 	 * The desired framerate in fps.
+	 * The update/render thread is laid to sleep if the machine renders too
+	 * fast, thus saving cpu cycles and letting fans calm down a little.
 	 */
 	private int targetFramerate = 60;
 
@@ -344,11 +339,11 @@ public class BioViz implements ApplicationListener {
 	}
 
 
-	// TODO why does this call 'loadedFileListeners??
+
 	void callTimeChangedListeners() {
-		logger.trace("Calling " + loadedFileListeners.size() +
+		logger.trace("Calling " + timeChangedListeners.size() +
 					 " listeners for timeChanged");
-		callListeners(loadedFileListeners);
+		callListeners(timeChangedListeners);
 	}
 
 	void callLoadFileListeners() {

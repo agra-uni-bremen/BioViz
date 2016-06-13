@@ -149,11 +149,29 @@ class PreferencesWindow extends JFrame {
 		c.anchor = GridBagConstraints.CENTER;
 		this.add(dropMovementSpeedSlider, c);
 
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 1;
+		this.add(new JLabel("Font transparency:"), c);
+		JSlider fontTransparencySlider =
+				new JSlider(SwingConstants.HORIZONTAL, 0,
+							100,
+							50);
+		fontTransparencySlider.addChangeListener(
+				e -> {
+					viz.messageCenter.setDefaultTextTransparency(
+							fontTransparencySlider.getValue() / 100f);
+				});
+		c.gridx = 0;
+		c.gridy = 5;
+		c.gridwidth = 3;
+		this.add(fontTransparencySlider, c);
+
 		JButton closeButton = new JButton("Close");
 		closeButton.addActionListener(e -> this.dispatchEvent(
 				new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
 		c.gridx = 0;
-		c.gridy = 5;
+		c.gridy = 7;
 		c.insets = new Insets(10, 0, 0, 0);
 		this.add(closeButton, c);
 

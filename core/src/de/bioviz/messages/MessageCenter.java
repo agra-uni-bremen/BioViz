@@ -46,6 +46,11 @@ public class MessageCenter {
 	private static final float SCALEINCSTEP = 2f;
 
 	/**
+	 * The default z order of text
+	 */
+	private static final float DEFAULT_Z = 100f;
+
+	/**
 	 * The central logging device for this class.
 	 */
 	private static Logger logger = LoggerFactory.getLogger(MessageCenter
@@ -77,6 +82,11 @@ public class MessageCenter {
 	 */
 	private BitmapFont messageFont;
 
+
+	/**
+	 * The alpha value of any rendered text.
+	 */
+	private float defaultTextTransparency = 0.5f;
 
 	/**
 	 * The text rendering resolution. In order to avoid artifacts when zooming
@@ -270,7 +280,7 @@ public class MessageCenter {
 				int startY = yCoord;
 				parent.batch.drawMessage(
 						messageFont, m.message, startX, startY,
-						normalProjection);
+						normalProjection, DEFAULT_Z);
 				yCoord -= spacing;
 			}
 
@@ -288,12 +298,12 @@ public class MessageCenter {
 							   showAt) {
 						float val = this.parent.currentCircuit.getScaleX();
 						val = (val - hideAt) / (showAt - hideAt);
-						targetColor.a = val;
+						targetColor.a = val * getDefaultTextTransparency();
 					} else {
-						targetColor.a = 1;
+						targetColor.a = getDefaultTextTransparency();
 					}
 				} else {
-					targetColor.a = 1;
+					targetColor.a = getDefaultTextTransparency();
 				}
 
 				font.setColor(targetColor);
@@ -309,7 +319,7 @@ public class MessageCenter {
 									Gdx.graphics.getHeight() / 2f;
 
 				parent.batch.drawMessage(font, layout, fontX, fontY,
-										 normalProjection);
+										 normalProjection, DEFAULT_Z);
 			}
 
 			while (this.messages.size() > 0 &&
@@ -446,5 +456,23 @@ public class MessageCenter {
 
 	public void setScaleMsg(final float scaleMsg) {
 		setmsgTextRenderResolution(scaleMsg);
+	}
+
+	/**
+	 * Retrieves the default text transparency.
+	 * @return the current default text transparency.
+	 */
+	public float getDefaultTextTransparency() {
+		return defaultTextTransparency;
+	}
+
+	/**
+	 * Sets the default text transparency.
+	 * @param defaultTextTransparency the new transparency value.
+	 */
+	public void setDefaultTextTransparency(float defaultTextTransparency) {
+		this.defaultTextTransparency = defaultTextTransparency;
+		logger.debug("Default font transparency is now "
+				+ this.defaultTextTransparency);
 	}
 }
