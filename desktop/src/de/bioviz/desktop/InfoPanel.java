@@ -1,16 +1,25 @@
 package de.bioviz.desktop;
 
-import de.bioviz.structures.*;
+import de.bioviz.structures.Biochip;
+import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.Dispenser;
+import de.bioviz.structures.Net;
+import de.bioviz.structures.Sink;
 import de.bioviz.ui.BioViz;
 import de.bioviz.ui.DrawableCircuit;
 import de.bioviz.ui.DrawableDroplet;
-import de.bioviz.ui.DrawableField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
 
 /**
  * @author Maximilian Luenert
@@ -25,7 +34,10 @@ public class InfoPanel extends JPanel {
 	private static Logger logger =
 			LoggerFactory.getLogger(PreferencesWindow.class);
 
-	private DefaultTableModel model = new DefaultTableModel() {
+	/**
+	 * TableModel for the fluidId to fluidType table.
+	 */
+	private DefaultTableModel fluidToTypeModel = new DefaultTableModel() {
 		private String[] columnNames = {"FluidID", "FluidType"};
 
 		@Override
@@ -34,16 +46,20 @@ public class InfoPanel extends JPanel {
 		}
 
 		@Override
-		public String getColumnName(int index) {
+		public String getColumnName(final int index) {
 			return columnNames[index];
 		}
 
 		@Override
-		public boolean isCellEditable(int col, int row) {
+		public boolean isCellEditable(final int col, final int row) {
 			return false;
 		}
+
 	};
 
+	/**
+	 * TableModel for the dropletId to fluidType table.
+	 */
 	private DefaultTableModel dropToFluidModel = new DefaultTableModel() {
 		private String[] columnNames = {"DropletID", "FluidType"};
 
@@ -53,56 +69,94 @@ public class InfoPanel extends JPanel {
 		}
 
 		@Override
-		public String getColumnName(int index) {
+		public String getColumnName(final int index) {
 			return columnNames[index];
 		}
 
 		@Override
-		public boolean isCellEditable(int col, int row) {
+		public boolean isCellEditable(final int col, final int row) {
 			return false;
 		}
 	};
 
+	/** Label to show the number of droplets. */
 	private JLabel dropletCountValue = new JLabel();
+	/** Label to show the experiment duration. */
 	private JLabel experimentDurationValue = new JLabel();
+	/** Label to show the min usage. */
 	private JLabel minUsageValue = new JLabel();
+	/** Label to show the max usage. */
 	private JLabel maxUsageValue = new JLabel();
+	/** Label to show the average usage. */
 	private JLabel avgUsageValue = new JLabel();
+	/** Label to show the number of fields. */
 	private JLabel fieldNumValue = new JLabel();
+	/** Label to show the number of nets. */
 	private JLabel numNetValue = new JLabel();
+	/** Label to show the number of source. */
 	private JLabel numSourcesValue = new JLabel();
+	/** Label to show the number of targets. */
 	private JLabel numTargetValue = new JLabel();
+	/** Label to show the number of sinks. */
 	private JLabel numSinksValue = new JLabel();
+	/** Label to show the number of dispensers. */
 	private JLabel numDispensersValue = new JLabel();
+	/** Label to show the number of detectors. */
+	private JLabel numDetectorsValue = new JLabel();
 
-	private JTable table = new JTable(model);
+	/** FluidId to FluidType table. */
+	private JTable fluidIdToTypeTable = new JTable(fluidToTypeModel);
+	/** DropletId to FluidType table. */
 	private JTable dropToFluidTable = new JTable(dropToFluidModel);
 
+	/** The current BioViz instance. */
 	private BioViz bioViz;
 
+	/** The currentCircuit. */
+	private DrawableCircuit currentCircuit;
 
+	/** The biochip data. */
+	private Biochip data;
+
+
+	/**
+	 * Constructor.
+	 * @param bioViz the BioViz instance to use.
+	 */
 	public InfoPanel(final BioViz bioViz) {
-		int panelWidth = 200;
-		int panelHeight = 600;
-		int labelHeight = 20;
-		int labelWidth = 120;
-		int valueWidth = 70;
-		int internalWidth = 190;
+		final int panelWidth = 200;
+		final int panelHeight = 600;
+		final int labelHeight = 20;
+		final int labelWidth = 120;
+		final int valueWidth = 70;
+		final int internalWidth = 190;
+		final int tableHeight = 100;
+		final int seperatorHeight = 5;
 
 		this.bioViz = bioViz;
 
+		// create main panel
 		JPanel panel = new JPanel();
+		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
 
-		panel.setPreferredSize(new Dimension(panelWidth,panelHeight));
+		fluidIdToTypeTable.getTableHeader().setResizingAllowed(false);
+		fluidIdToTypeTable.getTableHeader().setReorderingAllowed(false);
 
-		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setPreferredSize(new Dimension(internalWidth, 100));
+		dropToFluidTable.getTableHeader().setResizingAllowed(false);
+		dropToFluidTable.getTableHeader().setReorderingAllowed(false);
+
+		// create scroll pane for tables
+		JScrollPane fluidIdScrollPane = new JScrollPane(fluidIdToTypeTable);
+		fluidIdScrollPane.setPreferredSize(new Dimension(internalWidth,
+				tableHeight));
 		JScrollPane dropToFluidScrollPane = new JScrollPane(dropToFluidTable);
-		dropToFluidScrollPane.setPreferredSize(new Dimension(internalWidth, 100));
+		dropToFluidScrollPane.setPreferredSize(new Dimension(internalWidth,
+				tableHeight));
 
+		// create all labels and set their preferred size
 		JLabel dropCountLabel = new JLabel("# Droplets: ");
 		dropCountLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
-		dropletCountValue.setPreferredSize(new Dimension(valueWidth,labelHeight));
+		dropletCountValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
 		JLabel experimentDurationLabel = new JLabel("Timesteps: ");
 		experimentDurationLabel.setPreferredSize(
@@ -146,12 +200,16 @@ public class InfoPanel extends JPanel {
 		numDispensersLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
 		numDispensersValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
+		JLabel numDetectorsLabel = new JLabel("# Detectors: ");
+		numDetectorsLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		numDetectorsValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+
 		JSeparator infoSep = new JSeparator(SwingConstants.HORIZONTAL);
-		infoSep.setPreferredSize(new Dimension(internalWidth, 5));
+		infoSep.setPreferredSize(new Dimension(internalWidth, seperatorHeight));
 
 		JLabel infoLabel = new JLabel("Info");
-		infoLabel.setPreferredSize(new Dimension(internalWidth, 15));
 
+		// add all elements to the pane
 		panel.add(infoLabel);
 		panel.add(infoSep);
 		panel.add(dropCountLabel);
@@ -176,130 +234,182 @@ public class InfoPanel extends JPanel {
 		panel.add(numDispensersValue);
 		panel.add(numSinksLabel);
 		panel.add(numSinksValue);
-		panel.add(scrollPane);
+		panel.add(numDetectorsLabel);
+		panel.add(numDetectorsValue);
+		panel.add(fluidIdScrollPane);
 		panel.add(dropToFluidScrollPane);
 		this.add(panel);
 	}
 
+	/**
+	 * Refreshes the data shown in the infoPanel.
+	 */
 	public void refreshPanelData() {
-		model.setRowCount(0);
-		dropToFluidModel.setRowCount(0);
+
 		if (bioViz != null) {
-			DrawableCircuit currentCircuit = bioViz.currentCircuit;
+			currentCircuit = this.bioViz.currentCircuit;
 			if (currentCircuit != null) {
-
-				final int maxT = currentCircuit.getData().getMaxT();
-				final int dropletCount = currentCircuit.getDroplets().size();
-				dropletCountValue.setText(String.valueOf(dropletCount));
-				experimentDurationValue.setText(String.valueOf(maxT));
-
-				updateUsage();
-				updateFluidTable();
-				updateDropToFluid();
-				updateFieldCount();
-				updateNets();
-				updateSinksAndDispensers();
+				data = currentCircuit.getData();
 			}
 		}
+
+		fluidToTypeModel.setRowCount(0);
+		dropToFluidModel.setRowCount(0);
+			if (currentCircuit != null && data != null) {
+				updateMaxT();
+				updateDropletCount();
+				updateUsage();
+				updateFieldCount();
+				updateNets();
+				updateFieldTypes();
+				updateFluidTable();
+				updateDropToFluid();
+			}
 	}
 
 
+	/**
+	 * Repaints the tables in case of a repaint event.
+	 *
+	 * Otherwise there is no content in the tables.
+	 */
 	public void repaint() {
-		if (table != null) {
-			table.repaint();
+		if (fluidIdToTypeTable != null) {
+			fluidIdToTypeTable.repaint();
 		}
 		if (dropToFluidTable != null) {
 			dropToFluidTable.repaint();
 		}
 	}
 
+	/**
+	 * Updates maximum executionTime.
+	 */
+	public void updateMaxT() {
+		final int maxT = data.getMaxT();
+		experimentDurationValue.setText(String.valueOf(maxT));
+	}
+
+	/**
+	 * Updates the number of droplets.
+	 */
+	public void updateDropletCount() {
+		final int dropletCount = currentCircuit.getDroplets().size();
+		dropletCountValue.setText(String.valueOf(dropletCount));
+	}
+
+	/**
+	 * Updates the table data for the dropletId to fluidType table.
+	 */
 	private void updateDropToFluid() {
-		DrawableCircuit currentCircuit = bioViz.currentCircuit;
-		Biochip data = currentCircuit.getData();
-		for (final DrawableDroplet droplet : currentCircuit.getDroplets()) {
-			final int dropletID = droplet.droplet.getID();
-			String fluidName = data.fluidType(data.fluidID(dropletID));
-			dropToFluidModel.addRow(new Object[]{dropletID, fluidName});
+		if (data != null) {
+			for (final DrawableDroplet droplet : currentCircuit.getDroplets()) {
+				final int dropletID = droplet.droplet.getID();
+				String fluidName = data.fluidType(data.fluidID(dropletID));
+				dropToFluidModel.addRow(new Object[]{dropletID, fluidName});
+			}
 		}
 	}
 
+	/**
+	 * Updates the table data for the fluidId to fluidType table.
+	 */
 	public void updateFluidTable() {
-		Biochip data = bioViz.currentCircuit.getData();
-		for (final DrawableDroplet droplet : bioViz.currentCircuit.getDroplets()) {
-			final int dropletID = droplet.droplet.getID();
-			final Integer fluidID = data.fluidID(dropletID);
-			final String fluidName = data.fluidType(fluidID);
-			model.addRow(new Object[]{fluidID, fluidName});
+		if (data != null) {
+			for (final DrawableDroplet droplet : bioViz.currentCircuit.getDroplets()) {
+				final int dropletID = droplet.droplet.getID();
+				final Integer fluidID = data.fluidID(dropletID);
+				final String fluidName = data.fluidType(fluidID);
+				fluidToTypeModel.addRow(new Object[]{fluidID, fluidName});
+			}
 		}
 	}
 
+	/**
+	 * Updates the usage values.
+	 */
 	public void updateUsage() {
 
-		DrawableCircuit currentCircuit = bioViz.currentCircuit;
-		Biochip data = currentCircuit.getData();
+		if (data != null) {
+			data.computeCellUsage();
 
-		data.computeCellUsage();
+			int minUsage = Integer.MAX_VALUE;
+			int maxUsage = 0;
+			double avgUsage = 0;
 
-		int minUsage = Integer.MAX_VALUE;
-		int maxUsage = 0;
-		double avgUsage = 0;
-
-		for (final BiochipField f : currentCircuit.getData().getAllFields()) {
-			avgUsage += f.getUsage();
-			if (maxUsage < f.getUsage()) {
-				maxUsage = f.getUsage();
+			for (final BiochipField f : data.getAllFields()) {
+				avgUsage += f.getUsage();
+				if (maxUsage < f.getUsage()) {
+					maxUsage = f.getUsage();
+				}
+				if (minUsage > f.getUsage()) {
+					minUsage = f.getUsage();
+				}
 			}
-			if (minUsage > f.getUsage()) {
-				minUsage = f.getUsage();
-			}
+			avgUsage /= data.getAllFields().size();
+
+			avgUsageValue.setText(String.valueOf(avgUsage));
+			minUsageValue.setText(String.valueOf(minUsage));
+			maxUsageValue.setText(String.valueOf(maxUsage));
 		}
-		avgUsage /= currentCircuit.getFields().size();
-
-		avgUsageValue.setText(String.valueOf(avgUsage));
-		minUsageValue.setText(String.valueOf(minUsage));
-		maxUsageValue.setText(String.valueOf(maxUsage));
 	}
 
+	/**
+	 * Updates the number of fields.
+	 */
 	public void updateFieldCount() {
 		int numFields = bioViz.currentCircuit.getFields().size();
 		fieldNumValue.setText(String.valueOf(numFields));
 	}
 
+	/**
+	 * Updates the net infos.
+	 */
 	public void updateNets() {
-		DrawableCircuit currentCircuit = bioViz.currentCircuit;
-		int numNets = currentCircuit.getData().getNets().size();
-		int numSources = 0;
-		int numTargets = 0;
-		for (final Net n : currentCircuit.getData().getNets()) {
-			numSources += n.getSources().size();
-			if (n.getTarget() != null) {
-				numTargets++;
+		if (data != null) {
+			int numNets = data.getNets().size();
+			int numSources = 0;
+			int numTargets = 0;
+			for (final Net n : data.getNets()) {
+				numSources += n.getSources().size();
+				if (n.getTarget() != null) {
+					numTargets++;
+				}
 			}
-		}
 
-		numNetValue.setText(String.valueOf(numNets));
-		numSourcesValue.setText(String.valueOf(numSources));
-		numTargetValue.setText(String.valueOf(numTargets));
+			numNetValue.setText(String.valueOf(numNets));
+			numSourcesValue.setText(String.valueOf(numSources));
+			numTargetValue.setText(String.valueOf(numTargets));
+		}
 	}
 
-	public void updateSinksAndDispensers() {
-		DrawableCircuit currentCircuit = bioViz.currentCircuit;
-		int numDispenser = 0;
-		int numSinks = 0;
-		for (BiochipField f : currentCircuit.getData().getAllFields()) {
-			if (f instanceof Dispenser) {
-				numDispenser++;
+	/**
+	 * Updates the infos for special field types.
+	 */
+	public void updateFieldTypes() {
+		if (data != null) {
+			int numDispenser = 0;
+			int numSinks = 0;
+			int numDetectors = 0;
+			for (final BiochipField f : data.getAllFields()) {
+				if (f instanceof Dispenser) {
+					numDispenser++;
+				}
+				if (f instanceof Sink) {
+					numSinks++;
+				}
+				if (f.getDetector() != null) {
+					numDetectors++;
+				}
 			}
-			if (f instanceof Sink) {
-				numSinks++;
-			}
+			numDispensersValue.setText(String.valueOf(numDispenser));
+			numSinksValue.setText(String.valueOf(numSinks));
+			numDetectorsValue.setText(String.valueOf(numDetectors));
 		}
-		numDispensersValue.setText(String.valueOf(numDispenser));
-		numSinksValue.setText(String.valueOf(numSinks));
 	}
 
 	@Override
-	public void paintComponent(Graphics g) {
+	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 	}
 
