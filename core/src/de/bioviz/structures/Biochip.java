@@ -178,10 +178,15 @@ public class Biochip {
 	 * Determines the fluid type of the given fluid ID.
 	 *
 	 * @param fluidID
-	 * 		The fluid ID of the droplet whose fluid type is to be deterined.
-	 * @return The fluid type of the given droplet. Might be NULL.
+	 * 		The fluid ID of the droplet whose fluid type is to be determined.
+	 * 	    May be null to support easy chaining.
+	 * @return The fluid type of the given droplet. Might be NULL. If fluidID is
+	 * NULL the return value is also NULL.
 	 */
 	public String fluidType(final Integer fluidID) {
+		if (fluidID == null) {
+			return null;
+		}
 		return fluidTypes.get(fluidID);
 	}
 
