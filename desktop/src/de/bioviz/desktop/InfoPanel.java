@@ -207,7 +207,7 @@ public class InfoPanel extends JPanel {
 		JSeparator infoSep = new JSeparator(SwingConstants.HORIZONTAL);
 		infoSep.setPreferredSize(new Dimension(internalWidth, seperatorHeight));
 
-		JLabel infoLabel = new JLabel("Info");
+		JLabel infoLabel = new JLabel("Statistics");
 
 		// add all elements to the pane
 		panel.add(infoLabel);
