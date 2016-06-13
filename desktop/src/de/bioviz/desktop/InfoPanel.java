@@ -87,14 +87,14 @@ public class InfoPanel extends JPanel {
 		JPanel dropCountPane = new JPanel();
 		dropCountPane.setLayout(new BoxLayout(dropCountPane, BoxLayout
 				.X_AXIS));
-		JLabel dropCountLabel = new JLabel("# of Droplets: ");
+		JLabel dropCountLabel = new JLabel("# Droplets: ");
 		dropCountPane.add(dropCountLabel);
 		dropCountPane.add(dropletCountValue);
 
 		JPanel experimentDurationPane = new JPanel();
 		experimentDurationPane.setLayout(new BoxLayout(experimentDurationPane,
 													   BoxLayout.X_AXIS));
-		JLabel experimentDurationLabel = new JLabel("Max Duration: ");
+		JLabel experimentDurationLabel = new JLabel("# Timesteps: ");
 		experimentDurationPane.add(experimentDurationLabel);
 		experimentDurationPane.add(experimentDurationValue);
 
