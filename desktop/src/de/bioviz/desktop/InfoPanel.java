@@ -97,11 +97,11 @@ public class InfoPanel extends JPanel {
 		JScrollPane dropToFluidScrollPane = new JScrollPane(dropToFluidTable);
 		dropToFluidScrollPane.setPreferredSize(new Dimension(internalWidth, 100));
 
-		JLabel dropCountLabel = new JLabel("# of Droplets: ");
+		JLabel dropCountLabel = new JLabel("# Droplets: ");
 		dropCountLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
 		dropletCountValue.setPreferredSize(new Dimension(valueWidth,labelHeight));
 
-		JLabel experimentDurationLabel = new JLabel("Max duration: ");
+		JLabel experimentDurationLabel = new JLabel("Timesteps: ");
 		experimentDurationLabel.setPreferredSize(
 				new Dimension(labelWidth,	labelHeight));
 		experimentDurationValue.setPreferredSize(
@@ -119,7 +119,7 @@ public class InfoPanel extends JPanel {
 		avgUsageLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
 		avgUsageValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
-		JLabel fieldNumLabel = new JLabel("# of fields: ");
+		JLabel fieldNumLabel = new JLabel("# Fields: ");
 		fieldNumLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
 		fieldNumValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
