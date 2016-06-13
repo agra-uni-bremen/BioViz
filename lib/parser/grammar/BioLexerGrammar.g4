@@ -1,7 +1,9 @@
 lexer grammar BioLexerGrammar;
 
 
-
+@lexer::members {
+    public final static int ANNOTATIONS = 1;
+}
 
 Sinks: 'sinks';
 Droplets: 'droplets';
@@ -25,7 +27,7 @@ END: 'end';
 
 Integer: [0-9]+ ;
 Identifier: [a-zA-Z]+ ;
-Comment: '#' .*? Newlines -> skip;
+Comment: '#' .*? Newlines -> channel(ANNOTATIONS);
 
 Newlines: NEWLINE+;
 NEWLINE: '\r'? '\n' ;

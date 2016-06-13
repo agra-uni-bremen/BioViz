@@ -57,7 +57,7 @@ public final class Net {
 		Random rnd = new Random();
 
 		// TODO be more sophisticated here ^^
-		rnd.setSeed(target.fst + target.snd);
+		rnd.setSeed((long)target.fst + target.snd); // cast to long to avoid losing precision
 		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(),
 						  1f);
 	}
