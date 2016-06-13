@@ -2,6 +2,7 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Rectangle;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Dispenser;
@@ -9,6 +10,7 @@ import de.bioviz.structures.DrawableSink;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Sink;
+import de.bioviz.util.Quadruple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -332,29 +334,13 @@ public class DrawableCircuit implements Drawable {
 	 * @author Jannis Stoppe
 	 */
 	private void displayCoordinates() {
-		// calculate current dimensions first so the coordinates can be either
-		// displayed at the edge of the viewport (if the grid boundaries are
-		// beyond the viewport boundaries) or at the edge of the grid (if they
-		// are within)
-		int minX = Integer.MAX_VALUE;
-		int minY = Integer.MAX_VALUE;
-		int maxX = Integer.MIN_VALUE;
-		int maxY = Integer.MIN_VALUE;
 
-		for (final DrawableField f : this.getFields()) {
-			if (minX > f.getField().x()) {
-				minX = f.getField().x();
-			}
-			if (minY > f.getField().y()) {
-				minY = f.getField().y();
-			}
-			if (maxX < f.getField().x()) {
-				maxX = f.getField().x();
-			}
-			if (maxY < f.getField().y()) {
-				maxY = f.getField().y();
-			}
-		}
+		Quadruple<Integer, Integer, Integer, Integer> minMaxVals = minMaxXY();
+
+		int minX = minMaxVals.fst;
+		int minY = minMaxVals.snd;
+		int maxX = minMaxVals.thd;
+		int maxY = minMaxVals.fth;
 
 		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
 		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
@@ -411,7 +397,13 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	private void removeDisplayedCoordinates() {
+
+	/**
+	 * Calculates the current dimensions.
+	 *
+	 * @return Quadruple (minX,minY,maxX,maxY)
+	 */
+	private Quadruple<Integer, Integer, Integer, Integer> minMaxXY() {
 		int minX = Integer.MAX_VALUE;
 		int minY = Integer.MAX_VALUE;
 		int maxX = Integer.MIN_VALUE;
@@ -431,6 +423,16 @@ public class DrawableCircuit implements Drawable {
 				maxY = f.getField().y();
 			}
 		}
+		return new Quadruple<>(minX, minY, maxX, maxY);
+	}
+
+	private void removeDisplayedCoordinates() {
+		Quadruple<Integer, Integer, Integer, Integer> minMaxVals = minMaxXY();
+
+		int minX = minMaxVals.fst;
+		int minY = minMaxVals.snd;
+		int maxX = minMaxVals.thd;
+		int maxY = minMaxVals.fth;
 
 		// remove all HUD messages
 		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
@@ -545,7 +547,8 @@ public class DrawableCircuit implements Drawable {
 	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
 	 * supposed to skip those in between steps.
 	 *
-	 * @param scaleY The new scaling factor for the y axis.
+	 * @param scaleY
+	 * 		The new scaling factor for the y axis.
 	 */
 	public void setScaleY(final float scaleY) {
 		this.scaleY = scaleY;
