@@ -1527,5 +1527,10 @@ public class DesktopLauncher extends JFrame {
 			setState(currentViz.currentCircuit.
 					getDisplayOptions().getOption(option));
 		}
+
+
+
+
 	}
+
 }
