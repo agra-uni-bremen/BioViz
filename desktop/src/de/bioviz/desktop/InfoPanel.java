@@ -348,7 +348,7 @@ public class InfoPanel extends JPanel {
 			}
 			avgUsage /= data.getAllFields().size();
 
-			avgUsageValue.setText(String.valueOf(avgUsage));
+			avgUsageValue.setText(String.format("%.3f", avgUsage));
 			minUsageValue.setText(String.valueOf(minUsage));
 			maxUsageValue.setText(String.valueOf(maxUsage));
 		}
