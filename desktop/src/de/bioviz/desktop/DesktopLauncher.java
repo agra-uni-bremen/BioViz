@@ -58,6 +58,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import static java.awt.SystemColor.info;
+
 /**
  * This class is the single desktop starter class. It starts the cross-platform
  * core application and provides a basic java desktop UI to control it.
@@ -362,10 +364,20 @@ public class DesktopLauncher extends JFrame {
 		JButton preferencesButton = new JButton("Preferences");
 		preferencesButton.setPreferredSize(
 				new Dimension(buttonWidth,
-							  openButton.getPreferredSize().height)
+							  preferencesButton.getPreferredSize().height)
 		);
 		preferencesButton.addActionListener(e -> {
 			showSettings(currentViz);
+		});
+
+		JButton statisticsButton = new JButton("Statistics");
+		statisticsButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  statisticsButton.getPreferredSize().height)
+		);
+		statisticsButton.addActionListener(e -> {
+			boolean visible = this.infoPanel.isVisible();
+			this.infoPanel.setVisible(!visible);
 		});
 
 		JButton saveButton = new JButton("Save SVG");
@@ -451,6 +463,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(timeSlider);
 		panel.add(prefsSep);
 		panel.add(preferencesButton);
+		panel.add(statisticsButton);
 		return panel;
 	}
 
