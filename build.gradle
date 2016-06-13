@@ -19,6 +19,7 @@ allprojects {
     apply plugin: "idea"
     apply plugin: "me.champeau.gradle.antlr4"
     apply plugin: "checkstyle"
+    apply plugin: "java"
 
     // set antlr srcSet
     antlr4.source = file('../lib/parser')
@@ -69,8 +70,6 @@ allprojects {
 }
 
 project(":desktop") {
-    apply plugin: "java"
-
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -110,8 +109,6 @@ project(":desktop") {
 }
 
 project(":core") {
-    apply plugin: "java"
-
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile 'ch.qos.logback:logback-classic:1.1.3'
