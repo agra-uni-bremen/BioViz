@@ -1,7 +1,6 @@
 package de.bioviz.desktop;
 
-import de.bioviz.structures.Biochip;
-import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.*;
 import de.bioviz.ui.BioViz;
 import de.bioviz.ui.DrawableCircuit;
 import de.bioviz.ui.DrawableDroplet;
@@ -69,8 +68,12 @@ public class InfoPanel extends JPanel {
 	private JLabel minUsageValue = new JLabel();
 	private JLabel maxUsageValue = new JLabel();
 	private JLabel avgUsageValue = new JLabel();
-
 	private JLabel fieldNumValue = new JLabel();
+	private JLabel numNetValue = new JLabel();
+	private JLabel numSourcesValue = new JLabel();
+	private JLabel numTargetValue = new JLabel();
+	private JLabel numSinksValue = new JLabel();
+	private JLabel numDispensersValue = new JLabel();
 
 	private JTable table = new JTable(model);
 	private JTable dropToFluidTable = new JTable(dropToFluidModel);
@@ -123,6 +126,26 @@ public class InfoPanel extends JPanel {
 		fieldNumLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
 		fieldNumValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
+		JLabel numNetLabel = new JLabel("# Nets: ");
+		numNetLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		numNetValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+
+		JLabel numSourcesLabel = new JLabel("# Sources: ");
+		numSourcesLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		numSourcesValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+
+		JLabel numTargetLabel = new JLabel("# Targets: ");
+		numTargetLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		numTargetValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+
+		JLabel numSinksLabel = new JLabel("# Sinks: ");
+		numSinksLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		numSinksValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+
+		JLabel numDispensersLabel = new JLabel("# Dispensers: ");
+		numDispensersLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		numDispensersValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+
 		JSeparator infoSep = new JSeparator(SwingConstants.HORIZONTAL);
 		infoSep.setPreferredSize(new Dimension(internalWidth, 5));
 
@@ -143,6 +166,16 @@ public class InfoPanel extends JPanel {
 		panel.add(avgUsageValue);
 		panel.add(fieldNumLabel);
 		panel.add(fieldNumValue);
+		panel.add(numNetLabel);
+		panel.add(numNetValue);
+		panel.add(numSourcesLabel);
+		panel.add(numSourcesValue);
+		panel.add(numTargetLabel);
+		panel.add(numTargetValue);
+		panel.add(numDispensersLabel);
+		panel.add(numDispensersValue);
+		panel.add(numSinksLabel);
+		panel.add(numSinksValue);
 		panel.add(scrollPane);
 		panel.add(dropToFluidScrollPane);
 		this.add(panel);
@@ -164,22 +197,12 @@ public class InfoPanel extends JPanel {
 				updateFluidTable();
 				updateDropToFluid();
 				updateFieldCount();
+				updateNets();
+				updateSinksAndDispensers();
 			}
 		}
 	}
 
-	private void updateDropToFluid() {
-		DrawableCircuit currentCircuit = bioViz.currentCircuit;
-		Biochip data = currentCircuit.getData();
-		for (final DrawableDroplet droplet : currentCircuit.getDroplets()) {
-			final int dropletID = droplet.droplet.getID();
-			if (data != null) {
-				logger.debug("Adding rowData");
-				String fluidName = data.fluidType(data.fluidID(dropletID));
-				dropToFluidModel.addRow(new Object[]{dropletID, fluidName});
-			}
-		}
-	}
 
 	public void repaint() {
 		if (table != null) {
@@ -190,22 +213,27 @@ public class InfoPanel extends JPanel {
 		}
 	}
 
-	public void updateFluidTable(){
-		Biochip data = bioViz.currentCircuit.getData();
-		for (final DrawableDroplet droplet : bioViz.currentCircuit.getDroplets()) {
+	private void updateDropToFluid() {
+		DrawableCircuit currentCircuit = bioViz.currentCircuit;
+		Biochip data = currentCircuit.getData();
+		for (final DrawableDroplet droplet : currentCircuit.getDroplets()) {
 			final int dropletID = droplet.droplet.getID();
-			if (data != null) {
-				final Integer fluidID = data.fluidID(dropletID);
-				if(!bioViz.currentCircuit.isHidden(droplet) &&
-						droplet.getColor().a > 0.1 && fluidID != null) {
-					final String fluidName = data.fluidType(fluidID);
-					model.addRow(new Object[]{fluidID, fluidName});
-				}
-			}
+			String fluidName = data.fluidType(data.fluidID(dropletID));
+			dropToFluidModel.addRow(new Object[]{dropletID, fluidName});
 		}
 	}
 
-	public void updateUsage(){
+	public void updateFluidTable() {
+		Biochip data = bioViz.currentCircuit.getData();
+		for (final DrawableDroplet droplet : bioViz.currentCircuit.getDroplets()) {
+			final int dropletID = droplet.droplet.getID();
+			final Integer fluidID = data.fluidID(dropletID);
+			final String fluidName = data.fluidType(fluidID);
+			model.addRow(new Object[]{fluidID, fluidName});
+		}
+	}
+
+	public void updateUsage() {
 
 		DrawableCircuit currentCircuit = bioViz.currentCircuit;
 		Biochip data = currentCircuit.getData();
@@ -216,14 +244,13 @@ public class InfoPanel extends JPanel {
 		int maxUsage = 0;
 		double avgUsage = 0;
 
-		for (final DrawableField f : currentCircuit.getFields()){
-			BiochipField field = f.getField();
-			avgUsage += field.getUsage();
-			if(maxUsage < field.getUsage()){
-				maxUsage = field.getUsage();
+		for (final BiochipField f : currentCircuit.getData().getAllFields()) {
+			avgUsage += f.getUsage();
+			if (maxUsage < f.getUsage()) {
+				maxUsage = f.getUsage();
 			}
-			if(minUsage > field.getUsage() && field.getUsage() != 0){
-				minUsage = field.getUsage();
+			if (minUsage > f.getUsage()) {
+				minUsage = f.getUsage();
 			}
 		}
 		avgUsage /= currentCircuit.getFields().size();
@@ -233,9 +260,42 @@ public class InfoPanel extends JPanel {
 		maxUsageValue.setText(String.valueOf(maxUsage));
 	}
 
-	public void updateFieldCount(){
+	public void updateFieldCount() {
 		int numFields = bioViz.currentCircuit.getFields().size();
 		fieldNumValue.setText(String.valueOf(numFields));
+	}
+
+	public void updateNets() {
+		DrawableCircuit currentCircuit = bioViz.currentCircuit;
+		int numNets = currentCircuit.getData().getNets().size();
+		int numSources = 0;
+		int numTargets = 0;
+		for (final Net n : currentCircuit.getData().getNets()) {
+			numSources += n.getSources().size();
+			if (n.getTarget() != null) {
+				numTargets++;
+			}
+		}
+
+		numNetValue.setText(String.valueOf(numNets));
+		numSourcesValue.setText(String.valueOf(numSources));
+		numTargetValue.setText(String.valueOf(numTargets));
+	}
+
+	public void updateSinksAndDispensers() {
+		DrawableCircuit currentCircuit = bioViz.currentCircuit;
+		int numDispenser = 0;
+		int numSinks = 0;
+		for (BiochipField f : currentCircuit.getData().getAllFields()) {
+			if (f instanceof Dispenser) {
+				numDispenser++;
+			}
+			if (f instanceof Sink) {
+				numSinks++;
+			}
+		}
+		numDispensersValue.setText(String.valueOf(numDispenser));
+		numSinksValue.setText(String.valueOf(numSinks));
 	}
 
 	@Override
