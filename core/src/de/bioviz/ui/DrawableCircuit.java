@@ -2,7 +2,6 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Rectangle;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Dispenser;
