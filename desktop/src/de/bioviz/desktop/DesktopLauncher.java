@@ -147,6 +147,8 @@ public class DesktopLauncher extends JFrame {
 	 */
 	LwjglAWTInput input;
 
+	private InfoPanel infoPanel;
+
 	/**
 	 * The visualization instance. From the DesktopLauncher, this field is usd
 	 * to get access to any properties of the currently running visualization.
@@ -154,7 +156,7 @@ public class DesktopLauncher extends JFrame {
 	 * once in tabs, there is still only one visualization which then displays
 	 * several different circuits.
 	 */
-	BioViz currentViz;
+	 BioViz currentViz;
 
 
 	/**
@@ -234,6 +236,9 @@ public class DesktopLauncher extends JFrame {
 		manager.addKeyEventDispatcher(new MyDispatcher());
 
 		JPanel panel = initializePanel();
+
+		infoPanel = new InfoPanel(currentViz);
+
 		menubar = initializeMenubar();
 
 		this.setJMenuBar(menubar);
@@ -245,6 +250,8 @@ public class DesktopLauncher extends JFrame {
 		JPanel tabContainer = new JPanel(new BorderLayout());
 
 		container.add(tabContainer, BorderLayout.CENTER);
+
+		container.add(infoPanel, BorderLayout.EAST);
 
 		tabContainer.add(visualizationTabs, BorderLayout.NORTH);
 		tabContainer.add(canvas.getCanvas(), BorderLayout.CENTER);
@@ -1334,6 +1341,9 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + d.programName);
+
+				logger.debug("Initializing infoPanel.");
+				d.infoPanel.refreshPanelData();
 			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
