@@ -78,6 +78,11 @@ public class DesktopLauncher extends JFrame {
 	private static DesktopLauncher singleton;
 
 	/**
+	 * The name that is displayed as the program name in the OS's UI.
+	 */
+	private final static String programName = "BioViz";
+
+	/**
 	 * Used to handle feedback for the user about the program behaviour (and of
 	 * course the developer, too). Anything logged using this instance will
 	 * report as originating from the DesktopLauncher class.
@@ -174,10 +179,7 @@ public class DesktopLauncher extends JFrame {
 	 * The slider to control the length of the displayed droplet routes.
 	 */
 	private JSlider displayRouteLengthSlider;
-	/**
-	 * The name that is displayed as the program name in the OS's UI.
-	 */
-	private final String programName = "BioViz";
+
 
 	/**
 	 * Used to display the tabs for open files.
