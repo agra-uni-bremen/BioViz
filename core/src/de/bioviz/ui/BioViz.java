@@ -246,7 +246,6 @@ public class BioViz implements ApplicationListener {
 
     private void loadNewFile() {
         Biochip bc;
-        boolean error = false;
 
         try {
             drawables.remove(currentCircuit);
@@ -266,7 +265,6 @@ public class BioViz implements ApplicationListener {
                         logger.error("Could not parse file {}", bioFile);
                         logger.info("Creating empty Biochip to display");
                         bc = new Biochip();
-                        error = true;
                     }
                     logger.debug("Creating drawable elements...");
                     DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
