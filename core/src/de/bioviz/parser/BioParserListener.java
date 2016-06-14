@@ -352,8 +352,7 @@ class BioParserListener extends BioBaseListener {
 		Droplet drop = new Droplet(dropletID, spawnTime);
 		List<PositionContext> positions = ctx.position();
 
-		for (int i = 0; i < positions.size(); i++) {
-			PositionContext pos = positions.get(i);
+		for (PositionContext pos : positions) {
 			Point p = getPosition(pos);
 			drop.addPosition(p);
 		}
