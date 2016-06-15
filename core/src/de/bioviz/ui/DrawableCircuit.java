@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Dispenser;
-import de.bioviz.structures.DrawableSink;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Sink;
