@@ -4,6 +4,7 @@ package de.bioviz.structures;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
 import java.util.List;
@@ -103,7 +104,7 @@ public class Biochip {
 	 * @param types
 	 * 		the types to add.
 	 */
-	public void addFluidTypes(final HashMap<Integer, String> types) {
+	public void addFluidTypes(final Map<Integer, String> types) {
 		fluidTypes.putAll(types);
 	}
 
@@ -492,19 +493,20 @@ public class Biochip {
 	 */
 	// TODO why the heck do we provide the coordinates twice? --> check the
 	// parsing procedure.
-	public void addField(Point coordinates, final BiochipField biochipField) {
-		if (biochipField.x() != coordinates.fst ||
-			biochipField.y() != coordinates.snd) {
+	public void addField(final Point coordinates, final BiochipField biochipField) {
+		Point coords = coordinates;
+		if (biochipField.x() != coords.fst ||
+			biochipField.y() != coords.snd) {
 			logger.error(
 					"Field coordinates differ from those transmitted to the " +
 					"chip for this instance");
-			coordinates = new Point(biochipField.x(), biochipField.y());
+			coords = new Point(biochipField.x(), biochipField.y());
 		}
-		if (this.field.containsKey(coordinates)) {
-			logger.trace("Field added twice at " + coordinates +
+		if (this.field.containsKey(coords)) {
+			logger.trace("Field added twice at " + coords +
 						 ", removed older instance");
 		}
-		this.field.put(coordinates, biochipField);
+		this.field.put(coords, biochipField);
 	}
 
 
