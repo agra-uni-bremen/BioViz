@@ -80,7 +80,7 @@ public class DesktopLauncher extends JFrame {
 	/**
 	 * The name that is displayed as the program name in the OS's UI.
 	 */
-	private final static String programName = "BioViz";
+	private static final String programName = "BioViz";
 
 	/**
 	 * Used to handle feedback for the user about the program behaviour (and of
