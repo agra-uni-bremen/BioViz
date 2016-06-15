@@ -1357,7 +1357,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
-				d.setTitle(d.currentViz.getFileName() + " - " + d.programName);
+				d.setTitle(d.currentViz.getFileName() + " - " + programName);
 			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
@@ -1369,7 +1369,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
-				d.setTitle(d.programName);
+				d.setTitle(programName);
 			}
 		}
 	}
