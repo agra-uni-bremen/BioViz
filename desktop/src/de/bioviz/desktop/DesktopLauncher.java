@@ -77,10 +77,7 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private static DesktopLauncher singleton;
 
-	/**
-	 * The name that is displayed as the program name in the OS's UI.
-	 */
-	private static final String programName = "BioViz";
+
 
 	/**
 	 * Used to handle feedback for the user about the program behaviour (and of
@@ -221,7 +218,7 @@ public class DesktopLauncher extends JFrame {
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 
-		this.setTitle(programName);
+		this.setTitle(BioVizInfo.PROGNAME);
 
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
 
@@ -1357,7 +1354,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
-				d.setTitle(d.currentViz.getFileName() + " - " + programName);
+				d.setTitle(d.currentViz.getFileName() + " - " + BioVizInfo.PROGNAME);
 			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
@@ -1369,7 +1366,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
-				d.setTitle(programName);
+				d.setTitle(BioVizInfo.PROGNAME);
 			}
 		}
 	}
