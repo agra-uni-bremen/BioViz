@@ -673,10 +673,10 @@ public class DesktopLauncher extends JFrame {
 
 		if (opts.check != null) {
 			startErrorChecker(opts.check);
-			System.exit(0);
 		}
-
-		startGUI(args);
+		// in the end we start the gui. If the option wasn't set, the default
+		// file will be opened.
+		startGUI(opts.file);
 	}
 
 	/**
@@ -725,7 +725,7 @@ public class DesktopLauncher extends JFrame {
 	 * @param args
 	 * 		CLI arguments to BioViz when starting the GUI.
 	 */
-	static void startGUI(final String[] args) {
+	static void startGUI(final File file) {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -745,7 +745,7 @@ public class DesktopLauncher extends JFrame {
 								"\n" + e.getStackTrace());
 					}
 
-					JFrame frame = new DesktopLauncher();
+					JFrame frame = new DesktopLauncher(file);
 
 
 					singleton.addWindowListener(new WindowAdapter() {
@@ -1508,7 +1508,7 @@ public class DesktopLauncher extends JFrame {
 		private BDisplayOptions option;
 
 		BioCheckboxMenuItem(final String label,
-								   final BDisplayOptions option) {
+							final BDisplayOptions option) {
 			super(label);
 			this.option = option;
 
@@ -1529,8 +1529,6 @@ public class DesktopLauncher extends JFrame {
 			setState(currentViz.currentCircuit.
 					getDisplayOptions().getOption(option));
 		}
-
-
 
 
 	}

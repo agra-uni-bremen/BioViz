@@ -25,5 +25,8 @@ public class Options {
 	@Option(name = "--version", usage = "print version")
 	public boolean version = false;
 
+	@Option(name = "-f", aliases = "--file", usage = "Open .bio file", metaVar
+			= "files")
+	public File file;
 
 }
