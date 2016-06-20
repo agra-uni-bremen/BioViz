@@ -342,12 +342,12 @@ public class DesktopLauncher extends JFrame {
 		final int sliderWidth = buttonWidth;
 		final int sliderHeight = new JSlider().getPreferredSize().height;
 
-		JButton autoplaytButton = new JButton("Autoplay");
-		autoplaytButton.setPreferredSize(
+		JButton autoplayButton = new JButton("Autoplay");
+		autoplayButton.setPreferredSize(
 				new Dimension(buttonWidth,
-							  autoplaytButton.getPreferredSize().height)
+							  autoplayButton.getPreferredSize().height)
 		);
-		autoplaytButton.addActionListener(
+		autoplayButton.addActionListener(
 				e -> currentViz.currentCircuit.toggleAutoAdvance());
 
 		JButton openButton = new JButton("Open File");
@@ -445,7 +445,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(timeSep);
 		panel.add(new JLabel("Step: "));
 		panel.add(timeInfo);
-		panel.add(autoplaytButton);
+		panel.add(autoplayButton);
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
 		panel.add(timeSlider);
