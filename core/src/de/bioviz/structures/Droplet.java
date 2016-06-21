@@ -35,10 +35,10 @@ public class Droplet {
 
 	/**
 	 * <p>The varying sizes of the droplet. The order within the ArrayList
-	 * corresponds to consecutive time steps.</p>
-	 * <p>A multi-cell droplet is considered to have its <i>top-left corner to
-	 * be its coordinate</i>, so it stretches to the bottom and right as far
-	 * as this size goes.</p>
+	 * corresponds to consecutive time steps.</p> <p>A multi-cell droplet is
+	 * considered to have its <i>top-left corner to be its coordinate</i>,
+	 * so it
+	 * stretches to the bottom and right as far as this size goes.</p>
 	 */
 	private ArrayList<Point> sizes = new ArrayList<>();
 
@@ -140,9 +140,8 @@ public class Droplet {
 	}
 
 	/**
-	 * Appends a size to the the droplet's size list
-	 * Add them in order, add duplicates if size isn't supposed to change over
-	 * several time steps.
+	 * Appends a size to the the droplet's size list Add them in order, add
+	 * duplicates if size isn't supposed to change over several time steps.
 	 *
 	 * @param p
 	 * 		Position that is added
@@ -208,10 +207,12 @@ public class Droplet {
 		if (sizes.isEmpty() || index < 0 || index >= sizes.size()) {
 			/**
 			 * Just for testing
-			 * return new Point(this.hashCode() % 5,
-			 * this.getFirstPosition().hashCode() % 5);
- 			 */
-			return new Point(1, 1);
+			 **/
+
+			return new Point(this.hashCode() % 5,
+							 this.getFirstPosition().hashCode() % 5);
+
+//			return new Point(1, 1);
 		}
 		return sizes.get(index);
 	}
