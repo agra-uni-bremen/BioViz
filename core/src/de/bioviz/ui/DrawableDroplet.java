@@ -297,6 +297,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 		DrawableCircuit circ = parentCircuit;
 
+		Point size = droplet.getSizeAt(circ.getCurrentTime());
 		Point p = droplet.getPositionAt(circ.getCurrentTime());
 		boolean withinTimeRange = false;
 
@@ -321,11 +322,11 @@ public class DrawableDroplet extends DrawableSprite {
 			if (isVisible() && viz.currentCircuit.getDisplayOptions().
 					getOption(BDisplayOptions.Droplets)) {
 
-				float xCoord = circ.xCoordOnScreen(smoothX);
-				float yCoord = circ.yCoordOnScreen(smoothY);
+				float xCoord = circ.xCoordOnScreen(smoothX + (size.fst - 1) / 2f);
+				float yCoord = circ.yCoordOnScreen(smoothY - (size.snd - 1) / 2f);
 
-				this.setScaleX(circ.getSmoothScale());
-				this.setScaleY(circ.getSmoothScale());
+				this.setScaleX(circ.getSmoothScale() * size.fst);
+				this.setScaleY(circ.getSmoothScale() * size.snd);
 
 				// if hidden, place below grid
 				int invisibleIndex =

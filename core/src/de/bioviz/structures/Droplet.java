@@ -34,6 +34,12 @@ public class Droplet {
 	private ArrayList<Point> positions = new ArrayList<>();
 
 	/**
+	 * The varying sizes of the droplet. The order within the ArrayList
+	 * corresponds to consecutive time steps.
+	 */
+	private ArrayList<Point> sizes = new ArrayList<>();
+
+	/**
 	 * The unique ID of the droplet.
 	 */
 	private int id = 0;
@@ -175,6 +181,25 @@ public class Droplet {
 		return positions.get(index);
 	}
 
+	/**
+	 * @param t
+	 * 		Time step for which the position is requested
+	 * @return Position at time step t or null if outside time range
+	 */
+	public Point getSizeAt(final int t) {
+
+		int index = t - spawnTime;
+
+		if (sizes.isEmpty() || index < 0 || index >= sizes.size()) {
+			/**
+			 * Just for testing
+			 * return new Point(this.hashCode() % 5,
+			 * this.getFirstPosition().hashCode() % 5);
+ 			 */
+			return new Point(1, 1);
+		}
+		return sizes.get(index);
+	}
 
 	/**
 	 * @return First position of the droplet
