@@ -77,10 +77,7 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private static DesktopLauncher singleton;
 
-	/**
-	 * The name that is displayed as the program name in the OS's UI.
-	 */
-	private static final String programName = "BioViz";
+
 
 	/**
 	 * Used to handle feedback for the user about the program behaviour (and of
@@ -221,7 +218,7 @@ public class DesktopLauncher extends JFrame {
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 
-		this.setTitle(programName);
+		this.setTitle(BioVizInfo.PROGNAME);
 
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
 
@@ -342,12 +339,12 @@ public class DesktopLauncher extends JFrame {
 		final int sliderWidth = buttonWidth;
 		final int sliderHeight = new JSlider().getPreferredSize().height;
 
-		JButton autoplaytButton = new JButton("Autoplay");
-		autoplaytButton.setPreferredSize(
+		JButton autoplayButton = new JButton("Autoplay");
+		autoplayButton.setPreferredSize(
 				new Dimension(buttonWidth,
-							  autoplaytButton.getPreferredSize().height)
+							  autoplayButton.getPreferredSize().height)
 		);
-		autoplaytButton.addActionListener(
+		autoplayButton.addActionListener(
 				e -> currentViz.currentCircuit.toggleAutoAdvance());
 
 		JButton openButton = new JButton("Open File");
@@ -445,7 +442,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(timeSep);
 		panel.add(new JLabel("Step: "));
 		panel.add(timeInfo);
-		panel.add(autoplaytButton);
+		panel.add(autoplayButton);
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
 		panel.add(timeSlider);
@@ -673,10 +670,10 @@ public class DesktopLauncher extends JFrame {
 
 		if (opts.check != null) {
 			startErrorChecker(opts.check);
-			System.exit(0);
 		}
-
-		startGUI(args);
+		// in the end we start the gui. If the option wasn't set, the default
+		// file will be opened.
+		startGUI(opts.file);
 	}
 
 	/**
@@ -725,7 +722,7 @@ public class DesktopLauncher extends JFrame {
 	 * @param args
 	 * 		CLI arguments to BioViz when starting the GUI.
 	 */
-	static void startGUI(final String[] args) {
+	static void startGUI(final File file) {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -745,7 +742,7 @@ public class DesktopLauncher extends JFrame {
 								"\n" + e.getStackTrace());
 					}
 
-					JFrame frame = new DesktopLauncher();
+					JFrame frame = new DesktopLauncher(file);
 
 
 					singleton.addWindowListener(new WindowAdapter() {
@@ -1357,7 +1354,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
-				d.setTitle(d.currentViz.getFileName() + " - " + programName);
+				d.setTitle(d.currentViz.getFileName() + " - " + BioVizInfo.PROGNAME);
 			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
@@ -1369,7 +1366,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
-				d.setTitle(programName);
+				d.setTitle(BioVizInfo.PROGNAME);
 			}
 		}
 	}
@@ -1508,7 +1505,7 @@ public class DesktopLauncher extends JFrame {
 		private BDisplayOptions option;
 
 		BioCheckboxMenuItem(final String label,
-								   final BDisplayOptions option) {
+							final BDisplayOptions option) {
 			super(label);
 			this.option = option;
 
@@ -1529,8 +1526,6 @@ public class DesktopLauncher extends JFrame {
 			setState(currentViz.currentCircuit.
 					getDisplayOptions().getOption(option));
 		}
-
-
 
 
 	}
