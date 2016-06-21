@@ -34,8 +34,11 @@ public class Droplet {
 	private ArrayList<Point> positions = new ArrayList<>();
 
 	/**
-	 * The varying sizes of the droplet. The order within the ArrayList
-	 * corresponds to consecutive time steps.
+	 * <p>The varying sizes of the droplet. The order within the ArrayList
+	 * corresponds to consecutive time steps.</p>
+	 * <p>A multi-cell droplet is considered to have its <i>top-left corner to
+	 * be its coordinate</i>, so it stretches to the bottom and right as far
+	 * as this size goes.</p>
 	 */
 	private ArrayList<Point> sizes = new ArrayList<>();
 
@@ -137,6 +140,18 @@ public class Droplet {
 	}
 
 	/**
+	 * Appends a size to the the droplet's size list
+	 * Add them in order, add duplicates if size isn't supposed to change over
+	 * several time steps.
+	 *
+	 * @param p
+	 * 		Position that is added
+	 */
+	public void addSize(final Point p) {
+		sizes.add(p);
+	}
+
+	/**
 	 * Tries to return the position of the droplet at specified time step.
 	 * <p>
 	 * If the time step is before the droplet is spawned or after the droplet
@@ -184,7 +199,7 @@ public class Droplet {
 	/**
 	 * @param t
 	 * 		Time step for which the position is requested
-	 * @return Position at time step t or null if outside time range
+	 * @return Position at time step t or (1,1) if outside time range
 	 */
 	public Point getSizeAt(final int t) {
 
