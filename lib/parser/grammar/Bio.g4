@@ -73,7 +73,7 @@ source: dropletID position timeConstraint?;
 target: position timeConstraint?;
 
 medaNets: MedaNets Newlines (medaNet Newlines)+ END;
-medaNet: medaSource (Comme medaSource)* Arrow medaTarget;
+medaNet: medaSource (Comma medaSource)* Arrow medaTarget;
 medaSource: dropletID location timeConstraint?;
 medaTarget: location timeConstraint?;
 
