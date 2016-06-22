@@ -190,6 +190,12 @@ public abstract class DrawableSprite implements Drawable {
 		this.viz = parent;
 	}
 
+
+	public DrawableSprite(final TextureE texture, final BioViz parent) {
+		this(texture, 1, 1, parent);
+	}
+
+
 	private void initializeSprite(final float sizeX,
 								  final float sizeY,
 								  final TextureRegion region) {
@@ -199,9 +205,6 @@ public abstract class DrawableSprite implements Drawable {
 		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
 	}
 
-	public DrawableSprite(final TextureE texture, final BioViz parent) {
-		this(texture, 1, 1, parent);
-	}
 
 	/**
 	 * @param msg
@@ -217,6 +220,7 @@ public abstract class DrawableSprite implements Drawable {
 		}
 	}
 
+	@Override
 	public void draw() {
 		draw(this.z);
 	}
@@ -303,7 +307,7 @@ public abstract class DrawableSprite implements Drawable {
 	// TODO what is the rationale of this method?
 	private void setTexture() {
 		if (this.sprite != null) {
-			this.sprite.setRegion(this.textures.getTexture(currentTexture));
+			this.sprite.setRegion(DrawableSprite.textures.getTexture(currentTexture));
 		}
 	}
 
@@ -352,7 +356,7 @@ public abstract class DrawableSprite implements Drawable {
 				new Date().getTime() - colorTransitionStartTime) / (float) (
 				colorTransitionEndTime - colorTransitionStartTime)));
 		float totalProgress =
-				(float) -Math.pow((transitionProgress - 1), 4) + 1;
+				(float) -Math.pow(transitionProgress - 1, 4) + 1;
 
 		currentColor = originColor.cpy().mul(1 - totalProgress).add(
 				targetColor.cpy().mul(totalProgress));

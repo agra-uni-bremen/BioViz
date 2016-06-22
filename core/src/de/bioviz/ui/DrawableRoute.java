@@ -39,8 +39,8 @@ public class DrawableRoute extends DrawableSprite {
 	public DrawableDroplet droplet;
 
 
-	DrawableLine toTarget;
-	DrawableLine fromSource;
+	private DrawableLine toTarget;
+	private DrawableLine fromSource;
 
 	/**
 	 * The color the route is drawn in of not superseeded by another option.
@@ -55,7 +55,7 @@ public class DrawableRoute extends DrawableSprite {
 	 * @param droplet
 	 * 		The droplet this route belongs to.
 	 */
-	public DrawableRoute(final DrawableDroplet droplet) {
+	DrawableRoute(final DrawableDroplet droplet) {
 		super(TextureE.StepMarker, droplet.viz);
 		this.droplet = droplet;
 		super.addLOD(DEFAULT_LOD_THRESHOLD, TextureE.BlackPixel);
@@ -72,6 +72,7 @@ public class DrawableRoute extends DrawableSprite {
 	 *
 	 * @return The color of the route
 	 */
+	@Override
 	public Color getColor() {
 		Color c = baseColor.cpy();
 		if (droplet.parentCircuit.getDisplayOptions().getOption(
