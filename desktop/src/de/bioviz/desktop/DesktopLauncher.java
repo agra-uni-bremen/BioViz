@@ -158,7 +158,7 @@ public class DesktopLauncher extends JFrame {
 	 * once in tabs, there is still only one visualization which then displays
 	 * several different circuits.
 	 */
-	 BioViz currentViz;
+	BioViz currentViz;
 
 
 	/**
@@ -178,10 +178,7 @@ public class DesktopLauncher extends JFrame {
 	 * The slider to control the length of the displayed droplet routes.
 	 */
 	private JSlider displayRouteLengthSlider;
-	/**
-	 * The name that is displayed as the program name in the OS's UI.
-	 */
-	private final String programName = "BioViz";
+
 
 	/**
 	 * Used to display the tabs for open files.
@@ -223,7 +220,7 @@ public class DesktopLauncher extends JFrame {
 		final Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 
-		this.setTitle(programName);
+		this.setTitle(BioVizInfo.PROGNAME);
 
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
 
@@ -280,6 +277,11 @@ public class DesktopLauncher extends JFrame {
 		setVisible(true);
 
 		setSize(DEFAULT_X_WIDTH, DEFAULT_Y_WIDTH);
+
+
+		currentViz.addReloadFileListener(
+				() -> reloadTab()
+		);
 	}
 
 	/**
@@ -344,12 +346,12 @@ public class DesktopLauncher extends JFrame {
 		final int sliderWidth = buttonWidth;
 		final int sliderHeight = new JSlider().getPreferredSize().height;
 
-		JButton autoplaytButton = new JButton("Autoplay");
-		autoplaytButton.setPreferredSize(
+		JButton autoplayButton = new JButton("Autoplay");
+		autoplayButton.setPreferredSize(
 				new Dimension(buttonWidth,
-							  autoplaytButton.getPreferredSize().height)
+							  autoplayButton.getPreferredSize().height)
 		);
-		autoplaytButton.addActionListener(
+		autoplayButton.addActionListener(
 				e -> currentViz.currentCircuit.toggleAutoAdvance());
 
 		JButton openButton = new JButton("Open File");
@@ -457,7 +459,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(timeSep);
 		panel.add(new JLabel("Step: "));
 		panel.add(timeInfo);
-		panel.add(autoplaytButton);
+		panel.add(autoplayButton);
 		panel.add(prevStepButton);
 		panel.add(nextStepButton);
 		panel.add(timeSlider);
@@ -596,11 +598,28 @@ public class DesktopLauncher extends JFrame {
 		JPanel dummyPanel = new JPanel();
 		dummyPanel.setPreferredSize(new Dimension());
 		visualizationTabs.addTab(file.getName(), dummyPanel);
-		visualizationTabs.setSelectedIndex(visualizationTabs.getTabCount() -
-										   1);
+		visualizationTabs.setSelectedIndex(
+				visualizationTabs.getTabCount() - 1);
 		tabsToFilenames.put(dummyPanel, file);
 		this.currentViz.scheduleLoadingOfNewFile(file);
 	}
+
+
+	private void reloadTab() {
+		int index = visualizationTabs.getSelectedIndex();
+		logger.info("Reloading Tab {}", index);
+		File file = tabsToFilenames.get(
+				visualizationTabs.getSelectedComponent());
+
+		if (file != null) {
+			currentViz.unloadFile(file);
+			currentViz.scheduleLoadingOfNewFile(file);
+
+		} else {
+			logger.info("Nothing to reload");
+		}
+	}
+
 
 	/**
 	 * Closes a tab at a given index. Notice that by closing tabs at given
@@ -611,7 +630,7 @@ public class DesktopLauncher extends JFrame {
 	 * 		the index to be closed
 	 */
 	private void closeTab(final int index) {
-		logger.info("Closing file (" + index + ")");
+		logger.info("Closing Tab {}", index);
 		File file = tabsToFilenames.get(
 				visualizationTabs.getSelectedComponent());
 
@@ -669,10 +688,10 @@ public class DesktopLauncher extends JFrame {
 
 		if (opts.check != null) {
 			startErrorChecker(opts.check);
-			System.exit(0);
 		}
-
-		startGUI(args);
+		// in the end we start the gui. If the option wasn't set, the default
+		// file will be opened.
+		startGUI(opts.file);
 	}
 
 	/**
@@ -721,7 +740,7 @@ public class DesktopLauncher extends JFrame {
 	 * @param args
 	 * 		CLI arguments to BioViz when starting the GUI.
 	 */
-	static void startGUI(final String[] args) {
+	static void startGUI(final File file) {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -741,7 +760,7 @@ public class DesktopLauncher extends JFrame {
 								"\n" + e.getStackTrace());
 					}
 
-					JFrame frame = new DesktopLauncher();
+					JFrame frame = new DesktopLauncher(file);
 
 
 					singleton.addWindowListener(new WindowAdapter() {
@@ -1353,8 +1372,8 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
-				d.setTitle(d.currentViz.getFileName() + " - " + d.programName);
-
+				d.setTitle(d.currentViz.getFileName() + " - " + BioVizInfo.PROGNAME);
+				
 				logger.debug("Initializing infoPanel.");
 				d.infoPanel.refreshPanelData();
 			} else {
@@ -1368,7 +1387,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
-				d.setTitle(d.programName);
+				d.setTitle(BioVizInfo.PROGNAME);
 			}
 		}
 	}

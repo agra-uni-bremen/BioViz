@@ -73,7 +73,7 @@ class BioParserListener extends BioBaseListener {
 	private HashMap<Integer, Pin> pins = new HashMap<>();
 	private HashMap<Integer, ActuationVector> pinActuations = new HashMap<>();
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
-	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
+	private ArrayList<Mixer> mixers = new ArrayList<	>();
 
 
 	/**
@@ -85,9 +85,9 @@ class BioParserListener extends BioBaseListener {
 	 * Stores the textual representation of all errors that were found during
 	 * the parsing process.
 	 */
-	private ArrayList<String> errors;
+	private List<String> errors;
 
-	public ArrayList<String> getErrors() {
+	public List<String> getErrors() {
 		return errors;
 	}
 
@@ -352,8 +352,7 @@ class BioParserListener extends BioBaseListener {
 		Droplet drop = new Droplet(dropletID, spawnTime);
 		List<PositionContext> positions = ctx.position();
 
-		for (int i = 0; i < positions.size(); i++) {
-			PositionContext pos = positions.get(i);
+		for (PositionContext pos : positions) {
 			Point p = getPosition(pos);
 			drop.addPosition(p);
 		}
@@ -484,16 +483,16 @@ class BioParserListener extends BioBaseListener {
 		chip.detectors.addAll(detectors);
 
 
-		pins.values().forEach(pin -> {
-			pin.cells.forEach(pos -> chip.getFieldAt(pos).pin = pin);
-		});
+		pins.values().forEach(pin ->
+			pin.cells.forEach(pos -> chip.getFieldAt(pos).pin = pin)
+		);
 		chip.pins.putAll(pins);
 		errors.addAll(Validator.checkMultiplePinAssignments(pins.values()));
 		chip.pinActuations.putAll(pinActuations);
 
-		cellActuations.forEach((pos, vec) -> {
-			chip.getFieldAt(pos).actVec = vec;
-		});
+		cellActuations.forEach((pos, vec) ->
+			chip.getFieldAt(pos).actVec = vec
+		);
 		chip.cellActuations.putAll(cellActuations);
 
 		errors.addAll(Validator.checkActuationVectorLengths(cellActuations,
@@ -508,12 +507,12 @@ class BioParserListener extends BioBaseListener {
 																   false));
 
 		chip.mixers.addAll(this.mixers);
-		mixers.forEach(m -> {
+		mixers.forEach(m ->
 			m.positions.positions().forEach(pos -> {
 				logger.trace("Adding mixer {} to field {}", m, pos);
 				chip.getFieldAt(pos).mixers.add(m);
-			});
-		});
+			})
+		);
 
 		Set<FluidicConstraintViolation> badFields =
 				chip.getAdjacentActivations();
@@ -523,7 +522,7 @@ class BioParserListener extends BioBaseListener {
 		}
 
 
-		errors.forEach(s -> logger.info(s));
+		errors.forEach(logger::info);
 		chip.errors.addAll(errors);
 
 	}

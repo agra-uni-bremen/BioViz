@@ -1,4 +1,6 @@
 grid
+
+
 # horizontal bar in the detection region
 (1,12) (9,12)
 # vertical bars of the detection region

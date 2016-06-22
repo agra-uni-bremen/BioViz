@@ -46,7 +46,6 @@ class PreferencesWindow extends JFrame {
 		super("Preferences");
 
 
-
 		final int minAnimationDuration = 0;
 		final int maxAnimationDuration = 1000;
 		final int defaultAnimationDuration = BioViz.getAnimationDuration();
@@ -158,10 +157,9 @@ class PreferencesWindow extends JFrame {
 							100,
 							50);
 		fontTransparencySlider.addChangeListener(
-				e -> {
-					viz.messageCenter.setDefaultTextTransparency(
-							fontTransparencySlider.getValue() / 100f);
-				});
+				e -> viz.messageCenter.setDefaultTextTransparency(
+								fontTransparencySlider.getValue() / 100f)
+		);
 		c.gridx = 0;
 		c.gridy = 5;
 		c.gridwidth = 3;

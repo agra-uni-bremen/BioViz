@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Color;
  *
  * @author Jannis Stoppe
  */
-public class MessageBase {
+class MessageBase {
 	/**
 	 * The message that will be displayed on the top of the screen.
 	 */
@@ -23,7 +23,7 @@ public class MessageBase {
 	 *
 	 * @param message The message that will be displayed later on
 	 */
-	public MessageBase(final String message) {
+	MessageBase(final String message) {
 		this.message = message;
 		this.color = Color.WHITE.cpy();
 	}
