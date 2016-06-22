@@ -50,7 +50,6 @@ import java.util.Optional;
 import java.util.Set;
 
 
-
 class BioParserListener extends BioBaseListener {
 	private static Logger logger =
 			LoggerFactory.getLogger(BioParserListener.class);
@@ -73,7 +72,7 @@ class BioParserListener extends BioBaseListener {
 	private HashMap<Integer, Pin> pins = new HashMap<>();
 	private HashMap<Integer, ActuationVector> pinActuations = new HashMap<>();
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
-	private ArrayList<Mixer> mixers = new ArrayList<	>();
+	private ArrayList<Mixer> mixers = new ArrayList<>();
 
 
 	/**
@@ -361,6 +360,34 @@ class BioParserListener extends BioBaseListener {
 
 	}
 
+	@Override
+	public void enterMedaRoute(@NotNull Bio.MedaRouteContext ctx) {
+		int dropletID = Integer.parseInt(ctx.dropletID().getText());
+		int spawnTime = 1;
+		if (ctx.timeConstraint() != null) {
+			spawnTime = getTimeConstraint(ctx.timeConstraint());
+		}
+		Droplet drop = new Droplet(dropletID, spawnTime);
+
+		List<Bio.LocationContext> locations = ctx.location();
+
+		for (Bio.LocationContext l : locations) {
+			Point lowerLeft = getPosition(l.position(0));
+			Point upperRight = getPosition(l.position(1));
+
+			Point refPoint = new Point(lowerLeft.fst, upperRight.snd);
+			Point size = new Point(upperRight.fst - lowerLeft.fst +1,
+								   upperRight.snd - lowerLeft.snd +1);
+
+			drop.addPosition(refPoint);
+			drop.addSize(size);
+
+		}
+
+		droplets.add(drop);
+
+	}
+
 	private Range getTimeRange(final TimeRangeContext ctx) {
 		Integer fst = Integer.parseInt(ctx.Integer(0).getText());
 		Integer snd = Integer.parseInt(ctx.Integer(1).getText());
@@ -484,14 +511,16 @@ class BioParserListener extends BioBaseListener {
 
 
 		pins.values().forEach(pin ->
-			pin.cells.forEach(pos -> chip.getFieldAt(pos).pin = pin)
+									  pin.cells.forEach(
+											  pos -> chip.getFieldAt(pos).pin =
+													  pin)
 		);
 		chip.pins.putAll(pins);
 		errors.addAll(Validator.checkMultiplePinAssignments(pins.values()));
 		chip.pinActuations.putAll(pinActuations);
 
 		cellActuations.forEach((pos, vec) ->
-			chip.getFieldAt(pos).actVec = vec
+									   chip.getFieldAt(pos).actVec = vec
 		);
 		chip.cellActuations.putAll(cellActuations);
 
@@ -508,10 +537,11 @@ class BioParserListener extends BioBaseListener {
 
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(m ->
-			m.positions.positions().forEach(pos -> {
-				logger.trace("Adding mixer {} to field {}", m, pos);
-				chip.getFieldAt(pos).mixers.add(m);
-			})
+							   m.positions.positions().forEach(pos -> {
+								   logger.trace("Adding mixer {} to field {}",
+												m, pos);
+								   chip.getFieldAt(pos).mixers.add(m);
+							   })
 		);
 
 		Set<FluidicConstraintViolation> badFields =
