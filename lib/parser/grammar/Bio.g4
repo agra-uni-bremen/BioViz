@@ -18,6 +18,8 @@ bio: (
     pinAssignments|
     fluids|
     droplets|
+    medaRoutes|
+    medaNets|
     Newlines
 )+;
 
@@ -47,6 +49,10 @@ gridblock: position position;
 routes : Routes Newlines (route Newlines)+ END;
 route: dropletID timeConstraint? position+;
 
+medaRoutes: MedaRoutes Newlines (medaRoute Newlines)+ END;
+medaRoute: dropletID timeConstraint? location+;
+
+
 // Definition of mixers
 mixers: Mixers Newlines (mixer Newlines)+ END;
 mixer: mixerID timeRange position position;
@@ -65,6 +71,11 @@ nets: Nets Newlines (net Newlines)+ END;
 net: source (Comma source)* Arrow target;
 source: dropletID position timeConstraint?;
 target: position timeConstraint?;
+
+medaNets: MedaNets Newlines (medaNet Newlines)+ END;
+medaNet: medaSource (Comme medaSource)* Arrow medaTarget;
+medaSource: dropletID location timeConstraint?;
+medaTarget: location timeConstraint?;
 
 // Definition of blockages
 blockages: Blockages Newlines (blockage Newlines)+ END;
@@ -98,6 +109,7 @@ fluidID: Integer;
 pinID: Integer;
 mixerID: Integer;
 position: LParen xpos Comma ypos RParen;
+location: LParen position Comma position RParen;
 xpos: Integer;
 ypos: Integer;
 timeConstraint: LBracket Integer RBracket;
