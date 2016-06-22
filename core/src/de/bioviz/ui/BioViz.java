@@ -174,7 +174,6 @@ public class BioViz implements ApplicationListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
 
-        //camera.apply(Gdx.gl20);
 
         // clear previous frame
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -186,19 +185,18 @@ public class BioViz implements ApplicationListener {
             drawable.draw();
         }
 
-        //DrawableLine.drawNow();
-
         messageCenter.render();
 
         batch.end();
 
-        // TODO what the heck is supposed to be doing??
+        /*
+        We limit the frame rate to targetFramerate here
+         */
         long waitUntil = currentTimestamp + (1000 / this.targetFramerate);
         try {
             Thread.sleep(Math.max(0, waitUntil - new Date().getTime()));
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.info("Sleep was interrupted");
         }
     }
 
