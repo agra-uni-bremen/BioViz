@@ -15,6 +15,9 @@ Dispensers: 'dispensers';
 Detectors: 'detectors';
 Mixers: 'mixers';
 
+MedaRoutes: 'meda routes';
+MedaNets: 'meda nets';
+
 CellActuations: 'cell actuations';
 PinActuations: 'pin actuations';
 
