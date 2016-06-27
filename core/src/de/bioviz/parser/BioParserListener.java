@@ -59,7 +59,7 @@ class BioParserListener extends BioBaseListener {
 	private HashMap<Integer, ActuationVector> pinActuations = new HashMap<>();
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
-	private ArrayList<Annotation> annotations = new ArrayList<>();
+	private ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
 
 
 	/**
@@ -132,14 +132,15 @@ class BioParserListener extends BioBaseListener {
 		}
 	}
 
-	private Annotation getAreaAnnotation(final Bio.AreaAnnotationContext ctx){
+	private AreaAnnotation getAreaAnnotation(final Bio.AreaAnnotationContext ctx){
 		Point pos1 = getPosition(ctx.position(0));
-		Point pos2 = getPosition(ctx.position(1));
-		if (pos2 == null){
-			pos2 = pos1;
+		Point pos2 = pos1;
+		if(ctx.position().size() > 1) {
+			pos2 = getPosition(ctx.position(1));
 		}
 		Rectangle rect = new Rectangle(pos1,pos2);
-		return new Annotation(rect, "");
+
+		return new AreaAnnotation(rect, ctx.AreaAnnotationText().getText());
 	}
 
 	@Override
@@ -382,7 +383,7 @@ class BioParserListener extends BioBaseListener {
 	@Override
 	public void enterAnnotations(@NotNull final Bio.AnnotationsContext ctx){
 		for(Bio.AreaAnnotationContext areaCtx : ctx.areaAnnotation()){
-			annotations.add(getAreaAnnotation(areaCtx));
+			areaAnnotations.add(getAreaAnnotation(areaCtx));
 		}
 	}
 
@@ -514,6 +515,14 @@ class BioParserListener extends BioBaseListener {
 			m.positions.positions().forEach(pos -> {
 				logger.trace("Adding mixer {} to field {}", m, pos);
 				chip.getFieldAt(pos).mixers.add(m);
+			});
+		});
+
+		chip.areaAnnotations.addAll(this.areaAnnotations);
+		areaAnnotations.forEach(a -> {
+			a.position.positions().forEach(pos -> {
+				logger.trace("Adding areaAnnotation {} to field {}", a, pos);
+				chip.getFieldAt(pos).areaAnnotations.add(a);
 			});
 		});
 

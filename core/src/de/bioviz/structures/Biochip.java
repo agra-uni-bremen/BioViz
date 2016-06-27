@@ -39,6 +39,7 @@ public class Biochip {
 	public final HashMap<Point, ActuationVector> cellActuations =
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<>();
+	public final ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
 	public ArrayList<String> errors = new ArrayList<>();
 	public boolean recalculateAdjacency = false;
 
