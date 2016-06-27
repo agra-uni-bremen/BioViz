@@ -569,6 +569,14 @@ public class Biochip {
 	}
 
 	/**
+	 * Get the annotations stored in the chip.
+	 * @return List of strings containing the annotations.
+	 */
+	public List<String> getAnnotations(){
+		return annotations;
+	}
+
+	/**
 	 * Computes the cell usage for every cell of this chip.
 	 */
 	public void computeCellUsage() {
