@@ -41,8 +41,8 @@ public class Biochip {
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<>();
 	/** Stores the areaAnnotations. */
-	public final ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
-	public ArrayList<String> errors = new ArrayList<>();
+	public final List<AreaAnnotation> areaAnnotations = new ArrayList<>();
+	public List<String> errors = new ArrayList<>();
 	public boolean recalculateAdjacency = false;
 
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();

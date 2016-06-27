@@ -783,12 +783,12 @@ class BioParserListener extends BioBaseListener {
 		);
 
 		chip.areaAnnotations.addAll(this.areaAnnotations);
-		areaAnnotations.forEach(a -> {
+		areaAnnotations.forEach(a ->
 			a.getPosition().positions().forEach(pos -> {
 				logger.trace("Adding areaAnnotation {} to field {}", a, pos);
 				chip.getFieldAt(pos).areaAnnotations.add(a);
-			});
-		});
+			})
+		);
 
 		Set<FluidicConstraintViolation> badFields =
 				chip.getAdjacentActivations();
