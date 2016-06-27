@@ -36,7 +36,6 @@ route: dropletID timeConstraint? position+;
 mixers: Mixers Newlines (mixer Newlines)+ END;
 mixer: mixerID timeRange position position;
 
-
 // Definition of actuation vectors
 //
 pinActuations: PinActuations Newlines (pinActuation Newlines+)+ END ;
