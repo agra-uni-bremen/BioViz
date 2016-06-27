@@ -24,6 +24,8 @@ import java.awt.Graphics;
 import java.util.List;
 
 /**
+ * This class implements an infoPanel that shows statistics about the biochip.
+ *
  * @author Maximilian Luenert
  */
 public class InfoPanel extends JPanel {
@@ -368,13 +370,11 @@ public class InfoPanel extends JPanel {
 	 */
 	private void updateDropToFluid() {
 		if (data != null) {
-			for (final DrawableDroplet droplet : currentCircuit.getDroplets
-					()) {
+			for (final DrawableDroplet droplet : currentCircuit.getDroplets()) {
 				final int dropletID = droplet.droplet.getID();
 				String fluidType = data.fluidType(data.fluidID(dropletID));
 				if (fluidType != null) {
-					dropToFluidModel.addRow(new Object[]{dropletID,
-														 fluidType});
+					dropToFluidModel.addRow(new Object[]{dropletID, fluidType});
 				}
 			}
 

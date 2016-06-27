@@ -149,8 +149,6 @@ public class DesktopLauncher extends JFrame {
 	 */
 	LwjglAWTInput input;
 
-	private InfoPanel infoPanel;
-
 	/**
 	 * The visualization instance. From the DesktopLauncher, this field is usd
 	 * to get access to any properties of the currently running visualization.
@@ -160,6 +158,10 @@ public class DesktopLauncher extends JFrame {
 	 */
 	BioViz currentViz;
 
+	/**
+	 * The infoPanel displaying the statistics.
+	 */
+	private InfoPanel infoPanel;
 
 	/**
 	 * This maps the tabs that are open in the visualizationTabs field to the
@@ -605,6 +607,9 @@ public class DesktopLauncher extends JFrame {
 	}
 
 
+	/**
+	 * Reloads the tab if a file is reloaded.
+	 */
 	private void reloadTab() {
 		int index = visualizationTabs.getSelectedIndex();
 		logger.info("Reloading Tab {}", index);
@@ -737,8 +742,8 @@ public class DesktopLauncher extends JFrame {
 	/**
 	 * Starts the BioViz GUI.
 	 *
-	 * @param args
-	 * 		CLI arguments to BioViz when starting the GUI.
+	 * @param file
+	 * 		the file to load on startup.
 	 */
 	static void startGUI(final File file) {
 		try {
@@ -1367,13 +1372,12 @@ public class DesktopLauncher extends JFrame {
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
-						currentViz.currentCircuit.getData().getMaxRouteLength
-								());
+						currentViz.currentCircuit.getData().getMaxRouteLength());
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + BioVizInfo.PROGNAME);
-				
+
 				logger.debug("Initializing infoPanel.");
 				d.infoPanel.refreshPanelData();
 			} else {
@@ -1401,7 +1405,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Empty constructor, does nothing.
 		 */
-		public SaveFileCallback() {
+		SaveFileCallback() {
 		}
 
 		/**
@@ -1425,8 +1429,7 @@ public class DesktopLauncher extends JFrame {
 										.getCurrentTime();
 								// this is problematic if the file contains
 								// .svg inside the name
-								int svgPosition = f.getAbsolutePath().indexOf
-										(".svg");
+								int svgPosition = f.getAbsolutePath().indexOf(".svg");
 								// initialize with absolute path
 								String pathWithoutSuffix = f.getAbsolutePath();
 								// check if suffix was found, if not the path
@@ -1460,8 +1463,8 @@ public class DesktopLauncher extends JFrame {
 					}
 				});
 			} catch (final Exception e) {
-				logger.error("Could not save file: " + e.getMessage() + "\n"
-							 + e.getStackTrace());
+				logger.error("Could not save file: " + e.getMessage() + "\n" +
+						e.getStackTrace());
 			}
 			allowHotkeys = true;
 		}
@@ -1478,7 +1481,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Constructor, does nothing.
 		 */
-		public MyDispatcher() {
+		MyDispatcher() {
 			// Does nothing
 		}
 
@@ -1513,8 +1516,7 @@ public class DesktopLauncher extends JFrame {
 				} else if (e.getID() == KeyEvent.KEY_TYPED) {
 					// That thing might not have been initiliazed yet
 					if (currentViz.getInputProcessor() != null) {
-						currentViz.getInputProcessor().keyTyped(e.getKeyChar
-								());
+						currentViz.getInputProcessor().keyTyped(e.getKeyChar());
 					}
 				}
 			}
@@ -1522,9 +1524,21 @@ public class DesktopLauncher extends JFrame {
 		}
 	}
 
+	/**
+	 * This class implements a custom JCheckBoxMenuItem.
+	 */
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
+		/**
+		 * A BDisplayOption to store the checkboxValues
+		 */
 		private BDisplayOptions option;
 
+		/**
+		 * Constructs a new BioCheckBoxMenuItem.
+		 *
+		 * @param label the label for the new item
+		 * @param option the connected BDisplayOptions item
+		 */
 		BioCheckboxMenuItem(final String label,
 								   final BDisplayOptions option) {
 			super(label);

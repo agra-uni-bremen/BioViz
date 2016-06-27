@@ -306,7 +306,7 @@ public class Biochip {
 	 * Adds a single annotation to the chip.
 	 * @param annotation the annotation
 	 */
-	public void addAnnotation(final String annotation){
+	public void addAnnotation(final String annotation) {
 		this.annotations.add(annotation);
 	}
 
@@ -351,9 +351,9 @@ public class Biochip {
 							should highlight the cell that in the upcoming
 							time step violates one of the constraints.
 							 */
-							addAdjacentPoint(p1,d1,p2,d2,result,timestep);
-							addAdjacentPoint(pp1,d1,p2,d2,result,timestep);
-							addAdjacentPoint(p1,d1,pp2,d2,result,timestep);
+							addAdjacentPoint(p1, d1, p2, d2, result, timestep);
+							addAdjacentPoint(pp1, d1, p2, d2, result, timestep);
+							addAdjacentPoint(p1, d1, pp2, d2, result, timestep);
 						}
 					}
 				}
@@ -572,7 +572,7 @@ public class Biochip {
 	 * Get the annotations stored in the chip.
 	 * @return List of strings containing the annotations.
 	 */
-	public List<String> getAnnotations(){
+	public List<String> getAnnotations() {
 		return annotations;
 	}
 
