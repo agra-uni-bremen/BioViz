@@ -49,6 +49,8 @@ public class Biochip {
 
 	private HashMap<Integer, String> fluidTypes = new HashMap<>();
 
+	private ArrayList<String> annotations = new ArrayList<>();
+
 
 	/**
 	 * Caching data that does not need to be recalculated with each frame.
@@ -303,6 +305,22 @@ public class Biochip {
 	}
 
 	/**
+	 * Adds a single annotation to the chip.
+	 * @param annotation the annotation
+	 */
+	public void addAnnotation(final String annotation) {
+		this.annotations.add(annotation);
+	}
+
+	/**
+	 * Adds multiple annotations to the chip.
+	 * @param annotations the annotations
+	 */
+	public void addAnnotations(final List<String> annotations){
+		this.annotations.addAll(annotations);
+	}
+
+	/**
 	 * Calculates all fields that are at some point activated with adjacently
 	 * placed droplets.
 	 *
@@ -550,6 +568,14 @@ public class Biochip {
 			}
 		}
 		return maxUsageCache;
+	}
+
+	/**
+	 * Get the annotations stored in the chip.
+	 * @return List of strings containing the annotations.
+	 */
+	public List<String> getAnnotations() {
+		return annotations;
 	}
 
 	/**

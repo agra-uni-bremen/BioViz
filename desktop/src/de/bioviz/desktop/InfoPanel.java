@@ -16,12 +16,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.List;
 
 /**
+ * This class implements an infoPanel that shows statistics about the biochip.
+ *
  * @author Maximilian Luenert
  */
 public class InfoPanel extends JPanel {
@@ -79,58 +83,99 @@ public class InfoPanel extends JPanel {
 		}
 	};
 
-	/** Label to show the number of droplets. */
+	/**
+	 * Label to show the number of droplets.
+	 */
 	private JLabel dropletCountValue = new JLabel();
-	/** Label to show the experiment duration. */
+	/**
+	 * Label to show the experiment duration.
+	 */
 	private JLabel experimentDurationValue = new JLabel();
-	/** Label to show the min usage. */
+	/**
+	 * Label to show the min usage.
+	 */
 	private JLabel minUsageValue = new JLabel();
-	/** Label to show the max usage. */
+	/**
+	 * Label to show the max usage.
+	 */
 	private JLabel maxUsageValue = new JLabel();
-	/** Label to show the average usage. */
+	/**
+	 * Label to show the average usage.
+	 */
 	private JLabel avgUsageValue = new JLabel();
-	/** Label to show the number of fields. */
+	/**
+	 * Label to show the number of fields.
+	 */
 	private JLabel fieldNumValue = new JLabel();
-	/** Label to show the number of nets. */
+	/**
+	 * Label to show the number of nets.
+	 */
 	private JLabel numNetValue = new JLabel();
-	/** Label to show the number of source. */
+	/**
+	 * Label to show the number of source.
+	 */
 	private JLabel numSourcesValue = new JLabel();
-	/** Label to show the number of targets. */
+	/**
+	 * Label to show the number of targets.
+	 */
 	private JLabel numTargetValue = new JLabel();
-	/** Label to show the number of sinks. */
+	/**
+	 * Label to show the number of sinks.
+	 */
 	private JLabel numSinksValue = new JLabel();
-	/** Label to show the number of dispensers. */
+	/**
+	 * Label to show the number of dispensers.
+	 */
 	private JLabel numDispensersValue = new JLabel();
-	/** Label to show the number of detectors. */
+	/**
+	 * Label to show the number of detectors.
+	 */
 	private JLabel numDetectorsValue = new JLabel();
 
-	/** FluidId to FluidType table. */
+	/**
+	 * FluidId to FluidType table.
+	 */
 	private JTable fluidIdToTypeTable = new JTable(fluidToTypeModel);
-	/** DropletId to FluidType table. */
+	/**
+	 * DropletId to FluidType table.
+	 */
 	private JTable dropToFluidTable = new JTable(dropToFluidModel);
 
-	/** The current BioViz instance. */
+	/**
+	 * The textArea for the annotations.
+	 */
+	private JTextArea annotationArea = new JTextArea(1, 1);
+
+	/**
+	 * The current BioViz instance.
+	 */
 	private BioViz bioViz;
 
-	/** The currentCircuit. */
+	/**
+	 * The currentCircuit.
+	 */
 	private DrawableCircuit currentCircuit;
 
-	/** The biochip data. */
+	/**
+	 * The biochip data.
+	 */
 	private Biochip data;
 
 
 	/**
 	 * Constructor.
-	 * @param bioViz the BioViz instance to use.
+	 *
+	 * @param bioViz
+	 * 		the BioViz instance to use.
 	 */
 	public InfoPanel(final BioViz bioViz) {
 		final int panelWidth = 200;
-		final int panelHeight = 600;
+		final int panelHeight = 800;
 		final int labelHeight = 20;
 		final int labelWidth = 120;
 		final int valueWidth = 70;
 		final int internalWidth = 190;
-		final int tableHeight = 100;
+		final int tableHeight = 90;
 		final int seperatorHeight = 5;
 
 		this.bioViz = bioViz;
@@ -148,21 +193,23 @@ public class InfoPanel extends JPanel {
 		// create scroll pane for tables
 		JScrollPane fluidIdScrollPane = new JScrollPane(fluidIdToTypeTable);
 		fluidIdScrollPane.setPreferredSize(new Dimension(internalWidth,
-				tableHeight));
+														 tableHeight));
 		JScrollPane dropToFluidScrollPane = new JScrollPane(dropToFluidTable);
 		dropToFluidScrollPane.setPreferredSize(new Dimension(internalWidth,
-				tableHeight));
+															 tableHeight));
 
 		// create all labels and set their preferred size
 		JLabel dropCountLabel = new JLabel("# Droplets: ");
-		dropCountLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
-		dropletCountValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+		dropCountLabel.setPreferredSize(new Dimension(labelWidth,
+													  labelHeight));
+		dropletCountValue.setPreferredSize(
+				new Dimension(valueWidth, labelHeight));
 
 		JLabel experimentDurationLabel = new JLabel("Timesteps: ");
 		experimentDurationLabel.setPreferredSize(
-				new Dimension(labelWidth,	labelHeight));
+				new Dimension(labelWidth, labelHeight));
 		experimentDurationValue.setPreferredSize(
-				new Dimension(valueWidth,	labelHeight));
+				new Dimension(valueWidth, labelHeight));
 
 		JLabel minUsageLabel = new JLabel("Min usage: ");
 		minUsageLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
@@ -185,27 +232,44 @@ public class InfoPanel extends JPanel {
 		numNetValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
 		JLabel numSourcesLabel = new JLabel("# Sources: ");
-		numSourcesLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
-		numSourcesValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+		numSourcesLabel.setPreferredSize(
+				new Dimension(labelWidth, labelHeight));
+		numSourcesValue.setPreferredSize(
+				new Dimension(valueWidth, labelHeight));
 
 		JLabel numTargetLabel = new JLabel("# Targets: ");
-		numTargetLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
-		numTargetValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+		numTargetLabel.setPreferredSize(new Dimension(labelWidth,
+													  labelHeight));
+		numTargetValue.setPreferredSize(new Dimension(valueWidth,
+													  labelHeight));
 
 		JLabel numSinksLabel = new JLabel("# Sinks: ");
 		numSinksLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
 		numSinksValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
 		JLabel numDispensersLabel = new JLabel("# Dispensers: ");
-		numDispensersLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
-		numDispensersValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+		numDispensersLabel.setPreferredSize(
+				new Dimension(labelWidth, labelHeight));
+		numDispensersValue.setPreferredSize(
+				new Dimension(valueWidth, labelHeight));
 
 		JLabel numDetectorsLabel = new JLabel("# Detectors: ");
-		numDetectorsLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
-		numDetectorsValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+		numDetectorsLabel.setPreferredSize(
+				new Dimension(labelWidth, labelHeight));
+		numDetectorsValue.setPreferredSize(
+				new Dimension(valueWidth, labelHeight));
+
+		JLabel annotationsLabel = new JLabel("Annotations: ");
+		annotationsLabel.setPreferredSize(
+				new Dimension(labelWidth, labelHeight));
+		JScrollPane annotationsPane = new JScrollPane(annotationArea);
+		annotationArea.setEditable(false);
+		annotationsPane.setPreferredSize(
+				new Dimension(internalWidth, tableHeight));
 
 		JSeparator infoSep = new JSeparator(SwingConstants.HORIZONTAL);
-		infoSep.setPreferredSize(new Dimension(internalWidth, seperatorHeight));
+		infoSep.setPreferredSize(new Dimension(internalWidth,
+											   seperatorHeight));
 
 		JLabel infoLabel = new JLabel("Statistics");
 
@@ -238,6 +302,8 @@ public class InfoPanel extends JPanel {
 		panel.add(numDetectorsValue);
 		panel.add(fluidIdScrollPane);
 		panel.add(dropToFluidScrollPane);
+		panel.add(annotationsLabel);
+		panel.add(annotationsPane);
 		this.add(panel);
 	}
 
@@ -255,22 +321,23 @@ public class InfoPanel extends JPanel {
 
 		fluidToTypeModel.setRowCount(0);
 		dropToFluidModel.setRowCount(0);
-			if (currentCircuit != null && data != null) {
-				updateMaxT();
-				updateDropletCount();
-				updateUsage();
-				updateFieldCount();
-				updateNets();
-				updateFieldTypes();
-				updateFluidTable();
-				updateDropToFluid();
-			}
+		if (currentCircuit != null && data != null) {
+			updateMaxT();
+			updateDropletCount();
+			updateUsage();
+			updateFieldCount();
+			updateNets();
+			updateFieldTypes();
+			updateFluidTable();
+			updateDropToFluid();
+			updateAnnotations();
+		}
 	}
 
 
 	/**
 	 * Repaints the tables in case of a repaint event.
-	 *
+	 * <p>
 	 * Otherwise there is no content in the tables.
 	 */
 	public void repaint() {
@@ -305,9 +372,12 @@ public class InfoPanel extends JPanel {
 		if (data != null) {
 			for (final DrawableDroplet droplet : currentCircuit.getDroplets()) {
 				final int dropletID = droplet.droplet.getID();
-				String fluidName = data.fluidType(data.fluidID(dropletID));
-				dropToFluidModel.addRow(new Object[]{dropletID, fluidName});
+				String fluidType = data.fluidType(data.fluidID(dropletID));
+				if (fluidType != null) {
+					dropToFluidModel.addRow(new Object[]{dropletID, fluidType});
+				}
 			}
+
 		}
 	}
 
@@ -316,11 +386,14 @@ public class InfoPanel extends JPanel {
 	 */
 	public void updateFluidTable() {
 		if (data != null) {
-			for (final DrawableDroplet droplet : bioViz.currentCircuit.getDroplets()) {
+			for (final DrawableDroplet droplet : bioViz.currentCircuit
+					.getDroplets()) {
 				final int dropletID = droplet.droplet.getID();
 				final Integer fluidID = data.fluidID(dropletID);
 				final String fluidName = data.fluidType(fluidID);
-				fluidToTypeModel.addRow(new Object[]{fluidID, fluidName});
+				if (fluidID != null && fluidName != null) {
+					fluidToTypeModel.addRow(new Object[]{fluidID, fluidName});
+				}
 			}
 		}
 	}
@@ -405,6 +478,17 @@ public class InfoPanel extends JPanel {
 			numDispensersValue.setText(String.valueOf(numDispenser));
 			numSinksValue.setText(String.valueOf(numSinks));
 			numDetectorsValue.setText(String.valueOf(numDetectors));
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void updateAnnotations() {
+		List<String> annotations = currentCircuit.getData().getAnnotations();
+		//annotationArea.setRows(annotations.size()-1);
+		for (final String annotation : annotations) {
+			annotationArea.append(annotation.substring(2));
 		}
 	}
 

@@ -77,8 +77,6 @@ public final class BioParser {
 			parser.addErrorListener(errorListener);
 			ParseTree tree = parser.bio(); // parse everything
 
-			parseAnnotations(input);
-
 			if (errorListener.hasErrors()) {
 				for (final String msg : errorListener.getErrors()) {
 					logger.error(msg);
@@ -89,7 +87,11 @@ public final class BioParser {
 				// Walk the tree created during the parse, trigger callbacks
 				BioParserListener listener = new BioParserListener();
 				walker.walk(listener, tree);
-				return listener.getBiochip();
+				Biochip biochip = listener.getBiochip();
+				List<String> annotations =
+						parseChannel(input, BioLexerGrammar.ANNOTATION);
+				biochip.addAnnotations(annotations);
+				return biochip;
 			}
 		} catch (final Exception e) {
 			logger.error("Failed to parse file");
@@ -103,27 +105,27 @@ public final class BioParser {
 	 * @param input an ANTLRInputStream
 	 * @return A List of Strings containing the annotations.
 	 */
-	private static List<String> parseAnnotations(final ANTLRInputStream input) {
+	private static List<String> parseChannel(final ANTLRInputStream input,
+																					 final int channel){
 		BioLexerGrammar lexer = new BioLexerGrammar(input);
 		// @keszocze this one is needed. I don't know why.
 		lexer.reset();
-		CommonTokenStream annotationStream = new CommonTokenStream(lexer,
-				BioLexerGrammar.ANNOTATIONS);
-		List<String> annoTokens = new ArrayList<>();
+		CommonTokenStream cts = new CommonTokenStream(lexer);
+		List<String> channelTokens = new ArrayList<>();
 
 		// this one gets everything that is in the stream.
-		annotationStream.getText();
+		cts.getText();
 		// now we can use size() to run over the tokens
-		for (int i = 0; i < annotationStream.size(); i++) {
-			Token token = annotationStream.get(i);
+		for (int i = 0; i < cts.size(); i++){
+			Token token = cts.get(i);
 			// and check here if the token is on the right channel
-			if (token.getChannel() == BioLexerGrammar.ANNOTATIONS) {
-				logger.debug("Reading: " + token.getText());
-				annoTokens.add(token.getText());
+			if(token.getChannel() == channel) {
+				logger.trace("Parsing Comment: " + token.getText());
+				channelTokens.add(token.getText());
 			}
 		}
 
-		return annoTokens;
+		return channelTokens;
 	}
 
 }

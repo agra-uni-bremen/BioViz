@@ -1,8 +1,8 @@
 lexer grammar BioLexerGrammar;
 
-
 @lexer::members {
-    public final static int ANNOTATIONS = 1;
+    public static final int COMMENT = 1;
+    public static final int ANNOTATION = 2;
 }
 
 Sinks: 'sinks';
@@ -28,7 +28,8 @@ END: 'end';
 
 Integer: [0-9]+ ;
 Identifier: [a-zA-Z]+ ;
-Comment: '#' .*? Newlines -> channel(ANNOTATIONS);
+Annotation: '#!' .*? Newlines -> channel(ANNOTATION);
+Comment: '#' .*? Newlines -> channel(COMMENT);
 
 Newlines: NEWLINE+;
 NEWLINE: '\r'? '\n' ;
