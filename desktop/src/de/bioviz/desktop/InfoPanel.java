@@ -214,7 +214,7 @@ public class InfoPanel extends JPanel {
 		JLabel annotationsLabel = new JLabel("Annotations: ");
 		annotationsLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
 		JScrollPane annotationsPane = new JScrollPane(annotationArea);
-		//annotationArea.
+		annotationArea.setEditable(false);
 		annotationsPane.setPreferredSize(new Dimension(internalWidth, tableHeight));
 
 		JSeparator infoSep = new JSeparator(SwingConstants.HORIZONTAL);
