@@ -91,7 +91,10 @@ class BioVizInputProcessor implements InputProcessor {
 			parentViz.callCloseFileListeners();
 		} else if (keycode == Keys.O && ctrl) {
 			parentViz.callLoadFileListeners();
-		} else if (keycode == Keys.S) {
+		} else if (keycode == Keys.R && ctrl) {
+ 				parentViz.callReloadFileListeners();
+		}
+		else if (keycode == Keys.S) {
 			if (ctrl) {
 				parentViz.callSaveFileListeners();
 			} else {

@@ -4,6 +4,7 @@ package de.bioviz.structures;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
 import java.util.List;
@@ -103,7 +104,7 @@ public class Biochip {
 	 * @param types
 	 * 		the types to add.
 	 */
-	public void addFluidTypes(final HashMap<Integer, String> types) {
+	public void addFluidTypes(final Map<Integer, String> types) {
 		fluidTypes.putAll(types);
 	}
 
@@ -287,6 +288,18 @@ public class Biochip {
 		}
 	}
 
+
+	void addAdjacentPoint(final Point p1, final Droplet d1, final Point p2,
+						  final Droplet d2, final Set s, final int timestep) {
+		if (Point.adjacent(p1, p2)) {
+			logger.trace("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 +
+						 ") are adjacent in time step " + timestep);
+			BiochipField f1 = field.get(p1);
+			BiochipField f2 = field.get(p2);
+			s.add(new FluidicConstraintViolation(d1, f1, d2, f2, timestep));
+		}
+	}
+
 	/**
 	 * Calculates all fields that are at some point activated with adjacently
 	 * placed droplets.
@@ -320,51 +333,12 @@ public class Biochip {
 							should highlight the cell that in the upcoming
 							time step violates one of the constraints.
 							 */
-							if (Point.adjacent(p1, p2)) {
-								logger.trace(
-										"Points " + p1 + "(" + d1 + ") and " +
-										p2 + "(" + d2 +
-										") are adjacent in time step " +
-										timestep);
-								BiochipField f1 = field.get(p1);
-								BiochipField f2 = field.get(p2);
-								result.add(
-										new FluidicConstraintViolation(d1, f1,
-																	   d2, f2,
-																	   timestep));
-
-							}
-							if (Point.adjacent(pp1, p2)) {
-								logger.trace(
-										"Points " + pp1 + "(" + d1 + ") and " +
-										p2 + "(" + d2 +
-										") are adjacent in time step " +
-										(timestep + 1) + "/" + timestep);
-								BiochipField f1 = field.get(pp1);
-								BiochipField f2 = field.get(p2);
-								result.add(
-										new FluidicConstraintViolation(d1, f1,
-																	   d2, f2,
-																	   timestep));
-							}
-							if (Point.adjacent(p1, pp2)) {
-								logger.trace(
-										"Points " + p1 + "(" + d1 + ") and " +
-										pp2 + "(" + d2 +
-										") are adjacent in time step " +
-										timestep + "/" + (timestep + 1));
-
-								BiochipField f1 = field.get(p1);
-								BiochipField f2 = field.get(pp2);
-								result.add(
-										new FluidicConstraintViolation(d1, f1,
-																	   d2, f2,
-																	   timestep));
-							}
+							addAdjacentPoint(p1,d1,p2,d2,result,timestep);
+							addAdjacentPoint(pp1,d1,p2,d2,result,timestep);
+							addAdjacentPoint(p1,d1,pp2,d2,result,timestep);
 						}
 					}
 				}
-				logger.trace("Advanced to timestep {}", timestep);
 			}
 
 			adjacencyCache = result;
@@ -497,19 +471,21 @@ public class Biochip {
 	 */
 	// TODO why the heck do we provide the coordinates twice? --> check the
 	// parsing procedure.
-	public void addField(Point coordinates, final BiochipField biochipField) {
-		if (biochipField.x() != coordinates.fst ||
-			biochipField.y() != coordinates.snd) {
+	public void addField(final Point coordinates, final BiochipField
+			biochipField) {
+		Point coords = coordinates;
+		if (biochipField.x() != coords.fst ||
+			biochipField.y() != coords.snd) {
 			logger.error(
 					"Field coordinates differ from those transmitted to the " +
 					"chip for this instance");
-			coordinates = new Point(biochipField.x(), biochipField.y());
+			coords = new Point(biochipField.x(), biochipField.y());
 		}
-		if (this.field.containsKey(coordinates)) {
-			logger.trace("Field added twice at " + coordinates +
+		if (this.field.containsKey(coords)) {
+			logger.trace("Field added twice at " + coords +
 						 ", removed older instance");
 		}
-		this.field.put(coordinates, biochipField);
+		this.field.put(coords, biochipField);
 	}
 
 

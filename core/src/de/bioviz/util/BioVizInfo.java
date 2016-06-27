@@ -13,6 +13,12 @@ public final class BioVizInfo {
      */
     public static final String VERSION = "0.8";
 
+
+    /**
+     * The name that is displayed as the program name in the OS's UI.
+     */
+    public static final String PROGNAME = "BioViz";
+
     /**
      * Vector containing all authors of BioViz.
      *
@@ -21,6 +27,7 @@ public final class BioVizInfo {
     private static final String[] AUTHORS = {
             "Oliver Keszocze", "Jannis Stoppe", "Maximilian Luenert",
     };
+
 
 
     /**

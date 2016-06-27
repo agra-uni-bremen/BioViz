@@ -79,3 +79,6 @@ core/assets/examples/date16/
 core/assets/examples/tmp.bio
 tst
 .sonar/
+
+## Profiling data
+*.hprof

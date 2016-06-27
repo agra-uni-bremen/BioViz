@@ -11,7 +11,7 @@ public class Message extends MessageBase {
 	/**
 	 * The time the message will be displayed in milliseconds.
 	 */
-	public long displayTime = 5000;
+	private long displayTime = 5000;
 
 	/**
 	 * The time when the message was created.
@@ -19,7 +19,7 @@ public class Message extends MessageBase {
 	 * The variable will be used to check whether the message is still to be
 	 * displayed.
 	 */
-	public long createdOn;
+	private long createdOn;
 
 	/**
 	 * Creates a message that will be displayed on the top of the screen.
@@ -28,7 +28,7 @@ public class Message extends MessageBase {
 	 * @param msg
 	 * 		The message that will be displayed.
 	 */
-	public Message(final String msg) {
+	Message(final String msg) {
 		super(msg);
 		this.createdOn = System.currentTimeMillis();
 	}
@@ -38,7 +38,7 @@ public class Message extends MessageBase {
 	 *
 	 * @return true if the messages has expired, false otherwise
 	 */
-	public boolean expired() {
+	boolean expired() {
 		long currentTime = System.currentTimeMillis();
 
 		return createdOn + displayTime <= currentTime;

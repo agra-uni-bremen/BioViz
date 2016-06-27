@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
  *
  * @author Oliver Keszocze
  */
-public final class Validator {
+final class Validator {
 	/**
 	 * Logger used for debugging purposes.
 	 */
-	static final Logger logger = LoggerFactory.getLogger(Validator.class);
+	private static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
 
 	/**
@@ -250,9 +250,9 @@ public final class Validator {
 	 * 		detectors
 	 * @return List of errors
 	 */
-	public static ArrayList<String>
+	static List<String>
 	checkForDetectorPositions(final Biochip chip,
-							  final ArrayList<Detector> detectors,
+							  final List<Detector> detectors,
 							  final boolean removeWrongDetectors) {
 		ArrayList<String> errors = new ArrayList<>();
 
@@ -291,7 +291,7 @@ public final class Validator {
 	 * 		Position and direction of the dispenser
 	 * @return Error message
 	 */
-	public static String checkOutsidePosition(
+	private static String checkOutsidePosition(
 			final Biochip chip,
 			final String type,
 			final Pair<Point, Direction> dir) {
@@ -342,7 +342,7 @@ public final class Validator {
 	 * 		If true, erroneous sinkgs will be removed
 	 * @return List of errors
 	 */
-	public static ArrayList<String> checkSinkPositions(
+	static ArrayList<String> checkSinkPositions(
 			final Biochip chip,
 			final ArrayList<Pair<Point, Direction>> sinks,
 			final boolean removeWrongDirs) {
@@ -381,7 +381,7 @@ public final class Validator {
 	 * 		If true, erroneous sinkgs will be removed
 	 * @return List of errors
 	 */
-	public static ArrayList<String> checkDispenserPositions(
+	static ArrayList<String> checkDispenserPositions(
 			final Biochip chip,
 			final ArrayList<Pair<Integer, Pair<Point, Direction>>> disps,
 			final boolean removeWrongDirs) {
@@ -473,7 +473,7 @@ public final class Validator {
 	 * 		Whether strong matching should be performed
 	 * @return List of errors
 	 */
-	public static ArrayList<String> checkCellPinActuationCompatibility(
+	static ArrayList<String> checkCellPinActuationCompatibility(
 			final Biochip chip,
 			final HashMap<Point, ActuationVector> cellActuations,
 			final HashMap<Integer, ActuationVector> pinActuations,

@@ -1,5 +1,6 @@
-package de.bioviz.structures;
+package de.bioviz.ui;
 
+import de.bioviz.structures.Sink;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.DrawableCircuit;
 import de.bioviz.ui.DrawableField;
