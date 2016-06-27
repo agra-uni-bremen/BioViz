@@ -395,7 +395,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		if (getOption(BDisplayOptions.HighlightAnnotatedFields) &&
-				this.field.areaAnnotations.size() > 0){
+				this.field.areaAnnotations.size() > 0) {
 			result = new de.bioviz.ui.Color(Color.VIOLET);
 		}
 
@@ -423,8 +423,8 @@ public class DrawableField extends DrawableSprite {
 		super.draw();
 
 		// show the first annotation for this field
-		if (isHovered() && field.areaAnnotations.size() > 0){
-			displayText(field.areaAnnotations.get(0).annotation);
+		if (isHovered() && field.areaAnnotations.size() > 0) {
+			displayText(field.areaAnnotations.get(0).getAnnotation());
 		}
 
 		if (getOption(LongNetIndicatorsOnFields)) {

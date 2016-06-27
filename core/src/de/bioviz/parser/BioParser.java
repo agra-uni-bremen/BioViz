@@ -103,7 +103,7 @@ public final class BioParser {
 	 * @param input an ANTLRInputStream
 	 * @return A List of Strings containing the annotations.
 	 */
-	private static List<String> parseAnnotations(final ANTLRInputStream input){
+	private static List<String> parseAnnotations(final ANTLRInputStream input) {
 		BioLexerGrammar lexer = new BioLexerGrammar(input);
 		// @keszocze this one is needed. I don't know why.
 		lexer.reset();
@@ -114,10 +114,10 @@ public final class BioParser {
 		// this one gets everything that is in the stream.
 		annotationStream.getText();
 		// now we can use size() to run over the tokens
-		for (int i = 0; i < annotationStream.size(); i++){
+		for (int i = 0; i < annotationStream.size(); i++) {
 			Token token = annotationStream.get(i);
 			// and check here if the token is on the right channel
-			if(token.getChannel() == BioLexerGrammar.ANNOTATIONS) {
+			if (token.getChannel() == BioLexerGrammar.ANNOTATIONS) {
 				logger.debug("Reading: " + token.getText());
 				annoTokens.add(token.getText());
 			}

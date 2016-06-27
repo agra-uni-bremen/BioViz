@@ -40,6 +40,7 @@ public class Biochip {
 	public final HashMap<Point, ActuationVector> cellActuations =
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<>();
+	/** Stores the areaAnnotations. */
 	public final ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
 	public ArrayList<String> errors = new ArrayList<>();
 	public boolean recalculateAdjacency = false;
@@ -334,9 +335,9 @@ public class Biochip {
 							should highlight the cell that in the upcoming
 							time step violates one of the constraints.
 							 */
-							addAdjacentPoint(p1,d1,p2,d2,result,timestep);
-							addAdjacentPoint(pp1,d1,p2,d2,result,timestep);
-							addAdjacentPoint(p1,d1,pp2,d2,result,timestep);
+							addAdjacentPoint(p1, d1, p2, d2, result, timestep);
+							addAdjacentPoint(pp1, d1, p2, d2, result, timestep);
+							addAdjacentPoint(p1, d1, pp2, d2, result, timestep);
 						}
 					}
 				}
