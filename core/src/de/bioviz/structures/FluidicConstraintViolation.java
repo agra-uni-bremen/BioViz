@@ -112,10 +112,6 @@ public class FluidicConstraintViolation {
 		boolean switched2 = f2.equals(other.f1) && d2.equals(other.d1);
 		boolean switched = switched1 && switched2;
 
-		System.out.println("direct1: " + direct1 + " direct2 " + direct2);
-		System.out.println(
-				"switched1: " + switched1 + " switched " + switched2);
-
 		return (timestep == other.timestep) && (direct || switched);
 
 	}

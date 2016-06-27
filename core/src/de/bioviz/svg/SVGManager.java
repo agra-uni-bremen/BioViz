@@ -21,12 +21,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author Maximilian Luenert, Oliver Keszocze
- * Texture cache class.
- * <p>
- * This class manages texture themes. One can specify a folder in which the png
- * files that are loaded as textures are stored. These images are thenn either
- * loaded on demand or returned from the cache.
+ * @author Maximilian Luenert, Oliver Keszocze Texture cache class.
+ *         <p>
+ *         This class manages texture themes. One can specify a folder in which
+ *         the png files that are loaded as textures are stored. These images
+ *         are thenn either loaded on demand or returned from the cache.
  */
 public class SVGManager {
 
@@ -42,23 +41,6 @@ public class SVGManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(
 			SVGManager.class);
 
-	/**
-	 * svgCoreCreator.
-	 */
-	private SVGCoreCreator svgCoreCreator;
-
-	/** hashMap for uncolored svg elements. */
-	private HashMap<String, String> svgs = new HashMap<>();
-
-	/**
-	 * folder in which the svgs are.
-	 */
-	private String svgFolder;
-
-	/**
-	 * folder in which all images are.
-	 */
-	private final String baseFolder = "images";
 
 	/*
 	Warning: magic numbers ahead
@@ -66,35 +48,47 @@ public class SVGManager {
 	/**
 	 * scaleFactor.
 	 */
-	private final double scaleFactor = 1;
+	private static final double scaleFactor = 1;
 	/**
 	 * size of one block in pixels.
 	 */
-	private final int coordinateMultiplier = 256;
+	private static final int coordinateMultiplier = 256;
 
 	// font options
 	/**
 	 * the font for the exported texts.
 	 */
-	private final String font = "Helvetica";
+	private static final String font = "Helvetica";
 	/**
 	 * the font size for text.
 	 */
-	private final int fontSize = 90;
+	private static final int fontSize = 90;
 	/**
 	 * the font size for the info string.
 	 */
-	private final int fontSizeInfoString = 100;
+	private static final int fontSizeInfoString = 100;
 
 	/**
 	 * font color.
 	 */
-	private final String fontColor = SVGUtils.colorToSVG(Color.WHITE);
+	private static final String fontColor = SVGUtils.colorToSVG(Color.WHITE);
 	/**
 	 * font color for the info String.
 	 */
-	private final String fontColorInfoString = SVGUtils.colorToSVG(Color
-																				 .BLACK);
+	private static final String fontColorInfoString =
+			SVGUtils.colorToSVG(Color.BLACK);
+
+
+	/**
+	 * svgCoreCreator.
+	 */
+	private SVGCoreCreator svgCoreCreator;
+
+	/**
+	 * hashMap for uncolored svg elements.
+	 */
+	private HashMap<String, String> svgs = new HashMap<>();
+
 
 	/**
 	 * min coordinate for the exported svg.
@@ -196,7 +190,8 @@ public class SVGManager {
 		for (final TextureE s : TextureE.values()) {
 
 			if (s != TextureE.BlackPixel) {
-				svgs.put(s.toString(), svgCoreCreator.getSVGCode(s, null, null));
+				svgs.put(s.toString(), svgCoreCreator.getSVGCode(s, null,
+																 null));
 			}
 
 		}
@@ -365,14 +360,16 @@ public class SVGManager {
 			fieldCol.sub(Colors.HOVER_DIFF_COLOR);
 		}
 
-		String fieldID = SVGUtils.generateColoredID(vals.getTexture().toString(),
+		String fieldID =
+				SVGUtils.generateColoredID(vals.getTexture().toString(),
 										   fieldCol);
 		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
 						  getScaleTransformation() + " xlink:href=\"#" +
 						  fieldID +
 						  "\" />\n";
 
-		if (circuit.getDisplayOptions().getOption(BDisplayOptions.NetColorOnFields)) {
+		if (circuit.getDisplayOptions().getOption(
+				BDisplayOptions.NetColorOnFields)) {
 			fieldSvg += createGradient(field);
 		}
 
@@ -419,7 +416,7 @@ public class SVGManager {
 		DrawableDroplet droplet = drawableRoute.droplet;
 
 		int currentTime = droplet.droplet.getSpawnTime();
-		//int currentTime = droplet.parentCircuit.currentTime;
+
 		int displayAt;
 
 		int displayLength = DrawableRoute.routeDisplayLength;
@@ -473,24 +470,25 @@ public class SVGManager {
 
 				if (x1 < x2 && y1 == y2) {
 					//intentionally do nothing here
-				}	else if (y1 == y2 && x2 < x1) {
+				} else if (y1 == y2 && x2 < x1) {
 					transFormParams +=
 							" rotate(180 " + targetX + " " +
 							(targetY + 0.5f * coordinateMultiplier) + ") ";
-				}	else if (x1 == x2 && y2 > y1) {
+				} else if (x1 == x2 && y2 > y1) {
 					transFormParams +=
 							" rotate(90 " + targetX + " " +
 							(targetY + 0.5f * coordinateMultiplier) + ") ";
-				}	else if (x1 == x2 && y2 < y1) {
+				} else if (x1 == x2 && y2 < y1) {
 					transFormParams +=
 							"rotate(270 " + targetX + " " +
 							(targetY + 0.5f * coordinateMultiplier) + ") ";
-				}	else {
+				} else {
 					app = false;
 				}
 				if (app) {
 					String routeID =
-							SVGUtils.generateColoredID("StepMarker", routeColor);
+							SVGUtils.generateColoredID("StepMarker",
+													   routeColor);
 
 					sb.append("<use");
 					sb.append(position);
@@ -509,10 +507,12 @@ public class SVGManager {
 	/**
 	 * Creates svg arrows from all net sources to their net targets.
 	 *
-	 * @param drawableDrop the droplet
+	 * @param drawableDrop
+	 * 		the droplet
 	 * @return svg string containing all start end arrows
 	 */
-	private String createSourceTargetArrow(final DrawableDroplet drawableDrop) {
+	private String createSourceTargetArrow(final DrawableDroplet
+												   drawableDrop) {
 
 		Net net = drawableDrop.droplet.getNet();
 		String arrow = "";
@@ -550,15 +550,17 @@ public class SVGManager {
 			Color dropColor = drawableDrop.getColor();
 
 			if (startPoint != null && dropletPos != null &&
-					!startPoint.equals(dropletPos)) {
-				Color arrowColor = SVGUtils.getLighterLongNetIndicatorColor(dropColor);
+				!startPoint.equals(dropletPos)) {
+				Color arrowColor =
+						SVGUtils.getLighterLongNetIndicatorColor(dropColor);
 
 				arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
 			}
 
 			if (dropletPos != null && endPoint != null &&
-					!dropletPos.equals(endPoint)) {
-				Color arrowColor = SVGUtils.getDarkerLongNetIndicatorColor(dropColor);
+				!dropletPos.equals(endPoint)) {
+				Color arrowColor =
+						SVGUtils.getDarkerLongNetIndicatorColor(dropColor);
 				arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
 			}
 		}
@@ -632,11 +634,15 @@ public class SVGManager {
 			Point fieldPos = getFieldPosInSVGCoords(field);
 			if (dir != null) {
 				gradientSvg += "<rect x=\"" + (fieldPos.fst + 24) + "\" " +
-						"y=\"" + (fieldPos.snd + 24) + "\" rx=\"24\" ry=\"24\" " +
-						"height=\"208\" width=\"208\" fill=\"url(#" + SVGUtils
-						.generateColoredID("Gradient-" + dir.toString(),
-								SVGUtils.getNetColor(n)) + ")\" " +
-						"/>\n";
+							   "y=\"" + (fieldPos.snd + 24) +
+							   "\" rx=\"24\" ry=\"24\" " +
+							   "height=\"208\" width=\"208\" fill=\"url(#" +
+							   SVGUtils
+									   .generateColoredID(
+											   "Gradient-" + dir.toString(),
+											   SVGUtils.getNetColor(n)) +
+							   ")\" " +
+							   "/>\n";
 			}
 		}
 		return gradientSvg;
@@ -688,8 +694,9 @@ public class SVGManager {
 								  final Color color) {
 
 		Point start = SVGUtils.toSVGCoords(startPoint, circuit,
-				coordinateMultiplier);
-		Point end = SVGUtils.toSVGCoords(endPoint, circuit, coordinateMultiplier);
+										   coordinateMultiplier);
+		Point end = SVGUtils.toSVGCoords(endPoint, circuit,
+										 coordinateMultiplier);
 		int x1 = start.fst;
 		int y1 = start.snd;
 
@@ -704,7 +711,7 @@ public class SVGManager {
 		y2 += coordinateMultiplier / 2;
 
 		double length =
-				Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+				Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 		double angle = Math.asin((double) (y2 - y1) / length);
 
 		// move endPoint a bit back on the arrow so the arrowHead won't reach
@@ -714,16 +721,17 @@ public class SVGManager {
 
 		if (x2 > x1) {
 			x2 -= xDiff;
-		}	else if (x2 < x1) {
+		} else if (x2 < x1) {
 			x2 += xDiff;
 		}
 		y2 -= yDiff;
 
-		final String line = "<line x1=\"" + x1 +	"\" y1=\"" + y1 +
-					"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-					"\" stroke=\"#" +	SVGUtils.colorToSVG(color) +
-					"\" stroke-width=\"10\" marker-end=\"url(#" +
-					SVGUtils.generateColoredID("ArrowHead", color) + ")\" />\n";
+		final String line = "<line x1=\"" + x1 + "\" y1=\"" + y1 +
+							"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
+							"\" stroke=\"#" + SVGUtils.colorToSVG(color) +
+							"\" stroke-width=\"10\" marker-end=\"url(#" +
+							SVGUtils.generateColoredID("ArrowHead", color) +
+							")\" />\n";
 
 		return line;
 	}
@@ -809,7 +817,7 @@ public class SVGManager {
 
 		// create the svg def for the arrowhead for the source target arrows
 		if (circuit.getDisplayOptions().getOption(BDisplayOptions
-				.LongNetIndicatorsOnFields)) {
+														  .LongNetIndicatorsOnFields)) {
 			// this is needed for source target arrows
 			svgCoreCreator.appendSourceTargetArrowHead(svgs);
 		}
@@ -834,8 +842,8 @@ public class SVGManager {
 
 			// Add every needed color for the arrowheads
 			if (circuit.getDisplayOptions().getOption(BDisplayOptions
-					.LongNetIndicatorsOnDroplets)) {
-					svgCoreCreator.appendArrowheads(svgs, d.getColor());
+															  .LongNetIndicatorsOnDroplets)) {
+				svgCoreCreator.appendArrowheads(svgs, d.getColor());
 
 			}
 
@@ -856,7 +864,7 @@ public class SVGManager {
 	 */
 	private Point getFieldPosInSVGCoords(final DrawableField drawableField) {
 		return SVGUtils.toSVGCoords(drawableField.getField().pos,
-				circuit, coordinateMultiplier);
+									circuit, coordinateMultiplier);
 	}
 
 	/**
@@ -866,8 +874,11 @@ public class SVGManager {
 	 * 		the droplet
 	 * @return A Point with the position
 	 */
-	private Point getDropletPosInSVGCoords(final DrawableDroplet drawableDrop) {
-		return SVGUtils.toSVGCoords(drawableDrop.droplet.getSafePositionAt(circuit
-				.getCurrentTime()), circuit, coordinateMultiplier);
+	private Point getDropletPosInSVGCoords(final DrawableDroplet
+												   drawableDrop) {
+		return SVGUtils.toSVGCoords(
+				drawableDrop.droplet.getSafePositionAt(circuit
+															   .getCurrentTime()),
+				circuit, coordinateMultiplier);
 	}
 }

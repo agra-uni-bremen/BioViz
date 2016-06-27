@@ -27,7 +27,7 @@ public class MessageCenter {
 	/**
 	 * The maximal amount of messages that are displayed at once.
 	 */
-	public static final int MAX_MESSAGES_IN_UI = 32;
+	private static final int MAX_MESSAGES_IN_UI = 32;
 
 	/**
 	 * Default size for the messages.
@@ -59,12 +59,12 @@ public class MessageCenter {
 	/**
 	 * Whether messages are to be displayed.
 	 */
-	public boolean hidden = false;
+	private boolean hidden = false;
 
 	/**
 	 * The parent visualization.
 	 */
-	BioViz parent;
+	private BioViz parent;
 
 	/**
 	 * The list of messages.
@@ -159,7 +159,7 @@ public class MessageCenter {
 	 * @param value
 	 * 		the new text resolution.
 	 */
-	public void setTextRenderResolution(final float value) {
+	private void setTextRenderResolution(final float value) {
 		this.textRenderResolution =
 				Math.max(textRenderResolutionMinimum, value);
 		fontInvalidated = true;
@@ -176,7 +176,7 @@ public class MessageCenter {
 	 *
 	 * @return The text rendering resolution.
 	 */
-	public float getmsgTextRenderResolution() {
+	private float getmsgTextRenderResolution() {
 		return msgTextRenderResolution;
 	}
 
@@ -188,7 +188,7 @@ public class MessageCenter {
 	 * @param value
 	 * 		the new text resolution.
 	 */
-	public void setmsgTextRenderResolution(final float value) {
+	private void setmsgTextRenderResolution(final float value) {
 		this.msgTextRenderResolution =
 				Math.max(msgTextRenderResolutionMinimum, value);
 		fontInvalidated = true;
@@ -203,7 +203,7 @@ public class MessageCenter {
 	 *
 	 * @return The font that is used to display stuff on top of droplets/fields
 	 */
-	public BitmapFont getFont() {
+	private BitmapFont getFont() {
 		if (fontInvalidated) {
 			fontInvalidated = false;
 			FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
@@ -240,7 +240,7 @@ public class MessageCenter {
 	 * @param message
 	 * 		the message to be displayed
 	 */
-	public void addMessage(final String message) {
+	void addMessage(final String message) {
 		Message m = new Message(message);
 
 		// Meh. libgdx doesn't draw line breaks...
@@ -462,7 +462,7 @@ public class MessageCenter {
 	 * Retrieves the default text transparency.
 	 * @return the current default text transparency.
 	 */
-	public float getDefaultTextTransparency() {
+	private float getDefaultTextTransparency() {
 		return defaultTextTransparency;
 	}
 

@@ -120,7 +120,7 @@ public class ActuationVector {
 	 * @return String representation of the actuation vector
 	 */
 	public String toString() {
-		return vec.stream().map(a -> actuationToString(a)).collect(
+		return vec.stream().map(ActuationVector::actuationToString).collect(
 				Collectors.joining());
 	}
 }

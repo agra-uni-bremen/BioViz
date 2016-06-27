@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Dispenser;
-import de.bioviz.structures.DrawableSink;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Sink;
+import de.bioviz.util.Quadruple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -328,33 +328,15 @@ public class DrawableCircuit implements Drawable {
 	 * Draws the coordinates of the grid on top of and to the left of the grid.
 	 * This in fact uses the message center to display the numbers, so the
 	 * actual drawing will be done after the rest has been drawn.
-	 *
-	 * @author Jannis Stoppe
 	 */
 	private void displayCoordinates() {
-		// calculate current dimensions first so the coordinates can be either
-		// displayed at the edge of the viewport (if the grid boundaries are
-		// beyond the viewport boundaries) or at the edge of the grid (if they
-		// are within)
-		int minX = Integer.MAX_VALUE;
-		int minY = Integer.MAX_VALUE;
-		int maxX = Integer.MIN_VALUE;
-		int maxY = Integer.MIN_VALUE;
 
-		for (final DrawableField f : this.getFields()) {
-			if (minX > f.getField().x()) {
-				minX = f.getField().x();
-			}
-			if (minY > f.getField().y()) {
-				minY = f.getField().y();
-			}
-			if (maxX < f.getField().x()) {
-				maxX = f.getField().x();
-			}
-			if (maxY < f.getField().y()) {
-				maxY = f.getField().y();
-			}
-		}
+		Quadruple<Integer, Integer, Integer, Integer> minMaxVals = minMaxXY();
+
+		int minX = minMaxVals.fst;
+		int minY = minMaxVals.snd;
+		int maxX = minMaxVals.thd;
+		int maxY = minMaxVals.fth;
 
 		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
 		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
@@ -411,7 +393,13 @@ public class DrawableCircuit implements Drawable {
 		}
 	}
 
-	private void removeDisplayedCoordinates() {
+
+	/**
+	 * Calculates the current dimensions.
+	 *
+	 * @return Quadruple (minX,minY,maxX,maxY)
+	 */
+	private Quadruple<Integer, Integer, Integer, Integer> minMaxXY() {
 		int minX = Integer.MAX_VALUE;
 		int minY = Integer.MAX_VALUE;
 		int maxX = Integer.MIN_VALUE;
@@ -431,6 +419,16 @@ public class DrawableCircuit implements Drawable {
 				maxY = f.getField().y();
 			}
 		}
+		return new Quadruple<>(minX, minY, maxX, maxY);
+	}
+
+	private void removeDisplayedCoordinates() {
+		Quadruple<Integer, Integer, Integer, Integer> minMaxVals = minMaxXY();
+
+		int minX = minMaxVals.fst;
+		int minY = minMaxVals.snd;
+		int maxX = minMaxVals.thd;
+		int maxY = minMaxVals.fth;
 
 		// remove all HUD messages
 		for (int i = minX; i < maxX + Math.abs(minY) + 2 + maxY; i++) {
@@ -545,7 +543,8 @@ public class DrawableCircuit implements Drawable {
 	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
 	 * supposed to skip those in between steps.
 	 *
-	 * @param scaleY The new scaling factor for the y axis.
+	 * @param scaleY
+	 * 		The new scaling factor for the y axis.
 	 */
 	public void setScaleY(final float scaleY) {
 		this.scaleY = scaleY;
@@ -662,28 +661,24 @@ public class DrawableCircuit implements Drawable {
 		this.data = data;
 	}
 
-	public float getOffsetX() {
+	float getOffsetX() {
 		return offsetX;
 	}
 
-	public void setOffsetX(final float offsetX) {
+	void setOffsetX(final float offsetX) {
 		this.offsetX = offsetX;
 	}
 
-	public float getOffsetY() {
+	float getOffsetY() {
 		return offsetY;
 	}
 
-	public void setOffsetY(final float offsetY) {
+	void setOffsetY(final float offsetY) {
 		this.offsetY = offsetY;
 	}
 
-	protected float getSmoothScale() {
+	float getSmoothScale() {
 		return smoothScale;
-	}
-
-	protected void setSmoothScale(final float smoothScale) {
-		this.smoothScale = smoothScale;
 	}
 
 	protected float getSmoothOffsetX() {
@@ -795,5 +790,9 @@ public class DrawableCircuit implements Drawable {
 
 	public void setParent(final BioViz parent) {
 		this.parent = parent;
+	}
+
+	private void setSmoothScale(final float smoothScale) {
+		this.smoothScale = smoothScale;
 	}
 }
