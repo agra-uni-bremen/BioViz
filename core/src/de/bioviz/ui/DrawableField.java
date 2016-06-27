@@ -393,6 +393,10 @@ public class DrawableField extends DrawableSprite {
             result.add(Colors.HOVER_DIFF_COLOR);
         }
 
+        if (this.field.areaAnnotations.size() > 0){
+            result = new de.bioviz.ui.Color(Color.BLACK);
+        }
+
         return result.buildGdxColor().cpy();
     }
 
