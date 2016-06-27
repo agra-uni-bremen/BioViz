@@ -20,22 +20,7 @@ import de.bioviz.parser.generated.Bio.TimeConstraintContext;
 import de.bioviz.parser.generated.Bio.TimeRangeContext;
 import de.bioviz.parser.generated.Bio.TimingContext;
 import de.bioviz.parser.generated.BioBaseListener;
-import de.bioviz.structures.ActuationVector;
-import de.bioviz.structures.Biochip;
-import de.bioviz.structures.BiochipField;
-import de.bioviz.structures.Detector;
-import de.bioviz.structures.Direction;
-import de.bioviz.structures.Dispenser;
-import de.bioviz.structures.Droplet;
-import de.bioviz.structures.FluidicConstraintViolation;
-import de.bioviz.structures.Mixer;
-import de.bioviz.structures.Net;
-import de.bioviz.structures.Pin;
-import de.bioviz.structures.Point;
-import de.bioviz.structures.Range;
-import de.bioviz.structures.Rectangle;
-import de.bioviz.structures.Sink;
-import de.bioviz.structures.Source;
+import de.bioviz.structures.*;
 import de.bioviz.util.Pair;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Nullable;
@@ -74,6 +59,7 @@ class BioParserListener extends BioBaseListener {
 	private HashMap<Integer, ActuationVector> pinActuations = new HashMap<>();
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
 	private ArrayList<Mixer> mixers = new ArrayList<Mixer>();
+	private ArrayList<Annotation> annotations = new ArrayList<>();
 
 
 	/**
@@ -146,6 +132,15 @@ class BioParserListener extends BioBaseListener {
 		}
 	}
 
+	private Annotation getAreaAnnotation(final Bio.AreaAnnotationContext ctx){
+		Point pos1 = getPosition(ctx.position(0));
+		Point pos2 = getPosition(ctx.position(1));
+		if (pos2 == null){
+			pos2 = pos1;
+		}
+		Rectangle rect = new Rectangle(pos1,pos2);
+		return new Annotation(rect, "");
+	}
 
 	@Override
 	public void enterDispenser(@NotNull final DispenserContext ctx) {
@@ -382,6 +377,13 @@ class BioParserListener extends BioBaseListener {
 
 		mixers.add(new Mixer(id, rect, time));
 
+	}
+
+	@Override
+	public void enterAnnotations(@NotNull final Bio.AnnotationsContext ctx){
+		for(Bio.AreaAnnotationContext areaCtx : ctx.areaAnnotation()){
+			annotations.add(getAreaAnnotation(areaCtx));
+		}
 	}
 
 	@Override
