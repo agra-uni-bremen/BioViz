@@ -366,9 +366,7 @@ public class DesktopLauncher extends JFrame {
 				new Dimension(buttonWidth,
 							  preferencesButton.getPreferredSize().height)
 		);
-		preferencesButton.addActionListener(e -> {
-			showSettings(currentViz);
-		});
+		preferencesButton.addActionListener(e -> showSettings(currentViz));
 
 		JButton statisticsButton = new JButton("Statistics");
 		statisticsButton.setPreferredSize(
@@ -666,7 +664,7 @@ public class DesktopLauncher extends JFrame {
 		} catch (final CmdLineException e) {
 			String argsLine = String.join(" ", args);
 			System.err.println(
-					"Unable to parse arguments: \"" + argsLine + "\"");
+                    "Unable to parse arguments: \"" + argsLine + "\"");
 			System.err.println("\nusage:");
 			parser.printUsage(System.err);
 			System.exit(1);
@@ -727,10 +725,9 @@ public class DesktopLauncher extends JFrame {
 
 		Biochip chip = BioParser.parseFile(f);
 		if (!chip.errors.isEmpty()) {
-			System.out.println(
-					"Found errors in file \"" + f.getAbsolutePath() + "\":");
+			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath() );
 			for (final String error : chip.errors) {
-				System.out.println(error);
+                logger.error(error);
 			}
 		}
 	}
@@ -914,7 +911,7 @@ public class DesktopLauncher extends JFrame {
 			System.err.println(
 					"Error setting up logger: " + je.getStackTrace());
 		}
-		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+
 
 	}
 
