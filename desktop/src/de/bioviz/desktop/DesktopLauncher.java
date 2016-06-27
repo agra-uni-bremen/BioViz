@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -42,6 +43,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -785,7 +787,31 @@ public class DesktopLauncher extends JFrame {
 		if (load) {
 			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
 		} else {
+			// add the svg export options as an accessory to the fileChooser
+			JPanel accessory = new JPanel(new BorderLayout());
+
+			JCheckBox exportColors = new JCheckBox("Export colors");
+			exportColors.setSelected(true);
+			JCheckBox exportInfoString = new JCheckBox("Export info tag");
+			exportInfoString.setSelected(true);
+			JCheckBox exportSeries = new JCheckBox("Export series");
+			exportSeries.setSelected(false);
+
+			JPanel checkBoxes = new JPanel(new GridLayout(0, 1));
+			checkBoxes.add(exportColors);
+			checkBoxes.add(exportInfoString);
+			checkBoxes.add(exportSeries);
+
+			accessory.add(checkBoxes);
+
+			fileDialog.setAccessory(accessory);
+
 			choice = fileDialog.showSaveDialog(DesktopLauncher.singleton);
+
+			svgExportSettings.setColorfulExport(exportColors.isSelected());
+			svgExportSettings.setExportSeries(exportSeries.isSelected());
+			svgExportSettings.setInformationString(
+					exportInfoString.isSelected());
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
