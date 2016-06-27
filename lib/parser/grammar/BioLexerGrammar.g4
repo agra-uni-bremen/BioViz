@@ -47,8 +47,13 @@ Asterisk: '*';
 Arrow: '->' ;
 Colon: ':' -> mode(ACTUATION);
 
+LessThan : '<' -> mode(AREAANNOTATION);
+
 mode ACTUATION;
 ActuationVector: ('1'|'0'|'X')+ -> mode(DEFAULT_MODE);
+
+mode AREAANNOTATION;
+AreaAnnotationText: (Identifier|Integer|WS)+ -> mode(DEFAULT_MODE);
 
 // Antlr4 is annoying, I have to specify all lexer rules again as
 // no sharing between modes seems possible

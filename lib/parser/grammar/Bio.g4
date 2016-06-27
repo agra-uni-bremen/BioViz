@@ -38,7 +38,7 @@ mixer: mixerID timeRange position position;
 
 // Definition of areaAnnotations
 annotations: Annotations Newlines (areaAnnotation Newlines)+ END;
-areaAnnotation: position position? (Identifier|Integer|WS)*;
+areaAnnotation: position position? LessThan AreaAnnotationText;
 
 // Definition of actuation vectors
 //
