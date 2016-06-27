@@ -321,8 +321,8 @@ public class InfoPanel extends JPanel {
 		if (data != null) {
 			for (final DrawableDroplet droplet : currentCircuit.getDroplets()) {
 				final int dropletID = droplet.droplet.getID();
-				String fluidName = data.fluidType(data.fluidID(dropletID));
-				dropToFluidModel.addRow(new Object[]{dropletID, fluidName});
+				String fluidType = data.fluidType(data.fluidID(dropletID));
+				dropToFluidModel.addRow(new Object[]{dropletID, fluidType});
 			}
 
 		}
