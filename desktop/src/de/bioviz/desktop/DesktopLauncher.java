@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -42,6 +43,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -78,6 +80,8 @@ public class DesktopLauncher extends JFrame {
 	 * elevate this to public as needed.
 	 */
 	private static DesktopLauncher singleton;
+
+
 
 	/**
 	 * Used to handle feedback for the user about the program behaviour (and of
@@ -156,7 +160,7 @@ public class DesktopLauncher extends JFrame {
 	 * once in tabs, there is still only one visualization which then displays
 	 * several different circuits.
 	 */
-	BioViz currentViz;
+	 BioViz currentViz;
 
 	/**
 	 * The infoPanel displaying the statistics.
@@ -808,7 +812,31 @@ public class DesktopLauncher extends JFrame {
 		if (load) {
 			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
 		} else {
+			// add the svg export options as an accessory to the fileChooser
+			JPanel accessory = new JPanel(new BorderLayout());
+
+			JCheckBox exportColors = new JCheckBox("Export colors");
+			exportColors.setSelected(true);
+			JCheckBox exportInfoString = new JCheckBox("Export info tag");
+			exportInfoString.setSelected(true);
+			JCheckBox exportSeries = new JCheckBox("Export series");
+			exportSeries.setSelected(false);
+
+			JPanel checkBoxes = new JPanel(new GridLayout(0, 1));
+			checkBoxes.add(exportColors);
+			checkBoxes.add(exportInfoString);
+			checkBoxes.add(exportSeries);
+
+			accessory.add(checkBoxes);
+
+			fileDialog.setAccessory(accessory);
+
 			choice = fileDialog.showSaveDialog(DesktopLauncher.singleton);
+
+			svgExportSettings.setColorfulExport(exportColors.isSelected());
+			svgExportSettings.setExportSeries(exportSeries.isSelected());
+			svgExportSettings.setInformationString(
+					exportInfoString.isSelected());
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -1405,7 +1433,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Empty constructor, does nothing.
 		 */
-		SaveFileCallback() {
+		public SaveFileCallback() {
 		}
 
 		/**
@@ -1429,7 +1457,8 @@ public class DesktopLauncher extends JFrame {
 										.getCurrentTime();
 								// this is problematic if the file contains
 								// .svg inside the name
-								int svgPosition = f.getAbsolutePath().indexOf(".svg");
+								int svgPosition = f.getAbsolutePath().indexOf
+										(".svg");
 								// initialize with absolute path
 								String pathWithoutSuffix = f.getAbsolutePath();
 								// check if suffix was found, if not the path
@@ -1463,8 +1492,8 @@ public class DesktopLauncher extends JFrame {
 					}
 				});
 			} catch (final Exception e) {
-				logger.error("Could not save file: " + e.getMessage() + "\n" +
-						e.getStackTrace());
+				logger.error("Could not save file: " + e.getMessage() + "\n"
+							 + e.getStackTrace());
 			}
 			allowHotkeys = true;
 		}
@@ -1540,7 +1569,7 @@ public class DesktopLauncher extends JFrame {
 		 * @param option the connected BDisplayOptions item
 		 */
 		BioCheckboxMenuItem(final String label,
-								   final BDisplayOptions option) {
+							final BDisplayOptions option) {
 			super(label);
 			this.option = option;
 
@@ -1561,5 +1590,8 @@ public class DesktopLauncher extends JFrame {
 			setState(currentViz.currentCircuit.
 					getDisplayOptions().getOption(option));
 		}
+
+
 	}
+
 }
