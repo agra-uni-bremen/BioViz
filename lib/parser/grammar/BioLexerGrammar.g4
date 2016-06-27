@@ -16,6 +16,7 @@ Grid: 'grid';
 Dispensers: 'dispensers';
 Detectors: 'detectors';
 Mixers: 'mixers';
+Annotations: 'annotations';
 
 CellActuations: 'cell actuations';
 PinActuations: 'pin actuations';
