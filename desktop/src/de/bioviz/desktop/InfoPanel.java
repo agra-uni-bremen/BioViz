@@ -16,10 +16,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.List;
 
 /**
  * @author Maximilian Luenert
@@ -109,6 +111,11 @@ public class InfoPanel extends JPanel {
 	/** DropletId to FluidType table. */
 	private JTable dropToFluidTable = new JTable(dropToFluidModel);
 
+	/**
+	 * The textArea for the annotations.
+	 */
+	private JTextArea annotationArea = new JTextArea(1, 1);
+
 	/** The current BioViz instance. */
 	private BioViz bioViz;
 
@@ -125,12 +132,12 @@ public class InfoPanel extends JPanel {
 	 */
 	public InfoPanel(final BioViz bioViz) {
 		final int panelWidth = 200;
-		final int panelHeight = 600;
+		final int panelHeight = 800;
 		final int labelHeight = 20;
 		final int labelWidth = 120;
 		final int valueWidth = 70;
 		final int internalWidth = 190;
-		final int tableHeight = 100;
+		final int tableHeight = 90;
 		final int seperatorHeight = 5;
 
 		this.bioViz = bioViz;
@@ -204,6 +211,12 @@ public class InfoPanel extends JPanel {
 		numDetectorsLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
 		numDetectorsValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
+		JLabel annotationsLabel = new JLabel("Annotations: ");
+		annotationsLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+		JScrollPane annotationsPane = new JScrollPane(annotationArea);
+		//annotationArea.
+		annotationsPane.setPreferredSize(new Dimension(internalWidth, tableHeight));
+
 		JSeparator infoSep = new JSeparator(SwingConstants.HORIZONTAL);
 		infoSep.setPreferredSize(new Dimension(internalWidth, seperatorHeight));
 
@@ -238,6 +251,8 @@ public class InfoPanel extends JPanel {
 		panel.add(numDetectorsValue);
 		panel.add(fluidIdScrollPane);
 		panel.add(dropToFluidScrollPane);
+		panel.add(annotationsLabel);
+		panel.add(annotationsPane);
 		this.add(panel);
 	}
 
@@ -264,6 +279,7 @@ public class InfoPanel extends JPanel {
 				updateFieldTypes();
 				updateFluidTable();
 				updateDropToFluid();
+				updateAnnotations();
 			}
 	}
 
@@ -308,6 +324,7 @@ public class InfoPanel extends JPanel {
 				String fluidName = data.fluidType(data.fluidID(dropletID));
 				dropToFluidModel.addRow(new Object[]{dropletID, fluidName});
 			}
+
 		}
 	}
 
@@ -405,6 +422,17 @@ public class InfoPanel extends JPanel {
 			numDispensersValue.setText(String.valueOf(numDispenser));
 			numSinksValue.setText(String.valueOf(numSinks));
 			numDetectorsValue.setText(String.valueOf(numDetectors));
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void updateAnnotations(){
+		List<String> annotations = currentCircuit.getData().getAnnotations();
+		//annotationArea.setRows(annotations.size()-1);
+		for(final String annotation : annotations){
+			annotationArea.append(annotation.substring(2));
 		}
 	}
 
