@@ -4,7 +4,7 @@ parser grammar Bio;
 options { tokenVocab=BioLexerGrammar; }
 
 
-bio: (grid|nets|mixers|sinks|detectors|dispensers|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
+bio: (grid|nets|mixers|sinks|detectors|dispensers|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|annotations|Newlines)+;
 
 
 
@@ -36,6 +36,9 @@ route: dropletID timeConstraint? position+;
 mixers: Mixers Newlines (mixer Newlines)+ END;
 mixer: mixerID timeRange position position;
 
+// Definition of areaAnnotations
+annotations: Annotations Newlines (areaAnnotation Newlines)+ END;
+areaAnnotation: position position? LessThan AreaAnnotationText;
 
 // Definition of actuation vectors
 //

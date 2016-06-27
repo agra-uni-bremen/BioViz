@@ -40,6 +40,8 @@ public class Biochip {
 	public final HashMap<Point, ActuationVector> cellActuations =
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<>();
+	/** Stores the areaAnnotations. */
+	public final ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
 	public ArrayList<String> errors = new ArrayList<>();
 	public boolean recalculateAdjacency = false;
 
@@ -179,10 +181,15 @@ public class Biochip {
 	 * Determines the fluid type of the given fluid ID.
 	 *
 	 * @param fluidID
-	 * 		The fluid ID of the droplet whose fluid type is to be deterined.
-	 * @return The fluid type of the given droplet. Might be NULL.
+	 * 		The fluid ID of the droplet whose fluid type is to be determined.
+	 * 	    May be null to support easy chaining.
+	 * @return The fluid type of the given droplet. Might be NULL. If fluidID is
+	 * NULL the return value is also NULL.
 	 */
 	public String fluidType(final Integer fluidID) {
+		if (fluidID == null) {
+			return null;
+		}
 		return fluidTypes.get(fluidID);
 	}
 
@@ -328,9 +335,9 @@ public class Biochip {
 							should highlight the cell that in the upcoming
 							time step violates one of the constraints.
 							 */
-							addAdjacentPoint(p1,d1,p2,d2,result,timestep);
-							addAdjacentPoint(pp1,d1,p2,d2,result,timestep);
-							addAdjacentPoint(p1,d1,pp2,d2,result,timestep);
+							addAdjacentPoint(p1, d1, p2, d2, result, timestep);
+							addAdjacentPoint(pp1, d1, p2, d2, result, timestep);
+							addAdjacentPoint(p1, d1, pp2, d2, result, timestep);
 						}
 					}
 				}

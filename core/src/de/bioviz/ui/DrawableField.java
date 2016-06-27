@@ -394,6 +394,11 @@ public class DrawableField extends DrawableSprite {
 			result.add(Colors.HOVER_DIFF_COLOR);
 		}
 
+		if (getOption(BDisplayOptions.HighlightAnnotatedFields) &&
+				this.field.areaAnnotations.size() > 0) {
+			result = new de.bioviz.ui.Color(Color.VIOLET);
+		}
+
 		return result.buildGdxColor().cpy();
 	}
 
@@ -416,6 +421,11 @@ public class DrawableField extends DrawableSprite {
 		this.addLOD(Float.MAX_VALUE, vals.getTexture());
 
 		super.draw();
+
+		// show the first annotation for this field
+		if (isHovered() && field.areaAnnotations.size() > 0) {
+			displayText(field.areaAnnotations.get(0).getAnnotation());
+		}
 
 		if (getOption(LongNetIndicatorsOnFields)) {
 			for (final Net net : this.parentCircuit.getData().getNetsOf(this
