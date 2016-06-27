@@ -47,6 +47,8 @@ public class Biochip {
 
 	private HashMap<Integer, String> fluidTypes = new HashMap<>();
 
+	private ArrayList<String> annotations = new ArrayList<>();
+
 
 	/**
 	 * Caching data that does not need to be recalculated with each frame.
@@ -298,6 +300,22 @@ public class Biochip {
 			BiochipField f2 = field.get(p2);
 			s.add(new FluidicConstraintViolation(d1, f1, d2, f2, timestep));
 		}
+	}
+
+	/**
+	 * Adds a single annotation to the chip.
+	 * @param annotation the annotation
+	 */
+	public void addAnnotation(final String annotation){
+		this.annotations.add(annotation);
+	}
+
+	/**
+	 * Adds multiple annotations to the chip.
+	 * @param annotations the annotations
+	 */
+	public void addAnnotations(final List<String> annotations){
+		this.annotations.addAll(annotations);
 	}
 
 	/**
