@@ -421,6 +421,11 @@ public class DrawableField extends DrawableSprite {
 
         super.draw();
 
+        // show the first annotation for this field
+        if (isHovered() && field.areaAnnotations.size() > 0){
+            displayText(field.areaAnnotations.get(0).annotation);
+        }
+
         if (getOption(LongNetIndicatorsOnFields)) {
             for (final Net net : this.parentCircuit.getData().getNetsOf(this
                     .field)) {
