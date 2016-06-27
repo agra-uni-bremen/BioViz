@@ -77,7 +77,7 @@ public final class BioParser {
 			parser.addErrorListener(errorListener);
 			ParseTree tree = parser.bio(); // parse everything
 
-			parseAnnotations(input);
+			parseComments(input);
 
 			if (errorListener.hasErrors()) {
 				for (final String msg : errorListener.getErrors()) {
@@ -103,27 +103,31 @@ public final class BioParser {
 	 * @param input an ANTLRInputStream
 	 * @return A List of Strings containing the annotations.
 	 */
-	private static List<String> parseAnnotations(final ANTLRInputStream input){
+	private static List<String> parseComments(final ANTLRInputStream input){
 		BioLexerGrammar lexer = new BioLexerGrammar(input);
 		// @keszocze this one is needed. I don't know why.
 		lexer.reset();
-		CommonTokenStream annotationStream = new CommonTokenStream(lexer,
-				BioLexerGrammar.ANNOTATIONS);
-		List<String> annoTokens = new ArrayList<>();
+		CommonTokenStream cts = new CommonTokenStream(lexer);
+		List<String> annotations = new ArrayList<>();
+		List<String> comments = new ArrayList<>();
 
 		// this one gets everything that is in the stream.
-		annotationStream.getText();
+		cts.getText();
 		// now we can use size() to run over the tokens
-		for (int i = 0; i < annotationStream.size(); i++){
-			Token token = annotationStream.get(i);
+		for (int i = 0; i < cts.size(); i++){
+			Token token = cts.get(i);
 			// and check here if the token is on the right channel
-			if(token.getChannel() == BioLexerGrammar.ANNOTATIONS) {
-				logger.debug("Reading: " + token.getText());
-				annoTokens.add(token.getText());
+			if(token.getChannel() == BioLexerGrammar.COMMENT) {
+				logger.trace("Parsing Comment: " + token.getText());
+				comments.add(token.getText());
+			}
+			if(token.getChannel() == BioLexerGrammar.ANNOTATION) {
+				logger.trace("Parsing annotation: " + token.getText());
+				annotations.add(token.getText());
 			}
 		}
 
-		return annoTokens;
+		return annotations;
 	}
 
 }
