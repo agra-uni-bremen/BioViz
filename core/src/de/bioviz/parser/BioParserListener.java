@@ -267,15 +267,49 @@ class BioParserListener extends BioBaseListener {
 		ctx.children.stream().filter(
 				child -> child instanceof Bio.SourceContext
 		).forEach(child -> {
-					Source src =getSource((Bio.SourceContext) child);
-					sources.add(src);
-					logger.error("Found source child {}", src);
-				});
+			Source src = getSource((Bio.SourceContext) child);
+			sources.add(src);
+			//logger.error("Found source child {}", src);
+		});
 
-		logger.error("Add net -> {}", target);
+		//logger.error("Add net -> {}", target);
 		nets.add(new Net(sources, target));
 
 	}
+
+
+	Rectangle getLocation(@NotNull Bio.LocationContext loc) {
+		Point lowerLeft = getPosition(loc.position(0));
+		Point upperRight = getPosition(loc.position(1));
+		return new Rectangle(lowerLeft, upperRight);
+	}
+
+	@Override
+	public void enterMedaNet(@NotNull Bio.MedaNetContext ctx) {
+		ArrayList<Source> sources = new ArrayList<>();
+
+		List<Bio.MedaSourceContext> srcs = ctx.medaSource();
+
+		ctx.medaSource().forEach(c -> {
+			int id = Integer.parseInt(c.dropletID().getText());
+			Rectangle srcRect = getLocation(c.location());
+
+			int spawnTime = 1;
+			if (c.timeConstraint() != null) {
+				spawnTime = getTimeConstraint(c.timeConstraint());
+			}
+
+			Source src = new Source(id, srcRect, spawnTime);
+			sources.add(src);
+		});
+
+		Rectangle target = getLocation(ctx.medaTarget().location());
+
+		Net n = new Net(sources,target);
+		logger.info("Adding new net: {}",n);
+		nets.add(n);
+	}
+
 
 	@Override
 	public void enterBlockage(@NotNull final BlockageContext ctx) {
@@ -288,6 +322,7 @@ class BioParserListener extends BioBaseListener {
 
 		blockages.add(new Pair<>(rect, timing));
 	}
+
 
 	private Range getTiming(final TimingContext ctx) {
 		if (ctx == null) {
@@ -383,8 +418,8 @@ class BioParserListener extends BioBaseListener {
 			Point upperRight = getPosition(l.position(1));
 
 			Point refPoint = new Point(lowerLeft.fst, upperRight.snd);
-			Point size = new Point(upperRight.fst - lowerLeft.fst +1,
-								   upperRight.snd - lowerLeft.snd +1);
+			Point size = new Point(upperRight.fst - lowerLeft.fst + 1,
+								   upperRight.snd - lowerLeft.snd + 1);
 
 			drop.addPosition(refPoint);
 			drop.addSize(size);

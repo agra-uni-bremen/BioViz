@@ -124,7 +124,7 @@ public class DrawableField extends DrawableSprite {
 
 
         /*
-        Right now, the first options that is tested and set to true determines
+		Right now, the first options that is tested and set to true determines
 		the returned strings. This means that there might be a display of
 		inconsistant data. For example source/target IDs may interfere with a
 		detector ID. This is a real use case as a detector is a very valid
@@ -376,7 +376,8 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
-		// TODO Why does the following work? A "Set<FluidicConstraintViolation>" cannot contain a "BiochipField"
+		// TODO Why does the following work? A
+		// "Set<FluidicConstraintViolation>" cannot contain a "BiochipField"
 		if (getOption(Adjacency) &&
 			getParentCircuit().getData().getAdjacentActivations().contains(
 					this.getField())) {
@@ -417,28 +418,30 @@ public class DrawableField extends DrawableSprite {
 
 		super.draw();
 
+		// TODO why is drawing of lines in any way tied to the actual fields?!
 		if (getOption(LongNetIndicatorsOnFields)) {
-			for (final Net net : this.parentCircuit.getData().getNetsOf(this
-																				.field)) {
+			for (final Net net :
+					this.parentCircuit.getData().getNetsOf(this.field)) {
 				for (final Source s : net.getSources()) {
-					if (this.field.pos.equals(s.startPosition)) {
-						Pair<Float,Float> targetCenter = net.getTarget().centerFloat();
-						Pair<Float,Float> sourceCenter = s.startPosition.centerFloat();
+					Pair<Float, Float> targetCenter =
+							net.getTarget().centerFloat();
+					Pair<Float, Float> sourceCenter =
+							s.startPosition.centerFloat();
 
-						Vector2 target = new Vector2(targetCenter.fst,targetCenter.snd);
-						Vector2 source = new Vector2(sourceCenter.fst,sourceCenter.snd);
+					Vector2 target =
+							new Vector2(targetCenter.fst, targetCenter.snd);
+					Vector2 source =
+							new Vector2(sourceCenter.fst, sourceCenter.snd);
 
-
-						// draw to target
-						if (netIndicator == null) {
-							netIndicator = new DrawableLine(this.viz);
-						}
-						netIndicator.from = source;
-						netIndicator.to = target;
-						netIndicator.setColor(
-								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
-						netIndicator.draw();
+					// draw to target
+					if (netIndicator == null) {
+						netIndicator = new DrawableLine(this.viz);
 					}
+					netIndicator.from = source;
+					netIndicator.to = target;
+					netIndicator.setColor(
+							Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
+					netIndicator.draw();
 				}
 			}
 		}

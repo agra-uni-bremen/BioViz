@@ -55,8 +55,10 @@ public final class Net {
 	 * 		this net's droplets' common target
 	 */
 	public Net(final ArrayList<Source> sources, final Point target) {
-		this(sources,target, new Point(1,1));
+		this(sources,new Rectangle(target,1,1));
 	}
+
+
 
 	/**
 	 * <p>Creates a <i>net</i>. That is, a structure that describes for a
@@ -69,17 +71,16 @@ public final class Net {
 	 * 		this net's sources
 	 * @param target
 	 * 		this net's droplets' common target
-	 * @param size
-	 * 		this net's target size. (1,1) for non-meda nets.
+	 * @param target
+	 * 		the rectangle describing the target
 	 */
-	public Net(final ArrayList<Source> sources, final Point target, final
-	Point size) {
-		this.target = new Rectangle(target,size.fst,size.snd);
+	public Net(final ArrayList<Source> sources, final Rectangle target) {
+		this.target = target;
 		this.sources.addAll(sources);
 		Random rnd = new Random();
 
 		// TODO be more sophisticated here ^^
-		rnd.setSeed(target.fst + target.snd);
+		rnd.setSeed(target.upperRight.fst + target.lowerLeft.snd);
 		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(),
 						  1f);
 	}

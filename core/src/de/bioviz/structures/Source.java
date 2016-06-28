@@ -64,9 +64,13 @@ public class Source {
 				  final Point pos,
 				  final int spawnTime,
 				  final Point size) {
-		this.dropletID = dropletID;
-		this.startPosition = new Rectangle(pos,size.fst,size.snd);
-		this.spawnTime = spawnTime;
+		this(dropletID,new Rectangle(pos,size.fst,size.snd),spawnTime);
+	}
+
+	public Source(final int dropletID, final Rectangle pos, final int spawnTime) {
+		this.dropletID=dropletID;
+		this.startPosition=pos;
+		this.spawnTime=spawnTime;
 	}
 
 	@Override
