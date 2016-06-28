@@ -31,13 +31,16 @@ public final class Net {
 	/**
 	 * The target this net's droplets are directed to.
 	 */
-	private final Point target;
+	private final Rectangle target;
+
+
 
 
 	/**
 	 * The list of all starting points of this net's droplets.
 	 */
-	private final ArrayList<Source> sources = new ArrayList<Source>();
+	private final ArrayList<Source> sources = new ArrayList<>();
+
 
 	/**
 	 * <p>Creates a <i>net</i>. That is, a structure that describes for a
@@ -52,7 +55,26 @@ public final class Net {
 	 * 		this net's droplets' common target
 	 */
 	public Net(final ArrayList<Source> sources, final Point target) {
-		this.target = target;
+		this(sources,target, new Point(1,1));
+	}
+
+	/**
+	 * <p>Creates a <i>net</i>. That is, a structure that describes for a
+	 * set of
+	 * droplets with a common target.</p> <p>This class is basically immutable.
+	 * The sources/target combination you set in this constructor are
+	 * final.</p>
+	 *
+	 * @param sources
+	 * 		this net's sources
+	 * @param target
+	 * 		this net's droplets' common target
+	 * @param size
+	 * 		this net's target size. (1,1) for non-meda nets.
+	 */
+	public Net(final ArrayList<Source> sources, final Point target, final
+	Point size) {
+		this.target = new Rectangle(target,size.fst,size.snd);
 		this.sources.addAll(sources);
 		Random rnd = new Random();
 
@@ -107,34 +129,40 @@ public final class Net {
 		int yMax = Integer.MIN_VALUE;
 
 		for (final Source source : sources) {
-			if (source.startPosition.fst < xMin) {
-				xMin = source.startPosition.fst;
+			final Point ll = source.startPosition.lowerLeft;
+			final Point ur = source.startPosition.upperRight;
+			if (ll.fst < xMin) {
+				xMin = ll.fst;
 			}
-			if (source.startPosition.snd < yMin) {
-				yMin = source.startPosition.snd;
+			if (ll.snd < yMin) {
+				yMin = ll.snd;
 			}
-			if (source.startPosition.fst > xMax) {
-				xMax = source.startPosition.fst;
+			if (ur.fst > xMax) {
+				xMax = ur.fst;
 			}
-			if (source.startPosition.snd > yMax) {
-				yMax = source.startPosition.snd;
+			if (ur.snd > yMax) {
+				yMax = ur.snd;
 			}
-		}
-		if (target.fst < xMin) {
-			xMin = target.fst;
-		}
-		if (target.snd < yMin) {
-			yMin = target.snd;
-		}
-		if (target.fst > xMax) {
-			xMax = target.fst;
-		}
-		if (target.snd > yMax) {
-			yMax = target.snd;
 		}
 
-		return f.pos.fst >= xMin && f.pos.fst <= xMax &&
-			   f.pos.snd >= yMin && f.pos.snd <= yMax;
+		final Point ll = target.lowerLeft;
+		final Point ur = target.upperRight;
+		if (ll.fst < xMin) {
+			xMin = ll.fst;
+		}
+		if (ll.snd < yMin) {
+			yMin = ll.snd;
+		}
+		if (ur.fst > xMax) {
+			xMax = ur.fst;
+		}
+		if (ur.snd > yMax) {
+			yMax = ur.snd;
+		}
+
+		final Rectangle netBoundingBox = new Rectangle(xMin,yMin,xMax,yMax);
+
+		return netBoundingBox.contains(f.pos);
 	}
 
 	/**
@@ -142,7 +170,7 @@ public final class Net {
 	 *
 	 * @return the target this net's droplets are directed to.
 	 */
-	public Point getTarget() {
+	public Rectangle getTarget() {
 		return target;
 	}
 

@@ -1,6 +1,10 @@
 package de.bioviz.structures;
 
+import de.bioviz.util.Pair;
+
 import java.util.ArrayList;
+
+import static com.badlogic.gdx.utils.Align.center;
 
 /**
  * @author Oliver Keszocze
@@ -35,6 +39,18 @@ public class Rectangle {
 	 */
 	public Rectangle(final Point p1, final Point p2) {
 		this(p1.fst, p1.snd, p2.fst, p2.snd);
+	}
+
+
+	/**
+	 * Creates a Rectangle defined by the upper left corner and a size.
+	 *
+	 * @param pos Top left corner of the rectangle
+	 * @param xSize The width of the rectangle
+	 * @param ySize The height of the rectangle
+	 */
+	public Rectangle(final Point pos, final int xSize, final int ySize) {
+		this(pos.fst,pos.snd,pos.fst-(xSize-1),pos.snd-(ySize-1));
 	}
 
 	/**
@@ -96,6 +112,20 @@ public class Rectangle {
 		return lowerLeft.fst <= x && x <= upperRight.fst &&
 			   lowerLeft.snd <= y && y <= upperRight.snd;
 	}
+
+	public Point center() {
+		int centerX = (lowerLeft.fst + upperRight.fst)/2;
+		int centerY = (lowerLeft.snd + upperRight.snd)/2;
+		return new Point(centerX,centerY);
+	}
+
+	public Pair<Float,Float> centerFloat() {
+		float centerX = (lowerLeft.fst.floatValue() + upperRight.fst.floatValue())/2f;
+		float centerY = (lowerLeft.snd.floatValue() + upperRight.snd.floatValue())/2f;
+
+		return new Pair<Float,Float>(centerX,centerY);
+	}
+
 
 	/**
 	 * @return ArrayList of the points of this rectangle.

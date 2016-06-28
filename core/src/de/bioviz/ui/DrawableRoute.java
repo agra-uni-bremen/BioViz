@@ -172,7 +172,7 @@ public class DrawableRoute extends DrawableSprite {
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
 		if (dropletLongIndicator && droplet.droplet.hasNet()) {
 			setForcedLOD(1f);
-			final Point targetPoint = droplet.droplet.getNet().getTarget();
+			final Point targetPoint = droplet.droplet.getNet().getTarget().center();
 			Vector2 target = new Vector2(targetPoint.fst.floatValue(),
 										 targetPoint.snd.floatValue());
 

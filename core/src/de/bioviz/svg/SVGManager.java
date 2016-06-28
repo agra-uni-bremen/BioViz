@@ -519,7 +519,7 @@ public class SVGManager {
 
 		if (net != null) {
 			Point startPoint = drawableDrop.droplet.getFirstPosition();
-			Point endPoint = net.getTarget();
+			Point endPoint = net.getTarget().center();
 
 			Color arrowColor = Color.BLACK;
 			arrow = createSVGArrow(startPoint, endPoint, arrowColor);
@@ -544,7 +544,7 @@ public class SVGManager {
 
 			int time = circuit.getCurrentTime();
 			Point startPoint = drawableDrop.droplet.getFirstPosition();
-			Point endPoint = net.getTarget();
+			Point endPoint = net.getTarget().center();
 			Point dropletPos = drawableDrop.droplet.getSafePositionAt(time);
 
 			Color dropColor = drawableDrop.getColor();

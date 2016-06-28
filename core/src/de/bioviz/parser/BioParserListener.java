@@ -138,8 +138,12 @@ class BioParserListener extends BioBaseListener {
 		Point pos = getPosition(ctx.position());
 		int id = getDropletID(ctx.dropletID());
 		if (ctx.timeConstraint() != null) {
-			return new Source(id, pos, getTimeConstraint(ctx.timeConstraint
-					()));
+			return new Source(
+					id,
+					pos,
+					getTimeConstraint(ctx.timeConstraint()),
+					new Point(1, 1) // in this case it is a "normal" droplet
+			);
 		} else {
 			return new Source(id, pos);
 		}
@@ -261,11 +265,14 @@ class BioParserListener extends BioBaseListener {
 		ArrayList<Source> sources = new ArrayList<>();
 
 		ctx.children.stream().filter(
-				child -> child instanceof Bio.SourceContext).forEach(child -> {
-			sources.add(getSource((Bio.SourceContext) child));
-			logger.trace("Found source child {}", child);
-		});
+				child -> child instanceof Bio.SourceContext
+		).forEach(child -> {
+					Source src =getSource((Bio.SourceContext) child);
+					sources.add(src);
+					logger.error("Found source child {}", src);
+				});
 
+		logger.error("Add net -> {}", target);
 		nets.add(new Net(sources, target));
 
 	}
@@ -440,7 +447,13 @@ class BioParserListener extends BioBaseListener {
 		chip.addNets(nets);
 
 		nets.forEach(net -> {
-			Point target = net.getTarget();
+
+			Point target = net.getTarget().center();
+
+			logger.error("\nNet target={}, target.center={}\n", net
+								 .getTarget(),
+						 target);
+
 			net.getSources().forEach(src -> {
 				int dropID = src.dropletID;
 
@@ -448,7 +461,7 @@ class BioParserListener extends BioBaseListener {
 				kind of weird code to set the net of a droplet. But this
 				happens
 				when the Java people think that they have a clever idea for
-				'stream' when normal people would simply directly operate on
+				'streams' when normal people would simply directly operate on
 				lists, maps etc.
 				 */
 				Optional<Droplet> drop = droplets.stream().filter(
@@ -456,7 +469,8 @@ class BioParserListener extends BioBaseListener {
 				drop.ifPresent(it -> it.setNet(net));
 
 				chip.getFieldAt(target).targetIDs.add(dropID);
-				chip.getFieldAt(src.startPosition).sourceIDs.add(dropID);
+				chip.getFieldAt(src.startPosition.center()).sourceIDs.add(
+						dropID);
 			});
 		});
 

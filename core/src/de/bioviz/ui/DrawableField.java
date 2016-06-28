@@ -422,13 +422,11 @@ public class DrawableField extends DrawableSprite {
 																				.field)) {
 				for (final Source s : net.getSources()) {
 					if (this.field.pos.equals(s.startPosition)) {
-						Vector2 target = new Vector2(
-								net.getTarget().fst.floatValue(),
-								net.getTarget().snd.floatValue());
+						Pair<Float,Float> targetCenter = net.getTarget().centerFloat();
+						Pair<Float,Float> sourceCenter = s.startPosition.centerFloat();
 
-						Vector2 source = new Vector2(
-								s.startPosition.fst.floatValue(),
-								s.startPosition.snd.floatValue());
+						Vector2 target = new Vector2(targetCenter.fst,targetCenter.snd);
+						Vector2 source = new Vector2(sourceCenter.fst,sourceCenter.snd);
 
 
 						// draw to target
