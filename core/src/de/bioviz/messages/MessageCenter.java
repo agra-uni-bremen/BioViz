@@ -311,7 +311,6 @@ public class MessageCenter {
 				font.setColor(targetColor);
 
 				final GlyphLayout layout = new GlyphLayout(font, s.message);
-				// or for non final texts: layout.setText(font, text);
 
 				final float fontX = s.x -
 									layout.width / 2f +
@@ -324,8 +323,7 @@ public class MessageCenter {
 										 normalProjection, DEFAULT_Z);
 			}
 
-			while (this.messages.size() > 0 &&
-				   this.messages.get(0).expired()) {
+			while (!this.messages.isEmpty() && this.messages.get(0).expired()) {
 				this.messages.remove(0);
 			}
 		}

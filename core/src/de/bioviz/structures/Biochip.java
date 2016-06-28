@@ -31,13 +31,13 @@ public class Biochip {
 	private static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
 
-	public final ArrayList<Pair<Rectangle, Range>> blockages =
+	public final List<Pair<Rectangle, Range>> blockages =
 			new ArrayList<>();
-	public final ArrayList<Detector> detectors = new ArrayList<>();
-	public final HashMap<Integer, Pin> pins = new HashMap<>();
-	public final HashMap<Integer, ActuationVector> pinActuations =
+	public final List<Detector> detectors = new ArrayList<>();
+	public final Map<Integer, Pin> pins = new HashMap<>();
+	public final Map<Integer, ActuationVector> pinActuations =
 			new HashMap<>();
-	public final HashMap<Point, ActuationVector> cellActuations =
+	public final Map<Point, ActuationVector> cellActuations =
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<>();
 	/** Stores the areaAnnotations. */
@@ -45,11 +45,11 @@ public class Biochip {
 	public List<String> errors = new ArrayList<>();
 	public boolean recalculateAdjacency = false;
 
-	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
+	private Map<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 
-	private HashMap<Integer, String> fluidTypes = new HashMap<>();
+	private Map<Integer, String> fluidTypes = new HashMap<>();
 
-	private ArrayList<String> annotations = new ArrayList<>();
+	private List<String> annotations = new ArrayList<>();
 
 
 	/**

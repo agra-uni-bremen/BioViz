@@ -306,6 +306,8 @@ public class DesktopLauncher extends JFrame {
 
 		BDisplayOptions[] enumValues = BDisplayOptions.values();
 		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
+
+			@Override
 			public int compare(final BDisplayOptions left,
 							   final BDisplayOptions right) {
 				return left.description().compareTo(
@@ -741,6 +743,7 @@ public class DesktopLauncher extends JFrame {
 	static void startGUI(final File file) {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					initializeLogback();
 
@@ -762,6 +765,7 @@ public class DesktopLauncher extends JFrame {
 
 
 					singleton.addWindowListener(new WindowAdapter() {
+						@Override
 						public void windowClosing(final WindowEvent e) {
 							singleton.canvas.stop();
 						}
@@ -1262,6 +1266,7 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			try {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						Color c =
 								JColorChooser.showDialog(
@@ -1306,6 +1311,7 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			try {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						File f = askForFile("lastFilePath", true);
 						if (f != null) {

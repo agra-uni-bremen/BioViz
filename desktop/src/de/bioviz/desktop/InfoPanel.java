@@ -38,8 +38,8 @@ public class InfoPanel extends JPanel {
     private static Logger logger =
             LoggerFactory.getLogger(PreferencesWindow.class);
 
-    static final String[] idToType = {"FluidID", "FluidType"};
-    static final String[] dropToFluid = {"DropletID", "FluidType"};
+    private static final String[] idToType = {"FluidID", "FluidType"};
+    private static final String[] dropToFluid = {"DropletID", "FluidType"};
 
     /**
      * TableModel for the fluidId to fluidType table.
