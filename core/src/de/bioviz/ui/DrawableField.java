@@ -8,6 +8,7 @@ import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Mixer;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Rectangle;
 import de.bioviz.structures.Sink;
 import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
@@ -456,15 +457,13 @@ public class DrawableField extends DrawableSprite {
 	 * @return whether or not this field is part of its interference region
 	 */
 	private boolean isPartOfInterferenceRegion(final Droplet d) {
-		Point curPos = d.getPositionAt(getParentCircuit().getCurrentTime());
-		Point prevPos =
+		Rectangle curPos = d.getPositionAt(getParentCircuit().getCurrentTime());
+		Rectangle prevPos =
 				d.getPositionAt(getParentCircuit().getCurrentTime() - 1);
 		if (parentCircuit.getDisplayOptions()
 				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
-			return (curPos != null &&
-					curPos.adjacent(field.pos)) ||
-				   (prevPos != null &&
-					prevPos.adjacent(field.pos));
+			return (curPos != null && curPos.adjacent(field.pos)) ||
+				   (prevPos != null && prevPos.adjacent(field.pos));
 		} else {
 			return curPos != null && curPos.adjacent(field.pos);
 		}

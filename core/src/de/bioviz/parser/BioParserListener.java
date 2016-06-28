@@ -395,7 +395,8 @@ class BioParserListener extends BioBaseListener {
 
 		for (PositionContext pos : positions) {
 			Point p = getPosition(pos);
-			drop.addPosition(p);
+			Rectangle r = new Rectangle(p,1,1);
+			drop.addPosition(r);
 		}
 
 		droplets.add(drop);
@@ -417,12 +418,9 @@ class BioParserListener extends BioBaseListener {
 			Point lowerLeft = getPosition(l.position(0));
 			Point upperRight = getPosition(l.position(1));
 
-			Point refPoint = new Point(lowerLeft.fst, upperRight.snd);
-			Point size = new Point(upperRight.fst - lowerLeft.fst + 1,
-								   upperRight.snd - lowerLeft.snd + 1);
+			Rectangle r = new Rectangle(lowerLeft,upperRight);
 
-			drop.addPosition(refPoint);
-			drop.addSize(size);
+			drop.addPosition(r);
 
 		}
 
@@ -483,7 +481,7 @@ class BioParserListener extends BioBaseListener {
 
 		nets.forEach(net -> {
 
-			Point target = net.getTarget().center();
+			Rectangle target = net.getTarget();
 
 			logger.error("\nNet target={}, target.center={}\n", net
 								 .getTarget(),
@@ -503,9 +501,14 @@ class BioParserListener extends BioBaseListener {
 						it -> it.getID() == dropID).findFirst();
 				drop.ifPresent(it -> it.setNet(net));
 
-				chip.getFieldAt(target).targetIDs.add(dropID);
-				chip.getFieldAt(src.startPosition.center()).sourceIDs.add(
-						dropID);
+				target.positions().forEach(p ->
+				   chip.getFieldAt(p).targetIDs.add(dropID)
+				);
+
+				src.startPosition.positions().forEach(p->
+					chip.getFieldAt(p).sourceIDs.add(dropID)
+				);
+
 			});
 		});
 

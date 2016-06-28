@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,9 +130,11 @@ public class DrawableDroplet extends DrawableSprite {
 		route = new DrawableRoute(this);
 
 		/*
-		Set the initial coordinates for the droplet
+		Set the initial coordinates for the droplet.
+
+		Jannis chose the upper left corner of the droplet to be the reference.
 		 */
-		Point p = droplet.getFirstPosition();
+		Point p = droplet.getFirstPosition().upperLeft();
 		smoothX = p.fst;
 		smoothY = p.snd;
 		originX = p.fst;
@@ -218,20 +221,26 @@ public class DrawableDroplet extends DrawableSprite {
 			color = net.getColor().buildGdxColor();
 		}
 
+		Rectangle pos = droplet.getPositionAt(parentCircuit.getCurrentTime());
 
-		Point p = droplet.getPositionAt(parentCircuit.getCurrentTime());
+		if (pos != null) {
+			Point p = pos.upperLeft();
 
-		// if the droplet is currently not present, make it 'invisible' by
-		// making it totally transparent
-		if (p == null) {
-			color.sub(Color.BLACK).clamp();
+			// if the droplet is currently not present, make it 'invisible' by
+			// making it totally transparent
+			if (p == null) {
+				color.sub(Color.BLACK).clamp();
 
-		} else {
-			if (parentCircuit.getHiddenDroplets().contains(this)) {
-				color.a = 0.25f;
 			} else {
-				color.add(Color.BLACK).clamp();
+				if (parentCircuit.getHiddenDroplets().contains(this)) {
+					color.a = 0.25f;
+				} else {
+					color.add(Color.BLACK).clamp();
+				}
 			}
+		}
+		else {
+			color.sub(Color.BLACK).clamp();
 		}
 
 		return color;
@@ -297,8 +306,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 		DrawableCircuit circ = parentCircuit;
 
-		Point size = droplet.getSizeAt(circ.getCurrentTime());
-		Point p = droplet.getPositionAt(circ.getCurrentTime());
+		Rectangle p = droplet.getPositionAt(circ.getCurrentTime());
 		boolean withinTimeRange = false;
 
 		if (p == null) {
@@ -314,8 +322,11 @@ public class DrawableDroplet extends DrawableSprite {
 
 		this.setColor(getDisplayColor());
 
+		Point upperLeft = p.upperLeft();
+		Point size = p.size();
+
 		if (p != null) {
-			this.setTargetPosition(p.fst, p.snd);
+			this.setTargetPosition(upperLeft.fst, upperLeft.snd);
 			this.updateCoords();
 			route.draw();
 

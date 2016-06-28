@@ -445,8 +445,10 @@ public class SVGManager {
 
 			LOGGER.debug("displayAt {}", displayAt);
 
-			Point p1 = droplet.droplet.getSafePositionAt(displayAt);
-			Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
+			Point p1 = droplet.droplet.getSafePositionAt(displayAt)
+					.upperLeft();
+			Point p2 = droplet.droplet.getSafePositionAt(
+					displayAt + 1).upperLeft();
 
 			LOGGER.debug("p1 {}; p2 {}", p1, p2);
 
@@ -518,7 +520,8 @@ public class SVGManager {
 		String arrow = "";
 
 		if (net != null) {
-			Point startPoint = drawableDrop.droplet.getFirstPosition();
+			Point startPoint = drawableDrop.droplet.getFirstPosition()
+					.upperLeft();
 			Point endPoint = net.getTarget().center();
 
 			Color arrowColor = Color.BLACK;
@@ -543,9 +546,9 @@ public class SVGManager {
 		if (net != null) {
 
 			int time = circuit.getCurrentTime();
-			Point startPoint = drawableDrop.droplet.getFirstPosition();
+			Point startPoint = drawableDrop.droplet.getFirstPosition().upperLeft();
 			Point endPoint = net.getTarget().center();
-			Point dropletPos = drawableDrop.droplet.getSafePositionAt(time);
+			Point dropletPos = drawableDrop.droplet.getSafePositionAt(time).upperLeft();
 
 			Color dropColor = drawableDrop.getColor();
 
@@ -877,8 +880,8 @@ public class SVGManager {
 	private Point getDropletPosInSVGCoords(final DrawableDroplet
 												   drawableDrop) {
 		return SVGUtils.toSVGCoords(
-				drawableDrop.droplet.getSafePositionAt(circuit
-															   .getCurrentTime()),
-				circuit, coordinateMultiplier);
+				drawableDrop.droplet.getSafePositionAt(
+						circuit.getCurrentTime()).upperLeft(), circuit,
+				coordinateMultiplier);
 	}
 }

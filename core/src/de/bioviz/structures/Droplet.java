@@ -31,16 +31,8 @@ public class Droplet {
 	 * when
 	 * the droplet vanishes from the chip.
 	 */
-	private ArrayList<Point> positions = new ArrayList<>();
+	private ArrayList<Rectangle> positions = new ArrayList<>();
 
-	/**
-	 * <p>The varying sizes of the droplet. The order within the ArrayList
-	 * corresponds to consecutive time steps.</p> <p>A multi-cell droplet is
-	 * considered to have its <i>top-left corner to be its coordinate</i>,
-	 * so it
-	 * stretches to the bottom and right as far as this size goes.</p>
-	 */
-	private ArrayList<Point> sizes = new ArrayList<>();
 
 	/**
 	 * The unique ID of the droplet.
@@ -124,7 +116,7 @@ public class Droplet {
 	 * droplet. We could think about returning a copy but than again we believe
 	 * in the non-evilness of our clients :)
 	 */
-	public ArrayList<Point> getPositions() {
+	public ArrayList<Rectangle> getPositions() {
 		return positions;
 	}
 
@@ -135,20 +127,10 @@ public class Droplet {
 	 * @param p
 	 * 		Position that is added
 	 */
-	public void addPosition(final Point p) {
+	public void addPosition(final Rectangle p) {
 		positions.add(p);
 	}
 
-	/**
-	 * Appends a size to the the droplet's size list Add them in order, add
-	 * duplicates if size isn't supposed to change over several time steps.
-	 *
-	 * @param p
-	 * 		Position that is added
-	 */
-	public void addSize(final Point p) {
-		sizes.add(p);
-	}
 
 	/**
 	 * Tries to return the position of the droplet at specified time step.
@@ -163,7 +145,7 @@ public class Droplet {
 	 * 		Time step for which the position is requested
 	 * @return Position of droplet at time step t oder first/last position.
 	 */
-	public Point getSafePositionAt(final int t) {
+	public Rectangle getSafePositionAt(final int t) {
 
 		int index = t - spawnTime;
 
@@ -185,7 +167,7 @@ public class Droplet {
 	 * 		Time step for which the position is requested
 	 * @return Position at time step t or null if outside time range
 	 */
-	public Point getPositionAt(final int t) {
+	public Rectangle getPositionAt(final int t) {
 
 		int index = t - spawnTime;
 
@@ -195,34 +177,14 @@ public class Droplet {
 		return positions.get(index);
 	}
 
-	/**
-	 * @param t
-	 * 		Time step for which the position is requested
-	 * @return Position at time step t or (1,1) if outside time range
-	 */
-	public Point getSizeAt(final int t) {
 
-		int index = t - spawnTime;
-
-		if (sizes.isEmpty() || index < 0 || index >= sizes.size()) {
-			/**
-			 * Just for testing
-			 **/
-
-			return new Point(this.hashCode() % 5,
-							 this.getFirstPosition().hashCode() % 5);
-
-//			return new Point(1, 1);
-		}
-		return sizes.get(index);
-	}
 
 	/**
 	 * @return First position of the droplet
 	 * @throws IndexOutOfBoundsException
 	 * 		if list of positions is empty
 	 */
-	public Point getFirstPosition() {
+	public Rectangle getFirstPosition() {
 		return positions.get(0);
 	}
 
@@ -232,7 +194,7 @@ public class Droplet {
 	 * @throws IndexOutOfBoundsException
 	 * 		if list of positions is empty
 	 */
-	public Point getLastPosition() {
+	public Rectangle getLastPosition() {
 		return positions.get(positions.size() - 1);
 	}
 

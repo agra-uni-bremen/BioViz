@@ -8,7 +8,6 @@ import static com.badlogic.gdx.utils.Align.center;
 
 /**
  * @author Oliver Keszocze
-
  */
 public class Rectangle {
 
@@ -45,12 +44,15 @@ public class Rectangle {
 	/**
 	 * Creates a Rectangle defined by the upper left corner and a size.
 	 *
-	 * @param pos Top left corner of the rectangle
-	 * @param xSize The width of the rectangle
-	 * @param ySize The height of the rectangle
+	 * @param pos
+	 * 		Top left corner of the rectangle
+	 * @param xSize
+	 * 		The width of the rectangle
+	 * @param ySize
+	 * 		The height of the rectangle
 	 */
 	public Rectangle(final Point pos, final int xSize, final int ySize) {
-		this(pos.fst,pos.snd,pos.fst-(xSize-1),pos.snd-(ySize-1));
+		this(pos.fst, pos.snd, pos.fst - (xSize - 1), pos.snd - (ySize - 1));
 	}
 
 	/**
@@ -114,16 +116,20 @@ public class Rectangle {
 	}
 
 	public Point center() {
-		int centerX = (lowerLeft.fst + upperRight.fst)/2;
-		int centerY = (lowerLeft.snd + upperRight.snd)/2;
-		return new Point(centerX,centerY);
+		int centerX = (lowerLeft.fst + upperRight.fst) / 2;
+		int centerY = (lowerLeft.snd + upperRight.snd) / 2;
+		return new Point(centerX, centerY);
 	}
 
-	public Pair<Float,Float> centerFloat() {
-		float centerX = (lowerLeft.fst.floatValue() + upperRight.fst.floatValue())/2f;
-		float centerY = (lowerLeft.snd.floatValue() + upperRight.snd.floatValue())/2f;
+	public Pair<Float, Float> centerFloat() {
+		float centerX =
+				(lowerLeft.fst.floatValue() + upperRight.fst.floatValue()) /
+				2f;
+		float centerY =
+				(lowerLeft.snd.floatValue() + upperRight.snd.floatValue()) /
+				2f;
 
-		return new Pair<Float,Float>(centerX,centerY);
+		return new Pair<Float, Float>(centerX, centerY);
 	}
 
 
@@ -143,6 +149,91 @@ public class Rectangle {
 		return result;
 	}
 
+	/**
+	 * Checks whether the rectangle contains a single point only.
+	 *
+	 * @return true if the Rectangle is a single point only
+	 */
+	public boolean isPoint() {
+		return lowerLeft.equals(upperRight);
+	}
+
+	/**
+	 * @return the Point of the rectangle if the rectangle contains one point
+	 * only, null otherwise.
+	 */
+	public Point getPoint() {
+		if (isPoint()) {
+			return lowerLeft;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Checks two rectangles for adjacency.
+	 *
+	 * @param r1
+	 * 		The first rectangle
+	 * @param r2
+	 * 		The second rectanle
+	 * @return true if the rectangles are adjacent, false otherwise.
+	 * @warn Currently only single point rectangles are supported
+	 */
+	public static boolean adjacent(final Rectangle r1, final Rectangle r2) {
+
+		if (r1 == null || r2 == null) {
+			return false;
+		}
+
+		Point p1 = r1.getPoint();
+		Point p2 = r2.getPoint();
+
+		if (p1 != null && p2 != null) {
+			return Point.adjacent(p1, p2);
+		} else {
+			// TODO implement for meda droplets!
+			return false;
+		}
+	}
+
+
+	/**
+	 * Computes the size of the rectangle.
+	 * @return Point of type (width,height).
+	 */
+	public Point size() {
+		return new Point(
+				(upperRight.fst-lowerLeft.fst)+1,
+				(upperRight.snd-lowerLeft.snd)+1
+		);
+	}
+
+	/**
+	 * Computes the upper left corner of the rectangle.
+	 * @return The upper left corner of the rectangle.
+	 */
+	public Point upperLeft() {
+		return new Point(lowerLeft.fst,upperRight.snd);
+	}
+
+	/**
+	 * Checks if a point is adjacent to this rectangle.
+	 * <p>
+	 * The check is easily done be extending the rectangle and checking whether
+	 * the point is within that rectangle.
+	 *
+	 * @param p
+	 * 		The point to check for adjacency.
+	 * @return True if the point is adjacent to the rectangle.
+	 */
+	public boolean adjacent(final Point p) {
+		Rectangle biggerRect =
+				new Rectangle(lowerLeft.fst - 1, lowerLeft.snd - 1,
+							  upperRight.fst + 1, upperRight.snd + 1);
+
+		return biggerRect.contains(p);
+	}
 
 	/**
 	 * @return String of the form "Rect[(lowerLeft.x,lowerLeft.y)

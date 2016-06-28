@@ -3,6 +3,8 @@ package de.bioviz.ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Rectangle;
+import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,11 +127,12 @@ public class DrawableRoute extends DrawableSprite {
 
 
 			displayAt = currentTime + i;
-			Point p1 = droplet.droplet.getSafePositionAt(displayAt);
-			Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
+			Rectangle r1 = droplet.droplet.getSafePositionAt(displayAt);
+			Rectangle r2 = droplet.droplet.getSafePositionAt(displayAt + 1);
 
-			logger.trace("Point p1: {} (timestep {})", p1, displayAt);
-			logger.trace("Point p2: {} (timestep {})", p2, displayAt + 1);
+			Point p1 = r1.upperLeft();
+			Point p2 = r2.upperLeft();
+
 
 			int x1 = p1.fst;
 			int x2 = p2.fst;
@@ -172,14 +175,14 @@ public class DrawableRoute extends DrawableSprite {
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
 		if (dropletLongIndicator && droplet.droplet.hasNet()) {
 			setForcedLOD(1f);
-			final Point targetPoint = droplet.droplet.getNet().getTarget().center();
-			Vector2 target = new Vector2(targetPoint.fst.floatValue(),
-										 targetPoint.snd.floatValue());
+			final Pair<Float,Float> targetPoint = droplet.droplet.getNet().getTarget().centerFloat();
+			Vector2 target = new Vector2(targetPoint.fst, targetPoint.snd);
 
-			final Point sourcePoint = droplet.droplet.getFirstPosition();
-			Vector2 source = new Vector2(
-					sourcePoint.fst.floatValue(),
-					sourcePoint.snd.floatValue());
+			final Pair<Float,Float> sourcePoint = droplet.droplet.getFirstPosition().centerFloat();
+			Vector2 source = new Vector2(sourcePoint.fst, sourcePoint.snd);
+
+
+			// TODO need to have something like a smoothCenterX/smoothCenterY
 			Vector2 current = new Vector2(droplet.smoothX, droplet.smoothY);
 
 			// draw to target
