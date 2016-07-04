@@ -289,12 +289,10 @@ public class SVGManager {
 		// run over each droplet again and draw the arrows
 		// otherwise arrows can get under droplets
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
-			if (circuit.getDisplayOptions().getOption(BDisplayOptions
-															  .LongNetIndicatorsOnDroplets)) {
-
-				if (SVGUtils.isNotHiddenOrInvisible(drop)) {
+			if (circuit.getDisplayOptions().
+					getOption(BDisplayOptions.LongNetIndicatorsOnDroplets) &&
+					SVGUtils.isNotHiddenOrInvisible(drop)) {
 					sb.append(createDropletArrows(drop));
-				}
 			}
 			// append longNetIndicatorsOnFields when needed
 			if (circuit.getDisplayOptions().getOption(BDisplayOptions
