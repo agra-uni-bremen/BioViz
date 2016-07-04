@@ -13,6 +13,7 @@ import de.bioviz.ui.DrawableDroplet;
 import de.bioviz.ui.DrawableField;
 import de.bioviz.ui.DrawableRoute;
 import de.bioviz.ui.TextureE;
+import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -535,9 +536,9 @@ public class SVGManager {
 		String arrow = "";
 
 		if (net != null) {
-			Point startPoint = drawableDrop.droplet.getFirstPosition()
-					.upperLeft();
-			Point endPoint = net.getTarget().center();
+			Pair<Float, Float> startPoint = drawableDrop.droplet.getFirstPosition()
+					.centerFloat();
+			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
 
 			Color arrowColor = Color.BLACK;
 			arrow = createSVGArrow(startPoint, endPoint, arrowColor);
@@ -561,9 +562,12 @@ public class SVGManager {
 		if (net != null) {
 
 			int time = circuit.getCurrentTime();
-			Point startPoint = drawableDrop.droplet.getFirstPosition().upperLeft();
-			Point endPoint = net.getTarget().center();
-			Point dropletPos = drawableDrop.droplet.getSafePositionAt(time).upperLeft();
+			Pair<Float, Float> startPoint = drawableDrop.droplet.getFirstPosition()
+					.centerFloat();
+			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
+			Pair<Float, Float> dropletPos = drawableDrop.droplet.getSafePositionAt
+					(time)
+					.centerFloat();
 
 			Color dropColor = drawableDrop.getColor();
 
@@ -708,18 +712,19 @@ public class SVGManager {
 	 * 		the color for the arrow
 	 * @return svg string of an arrow
 	 */
-	private String createSVGArrow(final Point startPoint, final Point endPoint,
-								  final Color color) {
+	private String createSVGArrow(final Pair<Float, Float> startPoint, final
+																				Pair<Float, Float> endPoint, final Color
+			color){
+		Pair<Float, Float> start = SVGUtils.toSVGCoords(startPoint, circuit,
+				coordinateMultiplier);
+		Pair<Float, Float> end = SVGUtils.toSVGCoords(endPoint, circuit,
+				coordinateMultiplier);
 
-		Point start = SVGUtils.toSVGCoords(startPoint, circuit,
-										   coordinateMultiplier);
-		Point end = SVGUtils.toSVGCoords(endPoint, circuit,
-										 coordinateMultiplier);
-		int x1 = start.fst;
-		int y1 = start.snd;
+		float x1 = start.fst;
+		float y1 = start.snd;
 
-		int x2 = end.fst;
-		int y2 = end.snd;
+		float x2 = end.fst;
+		float y2 = end.snd;
 
 		// move startingPoint to the center of the field
 		x1 += coordinateMultiplier / 2;
@@ -745,11 +750,11 @@ public class SVGManager {
 		y2 -= yDiff;
 
 		final String line = "<line x1=\"" + x1 + "\" y1=\"" + y1 +
-							"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-							"\" stroke=\"#" + SVGUtils.colorToSVG(color) +
-							"\" stroke-width=\"10\" marker-end=\"url(#" +
-							SVGUtils.generateColoredID("ArrowHead", color) +
-							")\" />\n";
+				"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
+				"\" stroke=\"#" + SVGUtils.colorToSVG(color) +
+				"\" stroke-width=\"10\" marker-end=\"url(#" +
+				SVGUtils.generateColoredID("ArrowHead", color) +
+				")\" />\n";
 
 		return line;
 	}

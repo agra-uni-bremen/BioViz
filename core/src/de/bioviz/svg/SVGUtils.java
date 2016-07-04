@@ -105,6 +105,18 @@ public final class SVGUtils {
 		}
 	}
 
+	public static Pair<Float, Float> toSVGCoords(final Pair<Float, Float>	point,
+																							 final DrawableCircuit circuit,
+																							 final int coordinateMultiplier){
+		float yCoord = -point.snd + circuit.getData().getMaxCoord().snd;
+		float xCoord = point.fst;
+
+		xCoord *= coordinateMultiplier;
+		yCoord *= coordinateMultiplier;
+
+		return new Pair<>(xCoord, yCoord);
+	}
+
 	/**
 	 * Transforms a point to svgCoordinates.
 	 *
