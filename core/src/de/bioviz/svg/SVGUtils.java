@@ -150,31 +150,8 @@ public final class SVGUtils {
 
 		Rectangle position = droplet.droplet.getPositionAt(timeStep);
 
-		if (position.isPoint()) {
-			return new Pair<>(1,1);
-		}
-
-		int minX = Integer.MAX_VALUE;
-		int maxX = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE;
-		int maxY = Integer.MIN_VALUE;
-		for (Point p : position.positions()) {
-			if (p.fst < minX) {
-				minX = p.fst;
-			}
-			if (p.fst > maxX) {
-				maxX = p.fst;
-			}
-			if (p.snd < minY) {
-				minY = p.snd;
-			}
-			if (p.snd > maxY) {
-				maxY = p.snd;
-			}
-		}
-
-		int xScale = Math.abs(maxX - minX) + 1;
-		int yScale = Math.abs(maxY - minY) + 1;
+		int xScale = position.size().fst;
+		int yScale = position.size().snd;
 
 		return new Pair<>(xScale, yScale);
 	}
