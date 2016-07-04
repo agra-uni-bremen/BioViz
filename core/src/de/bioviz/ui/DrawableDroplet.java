@@ -325,7 +325,9 @@ public class DrawableDroplet extends DrawableSprite {
 		Point upperLeft = p.upperLeft();
 		Point size = p.size();
 
-		if (p != null) {
+		// at this point, p is definitely not null. The getFirst/LastPosition
+		// methods would have thrown an exception
+
 			this.setTargetPosition(upperLeft.fst, upperLeft.snd);
 			this.updateCoords();
 			route.draw();
@@ -361,7 +363,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 				super.draw();
 			}
-		}
+		
 		if (!withinTimeRange) {
 			// make sure that previous numbers are removed when the droplet is
 			// removed.
