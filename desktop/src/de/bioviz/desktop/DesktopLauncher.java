@@ -192,11 +192,6 @@ public class DesktopLauncher extends JFrame {
 	private JTabbedPane visualizationTabs;
 
 	/**
-	 * Used for more options than the panel can hold.
-	 */
-	private JMenuBar menubar;
-
-	/**
 	 * Creates a desktop launcher.
 	 */
 	public DesktopLauncher() {
@@ -244,9 +239,7 @@ public class DesktopLauncher extends JFrame {
 
 		infoPanel = new InfoPanel(currentViz);
 
-		menubar = initializeMenubar();
-
-		this.setJMenuBar(menubar);
+		this.setJMenuBar(initializeMenubar());
 
 		input = new LwjglAWTInput(canvas);
 
@@ -927,7 +920,7 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private static void showSettings(final BioViz viz) {
 		logger.debug("Opening preferences window...");
-		PreferencesWindow pw = new PreferencesWindow(viz);
+		new PreferencesWindow(viz);
 		logger.debug("Done opening preferences window.");
 	}
 
