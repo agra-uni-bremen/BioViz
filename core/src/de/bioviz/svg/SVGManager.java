@@ -386,15 +386,30 @@ public class SVGManager {
 	private String toSVG(final DrawableDroplet drawableDrop) {
 
 		Point dropletPos = getDropletPosInSVGCoords(drawableDrop);
+
+		Pair<Integer, Integer> scaleFactors = SVGUtils.getScaleFactors(drawableDrop,
+				circuit.getCurrentTime());
+
+		String scale = "scale(" + scaleFactors.fst + " " + scaleFactors.snd + ")";
+
+		String translateToZero = "translate(" + dropletPos.fst + " " +
+				dropletPos.snd + ")";
+		String translateBack = "translate(-" + dropletPos.fst + " " + "-" +
+				dropletPos.snd + ")";
+
+		// move the object to 0,0 then scale it and move it back to its
+		// original position
+		String transformation = getTransformation(translateToZero + " " +
+				scale + " " +	translateBack);
+
 		String route = toSVG(drawableDrop.route);
 
 		String dropletID = SVGUtils.generateColoredID("Droplet", drawableDrop
 				.getColor());
 
 		String dropShape = "<use x=\"" + dropletPos.fst + "\" " + "y=\"" +
-						   dropletPos.snd + "\"" +
-						   getScaleTransformation() + " xlink:href=\"#" +
-						   dropletID + "\" />\n";
+						   dropletPos.snd + "\"" + transformation + " " +
+				"xlink:href=\"#" + dropletID + "\" />\n";
 
 		return route + dropShape;
 	}

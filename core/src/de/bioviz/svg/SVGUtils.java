@@ -3,10 +3,12 @@ package de.bioviz.svg;
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Rectangle;
 import de.bioviz.ui.Colors;
 import de.bioviz.ui.DrawableCircuit;
 import de.bioviz.ui.DrawableDroplet;
 import de.bioviz.ui.DrawableField;
+import de.bioviz.util.Pair;
 
 /**
  * @author Maximilian Luenert
@@ -121,6 +123,48 @@ public final class SVGUtils {
 		yCoord *= coordinateMultiplier;
 
 		return new Point(xCoord, yCoord);
+	}
+
+	/**
+	 * Calculates the needed scale factors for a droplet.
+	 *
+	 * @param droplet the droplet
+	 * @param timeStep the timestep
+	 * @return Pair of Integers with x and y scale factor
+	 */
+	public static Pair<Integer, Integer> getScaleFactors(final DrawableDroplet
+																											 droplet,
+																		final int timeStep) {
+
+		Rectangle position = droplet.droplet.getPositionAt(timeStep);
+
+		if (position.isPoint()) {
+			return new Pair<>(1,1);
+		}
+
+		int minX = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int maxY = Integer.MIN_VALUE;
+		for (Point p : position.positions()) {
+			if (p.fst < minX) {
+				minX = p.fst;
+			}
+			if (p.fst > maxX) {
+				maxX = p.fst;
+			}
+			if (p.snd < minY) {
+				minY = p.snd;
+			}
+			if (p.snd > maxY) {
+				maxY = p.snd;
+			}
+		}
+
+		int xScale = Math.abs(maxX - minX) + 1;
+		int yScale = Math.abs(maxY - minY) + 1;
+
+		return new Pair<>(xScale, yScale);
 	}
 
 	/**
