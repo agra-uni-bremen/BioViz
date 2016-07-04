@@ -6,6 +6,7 @@ package de.bioviz.messages;
  */
 public class HUDMessage extends MessageBase {
 
+
 	/**
 	 * The message's x-position.
 	 */

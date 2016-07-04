@@ -50,7 +50,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-
 /**
  * This class implements a Listener for the BioParser.
  *
@@ -274,7 +273,12 @@ class BioParserListener extends BioBaseListener {
 		Point pos = getPosition(ctx.position());
 		int id = getDropletID(ctx.dropletID());
 		if (ctx.timeConstraint() != null) {
-			return new Source(id, pos, getTimeConstraint(ctx.timeConstraint()));
+			return new Source(
+					id,
+					pos,
+					getTimeConstraint(ctx.timeConstraint()),
+					new Point(1, 1) // in this case it is a "normal" droplet
+			);
 		} else {
 			return new Source(id, pos);
 		}
@@ -466,13 +470,53 @@ class BioParserListener extends BioBaseListener {
 		ArrayList<Source> sources = new ArrayList<>();
 
 		ctx.children.stream().filter(
-				child -> child instanceof Bio.SourceContext).forEach(child -> {
-			sources.add(getSource((Bio.SourceContext) child));
-			logger.trace("Found source child {}", child);
+				child -> child instanceof Bio.SourceContext
+		).forEach(child -> {
+			Source src = getSource((Bio.SourceContext) child);
+			sources.add(src);
+			//logger.error("Found source child {}", src);
 		});
 
+		//logger.error("Add net -> {}", target);
 		nets.add(new Net(sources, target));
 
+	}
+
+	/**
+	 * Parses a LocationContext
+	 * @param loc the location context
+	 * @return a parsed rectangle
+	 */
+	Rectangle getLocation(@NotNull final Bio.LocationContext loc) {
+		Point lowerLeft = getPosition(loc.position(0));
+		Point upperRight = getPosition(loc.position(1));
+		return new Rectangle(lowerLeft, upperRight);
+	}
+
+	@Override
+	public void enterMedaNet(@NotNull final Bio.MedaNetContext ctx) {
+		ArrayList<Source> sources = new ArrayList<>();
+
+		List<Bio.MedaSourceContext> srcs = ctx.medaSource();
+
+		ctx.medaSource().forEach(c -> {
+			int id = Integer.parseInt(c.dropletID().getText());
+			Rectangle srcRect = getLocation(c.location());
+
+			int spawnTime = 1;
+			if (c.timeConstraint() != null) {
+				spawnTime = getTimeConstraint(c.timeConstraint());
+			}
+
+			Source src = new Source(id, srcRect, spawnTime);
+			sources.add(src);
+		});
+
+		Rectangle target = getLocation(ctx.medaTarget().location());
+
+		Net n = new Net(sources, target);
+		logger.info("Adding new net: {}", n);
+		nets.add(n);
 	}
 
 	/**
@@ -491,6 +535,7 @@ class BioParserListener extends BioBaseListener {
 
 		blockages.add(new Pair<>(rect, timing));
 	}
+
 
 	/**
 	 * Parses a given TimingContext.
@@ -594,7 +639,33 @@ class BioParserListener extends BioBaseListener {
 
 		for (final PositionContext pos : positions) {
 			Point p = getPosition(pos);
-			drop.addPosition(p);
+			Rectangle r = new Rectangle(p, 1, 1);
+			drop.addPosition(r);
+		}
+
+		droplets.add(drop);
+
+	}
+
+	@Override
+	public void enterMedaRoute(@NotNull final Bio.MedaRouteContext ctx) {
+		int dropletID = Integer.parseInt(ctx.dropletID().getText());
+		int spawnTime = 1;
+		if (ctx.timeConstraint() != null) {
+			spawnTime = getTimeConstraint(ctx.timeConstraint());
+		}
+		Droplet drop = new Droplet(dropletID, spawnTime);
+
+		List<Bio.LocationContext> locations = ctx.location();
+
+		for (final Bio.LocationContext l : locations) {
+			Point lowerLeft = getPosition(l.position(0));
+			Point upperRight = getPosition(l.position(1));
+
+			Rectangle r = new Rectangle(lowerLeft, upperRight);
+
+			drop.addPosition(r);
+
 		}
 
 		droplets.add(drop);
@@ -681,7 +752,13 @@ class BioParserListener extends BioBaseListener {
 		chip.addNets(nets);
 
 		nets.forEach(net -> {
-			Point target = net.getTarget();
+
+			Rectangle target = net.getTarget();
+
+			logger.error("\nNet target={}, target.center={}\n", net
+								 .getTarget(),
+						 target);
+
 			net.getSources().forEach(src -> {
 				int dropID = src.dropletID;
 
@@ -689,15 +766,21 @@ class BioParserListener extends BioBaseListener {
 				kind of weird code to set the net of a droplet. But this
 				happens
 				when the Java people think that they have a clever idea for
-				'stream' when normal people would simply directly operate on
+				'streams' when normal people would simply directly operate on
 				lists, maps etc.
 				 */
 				Optional<Droplet> drop = droplets.stream().filter(
 						it -> it.getID() == dropID).findFirst();
 				drop.ifPresent(it -> it.setNet(net));
 
-				chip.getFieldAt(target).targetIDs.add(dropID);
-				chip.getFieldAt(src.startPosition).sourceIDs.add(dropID);
+				target.positions().forEach(p ->
+				   chip.getFieldAt(p).targetIDs.add(dropID)
+				);
+
+				src.startPosition.positions().forEach(p ->
+					chip.getFieldAt(p).sourceIDs.add(dropID)
+				);
+
 			});
 		});
 
@@ -752,14 +835,16 @@ class BioParserListener extends BioBaseListener {
 
 
 		pins.values().forEach(pin ->
-			pin.cells.forEach(pos -> chip.getFieldAt(pos).pin = pin)
+									  pin.cells.forEach(
+											  pos -> chip.getFieldAt(pos).pin =
+													  pin)
 		);
 		chip.pins.putAll(pins);
 		errors.addAll(Validator.checkMultiplePinAssignments(pins.values()));
 		chip.pinActuations.putAll(pinActuations);
 
 		cellActuations.forEach((pos, vec) ->
-			chip.getFieldAt(pos).actVec = vec
+									   chip.getFieldAt(pos).actVec = vec
 		);
 		chip.cellActuations.putAll(cellActuations);
 
@@ -776,10 +861,11 @@ class BioParserListener extends BioBaseListener {
 
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(m ->
-			m.positions.positions().forEach(pos -> {
-				logger.trace("Adding mixer {} to field {}", m, pos);
-				chip.getFieldAt(pos).mixers.add(m);
-			})
+							   m.positions.positions().forEach(pos -> {
+								   logger.trace("Adding mixer {} to field {}",
+												m, pos);
+								   chip.getFieldAt(pos).mixers.add(m);
+							   })
 		);
 
 		chip.areaAnnotations.addAll(this.areaAnnotations);

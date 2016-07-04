@@ -18,6 +18,9 @@ Detectors: 'detectors';
 Mixers: 'mixers';
 Annotations: 'annotations';
 
+MedaRoutes: 'meda routes';
+MedaNets: 'meda nets';
+
 CellActuations: 'cell actuations';
 PinActuations: 'pin actuations';
 

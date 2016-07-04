@@ -258,8 +258,8 @@ public class Biochip {
 	boolean dropletOnPosition(final Point pos, final int t) {
 
 		for (final Droplet d : droplets) {
-			Point p = d.getPositionAt(t);
-			if (p != null && p.equals(pos)) {
+			Rectangle p = d.getPositionAt(t);
+			if (p != null && p.contains(pos)) {
 				return true;
 			}
 		}
@@ -293,13 +293,15 @@ public class Biochip {
 	}
 
 
-	void addAdjacentPoint(final Point p1, final Droplet d1, final Point p2,
+	void addAdjacentPoint(final Rectangle p1, final Droplet d1, final Rectangle p2,
 						  final Droplet d2, final Set s, final int timestep) {
-		if (Point.adjacent(p1, p2)) {
+		if (Rectangle.adjacent(p1, p2)) {
 			logger.trace("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 +
 						 ") are adjacent in time step " + timestep);
-			BiochipField f1 = field.get(p1);
-			BiochipField f2 = field.get(p2);
+			BiochipField f1 = field.get(p1.upperLeft());
+			BiochipField f2 = field.get(p2.upperLeft());
+
+			logger.info("New violation: "+ d1+ " " +f1 + " " + d2 + " " + f2);
 			s.add(new FluidicConstraintViolation(d1, f1, d2, f2, timestep));
 		}
 	}
@@ -337,16 +339,16 @@ public class Biochip {
 
 			for (int timestep = 1; timestep <= getMaxT(); timestep++) {
 				for (final Droplet d1 : droplets) {
-					Point p1 = d1.getPositionAt(timestep);
-					Point pp1 = d1.getPositionAt(timestep + 1);
+					Rectangle p1 = d1.getPositionAt(timestep);
+					Rectangle pp1 = d1.getPositionAt(timestep + 1);
 					for (final Droplet d2 : droplets) {
 
 						logger.trace("Comparing droplets {} and {}", d1, d2);
 
 
 						if (!d1.equals(d2) && !sameNet(d1, d2)) {
-							Point p2 = d2.getPositionAt(timestep);
-							Point pp2 = d2.getPositionAt(timestep + 1);
+							Rectangle p2 = d2.getPositionAt(timestep);
+							Rectangle pp2 = d2.getPositionAt(timestep + 1);
 							/*
 							We actually need to differentiat the following
 							three cases. The dynamic fluidic constraints

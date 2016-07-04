@@ -264,14 +264,14 @@ public class BiochipField {
 	 * <p>
 	 * The usage is considered up to a specified position in time.
 	 *
-	 * @param T
+	 * @param maxT
 	 * 		The upper bound for the time steps to consider when computing the
 	 * 		usage.
 	 * @return The usage of this field up to time step T.
 	 */
-	int computeUsage(int T) {
+	int computeUsage(int maxT) {
 		usage = 0;
-		for (int t = 1; t <= T; t++) {
+		for (int t = 1; t <= maxT; t++) {
 			if (isActuated(t)) {
 				usage++;
 			}

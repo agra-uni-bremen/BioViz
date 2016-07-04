@@ -8,6 +8,7 @@ import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Mixer;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Rectangle;
 import de.bioviz.structures.Sink;
 import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
@@ -124,7 +125,7 @@ public class DrawableField extends DrawableSprite {
 
 
         /*
-        Right now, the first options that is tested and set to true determines
+		Right now, the first options that is tested and set to true determines
 		the returned strings. This means that there might be a display of
 		inconsistant data. For example source/target IDs may interfere with a
 		detector ID. This is a real use case as a detector is a very valid
@@ -376,7 +377,8 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
-		// TODO Why does the following work? A "Set<FluidicConstraintViolation>" cannot contain a "BiochipField"
+		// TODO Why does the following work? A
+		// "Set<FluidicConstraintViolation>" cannot contain a "BiochipField"
 		if (getOption(Adjacency) &&
 			getParentCircuit().getData().getAdjacentActivations().contains(
 					this.getField())) {
@@ -427,30 +429,30 @@ public class DrawableField extends DrawableSprite {
 			displayText(field.areaAnnotations.get(0).getAnnotation());
 		}
 
+		// TODO why is drawing of lines in any way tied to the actual fields?!
 		if (getOption(LongNetIndicatorsOnFields)) {
-			for (final Net net : this.parentCircuit.getData().getNetsOf(this
-																				.field)) {
+			for (final Net net :
+					this.parentCircuit.getData().getNetsOf(this.field)) {
 				for (final Source s : net.getSources()) {
-					if (this.field.pos.equals(s.startPosition)) {
-						Vector2 target = new Vector2(
-								net.getTarget().fst.floatValue(),
-								net.getTarget().snd.floatValue());
+					Pair<Float, Float> targetCenter =
+							net.getTarget().centerFloat();
+					Pair<Float, Float> sourceCenter =
+							s.startPosition.centerFloat();
 
-						Vector2 source = new Vector2(
-								s.startPosition.fst.floatValue(),
-								s.startPosition.snd.floatValue());
+					Vector2 target =
+							new Vector2(targetCenter.fst, targetCenter.snd);
+					Vector2 source =
+							new Vector2(sourceCenter.fst, sourceCenter.snd);
 
-
-						// draw to target
-						if (netIndicator == null) {
-							netIndicator = new DrawableLine(this.viz);
-						}
-						netIndicator.from = source;
-						netIndicator.to = target;
-						netIndicator.setColor(
-								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
-						netIndicator.draw();
+					// draw to target
+					if (netIndicator == null) {
+						netIndicator = new DrawableLine(this.viz);
 					}
+					netIndicator.from = source;
+					netIndicator.to = target;
+					netIndicator.setColor(
+							Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
+					netIndicator.draw();
 				}
 			}
 		}
@@ -465,15 +467,13 @@ public class DrawableField extends DrawableSprite {
 	 * @return whether or not this field is part of its interference region
 	 */
 	private boolean isPartOfInterferenceRegion(final Droplet d) {
-		Point curPos = d.getPositionAt(getParentCircuit().getCurrentTime());
-		Point prevPos =
+		Rectangle curPos = d.getPositionAt(getParentCircuit().getCurrentTime());
+		Rectangle prevPos =
 				d.getPositionAt(getParentCircuit().getCurrentTime() - 1);
 		if (parentCircuit.getDisplayOptions()
 				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
-			return (curPos != null &&
-					curPos.adjacent(field.pos)) ||
-				   (prevPos != null &&
-					prevPos.adjacent(field.pos));
+			return (curPos != null && curPos.adjacent(field.pos)) ||
+				   (prevPos != null && prevPos.adjacent(field.pos));
 		} else {
 			return curPos != null && curPos.adjacent(field.pos);
 		}

@@ -29,7 +29,7 @@ public class AreaAnnotation {
 	 * @return string representation
 	 */
 	@Override
-	public String toString(){
+	public String toString() {
 		return annotation + position;
 	}
 
@@ -43,7 +43,7 @@ public class AreaAnnotation {
 	}
 
 	/**
-	 * Sets the annotation position
+	 * Sets the annotation position.
 	 *
 	 * @param position the position
 	 */
@@ -61,7 +61,7 @@ public class AreaAnnotation {
 	}
 
 	/**
-	 * Sets the annotation text
+	 * Sets the annotation text.
 	 *
 	 * @param annotation the annotation text
 	 */

@@ -203,8 +203,6 @@ public abstract class DrawableSprite implements Drawable {
 		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
 	}
 
-
-
 	/**
 	 * @param msg
 	 * 		Message to be displayed
