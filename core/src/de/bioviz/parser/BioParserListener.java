@@ -482,14 +482,19 @@ class BioParserListener extends BioBaseListener {
 
 	}
 
-	Rectangle getLocation(@NotNull Bio.LocationContext loc) {
+	/**
+	 * Parses a LocationContext
+	 * @param loc the location context
+	 * @return a parsed rectangle
+	 */
+	Rectangle getLocation(@NotNull final Bio.LocationContext loc) {
 		Point lowerLeft = getPosition(loc.position(0));
 		Point upperRight = getPosition(loc.position(1));
 		return new Rectangle(lowerLeft, upperRight);
 	}
 
 	@Override
-	public void enterMedaNet(@NotNull Bio.MedaNetContext ctx) {
+	public void enterMedaNet(@NotNull final Bio.MedaNetContext ctx) {
 		ArrayList<Source> sources = new ArrayList<>();
 
 		List<Bio.MedaSourceContext> srcs = ctx.medaSource();
@@ -509,8 +514,8 @@ class BioParserListener extends BioBaseListener {
 
 		Rectangle target = getLocation(ctx.medaTarget().location());
 
-		Net n = new Net(sources,target);
-		logger.info("Adding new net: {}",n);
+		Net n = new Net(sources, target);
+		logger.info("Adding new net: {}", n);
 		nets.add(n);
 	}
 
@@ -634,7 +639,7 @@ class BioParserListener extends BioBaseListener {
 
 		for (final PositionContext pos : positions) {
 			Point p = getPosition(pos);
-			Rectangle r = new Rectangle(p,1,1);
+			Rectangle r = new Rectangle(p, 1, 1);
 			drop.addPosition(r);
 		}
 
@@ -643,7 +648,7 @@ class BioParserListener extends BioBaseListener {
 	}
 
 	@Override
-	public void enterMedaRoute(@NotNull Bio.MedaRouteContext ctx) {
+	public void enterMedaRoute(@NotNull final Bio.MedaRouteContext ctx) {
 		int dropletID = Integer.parseInt(ctx.dropletID().getText());
 		int spawnTime = 1;
 		if (ctx.timeConstraint() != null) {
@@ -653,11 +658,11 @@ class BioParserListener extends BioBaseListener {
 
 		List<Bio.LocationContext> locations = ctx.location();
 
-		for (Bio.LocationContext l : locations) {
+		for (final Bio.LocationContext l : locations) {
 			Point lowerLeft = getPosition(l.position(0));
 			Point upperRight = getPosition(l.position(1));
 
-			Rectangle r = new Rectangle(lowerLeft,upperRight);
+			Rectangle r = new Rectangle(lowerLeft, upperRight);
 
 			drop.addPosition(r);
 
@@ -772,7 +777,7 @@ class BioParserListener extends BioBaseListener {
 				   chip.getFieldAt(p).targetIDs.add(dropID)
 				);
 
-				src.startPosition.positions().forEach(p->
+				src.startPosition.positions().forEach(p ->
 					chip.getFieldAt(p).sourceIDs.add(dropID)
 				);
 

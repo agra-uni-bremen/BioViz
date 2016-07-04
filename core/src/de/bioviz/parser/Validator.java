@@ -10,7 +10,6 @@ import de.bioviz.structures.Detector;
 import de.bioviz.structures.Direction;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
-import de.bioviz.structures.Rectangle;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +88,7 @@ final class Validator {
 		 * 		Biochips that is checked for errors
 		 * @return List of errors
 		 */
-		static ArrayList<String> checkPathForBlockages ( final Biochip chip){
+		static ArrayList<String> checkPathForBlockages(final Biochip chip) {
 			Set<Droplet> droplets = chip.getDroplets();
 			ArrayList<String> errors = new ArrayList<>();
 
@@ -124,8 +123,8 @@ final class Validator {
 		 * 		'jumps'
 		 * @return List of errors
 		 */
-		static ArrayList<String> checkPathsForJumps (
-		final ArrayList<Droplet> drops){
+		static ArrayList<String> checkPathsForJumps(
+				final ArrayList<Droplet> drops) {
 			ArrayList<String> errors = new ArrayList<>();
 
 			// TODO fix this stupid method!
@@ -168,8 +167,8 @@ final class Validator {
 		 * @note This method will generate error messages even if one cell gets
 		 * assigned the same pin multiple times.
 		 */
-		static ArrayList<String> checkMultiplePinAssignments (
-		final Collection<Pin> pins){
+		static ArrayList<String> checkMultiplePinAssignments(
+		final Collection<Pin> pins) {
 			ArrayList<Point> points = new ArrayList<>();
 			ArrayList<String> errors = new ArrayList<>();
 
@@ -275,9 +274,9 @@ final class Validator {
 		 * @return List of errors
 		 */
 		static List<String>
-		checkForDetectorPositions( final Biochip chip,
+		checkForDetectorPositions(final Biochip chip,
 		final List<Detector> detectors,
-		final boolean removeWrongDetectors){
+		final boolean removeWrongDetectors) {
 			ArrayList<String> errors = new ArrayList<>();
 
 			if (detectors != null && !detectors.isEmpty()) {
@@ -547,9 +546,7 @@ final class Validator {
 		// .entrySet().size());
 		for (
 				final Map.Entry<Integer, ActuationVector> e
-				: pinActuations.entrySet())
-
-		{
+				: pinActuations.entrySet()) {
 			Integer pinID = e.getKey();
 			ActuationVector pinActVec = e.getValue();
 			List<BiochipField> fields = chip.getFieldsForPin(pinID);

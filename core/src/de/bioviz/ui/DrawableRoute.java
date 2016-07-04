@@ -40,8 +40,14 @@ public class DrawableRoute extends DrawableSprite {
 	 */
 	public DrawableDroplet droplet;
 
-
+	/**
+	 * Stores a line from droplet to target.
+	 */
 	private DrawableLine toTarget;
+
+	/**
+	 * Stores a line from droplet to source.
+	 */
 	private DrawableLine fromSource;
 
 	/**
@@ -175,10 +181,12 @@ public class DrawableRoute extends DrawableSprite {
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets);
 		if (dropletLongIndicator && droplet.droplet.hasNet()) {
 			setForcedLOD(1f);
-			final Pair<Float,Float> targetPoint = droplet.droplet.getNet().getTarget().centerFloat();
+			final Pair<Float, Float> targetPoint =
+					droplet.droplet.getNet().getTarget().centerFloat();
 			Vector2 target = new Vector2(targetPoint.fst, targetPoint.snd);
 
-			final Pair<Float,Float> sourcePoint = droplet.droplet.getFirstPosition().centerFloat();
+			final Pair<Float, Float> sourcePoint =
+					droplet.droplet.getFirstPosition().centerFloat();
 			Vector2 source = new Vector2(sourcePoint.fst, sourcePoint.snd);
 
 

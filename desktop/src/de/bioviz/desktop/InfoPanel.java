@@ -38,22 +38,17 @@ public class InfoPanel extends JPanel {
     private static Logger logger =
             LoggerFactory.getLogger(PreferencesWindow.class);
 
-    private static final String[] idToType = {"FluidID", "FluidType"};
-    private static final String[] dropToFluid = {"DropletID", "FluidType"};
-
     /**
      * TableModel for the fluidId to fluidType table.
-     *
-     * The extra variable is only needed as Java is too stupid for new OurTableModel({"FluidID", "FluidType"});
      */
-    private DefaultTableModel fluidToTypeModel = new OurTableModel(idToType);
-
+    private DefaultTableModel fluidToTypeModel =
+        new OurTableModel(new String[]{"FluidID", "FluidType"});
 
     /**
      * TableModel for the dropletId to fluidType table.
      */
-
-    private DefaultTableModel dropToFluidModel = new OurTableModel(dropToFluid);
+    private DefaultTableModel dropToFluidModel =
+        new OurTableModel(new String[]{"DropletID", "FluidType"});
 
     /**
      * Label to show the number of droplets.
@@ -468,13 +463,24 @@ public class InfoPanel extends JPanel {
         super.paintComponent(g);
     }
 
-    private class OurTableModel extends DefaultTableModel {
+	/**
+   * This implements a table model for the tables.
+   */
+  private class OurTableModel extends DefaultTableModel {
 
-        private final String[] columnNames;
+		/**
+     * Stores the columnNames.
+     */
+    private final String[] columnNames;
 
-        OurTableModel(String[] columnNames) {
+		/**
+     * Creates a new table model with the given columnNames.
+     * @param columnNames the column names
+     */
+    OurTableModel(final String[] columnNames) {
             this.columnNames = columnNames;
         }
+
         @Override
         public int getColumnCount() {
             return columnNames.length;
@@ -490,7 +496,5 @@ public class InfoPanel extends JPanel {
             return false;
         }
     }
-
-    ;
 
 }
