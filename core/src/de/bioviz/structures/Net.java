@@ -75,7 +75,7 @@ public final class Net {
 	 * @param target
 	 * 		the rectangle describing the target
 	 */
-	public Net(final ArrayList<Source> sources, final Rectangle target) {
+	public Net(final List<Source> sources, final Rectangle target) {
 		this.target = target;
 		this.sources.addAll(sources);
 		Random rnd = new Random();
