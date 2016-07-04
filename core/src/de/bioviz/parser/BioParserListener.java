@@ -21,6 +21,7 @@ import de.bioviz.parser.generated.Bio.TimeRangeContext;
 import de.bioviz.parser.generated.Bio.TimingContext;
 import de.bioviz.parser.generated.BioBaseListener;
 import de.bioviz.structures.ActuationVector;
+import de.bioviz.structures.AreaAnnotation;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Detector;
@@ -49,29 +50,102 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-
+/**
+ * This class implements a Listener for the BioParser.
+ *
+ * @author Oliver Keszocze?, Jannis Stoppe?, Maximilian Luenert
+ */
 class BioParserListener extends BioBaseListener {
+	/**
+	 * The logger instance.
+	 */
 	private static Logger logger =
 			LoggerFactory.getLogger(BioParserListener.class);
 
+	/**
+	 * Stores all the parsed rectangles used to define the cells of the chip.
+	 */
 	private ArrayList<Rectangle> rectangles = new ArrayList<>();
+
+	/**
+	 * Stores all the parsed droplets.
+	 */
 	private ArrayList<Droplet> droplets = new ArrayList<>();
+
+	/**
+	 * Stores the maxX coordinate.
+	 */
 	private int maxX = 0;
+
+	/**
+	 * Stores the maxY coordinate.
+	 */
 	private int maxY = 0;
+
+	/**
+	 * Stores the number of grids that were defined in the input file.
+	 */
 	private int nGrids = 0;
 
-
+	/**
+	 * Stores all parsed fluidTypes.
+	 */
 	private HashMap<Integer, String> fluidTypes = new HashMap<>();
+
+	/**
+	 * Stores alls parsed nets.
+	 */
 	private ArrayList<Net> nets = new ArrayList<>();
+
+	/**
+	 * Stores a connection from dropletIds to FluidTypes.
+	 */
 	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
+
+	/**
+	 * Stores all parsed sinks.
+	 */
 	private ArrayList<Pair<Point, Direction>> sinks = new ArrayList<>();
+
+	/**
+	 * Stores all parsed dispensers.
+	 */
 	private ArrayList<Pair<Integer, Pair<Point, Direction>>> dispensers =
 			new ArrayList<>();
+
+	/**
+	 * Stores all parsed blockages.
+	 */
 	private ArrayList<Pair<Rectangle, Range>> blockages = new ArrayList<>();
+
+	/**
+	 * Stores all parsed detectors.
+	 */
 	private ArrayList<Detector> detectors = new ArrayList<>();
+
+	/**
+	 * Stores all parsed pin assignments.
+	 */
 	private HashMap<Integer, Pin> pins = new HashMap<>();
+
+	/**
+	 * Stores all parsed pinActuations.
+	 */
 	private HashMap<Integer, ActuationVector> pinActuations = new HashMap<>();
+
+	/**
+	 * Stores all parsed cellActuations.
+	 */
 	private HashMap<Point, ActuationVector> cellActuations = new HashMap<>();
+
+	/**
+	 * Stores all parsed areaAnnotations.
+	 */
+	private ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
+
+	/**
+	 * Stores all parsed mixers.
+	 */
 	private ArrayList<Mixer> mixers = new ArrayList<>();
 
 
@@ -86,30 +160,72 @@ class BioParserListener extends BioBaseListener {
 	 */
 	private List<String> errors;
 
+	/**
+	 * Empty constructor.
+	 */
+	BioParserListener() {
+
+	}
+
+	/**
+	 * Gets all the errors.
+	 *
+	 * @return List of String containing all error messages.
+	 */
 	public List<String> getErrors() {
 		return errors;
 	}
 
+	/**
+	 * Gets the parsed biochip.
+	 *
+	 * @return parsed biochip.
+	 */
 	public Biochip getBiochip() {
 		return chip;
 	}
 
+	/**
+	 * Parses the given TimeConstraintContext.
+	 *
+	 * @param ctx The TimeConstraintContext
+	 * @return int value of the timeConstraint
+	 */
 	private int getTimeConstraint(final TimeConstraintContext ctx) {
 		return Integer.parseInt(ctx.Integer().getText());
 	}
 
+	/**
+	 * Parses a given PositionContext.
+	 *
+	 * @param ctx The positionContext
+	 * @return Point object for the position
+	 */
 	private Point getPosition(final PositionContext ctx) {
 		Integer x = Integer.parseInt(ctx.xpos().getText());
 		Integer y = Integer.parseInt(ctx.ypos().getText());
 		return new Point(x, y);
 	}
 
+	/**
+	 * Parses the given dropletIDContext.
+	 *
+	 * @param ctx The DropletIdContext
+	 * @return int value of the dropletId
+	 */
 	private int getDropletID(final DropletIDContext ctx) {
 		return Integer.parseInt(ctx.Integer().getText());
 	}
 
 
-	// TODO remove this code dublicity!
+	/**
+	 * Parses the given fluidIdContext.
+	 *
+	 * @param ctx The fluidIdContext
+	 * @return int value of the fluidId
+	 * 					or 0 if ctx is null
+	 */
+	// TODO remove this code duplicity!
 	private int getFluidID(final FluidIDContext ctx) {
 		if (ctx == null) {
 			return 0;
@@ -118,6 +234,12 @@ class BioParserListener extends BioBaseListener {
 		}
 	}
 
+	/**
+	 * Parses the given PinIdContext.
+	 * @param ctx The PinIdContext
+	 * @return int value of the PinId or
+	 * 					0 if ctx is null
+	 */
 	private int getPinID(final PinIDContext ctx) {
 		if (ctx == null) {
 			return 0;
@@ -126,6 +248,13 @@ class BioParserListener extends BioBaseListener {
 		}
 	}
 
+	/**
+	 * Parses the given MixerIdContext.
+	 *
+	 * @param ctx The MixerIdContext
+	 * @return int value of the parsed mixerId
+	 * 					or 0 if ctx is null
+	 */
 	private int getMixerID(final MixerIDContext ctx) {
 		if (ctx == null) {
 			return 0;
@@ -134,6 +263,12 @@ class BioParserListener extends BioBaseListener {
 		}
 	}
 
+	/**
+	 * Parses the given SourceContext.
+	 *
+	 * @param ctx The SourceContext
+	 * @return Source object
+	 */
 	private Source getSource(final SourceContext ctx) {
 		Point pos = getPosition(ctx.position());
 		int id = getDropletID(ctx.dropletID());
@@ -149,6 +284,23 @@ class BioParserListener extends BioBaseListener {
 		}
 	}
 
+	/**
+	 * Parses the given AreaAnnotationContext.
+	 *
+	 * @param ctx The AreaAnnotationContext
+	 * @return AreaAnnotation object
+	 */
+	private AreaAnnotation getAreaAnnotation(final Bio.AreaAnnotationContext
+																							 ctx) {
+		Point pos1 = getPosition(ctx.position(0));
+		Point pos2 = pos1;
+		if (ctx.position().size() > 1) {
+			pos2 = getPosition(ctx.position(1));
+		}
+		Rectangle rect = new Rectangle(pos1, pos2);
+
+		return new AreaAnnotation(rect, ctx.AreaAnnotationText().getText());
+	}
 
 	@Override
 	public void enterDispenser(@NotNull final DispenserContext ctx) {
@@ -164,6 +316,12 @@ class BioParserListener extends BioBaseListener {
 
 	}
 
+	/**
+	 * Parses a String as a Direction.
+	 *
+	 * @param dir String resembling a direction
+	 * @return Direction object or null on error
+	 */
 	@Nullable
 	private Direction getDirection(final String dir) {
 		if ("N".equals(dir) || "U".equals(dir)) {
@@ -183,6 +341,12 @@ class BioParserListener extends BioBaseListener {
 		return null;
 	}
 
+	/**
+	 * Parses a given IoportContext.
+	 *
+	 * @param ctx The IoportContext
+	 * @return Pair with Point and Direction
+	 */
 	private Pair<Point, Direction> getIOPort(final Bio.IoportContext ctx) {
 		Point pos = getPosition(ctx.position());
 		Direction dir = getDirection(ctx.Direction().getText());
@@ -193,21 +357,43 @@ class BioParserListener extends BioBaseListener {
 		return new Pair<>(pos, dir);
 	}
 
+	/**
+	 * Updates the MaxDimension values. It compares the given Point with the
+	 * stored maxX and maxY values.
+	 *
+	 * @param p A point with the coordinates to test.
+	 */
 	private void updateMaxDimension(final Point p) {
 		maxX = Math.max(p.fst + 1, maxX);
 		maxY = Math.max(p.snd + 1, maxY);
 	}
 
+	/**
+	 * Updates the max dimensions with two points.
+	 *
+	 * @param p1 The first point
+	 * @param p2 The second point
+	 */
 	private void updateMaxDimension(final Point p1, final Point p2) {
 		updateMaxDimension(p1);
 		updateMaxDimension(p2);
 	}
 
+	/**
+	 * Updates the count of parsed grids.
+	 *
+	 * @param ctx A GridContext
+	 */
 	@Override
 	public void enterGrid(final Bio.GridContext ctx) {
 		++nGrids;
 	}
 
+	/**
+	 * Parses a given SinkContext.
+	 *
+	 * @param ctx The SinkContext
+	 */
 	@Override
 	public void enterSink(@NotNull final Bio.SinkContext ctx) {
 		Pair<Point, Direction> sinkDef = getIOPort(ctx.ioport());
@@ -220,6 +406,11 @@ class BioParserListener extends BioBaseListener {
 
 	}
 
+	/**
+	 * Parses a given AssignmentContext.
+	 *
+	 * @param ctx The AssignmentContext
+	 */
 	@Override
 	public void enterAssignment(@NotNull final Bio.AssignmentContext ctx) {
 		Point pos = getPosition(ctx.position());
@@ -232,6 +423,11 @@ class BioParserListener extends BioBaseListener {
 		}
 	}
 
+	/**
+	 * Parses a given DetectorContext.
+	 *
+	 * @param ctx The DetectorContext
+	 */
 	@Override
 	public void enterDetector(@NotNull final Bio.DetectorContext ctx) {
 		Point pos = getPosition(ctx.position());
@@ -248,7 +444,11 @@ class BioParserListener extends BioBaseListener {
 		detectors.add(new Detector(pos, duration, fluidType));
 	}
 
-
+	/**
+	 * Parses a given DropToFluidContext.
+	 *
+	 * @param ctx The DropToFluidContext
+	 */
 	@Override
 	public void enterDropToFluid(@NotNull final Bio.DropToFluidContext ctx) {
 		int dropID = getDropletID(ctx.dropletID());
@@ -258,6 +458,11 @@ class BioParserListener extends BioBaseListener {
 		dropletIDsToFluidTypes.put(dropID, fluidID);
 	}
 
+	/**
+	 * Parses a NetContext.
+	 *
+	 * @param ctx The NetContext
+	 */
 	@Override
 	public void enterNet(@NotNull final Bio.NetContext ctx) {
 		Point target = getPosition(ctx.target().position());
@@ -276,7 +481,6 @@ class BioParserListener extends BioBaseListener {
 		nets.add(new Net(sources, target));
 
 	}
-
 
 	Rectangle getLocation(@NotNull Bio.LocationContext loc) {
 		Point lowerLeft = getPosition(loc.position(0));
@@ -310,7 +514,11 @@ class BioParserListener extends BioBaseListener {
 		nets.add(n);
 	}
 
-
+	/**
+	 * Parses a given BlockageContext.
+	 *
+	 * @param ctx The BlockageContext
+	 */
 	@Override
 	public void enterBlockage(@NotNull final BlockageContext ctx) {
 		Point p1 = getPosition((PositionContext) ctx.getChild(0));
@@ -324,6 +532,13 @@ class BioParserListener extends BioBaseListener {
 	}
 
 
+	/**
+	 * Parses a given TimingContext.
+	 *
+	 * @param ctx The TimingContext
+	 * @return Range object from begin to end or
+	 * 					DONTCARE to DONTCARE if ctx is null
+	 */
 	private Range getTiming(final TimingContext ctx) {
 		if (ctx == null) {
 			return new Range(Range.DONTCARE, Range.DONTCARE);
@@ -343,6 +558,11 @@ class BioParserListener extends BioBaseListener {
 		}
 	}
 
+	/**
+	 * Parses a given GridblockContext.
+	 *
+	 * @param ctx The GridblockContext
+	 */
 	@Override
 	public void enterGridblock(final GridblockContext ctx) {
 
@@ -357,6 +577,11 @@ class BioParserListener extends BioBaseListener {
 		super.enterGridblock(ctx);
 	}
 
+	/**
+	 * Parses a given FluiddefContext.
+	 *
+	 * @param ctx The FluiddefContext
+	 */
 	@Override
 	public void enterFluiddef(@NotNull final FluiddefContext ctx) {
 		int fluidID = Integer.parseInt(ctx.fluidID().getText());
@@ -365,7 +590,11 @@ class BioParserListener extends BioBaseListener {
 		fluidTypes.put(fluidID, fluid);
 	}
 
-
+	/**
+	 * Parses a given PinActuationContext.
+	 *
+	 * @param ctx The PinActuationContext.
+	 */
 	@Override
 	public void enterPinActuation(@NotNull final PinActuationContext ctx) {
 		int pinID = getPinID(ctx.pinID());
@@ -375,6 +604,11 @@ class BioParserListener extends BioBaseListener {
 
 	}
 
+	/**
+	 * Parses a given CellActuationContext.
+	 *
+	 * @param ctx The CellActuationContext
+	 */
 	@Override
 	public void enterCellActuation(@NotNull final CellActuationContext ctx) {
 		Point pos = getPosition(ctx.position());
@@ -383,6 +617,11 @@ class BioParserListener extends BioBaseListener {
 		cellActuations.put(pos, actVec);
 	}
 
+	/**
+	 * Parses a given RouteContext.
+	 *
+	 * @param ctx The RouteContext
+	 */
 	@Override
 	public void enterRoute(final RouteContext ctx) {
 		int dropletID = Integer.parseInt(ctx.dropletID().getText());
@@ -393,7 +632,7 @@ class BioParserListener extends BioBaseListener {
 		Droplet drop = new Droplet(dropletID, spawnTime);
 		List<PositionContext> positions = ctx.position();
 
-		for (PositionContext pos : positions) {
+		for (final PositionContext pos : positions) {
 			Point p = getPosition(pos);
 			Rectangle r = new Rectangle(p,1,1);
 			drop.addPosition(r);
@@ -428,6 +667,12 @@ class BioParserListener extends BioBaseListener {
 
 	}
 
+	/**
+	 * Parses a given TimeRangeContext.
+	 *
+	 * @param ctx The TimeRangeContext
+	 * @return Range from start to end
+	 */
 	private Range getTimeRange(final TimeRangeContext ctx) {
 		Integer fst = Integer.parseInt(ctx.Integer(0).getText());
 		Integer snd = Integer.parseInt(ctx.Integer(1).getText());
@@ -437,6 +682,11 @@ class BioParserListener extends BioBaseListener {
 		return new Range(fst, snd);
 	}
 
+	/**
+	 * Parses a given MixerContext.
+	 *
+	 * @param ctx The MixerContext
+	 */
 	@Override
 	public void enterMixer(@NotNull final Bio.MixerContext ctx) {
 
@@ -450,6 +700,23 @@ class BioParserListener extends BioBaseListener {
 
 	}
 
+	/**
+	 * Parses a given AnnotationContext.
+	 *
+	 * @param ctx The AnnotationContext
+	 */
+	@Override
+	public void enterAnnotations(@NotNull final Bio.AnnotationsContext ctx) {
+		for (final Bio.AreaAnnotationContext areaCtx : ctx.areaAnnotation()) {
+			areaAnnotations.add(getAreaAnnotation(areaCtx));
+		}
+	}
+
+	/**
+	 * Creates the BioChip when the parsing is done.
+	 *
+	 * @param ctx The BioContext
+	 */
 	@Override
 	public void exitBio(final BioContext ctx) {
 
@@ -594,6 +861,14 @@ class BioParserListener extends BioBaseListener {
 												m, pos);
 								   chip.getFieldAt(pos).mixers.add(m);
 							   })
+		);
+
+		chip.areaAnnotations.addAll(this.areaAnnotations);
+		areaAnnotations.forEach(a ->
+			a.getPosition().positions().forEach(pos -> {
+				logger.trace("Adding areaAnnotation {} to field {}", a, pos);
+				chip.getFieldAt(pos).areaAnnotations.add(a);
+			})
 		);
 
 		Set<FluidicConstraintViolation> badFields =

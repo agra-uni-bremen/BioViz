@@ -6,6 +6,7 @@ import de.bioviz.parser.generated.BioLexerGrammar;
 import de.bioviz.structures.Biochip;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.slf4j.Logger;
@@ -15,6 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Static class providing a parser for BioGram files.
@@ -83,13 +87,45 @@ public final class BioParser {
 				// Walk the tree created during the parse, trigger callbacks
 				BioParserListener listener = new BioParserListener();
 				walker.walk(listener, tree);
-				return listener.getBiochip();
+				Biochip biochip = listener.getBiochip();
+				List<String> annotations =
+						parseChannel(input, BioLexerGrammar.ANNOTATION);
+				biochip.addAnnotations(annotations);
+				return biochip;
 			}
 		} catch (final Exception e) {
 			logger.error("Failed to parse file");
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	/**
+	 * Parses the annotations in a file.
+	 * @param input an ANTLRInputStream
+	 * @return A List of Strings containing the annotations.
+	 */
+	private static List<String> parseChannel(final ANTLRInputStream input,
+																					 final int channel){
+		BioLexerGrammar lexer = new BioLexerGrammar(input);
+		// @keszocze this one is needed. I don't know why.
+		lexer.reset();
+		CommonTokenStream cts = new CommonTokenStream(lexer);
+		List<String> channelTokens = new ArrayList<>();
+
+		// this one gets everything that is in the stream.
+		cts.getText();
+		// now we can use size() to run over the tokens
+		for (int i = 0; i < cts.size(); i++){
+			Token token = cts.get(i);
+			// and check here if the token is on the right channel
+			if(token.getChannel() == channel) {
+				logger.trace("Parsing Comment: " + token.getText());
+				channelTokens.add(token.getText());
+			}
+		}
+
+		return channelTokens;
 	}
 
 }

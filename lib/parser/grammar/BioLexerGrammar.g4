@@ -1,7 +1,9 @@
 lexer grammar BioLexerGrammar;
 
-
-
+@lexer::members {
+    public static final int COMMENT = 1;
+    public static final int ANNOTATION = 2;
+}
 
 Sinks: 'sinks';
 Droplets: 'droplets';
@@ -14,6 +16,7 @@ Grid: 'grid';
 Dispensers: 'dispensers';
 Detectors: 'detectors';
 Mixers: 'mixers';
+Annotations: 'annotations';
 
 MedaRoutes: 'meda routes';
 MedaNets: 'meda nets';
@@ -28,7 +31,8 @@ END: 'end';
 
 Integer: [0-9]+ ;
 Identifier: [a-zA-Z]+ ;
-Comment: '#' .*? Newlines -> skip;
+Annotation: '#!' .*? Newlines -> channel(ANNOTATION);
+Comment: '#' .*? Newlines -> channel(COMMENT);
 
 Newlines: NEWLINE+;
 NEWLINE: '\r'? '\n' ;
@@ -47,8 +51,13 @@ Asterisk: '*';
 Arrow: '->' ;
 Colon: ':' -> mode(ACTUATION);
 
+LessThan : '<' -> mode(AREAANNOTATION);
+
 mode ACTUATION;
 ActuationVector: ('1'|'0'|'X')+ -> mode(DEFAULT_MODE);
+
+mode AREAANNOTATION;
+AreaAnnotationText: (Identifier|Integer|WS)+ -> mode(DEFAULT_MODE);
 
 // Antlr4 is annoying, I have to specify all lexer rules again as
 // no sharing between modes seems possible

@@ -59,7 +59,7 @@ allprojects {
         // Required metadata
         property "sonar.projectKey", "de.dfki.bioviz"
         property "sonar.projectName", "BioViz"
-        property "sonar.projectVersion", "1.0"
+        property "sonar.projectVersion", "0.5"
         // Language
         property "sonar.language", "java"
         // Encoding of the source files

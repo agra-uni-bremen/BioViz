@@ -3,7 +3,6 @@ parser grammar Bio;
 
 options { tokenVocab=BioLexerGrammar; }
 
-
 bio: (
     grid|
     nets|
@@ -20,6 +19,7 @@ bio: (
     droplets|
     medaRoutes|
     medaNets|
+    annotations|
     Newlines
 )+;
 
@@ -57,6 +57,9 @@ medaRoute: dropletID timeConstraint? location+;
 mixers: Mixers Newlines (mixer Newlines)+ END;
 mixer: mixerID timeRange position position;
 
+// Definition of areaAnnotations
+annotations: Annotations Newlines (areaAnnotation Newlines)+ END;
+areaAnnotation: position position? LessThan AreaAnnotationText;
 
 // Definition of actuation vectors
 //

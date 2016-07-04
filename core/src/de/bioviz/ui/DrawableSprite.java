@@ -190,11 +190,9 @@ public abstract class DrawableSprite implements Drawable {
 		this.viz = parent;
 	}
 
-
 	public DrawableSprite(final TextureE texture, final BioViz parent) {
 		this(texture, 1, 1, parent);
 	}
-
 
 	private void initializeSprite(final float sizeX,
 								  final float sizeY,
@@ -204,7 +202,6 @@ public abstract class DrawableSprite implements Drawable {
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
 		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
 	}
-
 
 	/**
 	 * @param msg

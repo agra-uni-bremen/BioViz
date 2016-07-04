@@ -14,8 +14,10 @@ import de.bioviz.ui.BioViz;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
+
 
 /**
  * This class provides some methods to draw text.
@@ -69,7 +71,7 @@ public class MessageCenter {
 	/**
 	 * The list of messages.
 	 */
-	private Vector<Message> messages;
+	private List<Message> messages;
 
 	/**
 	 * The font that is used to display infos on top of fields and droplets.
@@ -138,7 +140,7 @@ public class MessageCenter {
 	 */
 	public MessageCenter(final BioViz parent) {
 		this.parent = parent;
-		messages = new Vector<>();
+		messages = new ArrayList<>();
 	}
 
 	/**
@@ -309,7 +311,6 @@ public class MessageCenter {
 				font.setColor(targetColor);
 
 				final GlyphLayout layout = new GlyphLayout(font, s.message);
-				// or for non final texts: layout.setText(font, text);
 
 				final float fontX = s.x -
 									layout.width / 2f +
@@ -322,8 +323,7 @@ public class MessageCenter {
 										 normalProjection, DEFAULT_Z);
 			}
 
-			while (this.messages.size() > 0 &&
-				   this.messages.get(0).expired()) {
+			while (!this.messages.isEmpty() && this.messages.get(0).expired()) {
 				this.messages.remove(0);
 			}
 		}

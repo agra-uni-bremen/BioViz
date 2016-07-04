@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -42,6 +43,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -57,6 +59,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+
+import static java.awt.SystemColor.info;
 
 /**
  * This class is the single desktop starter class. It starts the cross-platform
@@ -156,8 +160,12 @@ public class DesktopLauncher extends JFrame {
 	 * once in tabs, there is still only one visualization which then displays
 	 * several different circuits.
 	 */
-	BioViz currentViz;
+	 BioViz currentViz;
 
+	/**
+	 * The infoPanel displaying the statistics.
+	 */
+	private InfoPanel infoPanel;
 
 	/**
 	 * This maps the tabs that are open in the visualizationTabs field to the
@@ -233,6 +241,9 @@ public class DesktopLauncher extends JFrame {
 		manager.addKeyEventDispatcher(new MyDispatcher());
 
 		JPanel panel = initializePanel();
+
+		infoPanel = new InfoPanel(currentViz);
+
 		menubar = initializeMenubar();
 
 		this.setJMenuBar(menubar);
@@ -244,6 +255,8 @@ public class DesktopLauncher extends JFrame {
 		JPanel tabContainer = new JPanel(new BorderLayout());
 
 		container.add(tabContainer, BorderLayout.CENTER);
+
+		container.add(infoPanel, BorderLayout.EAST);
 
 		tabContainer.add(visualizationTabs, BorderLayout.NORTH);
 		tabContainer.add(canvas.getCanvas(), BorderLayout.CENTER);
@@ -293,6 +306,8 @@ public class DesktopLauncher extends JFrame {
 
 		BDisplayOptions[] enumValues = BDisplayOptions.values();
 		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
+
+			@Override
 			public int compare(final BDisplayOptions left,
 							   final BDisplayOptions right) {
 				return left.description().compareTo(
@@ -327,15 +342,7 @@ public class DesktopLauncher extends JFrame {
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
 
-
-		// This text was completely useless. I leave the code here as a
-		// reference on how to add labels with some kind
-		// of formatting.
-//		JLabel label = new JLabel("<html><body>Totally classic<br/>UI
-// elements<br/></body></html>");
-
-
-		final int buttonWidth = 112;
+        final int buttonWidth = 112;
 		final int sliderWidth = buttonWidth;
 		final int sliderHeight = new JSlider().getPreferredSize().height;
 
@@ -359,10 +366,18 @@ public class DesktopLauncher extends JFrame {
 		JButton preferencesButton = new JButton("Preferences");
 		preferencesButton.setPreferredSize(
 				new Dimension(buttonWidth,
-							  openButton.getPreferredSize().height)
+							  preferencesButton.getPreferredSize().height)
 		);
-		preferencesButton.addActionListener(e -> {
-			showSettings(currentViz);
+		preferencesButton.addActionListener(e -> showSettings(currentViz));
+
+		JButton statisticsButton = new JButton("Statistics");
+		statisticsButton.setPreferredSize(
+				new Dimension(buttonWidth,
+							  statisticsButton.getPreferredSize().height)
+		);
+		statisticsButton.addActionListener(e -> {
+			boolean visible = this.infoPanel.isVisible();
+			this.infoPanel.setVisible(!visible);
 		});
 
 		JButton saveButton = new JButton("Save SVG");
@@ -448,6 +463,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(timeSlider);
 		panel.add(prefsSep);
 		panel.add(preferencesButton);
+		panel.add(statisticsButton);
 		return panel;
 	}
 
@@ -587,6 +603,9 @@ public class DesktopLauncher extends JFrame {
 	}
 
 
+	/**
+	 * Reloads the tab if a file is reloaded.
+	 */
 	private void reloadTab() {
 		int index = visualizationTabs.getSelectedIndex();
 		logger.info("Reloading Tab {}", index);
@@ -647,7 +666,7 @@ public class DesktopLauncher extends JFrame {
 		} catch (final CmdLineException e) {
 			String argsLine = String.join(" ", args);
 			System.err.println(
-					"Unable to parse arguments: \"" + argsLine + "\"");
+                    "Unable to parse arguments: \"" + argsLine + "\"");
 			System.err.println("\nusage:");
 			parser.printUsage(System.err);
 			System.exit(1);
@@ -708,10 +727,9 @@ public class DesktopLauncher extends JFrame {
 
 		Biochip chip = BioParser.parseFile(f);
 		if (!chip.errors.isEmpty()) {
-			System.out.println(
-					"Found errors in file \"" + f.getAbsolutePath() + "\":");
+			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath() );
 			for (final String error : chip.errors) {
-				System.out.println(error);
+                logger.error(error);
 			}
 		}
 	}
@@ -719,12 +737,13 @@ public class DesktopLauncher extends JFrame {
 	/**
 	 * Starts the BioViz GUI.
 	 *
-	 * @param args
-	 * 		CLI arguments to BioViz when starting the GUI.
+	 * @param file
+	 * 		the file to load on startup.
 	 */
 	static void startGUI(final File file) {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					initializeLogback();
 
@@ -746,6 +765,7 @@ public class DesktopLauncher extends JFrame {
 
 
 					singleton.addWindowListener(new WindowAdapter() {
+						@Override
 						public void windowClosing(final WindowEvent e) {
 							singleton.canvas.stop();
 						}
@@ -785,7 +805,31 @@ public class DesktopLauncher extends JFrame {
 		if (load) {
 			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
 		} else {
+			// add the svg export options as an accessory to the fileChooser
+			JPanel accessory = new JPanel(new BorderLayout());
+
+			JCheckBox exportColors = new JCheckBox("Export colors");
+			exportColors.setSelected(true);
+			JCheckBox exportInfoString = new JCheckBox("Export info tag");
+			exportInfoString.setSelected(true);
+			JCheckBox exportSeries = new JCheckBox("Export series");
+			exportSeries.setSelected(false);
+
+			JPanel checkBoxes = new JPanel(new GridLayout(0, 1));
+			checkBoxes.add(exportColors);
+			checkBoxes.add(exportInfoString);
+			checkBoxes.add(exportSeries);
+
+			accessory.add(checkBoxes);
+
+			fileDialog.setAccessory(accessory);
+
 			choice = fileDialog.showSaveDialog(DesktopLauncher.singleton);
+
+			svgExportSettings.setColorfulExport(exportColors.isSelected());
+			svgExportSettings.setExportSeries(exportSeries.isSelected());
+			svgExportSettings.setInformationString(
+					exportInfoString.isSelected());
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -871,7 +915,7 @@ public class DesktopLauncher extends JFrame {
 			System.err.println(
 					"Error setting up logger: " + je.getStackTrace());
 		}
-		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+
 
 	}
 
@@ -1222,6 +1266,7 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			try {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						Color c =
 								JColorChooser.showDialog(
@@ -1266,6 +1311,7 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			try {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						File f = askForFile("lastFilePath", true);
 						if (f != null) {
@@ -1349,12 +1395,14 @@ public class DesktopLauncher extends JFrame {
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
-						currentViz.currentCircuit.getData().getMaxRouteLength
-								());
+						currentViz.currentCircuit.getData().getMaxRouteLength());
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + BioVizInfo.PROGNAME);
+
+				logger.debug("Initializing infoPanel.");
+				d.infoPanel.refreshPanelData();
 			} else {
 				logger.trace("Last file closed, no more file to display.");
 				DesktopLauncher d = DesktopLauncher.singleton;
@@ -1457,7 +1505,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Constructor, does nothing.
 		 */
-		public MyDispatcher() {
+		MyDispatcher() {
 			// Does nothing
 		}
 
@@ -1492,8 +1540,7 @@ public class DesktopLauncher extends JFrame {
 				} else if (e.getID() == KeyEvent.KEY_TYPED) {
 					// That thing might not have been initiliazed yet
 					if (currentViz.getInputProcessor() != null) {
-						currentViz.getInputProcessor().keyTyped(e.getKeyChar
-								());
+						currentViz.getInputProcessor().keyTyped(e.getKeyChar());
 					}
 				}
 			}
@@ -1501,9 +1548,21 @@ public class DesktopLauncher extends JFrame {
 		}
 	}
 
+	/**
+	 * This class implements a custom JCheckBoxMenuItem.
+	 */
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
+		/**
+		 * A BDisplayOption to store the checkboxValues
+		 */
 		private BDisplayOptions option;
 
+		/**
+		 * Constructs a new BioCheckBoxMenuItem.
+		 *
+		 * @param label the label for the new item
+		 * @param option the connected BDisplayOptions item
+		 */
 		BioCheckboxMenuItem(final String label,
 							final BDisplayOptions option) {
 			super(label);

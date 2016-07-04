@@ -31,21 +31,25 @@ public class Biochip {
 	private static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
 
-	public final ArrayList<Pair<Rectangle, Range>> blockages =
+	public final List<Pair<Rectangle, Range>> blockages =
 			new ArrayList<>();
-	public final ArrayList<Detector> detectors = new ArrayList<>();
-	public final HashMap<Integer, Pin> pins = new HashMap<>();
-	public final HashMap<Integer, ActuationVector> pinActuations =
+	public final List<Detector> detectors = new ArrayList<>();
+	public final Map<Integer, Pin> pins = new HashMap<>();
+	public final Map<Integer, ActuationVector> pinActuations =
 			new HashMap<>();
-	public final HashMap<Point, ActuationVector> cellActuations =
+	public final Map<Point, ActuationVector> cellActuations =
 			new HashMap<>();
 	public final ArrayList<Mixer> mixers = new ArrayList<>();
-	public ArrayList<String> errors = new ArrayList<>();
+	/** Stores the areaAnnotations. */
+	public final List<AreaAnnotation> areaAnnotations = new ArrayList<>();
+	public List<String> errors = new ArrayList<>();
 	public boolean recalculateAdjacency = false;
 
-	private HashMap<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
+	private Map<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 
-	private HashMap<Integer, String> fluidTypes = new HashMap<>();
+	private Map<Integer, String> fluidTypes = new HashMap<>();
+
+	private List<String> annotations = new ArrayList<>();
 
 
 	/**
@@ -179,10 +183,15 @@ public class Biochip {
 	 * Determines the fluid type of the given fluid ID.
 	 *
 	 * @param fluidID
-	 * 		The fluid ID of the droplet whose fluid type is to be deterined.
-	 * @return The fluid type of the given droplet. Might be NULL.
+	 * 		The fluid ID of the droplet whose fluid type is to be determined.
+	 * 	    May be null to support easy chaining.
+	 * @return The fluid type of the given droplet. Might be NULL. If fluidID is
+	 * NULL the return value is also NULL.
 	 */
 	public String fluidType(final Integer fluidID) {
+		if (fluidID == null) {
+			return null;
+		}
 		return fluidTypes.get(fluidID);
 	}
 
@@ -298,6 +307,22 @@ public class Biochip {
 	}
 
 	/**
+	 * Adds a single annotation to the chip.
+	 * @param annotation the annotation
+	 */
+	public void addAnnotation(final String annotation) {
+		this.annotations.add(annotation);
+	}
+
+	/**
+	 * Adds multiple annotations to the chip.
+	 * @param annotations the annotations
+	 */
+	public void addAnnotations(final List<String> annotations){
+		this.annotations.addAll(annotations);
+	}
+
+	/**
 	 * Calculates all fields that are at some point activated with adjacently
 	 * placed droplets.
 	 *
@@ -330,9 +355,9 @@ public class Biochip {
 							should highlight the cell that in the upcoming
 							time step violates one of the constraints.
 							 */
-							addAdjacentPoint(p1,d1,p2,d2,result,timestep);
-							addAdjacentPoint(pp1,d1,p2,d2,result,timestep);
-							addAdjacentPoint(p1,d1,pp2,d2,result,timestep);
+							addAdjacentPoint(p1, d1, p2, d2, result, timestep);
+							addAdjacentPoint(pp1, d1, p2, d2, result, timestep);
+							addAdjacentPoint(p1, d1, pp2, d2, result, timestep);
 						}
 					}
 				}
@@ -545,6 +570,14 @@ public class Biochip {
 			}
 		}
 		return maxUsageCache;
+	}
+
+	/**
+	 * Get the annotations stored in the chip.
+	 * @return List of strings containing the annotations.
+	 */
+	public List<String> getAnnotations() {
+		return annotations;
 	}
 
 	/**

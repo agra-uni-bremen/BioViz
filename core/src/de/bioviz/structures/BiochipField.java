@@ -48,6 +48,8 @@ public class BiochipField {
 	 */
 	public ArrayList<Mixer> mixers = new ArrayList<>();
 
+	public ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
+
 
 	/**
 	 * The biochip this field belongs to.

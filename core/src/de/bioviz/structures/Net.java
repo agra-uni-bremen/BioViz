@@ -81,6 +81,7 @@ public final class Net {
 
 		// TODO be more sophisticated here ^^
 		rnd.setSeed(target.upperRight.fst + target.lowerLeft.snd);
+
 		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(),
 						  1f);
 	}
