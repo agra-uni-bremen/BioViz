@@ -474,10 +474,7 @@ class BioParserListener extends BioBaseListener {
 		).forEach(child -> {
 			Source src = getSource((Bio.SourceContext) child);
 			sources.add(src);
-			//logger.error("Found source child {}", src);
 		});
-
-		//logger.error("Add net -> {}", target);
 		nets.add(new Net(sources, target));
 
 	}
@@ -496,8 +493,6 @@ class BioParserListener extends BioBaseListener {
 	@Override
 	public void enterMedaNet(@NotNull final Bio.MedaNetContext ctx) {
 		ArrayList<Source> sources = new ArrayList<>();
-
-		List<Bio.MedaSourceContext> srcs = ctx.medaSource();
 
 		ctx.medaSource().forEach(c -> {
 			int id = Integer.parseInt(c.dropletID().getText());
