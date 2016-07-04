@@ -74,7 +74,12 @@ public class Source {
 	}
 
 	@Override
+	/**
+	 * Returns the string representation of a Source.
+	 *
+	 * @return "<ID>:<startPosition>"
+	 */
 	public String toString() {
-		return ""+ dropletID + ": "+ startPosition;
+		return Integer.toString(dropletID) + ": "+ startPosition;
 	}
 }

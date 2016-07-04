@@ -318,9 +318,8 @@ public class DrawableField extends DrawableSprite {
 						if (d2.droplet.getPositionAt(
 								this.parentCircuit.getCurrentTime()) != null &&
 							d2.droplet.getNet() != d.getNet() &&
-							d2.droplet.getPositionAt(
-									this.parentCircuit.getCurrentTime())
-									.equals(
+								// TODO we have to fix this to work with meda droplets
+							d2.droplet.getPositionAt(this.parentCircuit.getCurrentTime()).equals(
 											this.field.pos)) {
 							result.add(
 									Colors.INTERFERENCE_REGION_OVERLAP_COLOR);

@@ -1,6 +1,7 @@
 package de.bioviz.structures;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import de.bioviz.ui.Color;
@@ -39,7 +40,7 @@ public final class Net {
 	/**
 	 * The list of all starting points of this net's droplets.
 	 */
-	private final ArrayList<Source> sources = new ArrayList<>();
+	private final List<Source> sources = new ArrayList<>();
 
 
 	/**
@@ -80,7 +81,7 @@ public final class Net {
 		Random rnd = new Random();
 
 		// TODO be more sophisticated here ^^
-		rnd.setSeed(target.upperRight.fst + target.lowerLeft.snd);
+		rnd.setSeed((long)target.upperRight.fst + target.lowerLeft.snd);
 
 		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(),
 						  1f);
@@ -181,7 +182,7 @@ public final class Net {
 	 *
 	 * @return the list of all starting points of this net's droplets.
 	 */
-	public ArrayList<Source> getSources() {
+	public List<Source> getSources() {
 		return sources;
 	}
 

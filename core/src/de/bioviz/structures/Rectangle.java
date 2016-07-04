@@ -23,11 +23,11 @@ public class Rectangle {
 
 
 	/**
+	 * Creates a rectangle defined by two corners.
 	 * @param p1
 	 * 		First corner
 	 * @param p2
 	 * 		Second corner
-	 * @brief Creates a rectangle defined by two corners.
 	 * <p>
 	 * Internally, the class stores the coordinates of the rectangle by
 	 * computing the lower left and upper right corners. The provided corners
@@ -56,6 +56,9 @@ public class Rectangle {
 	}
 
 	/**
+	 *
+	 * Creates a rectangle defined by two corners (provided by their
+	 * coordinates).
 	 * @param x1
 	 * 		x-coordinate of the first corner
 	 * @param y1
@@ -64,8 +67,7 @@ public class Rectangle {
 	 * 		x-coordinate of the second corner
 	 * @param y2
 	 * 		y-coordinate of the second corner
-	 * @brief Creates a rectangle defined by two corners (provided by their
-	 * coordinates).
+	 * .
 	 * <p>
 	 * Internally, the class stores the coordinates of the rectangle by
 	 * computing the lower left and upper right corners. The provided corners
@@ -89,11 +91,13 @@ public class Rectangle {
 
 
 	/**
+	 * Checks whether a given point is within the boundaries of the
+	 * rectangle.
+	 *
 	 * @param p
 	 * 		Point to check for
 	 * @return true if p is within the rectangle, false otherwise
-	 * @brief Checks whether a given point is within the boundaries of the
-	 * rectangle
+	 *
 	 */
 	public boolean contains(final Point p) {
 		return contains(p.fst, p.snd);
@@ -101,13 +105,15 @@ public class Rectangle {
 
 
 	/**
+	 * Checks whether a given point is within the boundaries of the
+	 * rectangle.
+	 *
 	 * @param x
 	 * 		x-coordinate of Point to check for
 	 * @param y
 	 * 		y-coordinate of Point to check for
 	 * @return true if (x,y) is within the rectangle, false otherwise
-	 * @brief Checks whether a given point is within the boundaries of the
-	 * rectangle
+	 *
 	 */
 	public boolean contains(final int x, final int y) {
 
@@ -115,12 +121,29 @@ public class Rectangle {
 			   lowerLeft.snd <= y && y <= upperRight.snd;
 	}
 
+
+    /**
+     * Computes the center of the rectangle.
+     *
+     * The computation is done in coordinates using integer arithmetic. This means
+     * that the usual rounding rules apply. The result will be a point within
+     * the Rectangle.
+	 * @return Point which is in the center of the rectangle.
+     */
 	public Point center() {
 		int centerX = (lowerLeft.fst + upperRight.fst) / 2;
 		int centerY = (lowerLeft.snd + upperRight.snd) / 2;
 		return new Point(centerX, centerY);
 	}
 
+    /**
+	 * Computes the center of the rectangle using floating point arithmetic.
+	 *
+	 * The result is a pair of floats. While the result lies within the rectangle
+	 * it is not necessarily a valid integer coordinate of it.
+	 *
+	 * @return Point in the center of the rectangle using floating point arithmetic.
+	 */
 	public Pair<Float, Float> centerFloat() {
 		float centerX =
 				(lowerLeft.fst.floatValue() + upperRight.fst.floatValue()) /
@@ -129,7 +152,7 @@ public class Rectangle {
 				(lowerLeft.snd.floatValue() + upperRight.snd.floatValue()) /
 				2f;
 
-		return new Pair<Float, Float>(centerX, centerY);
+		return new Pair<>(centerX, centerY);
 	}
 
 
@@ -138,7 +161,7 @@ public class Rectangle {
 	 */
 	public ArrayList<Point> positions() {
 
-		ArrayList<Point> result = new ArrayList<Point>();
+		ArrayList<Point> result = new ArrayList<>();
 
 		for (int x = lowerLeft.fst; x <= upperRight.fst; x++) {
 			for (int y = lowerLeft.snd; y <= upperRight.snd; y++) {
