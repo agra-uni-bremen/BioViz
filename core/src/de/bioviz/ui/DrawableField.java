@@ -203,38 +203,7 @@ public class DrawableField extends DrawableSprite {
 		return 0;
 	}
 
-	/**
-	 * Calculates the current color based on the parent circuit's
-	 * displayOptions.
-	 *
-	 * @return the field's color.
-	 */
-	@Override
-	// TODO put everything in separate methods. The current situation sucks
-	// hard!
-	public Color getColor() {
-
-		/**
-		 * This value stores the amount of colors being overlaid in the process
-		 * of computing the color. This is currently required to calculate the
-		 * average value of all colors at the end of the process (e.g. if three
-		 * different colors are being added, the final result needs to be
-		 * divided by three).
-		 */
-		int colorOverlayCount = 0;
-
-		/*
-		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
-		final and thus can not be modified.
-		If that value is unchangeable, the cells all stay white
-		 */
-		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
-
-		if (getField().isBlocked(getParentCircuit().getCurrentTime())) {
-			result.add(Colors.BLOCKED_COLOR);
-			colorOverlayCount++;
-		}
-
+	private void netColoring() {
 		/**
 		 * The NetColorOnFields display option is a little special and thus
 		 * gets quite some amount of code here.
@@ -317,6 +286,42 @@ public class DrawableField extends DrawableSprite {
 		} else {
 			cornerColors = null;
 		}
+	}
+
+	/**
+	 * Calculates the current color based on the parent circuit's
+	 * displayOptions.
+	 *
+	 * @return the field's color.
+	 */
+	@Override
+	// TODO put everything in separate methods. The current situation sucks
+	// hard!
+	public Color getColor() {
+
+		/**
+		 * This value stores the amount of colors being overlaid in the process
+		 * of computing the color. This is currently required to calculate the
+		 * average value of all colors at the end of the process (e.g. if three
+		 * different colors are being added, the final result needs to be
+		 * divided by three).
+		 */
+		int colorOverlayCount = 0;
+
+		/*
+		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
+		final and thus can not be modified.
+		If that value is unchangeable, the cells all stay white
+		 */
+		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
+
+		if (getField().isBlocked(getParentCircuit().getCurrentTime())) {
+			result.add(Colors.BLOCKED_COLOR);
+			colorOverlayCount++;
+		}
+
+
+		netColoring();
 
 		colorOverlayCount += cellUsageColoring(result);
 
