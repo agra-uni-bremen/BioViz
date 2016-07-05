@@ -320,11 +320,14 @@ public class DrawableField extends DrawableSprite {
 					filter(d -> isPartOfInterferenceRegion(d)).
 					collect(Collectors.toCollection(ArrayList<Droplet>::new));
 
-
 			for (int i = 0; i < drops.size(); ++i) {
 				boolean interferenceViolation = false;
 				for (int j = i + 1; j < drops.size(); j++) {
-					if (drops.get(i).getNet() != drops.get(j).getNet()) {
+					final Droplet drop1 = drops.get(i);
+					final Droplet drop2 = drops.get(j);
+					boolean sameNet=
+							getParentCircuit().getData().sameNet(drop1, drop2);
+					if (!sameNet) {
 						result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 						++colorOverlayCount;
 						interferenceViolation = true;
@@ -382,8 +385,8 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
-		// TODO Why does the following work? A
-		// "Set<FluidicConstraintViolation>" cannot contain a "BiochipField"
+		// TODO Why does the following work? -> it doesn't!
+		// A "Set<FluidicConstraintViolation>" cannot contain a "BiochipField"
 		if (getOption(Adjacency) &&
 			getParentCircuit().getData().getAdjacentActivations().contains(
 					this.getField())) {

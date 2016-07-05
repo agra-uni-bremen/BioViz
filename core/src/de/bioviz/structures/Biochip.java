@@ -276,7 +276,7 @@ public class Biochip {
 	 * 		Second droplet to test.
 	 * @return true iff the droplets are from the same net
 	 */
-	private boolean sameNet(final Droplet d1, final Droplet d2) {
+	public boolean sameNet(final Droplet d1, final Droplet d2) {
 		if (nets != null) {
 			// first find the net of one of the droplets
 			Net net = null;
