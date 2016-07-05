@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Dispenser;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.FluidicConstraintViolation;
 import de.bioviz.structures.Mixer;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
@@ -18,12 +19,14 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.bioviz.ui.BDisplayOptions.Actuations;
 import static de.bioviz.ui.BDisplayOptions.Adjacency;
 import static de.bioviz.ui.BDisplayOptions.CellUsage;
 import static de.bioviz.ui.BDisplayOptions.CellUsageCount;
 import static de.bioviz.ui.BDisplayOptions.DetectorIcon;
+import static de.bioviz.ui.BDisplayOptions.HighlightAnnotatedFields;
 import static de.bioviz.ui.BDisplayOptions.InterferenceRegion;
 import static de.bioviz.ui.BDisplayOptions.LingeringInterferenceRegions;
 import static de.bioviz.ui.BDisplayOptions.LongNetIndicatorsOnFields;
@@ -325,7 +328,7 @@ public class DrawableField extends DrawableSprite {
 				for (int j = i + 1; j < drops.size(); j++) {
 					final Droplet drop1 = drops.get(i);
 					final Droplet drop2 = drops.get(j);
-					boolean sameNet=
+					boolean sameNet =
 							getParentCircuit().getData().sameNet(drop1, drop2);
 					if (!sameNet) {
 						result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
@@ -404,8 +407,7 @@ public class DrawableField extends DrawableSprite {
 			result.add(Colors.HOVER_DIFF_COLOR);
 		}
 
-		if (getOption(BDisplayOptions.HighlightAnnotatedFields) &&
-			this.field.areaAnnotations.size() > 0) {
+		if (getOption(HighlightAnnotatedFields) && field.hasAnnotations()) {
 			result = new de.bioviz.ui.Color(Color.VIOLET);
 		}
 

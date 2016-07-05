@@ -110,6 +110,14 @@ public class BiochipField {
 		return pos.snd;
 	}
 
+	/**
+	 * Checks whether this field has any area annotations.
+	 * @return true if the field as area annotations, false otherwise.
+	 */
+	public boolean hasAnnotations() {
+		return !areaAnnotations.isEmpty();
+	}
+
 
 	/**
 	 * Sets the detector of this field.
