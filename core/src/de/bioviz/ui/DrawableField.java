@@ -188,6 +188,21 @@ public class DrawableField extends DrawableSprite {
 		return Pair.mkPair(fieldHUDMsg, texture);
 	}
 
+
+
+	private int cellUsageColoring(de.bioviz.ui.Color result) {
+		if (getOption(CellUsage)) {
+			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
+			// Usage verwenden)
+			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
+			int usage = field.getUsage();
+			float color = usage / scalingFactor;
+			result.add(new Color(color, color, color, 0));
+			return 1;
+		}
+		return 0;
+	}
+
 	/**
 	 * Calculates the current color based on the parent circuit's
 	 * displayOptions.
@@ -303,15 +318,9 @@ public class DrawableField extends DrawableSprite {
 			cornerColors = null;
 		}
 
-		if (getOption(CellUsage)) {
-			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
-			// Usage verwenden)
-			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
-			int usage = field.getUsage();
-			float color = usage / scalingFactor;
-			result.add(new Color(color, color, color, 0));
-			++colorOverlayCount;
-		}
+		colorOverlayCount += cellUsageColoring(result);
+
+
 
 		/** Colours the interference region **/
 		if (getOption(InterferenceRegion)) {
