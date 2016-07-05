@@ -276,7 +276,7 @@ public class Biochip {
 	 * 		Second droplet to test.
 	 * @return true iff the droplets are from the same net
 	 */
-	private boolean sameNet(final Droplet d1, final Droplet d2) {
+	public boolean sameNet(final Droplet d1, final Droplet d2) {
 		if (nets != null) {
 			// first find the net of one of the droplets
 			Net net = null;
@@ -296,7 +296,7 @@ public class Biochip {
 	void addAdjacentPoint(final Rectangle p1, final Droplet d1, final Rectangle p2,
 						  final Droplet d2, final Set s, final int timestep) {
 		if (Rectangle.adjacent(p1, p2)) {
-			logger.trace("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 +
+			logger.info("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 +
 						 ") are adjacent in time step " + timestep);
 			BiochipField f1 = field.get(p1.upperLeft());
 			BiochipField f2 = field.get(p2.upperLeft());
@@ -350,7 +350,7 @@ public class Biochip {
 							Rectangle p2 = d2.getPositionAt(timestep);
 							Rectangle pp2 = d2.getPositionAt(timestep + 1);
 							/*
-							We actually need to differentiat the following
+							We actually need to differentiate the following
 							three cases. The dynamic fluidic constraints
 							should highlight the cell that in the upcoming
 							time step violates one of the constraints.

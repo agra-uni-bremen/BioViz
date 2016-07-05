@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Dispenser;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.FluidicConstraintViolation;
 import de.bioviz.structures.Mixer;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
@@ -16,13 +17,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.bioviz.ui.BDisplayOptions.Actuations;
 import static de.bioviz.ui.BDisplayOptions.Adjacency;
 import static de.bioviz.ui.BDisplayOptions.CellUsage;
 import static de.bioviz.ui.BDisplayOptions.CellUsageCount;
 import static de.bioviz.ui.BDisplayOptions.DetectorIcon;
+import static de.bioviz.ui.BDisplayOptions.HighlightAnnotatedFields;
 import static de.bioviz.ui.BDisplayOptions.InterferenceRegion;
+import static de.bioviz.ui.BDisplayOptions.LingeringInterferenceRegions;
 import static de.bioviz.ui.BDisplayOptions.LongNetIndicatorsOnFields;
 import static de.bioviz.ui.BDisplayOptions.NetColorOnFields;
 import static de.bioviz.ui.BDisplayOptions.Pins;
@@ -189,6 +195,8 @@ public class DrawableField extends DrawableSprite {
 	 * @return the field's color.
 	 */
 	@Override
+	// TODO put everything in separate methods. The current situation sucks
+	// hard!
 	public Color getColor() {
 
 		/**
@@ -202,8 +210,7 @@ public class DrawableField extends DrawableSprite {
 
 		/*
 		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
-		final
-		 and thus can not be modified.
+		final and thus can not be modified.
 		If that value is unchangeable, the cells all stay white
 		 */
 		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
@@ -255,6 +262,9 @@ public class DrawableField extends DrawableSprite {
 				final int topleft = 1;
 				final int topright = 2;
 				final int bottomright = 3;
+
+				// TODO cornercolors schonmal vorher berechnen, auch die
+				// conditions leichter lesbar machen
 				if (!getParentCircuit().getData().hasFieldAt(top) ||
 					!n.containsField(
 							getParentCircuit().getData().
@@ -298,55 +308,59 @@ public class DrawableField extends DrawableSprite {
 			// Usage verwenden)
 			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
 			int usage = field.getUsage();
-			result.add(new Color(
-					usage / scalingFactor,
-					usage / scalingFactor,
-					usage / scalingFactor,
-					0));
+			float color = usage / scalingFactor;
+			result.add(new Color(color, color, color, 0));
 			++colorOverlayCount;
 		}
 
 		/** Colours the interference region **/
 		if (getOption(InterferenceRegion)) {
 			int amountOfInterferenceRegions = 0;
-			for (final Droplet d : getParentCircuit().getData().
-					getDroplets()) {
-				if (isPartOfInterferenceRegion(d)) {
-					boolean interferenceViolation = false;
-					for (final DrawableDroplet d2 :
-							parentCircuit.getDroplets()) {
-						if (d2.droplet.getPositionAt(
-								this.parentCircuit.getCurrentTime()) != null &&
-							d2.droplet.getNet() != d.getNet() &&
-								// TODO we have to fix this to work with meda droplets
-							d2.droplet.getPositionAt(this.parentCircuit.getCurrentTime()).equals(
-											this.field.pos)) {
-							result.add(
-									Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
-							++colorOverlayCount;
-							interferenceViolation = true;
-						}
+			final Set<Droplet> dropsSet =
+					getParentCircuit().getData().getDroplets();
+
+			ArrayList<Droplet> drops = dropsSet.stream().
+					filter(d -> isPartOfInterferenceRegion(d)).
+					collect(Collectors.toCollection(ArrayList<Droplet>::new));
+
+			for (int i = 0; i < drops.size(); ++i) {
+				boolean interferenceViolation = false;
+				for (int j = i + 1; j < drops.size(); j++) {
+					final Droplet drop1 = drops.get(i);
+					final Droplet drop2 = drops.get(j);
+					boolean sameNet =
+							getParentCircuit().getData().sameNet(drop1, drop2);
+					if (!sameNet) {
+						result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
+						++colorOverlayCount;
+						interferenceViolation = true;
 					}
-					if (!interferenceViolation) {
-						++amountOfInterferenceRegions;
-					}
+				}
+
+				/*
+				We only increase the amount of interference regions if no
+				violation took place. This makes sense as a violation is
+				handled
+				differently.
+				 */
+				if (!interferenceViolation) {
+					++amountOfInterferenceRegions;
 				}
 			}
 
 			if (amountOfInterferenceRegions > 0) {
-				result.add(new de.bioviz.ui.Color(
-						Colors.INTERFERENCE_REGION_COLOR).mul(
-						(float) Math.sqrt(amountOfInterferenceRegions)));
+				float scale = (float) Math.sqrt(amountOfInterferenceRegions);
+				Color c = new Color(Colors.INTERFERENCE_REGION_COLOR);
+				result.add(c.mul(scale));
 				++colorOverlayCount;
 			}
 		}
 
 		int t = getParentCircuit().getCurrentTime();
-		if (getOption(Actuations)) {
-			if (getField().isActuated(t)) {
-				result.add(Colors.ACTAUTED_COLOR);
-				++colorOverlayCount;
-			}
+		if (getOption(Actuations) && field.isActuated(t)) {
+			result.add(Colors.ACTAUTED_COLOR);
+			++colorOverlayCount;
+
 		}
 
 		// TODO why do we only add something if the count is zero? Save
@@ -365,23 +379,22 @@ public class DrawableField extends DrawableSprite {
 				colorOverlayCount++;
 			}
 
-			if (field.hasMixers()) {
-
-				for (final Mixer m : field.mixers) {
-					if (m.timing.inRange(t)) {
-						result.add(Colors.MIXER_COLOR);
-					}
+			for (final Mixer m : field.mixers) {
+				if (m.timing.inRange(t)) {
+					result.add(Colors.MIXER_COLOR);
 				}
 			}
+
 		}
 
 
-		// TODO Why does the following work? A
-		// "Set<FluidicConstraintViolation>" cannot contain a "BiochipField"
-		if (getOption(Adjacency) &&
-			getParentCircuit().getData().getAdjacentActivations().contains(
-					this.getField())) {
-			result.add(Colors.ADJACENT_ACTIVATION_COLOR);
+		if (getOption(Adjacency)) {
+			final Stream<FluidicConstraintViolation> violations =
+					getParentCircuit().getData().getAdjacentActivations().stream();
+
+			if (violations.anyMatch(v -> v.containsField(this.field))) {
+				result.add(Colors.ADJACENT_ACTIVATION_COLOR);
+			}
 		}
 
 		if (colorOverlayCount > 0) {
@@ -395,8 +408,7 @@ public class DrawableField extends DrawableSprite {
 			result.add(Colors.HOVER_DIFF_COLOR);
 		}
 
-		if (getOption(BDisplayOptions.HighlightAnnotatedFields) &&
-				this.field.areaAnnotations.size() > 0) {
+		if (getOption(HighlightAnnotatedFields) && field.hasAnnotations()) {
 			result = new de.bioviz.ui.Color(Color.VIOLET);
 		}
 
@@ -457,6 +469,7 @@ public class DrawableField extends DrawableSprite {
 		}
 	}
 
+
 	/**
 	 * Calculates whether or not this field is part of a droplet's interference
 	 * region.
@@ -466,15 +479,20 @@ public class DrawableField extends DrawableSprite {
 	 * @return whether or not this field is part of its interference region
 	 */
 	private boolean isPartOfInterferenceRegion(final Droplet d) {
-		Rectangle curPos = d.getPositionAt(getParentCircuit().getCurrentTime());
-		Rectangle prevPos =
-				d.getPositionAt(getParentCircuit().getCurrentTime() - 1);
-		if (parentCircuit.getDisplayOptions()
-				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
-			return (curPos != null && curPos.adjacent(field.pos)) ||
-				   (prevPos != null && prevPos.adjacent(field.pos));
+		Rectangle currPos = d.getPositionAt(
+				getParentCircuit().getCurrentTime()
+		);
+		Rectangle prevPos = d.getPositionAt(
+				getParentCircuit().getCurrentTime() - 1
+		);
+
+		boolean currAdj = currPos != null && currPos.adjacent(field.pos);
+
+		if (getOption(LingeringInterferenceRegions)) {
+			boolean prevAdj = prevPos != null && prevPos.adjacent(field.pos);
+			return currAdj || prevAdj;
 		} else {
-			return curPos != null && curPos.adjacent(field.pos);
+			return currAdj;
 		}
 	}
 

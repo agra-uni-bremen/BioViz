@@ -1,6 +1,8 @@
 package de.bioviz.structures;
 
 import java.util.ArrayList;
+import java.util.Map;
+
 
 /**
  * The abstraction of a field on a biochip.
@@ -107,6 +109,14 @@ public class BiochipField {
 	 */
 	public int y() {
 		return pos.snd;
+	}
+
+	/**
+	 * Checks whether this field has any area annotations.
+	 * @return true if the field as area annotations, false otherwise.
+	 */
+	public boolean hasAnnotations() {
+		return !areaAnnotations.isEmpty();
 	}
 
 
@@ -225,8 +235,9 @@ public class BiochipField {
 		Biochip circ = parent;
 		Actuation act = Actuation.OFF;
 
-		if (pin != null && !circ.pinActuations.isEmpty()) {
-			ActuationVector vec = circ.pinActuations.get(pin.pinID);
+		Map<Integer,ActuationVector> actVecs = circ.pinActuations;
+		if (pin != null && !actVecs.isEmpty()) {
+			ActuationVector vec = actVecs.get(pin.pinID);
 			if (vec != null) {
 				act = vec.get(timeStep - 1);
 			}
@@ -278,6 +289,8 @@ public class BiochipField {
 		}
 		return usage;
 	}
+
+
 
 
 }

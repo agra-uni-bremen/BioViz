@@ -199,7 +199,7 @@ public class Rectangle {
 	 * @param r1
 	 * 		The first rectangle
 	 * @param r2
-	 * 		The second rectanle
+	 * 		The second rectangle
 	 * @return true if the rectangles are adjacent, false otherwise.
 	 * @warn Currently only single point rectangles are supported
 	 */
@@ -246,16 +246,31 @@ public class Rectangle {
 	 * The check is easily done be extending the rectangle and checking whether
 	 * the point is within that rectangle.
 	 *
+	 * The parameter size determins how much the rectangle gets extended. This
+	 * is of interest when working with meda chips.
+	 *
 	 * @param p
 	 * 		The point to check for adjacency.
+	 * 	@param size The size of the adjacency to be considered.
 	 * @return True if the point is adjacent to the rectangle.
 	 */
-	public boolean adjacent(final Point p) {
+	public boolean adjacent(final Point p, final int size) {
 		Rectangle biggerRect =
-				new Rectangle(lowerLeft.fst - 1, lowerLeft.snd - 1,
-							  upperRight.fst + 1, upperRight.snd + 1);
+				new Rectangle(lowerLeft.fst - size, lowerLeft.snd - size,
+							  upperRight.fst + size, upperRight.snd + size);
 
 		return biggerRect.contains(p);
+	}
+
+
+	/**
+	 * Checks if a point is adjacent to this rectangle using a distance of 1.
+	 *
+	 * @param p The point to check for adjacency.
+	 * @return True if the point is adjacent to the rectangle, false otherwise.
+	 */
+	public boolean adjacent(final Point p) {
+		return adjacent(p, 1);
 	}
 
 	/**
