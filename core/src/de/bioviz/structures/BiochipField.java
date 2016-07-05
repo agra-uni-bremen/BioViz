@@ -3,6 +3,7 @@ package de.bioviz.structures;
 import java.util.ArrayList;
 import java.util.Map;
 
+
 /**
  * The abstraction of a field on a biochip.
  * <p>
@@ -288,6 +289,8 @@ public class BiochipField {
 		}
 		return usage;
 	}
+
+
 
 
 }

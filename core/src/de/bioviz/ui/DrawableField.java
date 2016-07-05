@@ -469,6 +469,7 @@ public class DrawableField extends DrawableSprite {
 		}
 	}
 
+
 	/**
 	 * Calculates whether or not this field is part of a droplet's interference
 	 * region.
