@@ -388,12 +388,13 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
-		// TODO Why does the following work? -> it doesn't!
-		// A "Set<FluidicConstraintViolation>" cannot contain a "BiochipField"
-		if (getOption(Adjacency) &&
-			getParentCircuit().getData().getAdjacentActivations().contains(
-					this.getField())) {
-			result.add(Colors.ADJACENT_ACTIVATION_COLOR);
+		if (getOption(Adjacency)) {
+			final Stream<FluidicConstraintViolation> violations =
+					getParentCircuit().getData().getAdjacentActivations().stream();
+
+			if (violations.anyMatch(v -> v.containsField(this.field))) {
+				result.add(Colors.ADJACENT_ACTIVATION_COLOR);
+			}
 		}
 
 		if (colorOverlayCount > 0) {
