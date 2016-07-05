@@ -1,6 +1,7 @@
 package de.bioviz.structures;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * The abstraction of a field on a biochip.
@@ -225,8 +226,9 @@ public class BiochipField {
 		Biochip circ = parent;
 		Actuation act = Actuation.OFF;
 
-		if (pin != null && !circ.pinActuations.isEmpty()) {
-			ActuationVector vec = circ.pinActuations.get(pin.pinID);
+		Map<Integer,ActuationVector> actVecs = circ.pinActuations;
+		if (pin != null && !actVecs.isEmpty()) {
+			ActuationVector vec = actVecs.get(pin.pinID);
 			if (vec != null) {
 				act = vec.get(timeStep - 1);
 			}
