@@ -10,6 +10,7 @@ import de.bioviz.structures.Detector;
 import de.bioviz.structures.Direction;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Rectangle;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,38 +62,36 @@ final class Validator {
 			final ArrayList<Droplet> drops, final Set<Point> points) {
 		ArrayList<String> errors = new ArrayList<>();
 
-		// TODO fix this stupid method
+		for (final Droplet drop : drops) {
+			ArrayList<Rectangle> ps = drop.getPositions();
 
-//		for (final Droplet drop : drops) {
-//			ArrayList<Rectangle> ps = drop.getPositions();
-//
-//
-//			ps.forEach(rect -> {
-//						   rect.positions().forEach(pos -> {
-//							   if (!points.contains(pos)) {
-//								   errors.add("Droplet " + drop.getID() +
-//											  ": position " + pos +
-//											  " of route not on grid!");
-//							   }
-//
-//						   })
-//					   }
-//			);
+			ps.forEach(rect -> {
+						   rect.positions().forEach(pos -> {
+							   if (!points.contains(pos)) {
+								   errors.add("Droplet " + drop.getID() +
+											  ": position " + pos +
+											  " of route not on grid!");
+							   }
+
+						   });
+					   }
+			);
 			return errors;
 		}
+	}
 
-		/**
-		 * Checks whether paths move through blockages.
-		 *
-		 * @param chip
-		 * 		Biochips that is checked for errors
-		 * @return List of errors
-		 */
-		static ArrayList<String> checkPathForBlockages(final Biochip chip) {
-			Set<Droplet> droplets = chip.getDroplets();
-			ArrayList<String> errors = new ArrayList<>();
+	/**
+	 * Checks whether paths move through blockages.
+	 *
+	 * @param chip
+	 * 		Biochips that is checked for errors
+	 * @return List of errors
+	 */
+	static ArrayList<String> checkPathForBlockages(final Biochip chip) {
+		Set<Droplet> droplets = chip.getDroplets();
+		ArrayList<String> errors = new ArrayList<>();
 
-			// TODO fix this stupid method
+		// TODO fix this stupid method
 
 //			for (final Droplet drop : droplets) {
 //				ArrayList<Point> positions = drop.getPositions();
@@ -110,24 +109,24 @@ final class Validator {
 //				}
 //			}
 
-			return errors;
-		}
+		return errors;
+	}
 
-		/**
-		 * This method checks whether droplets only move a single cell in
-		 * horizontal
-		 * or vertical direction in one time step.
-		 *
-		 * @param drops
-		 * 		Droplets whose positions on the grid will be checked for
-		 * 		'jumps'
-		 * @return List of errors
-		 */
-		static ArrayList<String> checkPathsForJumps(
-				final ArrayList<Droplet> drops) {
-			ArrayList<String> errors = new ArrayList<>();
+	/**
+	 * This method checks whether droplets only move a single cell in
+	 * horizontal
+	 * or vertical direction in one time step.
+	 *
+	 * @param drops
+	 * 		Droplets whose positions on the grid will be checked for
+	 * 		'jumps'
+	 * @return List of errors
+	 */
+	static ArrayList<String> checkPathsForJumps(
+			final ArrayList<Droplet> drops) {
+		ArrayList<String> errors = new ArrayList<>();
 
-			// TODO fix this stupid method!
+		// TODO fix this stupid method!
 
 
 //			for (final Droplet drop : drops) {
@@ -154,169 +153,168 @@ final class Validator {
 //				}
 //
 //			}
-			return errors;
+		return errors;
+	}
+
+	/**
+	 * Method that checks whether there are cells that have multiple pin
+	 * assigned to them.
+	 *
+	 * @param pins
+	 * 		List of pins that will be scanned for multiple aissgnments
+	 * @return List of errors
+	 * @note This method will generate error messages even if one cell gets
+	 * assigned the same pin multiple times.
+	 */
+	static ArrayList<String> checkMultiplePinAssignments(
+			final Collection<Pin> pins) {
+		ArrayList<Point> points = new ArrayList<>();
+		ArrayList<String> errors = new ArrayList<>();
+
+		for (final Pin pin : pins) {
+			points.addAll(pin.cells);
 		}
 
-		/**
-		 * Method that checks whether there are cells that have multiple pin
-		 * assigned to them.
-		 *
-		 * @param pins
-		 * 		List of pins that will be scanned for multiple aissgnments
-		 * @return List of errors
-		 * @note This method will generate error messages even if one cell gets
-		 * assigned the same pin multiple times.
-		 */
-		static ArrayList<String> checkMultiplePinAssignments(
-		final Collection<Pin> pins) {
-			ArrayList<Point> points = new ArrayList<>();
-			ArrayList<String> errors = new ArrayList<>();
+		Map<Point, Long> counts = points.stream().collect(
+				Collectors.groupingBy(e -> e, Collectors.counting()));
 
-			for (final Pin pin : pins) {
-				points.addAll(pin.cells);
+		for (final Map.Entry<Point, Long> e : counts.entrySet()) {
+			long count = e.getValue();
+			if (count > 1) {
+				errors.add(
+						"Cell " + e.getKey() +
+						" has multiple pins assigned:" +
+						" " +
+						count);
 			}
-
-			Map<Point, Long> counts = points.stream().collect(
-					Collectors.groupingBy(e -> e, Collectors.counting()));
-
-			for (final Map.Entry<Point, Long> e : counts.entrySet()) {
-				long count = e.getValue();
-				if (count > 1) {
-					errors.add(
-							"Cell " + e.getKey() +
-							" has multiple pins assigned:" +
-							" " +
-							count);
-				}
-			}
-
-			return errors;
 		}
 
-		/**
-		 * This method checks that all actuations sequences provided have the
-		 * same
-		 * length.
-		 *
-		 * @param cellActuations
-		 * 		List of actuations given on the cell level (might be null)
-		 * @param pinActuations
-		 * 		List of actuations given on the pin level (might be nulll)
-		 * @return List of errors
-		 */
-		static ArrayList<String> checkActuationVectorLengths (
-		final HashMap<Point, ActuationVector> cellActuations,
-		final HashMap<Integer, ActuationVector> pinActuations){
-			ArrayList<String> errors = new ArrayList<>();
+		return errors;
+	}
 
-			Integer cellActs = null;
-			Integer pinActs = null;
-			boolean addedCellError = false;
+	/**
+	 * This method checks that all actuations sequences provided have the
+	 * same
+	 * length.
+	 *
+	 * @param cellActuations
+	 * 		List of actuations given on the cell level (might be null)
+	 * @param pinActuations
+	 * 		List of actuations given on the pin level (might be nulll)
+	 * @return List of errors
+	 */
+	static ArrayList<String> checkActuationVectorLengths(
+			final HashMap<Point, ActuationVector> cellActuations,
+			final HashMap<Integer, ActuationVector> pinActuations) {
+		ArrayList<String> errors = new ArrayList<>();
 
-			if (cellActuations != null && !cellActuations.isEmpty()) {
-				for (final Map.Entry<Point, ActuationVector> pair :
-						cellActuations
-								.entrySet()) {
-					int len = pair.getValue().size();
-					if (cellActs == null) {
-						cellActs = len;
-					} else {
-						if (len != cellActs && !addedCellError) {
-							errors.add("Different lengths in cell actuations");
-							addedCellError = true;
-						}
+		Integer cellActs = null;
+		Integer pinActs = null;
+		boolean addedCellError = false;
+
+		if (cellActuations != null && !cellActuations.isEmpty()) {
+			for (final Map.Entry<Point, ActuationVector> pair :
+					cellActuations
+							.entrySet()) {
+				int len = pair.getValue().size();
+				if (cellActs == null) {
+					cellActs = len;
+				} else {
+					if (len != cellActs && !addedCellError) {
+						errors.add("Different lengths in cell actuations");
+						addedCellError = true;
 					}
 				}
 			}
+		}
 
-			boolean addedPinError = false;
-			boolean diffError = false;
-			if (pinActuations != null && !pinActuations.isEmpty()) {
-				for (final Map.Entry<Integer, ActuationVector> pair :
-						pinActuations
-								.entrySet()) {
-					int len = pair.getValue().size();
-					if (pinActs == null) {
-						pinActs = len;
-					} else {
-						if (cellActs != null && len != cellActs &&
-							!addedPinError) {
-							errors.add("Different lengths in pin actuations");
-							addedPinError = true;
-						}
-						if (pinActs != -1 && pinActs != len && !diffError) {
-							errors.add(
-									"Different lengths between cell and pin " +
-									"actuations");
-							diffError = true;
-						}
+		boolean addedPinError = false;
+		boolean diffError = false;
+		if (pinActuations != null && !pinActuations.isEmpty()) {
+			for (final Map.Entry<Integer, ActuationVector> pair :
+					pinActuations
+							.entrySet()) {
+				int len = pair.getValue().size();
+				if (pinActs == null) {
+					pinActs = len;
+				} else {
+					if (cellActs != null && len != cellActs &&
+						!addedPinError) {
+						errors.add("Different lengths in pin actuations");
+						addedPinError = true;
+					}
+					if (pinActs != -1 && pinActs != len && !diffError) {
+						errors.add(
+								"Different lengths between cell and pin " +
+								"actuations");
+						diffError = true;
 					}
 				}
 			}
-			return errors;
 		}
+		return errors;
+	}
 
 
-		/**
-		 * This method checks whether provided detectors can actually be
-		 * placed on
-		 * the chip. It can further remove conflicting detectors from the
-		 * detectors
-		 * list.
-		 *
-		 * @param chip
-		 * 		The biochip that is supposed to contain the detectors
-		 * @param detectors
-		 * 		List of detectors to be placed on the chip (might be nulll)
-		 * @param removeWrongDetectors
-		 * 		if true, erroneous detectors will be removed from the list of
-		 * 		detectors
-		 * @return List of errors
-		 */
-		static List<String>
-		checkForDetectorPositions(final Biochip chip,
-		final List<Detector> detectors,
-		final boolean removeWrongDetectors) {
+	/**
+	 * This method checks whether provided detectors can actually be placed on
+	 * the chip. It can further remove conflicting detectors from the
+	 * detectors
+	 * list.
+	 *
+	 * @param chip
+	 * 		The biochip that is supposed to contain the detectors
+	 * @param detectors
+	 * 		List of detectors to be placed on the chip (might be nulll)
+	 * @param removeWrongDetectors
+	 * 		if true, erroneous detectors will be removed from the list of
+	 * 		detectors
+	 * @return List of errors
+	 */
+	static List<String>
+	checkForDetectorPositions(final Biochip chip,
+							  final List<Detector> detectors,
+							  final boolean removeWrongDetectors) {
 			ArrayList<String> errors = new ArrayList<>();
-
-			if (detectors != null && !detectors.isEmpty()) {
-				ArrayList<Detector> removeList = new ArrayList<>();
-				for (final Detector det : detectors) {
-					Point pos = det.position();
-					try {
-						chip.getFieldAt(pos);
-					} catch (final RuntimeException e) {
-						String msg =
-								"Can not place detectors at position " + pos +
-								". Position does not exist on chip.";
-						if (removeWrongDetectors) {
-							removeList.add(det);
-							msg = msg +
-								  " Removed erroneous detector from list.";
-						}
-						errors.add(msg);
-					}
-				}
-				detectors.removeAll(removeList);
-			}
+//
+//			if (detectors != null && !detectors.isEmpty()) {
+//				ArrayList<Detector> removeList = new ArrayList<>();
+//				for (final Detector det : detectors) {
+//					Point pos = det.position();
+//					try {
+//						chip.getFieldAt(pos);
+//					} catch (final RuntimeException e) {
+//						String msg =
+//								"Can not place detectors at position " + pos +
+//								". Position does not exist on chip.";
+//						if (removeWrongDetectors) {
+//							removeList.add(det);
+//							msg = msg +
+//								  " Removed erroneous detector from list.";
+//						}
+//						errors.add(msg);
+//					}
+//				}
+//				detectors.removeAll(removeList);
+//			}
 			return errors;
-		}
+	}
 
-		/**
-		 * Check the validity of dispenser/sink positions.
-		 * <p>
-		 * A dispenser/sink itself must sit outside of the regular chip
-		 * positions.
-		 * Its target/source, on the other hand, must be a valid chip position.
-		 *
-		 * @param chip
-		 * 		Biochip to check for errors
-		 * @param type
-		 * 		What is tested (dispensers or sinks)
-		 * @param dir
-		 * 		Position and direction of the dispenser
-		 * @return Error message
-		 */
+	/**
+	 * Check the validity of dispenser/sink positions.
+	 * <p>
+	 * A dispenser/sink itself must sit outside of the regular chip
+	 * positions.
+	 * Its target/source, on the other hand, must be a valid chip position.
+	 *
+	 * @param chip
+	 * 		Biochip to check for errors
+	 * @param type
+	 * 		What is tested (dispensers or sinks)
+	 * @param dir
+	 * 		Position and direction of the dispenser
+	 * @return Error message
+	 */
 
 	private static String checkOutsidePosition(
 			final Biochip chip,
