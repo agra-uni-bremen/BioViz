@@ -351,11 +351,9 @@ public class DrawableField extends DrawableSprite {
 		}
 
 
-		colorOverlayCount += typeColoring(result, t, colorOverlayCount == 0);
-		// TODO why do we only add something if the count is zero? Save
-		// computation time?
-		// nope it seems that the cell usage is supposed to override the other
-		// overlays
+		if (colorOverlayCount == 0) {
+			colorOverlayCount += typeColoring(result, t);
+		}
 
 
 		if (getOption(Adjacency)) {
@@ -386,29 +384,32 @@ public class DrawableField extends DrawableSprite {
 		return result.buildGdxColor().cpy();
 	}
 
-	private int typeColoring(
-			de.bioviz.ui.Color result,
-			int timeStep,
-			boolean applies) {
+	/**
+	 * Computes the color based on the type of the field.
+	 *
+	 * @param result
+	 * 		The resulting color.
+	 * @param timeStep
+	 * 		The current time step.
+	 * @return The amount of new color overlays.
+	 */
+	private int typeColoring(de.bioviz.ui.Color result, int timeStep) {
 		int colorOverlayCount = 0;
-		if (applies) {
-			if (field instanceof Sink) {
-				result.add(Colors.SINK_COLOR);
-				colorOverlayCount++;
-			} else if (field instanceof Dispenser) {
-				result.add(Colors.SOURCE_COLOR);
-				colorOverlayCount++;
-			} else {
-				result.add(Colors.FIELD_COLOR);
-				colorOverlayCount++;
-			}
+		if (field instanceof Sink) {
+			result.add(Colors.SINK_COLOR);
+			colorOverlayCount++;
+		} else if (field instanceof Dispenser) {
+			result.add(Colors.SOURCE_COLOR);
+			colorOverlayCount++;
+		} else {
+			result.add(Colors.FIELD_COLOR);
+			colorOverlayCount++;
+		}
 
-			for (final Mixer m : field.mixers) {
-				if (m.timing.inRange(timeStep)) {
-					result.add(Colors.MIXER_COLOR);
-				}
+		for (final Mixer m : field.mixers) {
+			if (m.timing.inRange(timeStep)) {
+				result.add(Colors.MIXER_COLOR);
 			}
-
 		}
 		return colorOverlayCount;
 	}
@@ -416,7 +417,8 @@ public class DrawableField extends DrawableSprite {
 	/**
 	 * Colors based on the interference region.
 	 *
-	 * @param result The color that results from this method call.
+	 * @param result
+	 * 		The color that results from this method call.
 	 * @return The amount of color overlays produced by this method.
 	 */
 	private int inteferenceRegionColoring(de.bioviz.ui.Color result) {
