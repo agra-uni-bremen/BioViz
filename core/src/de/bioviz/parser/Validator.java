@@ -91,24 +91,28 @@ final class Validator {
 		Set<Droplet> droplets = chip.getDroplets();
 		ArrayList<String> errors = new ArrayList<>();
 
-		// TODO fix this stupid method
+		for (final Droplet drop : droplets) {
+			ArrayList<Rectangle> rectPositions = drop.getPositions();
 
-//			for (final Droplet drop : droplets) {
-//				ArrayList<Point> positions = drop.getPositions();
-//				for (int i = 0; i < positions.size(); i++) {
-//					Point pos = positions.get(i);
-//					if (chip.hasFieldAt(pos)) {
-//						int timestep = i + drop.getSpawnTime();
-//						BiochipField field = chip.getFieldAt(pos);
-//						if (field.isBlocked(timestep)) {
-//							errors.add("Droplet " + drop.getID() +
-//									   " moves into blockage at " + pos +
-//									   " in time step " + timestep);
-//						}
-//					}
-//				}
-//			}
+			for (int timeStep = 0;
+				 timeStep < rectPositions.size(); timeStep++) {
+				Rectangle rectPos = rectPositions.get(timeStep);
+				ArrayList<Point> positions =
+						rectPos.positions().stream().filter(
+								pos -> chip.hasFieldAt(pos)).collect(
+								Collectors.toCollection(ArrayList::new));
 
+				for (Point pos : positions) {
+					int timestep = timeStep + drop.getSpawnTime();
+					BiochipField field = chip.getFieldAt(pos);
+					if (field.isBlocked(timestep)) {
+						errors.add("Droplet " + drop.getID() +
+								   " moves into blockage at " + pos +
+								   " in time step " + timestep);
+					}
+				}
+			}
+		}
 		return errors;
 	}
 
@@ -118,8 +122,7 @@ final class Validator {
 	 * or vertical direction in one time step.
 	 *
 	 * @param drops
-	 * 		Droplets whose positions on the grid will be checked for
-	 * 		'jumps'
+	 * 		Droplets whose positions on the grid will be checked for 'jumps'
 	 * @return List of errors
 	 */
 	static ArrayList<String> checkPathsForJumps(
@@ -193,8 +196,7 @@ final class Validator {
 	}
 
 	/**
-	 * This method checks that all actuations sequences provided have the
-	 * same
+	 * This method checks that all actuations sequences provided have the same
 	 * length.
 	 *
 	 * @param cellActuations
@@ -258,8 +260,7 @@ final class Validator {
 
 	/**
 	 * This method checks whether provided detectors can actually be placed on
-	 * the chip. It can further remove conflicting detectors from the
-	 * detectors
+	 * the chip. It can further remove conflicting detectors from the detectors
 	 * list.
 	 *
 	 * @param chip
@@ -275,7 +276,7 @@ final class Validator {
 	checkForDetectorPositions(final Biochip chip,
 							  final List<Detector> detectors,
 							  final boolean removeWrongDetectors) {
-			ArrayList<String> errors = new ArrayList<>();
+		ArrayList<String> errors = new ArrayList<>();
 //
 //			if (detectors != null && !detectors.isEmpty()) {
 //				ArrayList<Detector> removeList = new ArrayList<>();
@@ -297,14 +298,13 @@ final class Validator {
 //				}
 //				detectors.removeAll(removeList);
 //			}
-			return errors;
+		return errors;
 	}
 
 	/**
 	 * Check the validity of dispenser/sink positions.
 	 * <p>
-	 * A dispenser/sink itself must sit outside of the regular chip
-	 * positions.
+	 * A dispenser/sink itself must sit outside of the regular chip positions.
 	 * Its target/source, on the other hand, must be a valid chip position.
 	 *
 	 * @param chip
