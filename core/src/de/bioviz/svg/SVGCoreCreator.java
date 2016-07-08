@@ -222,7 +222,8 @@ public class SVGCoreCreator {
 		return "<marker id=\"" + id + "\" " +
 			   "markerWidth=\"10\" " + "markerHeight=\"10\" " +
 			   "refX=\"7\" " + "refY=\"3\"	" +
-			   "orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path d=\"M0," +
+			   "orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path " +
+			   "d=\"M0," +
 			   "0" +
 			   " C 1,1" +
 			   " 1,5 0,6 L9,3  z\" " +
@@ -252,16 +253,18 @@ public class SVGCoreCreator {
 		int y1 = dir.hasOrientation(Point.NORTH) ? 1 : 0;
 		int y2 = dir.hasOrientation(Point.SOUTH) ? 1 : 0;
 
+		final int colorMult = 255;
+
 		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
 					   "y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 +
 					   "\" >\n";
 		String offset1 = "<stop offset=\"0%\" " + "style=\"stop-color:rgb(" +
-						 color.r * 255 + "," + color.g * 255 + "," +
-						 color.b * 255 + ");" +
+						 color.r * colorMult + "," + color.g * colorMult +
+						 "," + color.b * colorMult + ");" +
 						 "stop-opacity:0\" />\n";
 		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
-						 color.r * 255 + "," + color.g * 255 + "," +
-						 color.b * 255 + ");" +
+						 color.r * colorMult + "," + color.g * colorMult +
+						 "," + color.b * colorMult + ");" +
 						 "stop-opacity:0.8\" />\n";
 		String end = "</linearGradient>\n";
 		return begin + offset1 + offset2 + end;
@@ -431,7 +434,8 @@ public class SVGCoreCreator {
 										 dropColor) {
 		final Color[] colors =
 				{SVGUtils.getLighterLongNetIndicatorColor(dropColor)
-						, SVGUtils.getDarkerLongNetIndicatorColor(dropColor), };
+						, SVGUtils.getDarkerLongNetIndicatorColor(dropColor)
+						,};
 		for (final Color color : colors) {
 			final String key = SVGUtils.generateColoredID("ArrowHead", color);
 			if (!svgs.containsKey(key)) {

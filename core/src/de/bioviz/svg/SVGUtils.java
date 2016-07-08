@@ -106,7 +106,7 @@ public final class SVGUtils {
 	}
 
 	/**
-	 * Transforms a Pair<Float, Float> into svgCoords
+	 * Transforms a Pair<Float, Float> into svgCoords.
 	 * @param point the coord to transform
 	 * @param circuit the current circuit
 	 * @param coordinateMultiplier the coordinate multiplier
