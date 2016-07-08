@@ -2,6 +2,7 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Dispenser;
 import de.bioviz.structures.Droplet;
@@ -189,7 +190,13 @@ public class DrawableField extends DrawableSprite {
 	}
 
 
-
+	/**
+	 * Computes the cell coloring based on the usage.
+	 *
+	 * @param result
+	 * 		The color that is to be adjusted by this method.
+	 * @return 1 if cell usage was used, 0 otherwise
+	 */
 	private int cellUsageColoring(de.bioviz.ui.Color result) {
 		if (getOption(CellUsage)) {
 			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
@@ -203,6 +210,9 @@ public class DrawableField extends DrawableSprite {
 		return 0;
 	}
 
+	/**
+	 * Decorates cells that are on the corners of a net bounding box.
+	 */
 	private void netColoring() {
 		/**
 		 * The NetColorOnFields display option is a little special and thus
@@ -233,49 +243,52 @@ public class DrawableField extends DrawableSprite {
 					netCol.add(Colors.HOVER_NET_DIFF_COLOR);
 
 				}
-				Point top = new Point(
-						field.x(), field.y() + 1);
-				Point bottom = new Point(
-						field.x(), field.y() - 1);
-				Point left = new Point(
-						field.x() - 1, field.y());
-				Point right = new Point(
-						field.x() + 1, field.y());
+				Point top = new Point(field.x(), field.y() + 1);
+				Point bottom = new Point(field.x(), field.y() - 1);
+				Point left = new Point(field.x() - 1, field.y());
+				Point right = new Point(field.x() + 1, field.y());
+
+				Color color = netCol.buildGdxColor();
+
 
 				final int bottomleft = 0;
 				final int topleft = 1;
 				final int topright = 2;
 				final int bottomright = 3;
 
-				// TODO cornercolors schonmal vorher berechnen, auch die
-				// conditions leichter lesbar machen
-				if (!getParentCircuit().getData().hasFieldAt(top) ||
-					!n.containsField(
-							getParentCircuit().getData().
-									getFieldAt(top))) {
-					this.cornerColors[topleft].add(netCol.buildGdxColor());
-					this.cornerColors[topright].add(netCol.buildGdxColor());
+				boolean fieldAtTop =
+						getParentCircuit().getData().hasFieldAt(top);
+				boolean fieldAtBottom =
+						getParentCircuit().getData().hasFieldAt(bottom);
+				boolean fieldAtLeft =
+						getParentCircuit().getData().hasFieldAt(left);
+				boolean fieldAtRight =
+						getParentCircuit().getData().hasFieldAt(right);
+
+				Biochip parent = getParentCircuit().getData();
+				boolean containsTop = n.containsField(parent.getFieldAt(top));
+				boolean containsBottom =
+						n.containsField(parent.getFieldAt(bottom));
+				boolean containsLeft = n.containsField(parent.getFieldAt
+						(left));
+				boolean containsRight =
+						n.containsField(parent.getFieldAt(right));
+
+				if (!fieldAtTop || containsTop) {
+					this.cornerColors[topleft].add(color);
+					this.cornerColors[topright].add(color);
 				}
-				if (!getParentCircuit().getData().hasFieldAt(bottom) ||
-					!n.containsField(
-							getParentCircuit().getData().
-									getFieldAt(bottom))) {
-					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
-					this.cornerColors[bottomright].add(netCol.buildGdxColor());
+				if (!fieldAtBottom || containsBottom) {
+					this.cornerColors[bottomleft].add(color);
+					this.cornerColors[bottomright].add(color);
 				}
-				if (!getParentCircuit().getData().hasFieldAt(left) ||
-					!n.containsField(
-							getParentCircuit().getData().
-									getFieldAt(left))) {
-					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
-					this.cornerColors[topleft].add(netCol.buildGdxColor());
+				if (!fieldAtLeft || containsLeft) {
+					this.cornerColors[bottomleft].add(color);
+					this.cornerColors[topleft].add(color);
 				}
-				if (!getParentCircuit().getData().hasFieldAt(right) ||
-					!n.containsField(
-							getParentCircuit().getData().
-									getFieldAt(right))) {
-					this.cornerColors[topright].add(netCol.buildGdxColor());
-					this.cornerColors[bottomright].add(netCol.buildGdxColor());
+				if (!fieldAtRight || containsRight) {
+					this.cornerColors[topright].add(color);
+					this.cornerColors[bottomright].add(color);
 				}
 			}
 			for (int i = 0; i < cornerColors.length; i++) {
@@ -325,8 +338,89 @@ public class DrawableField extends DrawableSprite {
 
 		colorOverlayCount += cellUsageColoring(result);
 
+		colorOverlayCount += inteferenceRegionColoring(result);
 
 
+		/**
+		 * Here we highlight cells that are currently actuated.
+		 */
+		int t = getParentCircuit().getCurrentTime();
+		if (getOption(Actuations) && field.isActuated(t)) {
+			result.add(Colors.ACTAUTED_COLOR);
+			++colorOverlayCount;
+		}
+
+
+		colorOverlayCount += typeColoring(result, t, colorOverlayCount == 0);
+		// TODO why do we only add something if the count is zero? Save
+		// computation time?
+		// nope it seems that the cell usage is supposed to override the other
+		// overlays
+
+
+		if (getOption(Adjacency)) {
+			final Stream<FluidicConstraintViolation> violations =
+					getParentCircuit().getData().getAdjacentActivations()
+							.stream();
+
+			if (violations.anyMatch(v -> v.containsField(this.field))) {
+				result.add(Colors.ADJACENT_ACTIVATION_COLOR);
+			}
+		}
+
+		if (colorOverlayCount > 0) {
+			result.mul(1f / ((float) colorOverlayCount));
+			result.clamp();
+		} else {
+			result = new de.bioviz.ui.Color(Colors.FIELD_COLOR);
+		}
+
+		if (this.isHovered()) {
+			result.add(Colors.HOVER_DIFF_COLOR);
+		}
+
+		if (getOption(HighlightAnnotatedFields) && field.hasAnnotations()) {
+			result = new de.bioviz.ui.Color(Color.VIOLET);
+		}
+
+		return result.buildGdxColor().cpy();
+	}
+
+	private int typeColoring(
+			de.bioviz.ui.Color result,
+			int timeStep,
+			boolean applies) {
+		int colorOverlayCount = 0;
+		if (applies) {
+			if (field instanceof Sink) {
+				result.add(Colors.SINK_COLOR);
+				colorOverlayCount++;
+			} else if (field instanceof Dispenser) {
+				result.add(Colors.SOURCE_COLOR);
+				colorOverlayCount++;
+			} else {
+				result.add(Colors.FIELD_COLOR);
+				colorOverlayCount++;
+			}
+
+			for (final Mixer m : field.mixers) {
+				if (m.timing.inRange(timeStep)) {
+					result.add(Colors.MIXER_COLOR);
+				}
+			}
+
+		}
+		return colorOverlayCount;
+	}
+
+	/**
+	 * Colors based on the interference region.
+	 *
+	 * @param result The color that results from this method call.
+	 * @return The amount of color overlays produced by this method.
+	 */
+	private int inteferenceRegionColoring(de.bioviz.ui.Color result) {
+		int colorOverlayCount = 0;
 		/** Colours the interference region **/
 		if (getOption(InterferenceRegion)) {
 			int amountOfInterferenceRegions = 0;
@@ -368,65 +462,9 @@ public class DrawableField extends DrawableSprite {
 				result.add(c.mul(scale));
 				++colorOverlayCount;
 			}
-		}
-
-		int t = getParentCircuit().getCurrentTime();
-		if (getOption(Actuations) && field.isActuated(t)) {
-			result.add(Colors.ACTAUTED_COLOR);
-			++colorOverlayCount;
 
 		}
-
-		// TODO why do we only add something if the count is zero? Save
-		// computation time?
-		// nope it seems that the cell usage is supposed to override the other
-		// overlays
-		if (colorOverlayCount == 0) {
-			if (field instanceof Sink) {
-				result.add(Colors.SINK_COLOR);
-				colorOverlayCount++;
-			} else if (field instanceof Dispenser) {
-				result.add(Colors.SOURCE_COLOR);
-				colorOverlayCount++;
-			} else {
-				result.add(Colors.FIELD_COLOR);
-				colorOverlayCount++;
-			}
-
-			for (final Mixer m : field.mixers) {
-				if (m.timing.inRange(t)) {
-					result.add(Colors.MIXER_COLOR);
-				}
-			}
-
-		}
-
-
-		if (getOption(Adjacency)) {
-			final Stream<FluidicConstraintViolation> violations =
-					getParentCircuit().getData().getAdjacentActivations().stream();
-
-			if (violations.anyMatch(v -> v.containsField(this.field))) {
-				result.add(Colors.ADJACENT_ACTIVATION_COLOR);
-			}
-		}
-
-		if (colorOverlayCount > 0) {
-			result.mul(1f / ((float) colorOverlayCount));
-			result.clamp();
-		} else {
-			result = new de.bioviz.ui.Color(Colors.FIELD_COLOR);
-		}
-
-		if (this.isHovered()) {
-			result.add(Colors.HOVER_DIFF_COLOR);
-		}
-
-		if (getOption(HighlightAnnotatedFields) && field.hasAnnotations()) {
-			result = new de.bioviz.ui.Color(Color.VIOLET);
-		}
-
-		return result.buildGdxColor().cpy();
+		return colorOverlayCount;
 	}
 
 	@Override
