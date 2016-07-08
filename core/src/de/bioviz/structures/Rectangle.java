@@ -4,8 +4,6 @@ import de.bioviz.util.Pair;
 
 import java.util.ArrayList;
 
-import static com.badlogic.gdx.utils.Align.center;
-
 /**
  * @author Oliver Keszocze
  */
@@ -24,17 +22,20 @@ public class Rectangle {
 
 	/**
 	 * Creates a rectangle defined by two corners.
+	 *
 	 * @param p1
 	 * 		First corner
 	 * @param p2
 	 * 		Second corner
-	 * <p>
-	 * Internally, the class stores the coordinates of the rectangle by
-	 * computing the lower left and upper right corners. The provided corners
-	 * need not be the lower left or upper right corner. This also means that
-	 * the toString() method may produce unexpected output.
-	 * <p>
-	 * The two corners of the rectangle may be identical.
+	 * 		<p>
+	 * 		Internally, the class stores the coordinates of the rectangle by
+	 * 		computing the lower left and upper right corners. The provided
+	 * 		corners
+	 * 		need not be the lower left or upper right corner. This also means
+	 * 		that
+	 * 		the toString() method may produce unexpected output.
+	 * 		<p>
+	 * 		The two corners of the rectangle may be identical.
 	 */
 	public Rectangle(final Point p1, final Point p2) {
 		this(p1.fst, p1.snd, p2.fst, p2.snd);
@@ -56,9 +57,9 @@ public class Rectangle {
 	}
 
 	/**
-	 *
 	 * Creates a rectangle defined by two corners (provided by their
 	 * coordinates).
+	 *
 	 * @param x1
 	 * 		x-coordinate of the first corner
 	 * @param y1
@@ -66,15 +67,16 @@ public class Rectangle {
 	 * @param x2
 	 * 		x-coordinate of the second corner
 	 * @param y2
-	 * 		y-coordinate of the second corner
-	 * .
-	 * <p>
-	 * Internally, the class stores the coordinates of the rectangle by
-	 * computing the lower left and upper right corners. The provided corners
-	 * need not be the lower left or upper right corner. This also means that
-	 * the toString() method may produce unexpected output.
-	 * <p>
-	 * The two corners of the rectangle may be identical.
+	 * 		y-coordinate of the second corner .
+	 * 		<p>
+	 * 		Internally, the class stores the coordinates of the rectangle by
+	 * 		computing the lower left and upper right corners. The provided
+	 * 		corners
+	 * 		need not be the lower left or upper right corner. This also means
+	 * 		that
+	 * 		the toString() method may produce unexpected output.
+	 * 		<p>
+	 * 		The two corners of the rectangle may be identical.
 	 */
 	public Rectangle(final int x1, final int y1, final int x2, final int y2) {
 
@@ -91,13 +93,11 @@ public class Rectangle {
 
 
 	/**
-	 * Checks whether a given point is within the boundaries of the
-	 * rectangle.
+	 * Checks whether a given point is within the boundaries of the rectangle.
 	 *
 	 * @param p
 	 * 		Point to check for
 	 * @return true if p is within the rectangle, false otherwise
-	 *
 	 */
 	public boolean contains(final Point p) {
 		return contains(p.fst, p.snd);
@@ -105,15 +105,13 @@ public class Rectangle {
 
 
 	/**
-	 * Checks whether a given point is within the boundaries of the
-	 * rectangle.
+	 * Checks whether a given point is within the boundaries of the rectangle.
 	 *
 	 * @param x
 	 * 		x-coordinate of Point to check for
 	 * @param y
 	 * 		y-coordinate of Point to check for
 	 * @return true if (x,y) is within the rectangle, false otherwise
-	 *
 	 */
 	public boolean contains(final int x, final int y) {
 
@@ -122,27 +120,29 @@ public class Rectangle {
 	}
 
 
-    /**
-     * Computes the center of the rectangle.
-     *
-     * The computation is done in coordinates using integer arithmetic. This means
-     * that the usual rounding rules apply. The result will be a point within
-     * the Rectangle.
+	/**
+	 * Computes the center of the rectangle.
+	 * <p>
+	 * The computation is done in coordinates using integer arithmetic. This
+	 * means that the usual rounding rules apply. The result will be a point
+	 * within the Rectangle.
+	 *
 	 * @return Point which is in the center of the rectangle.
-     */
+	 */
 	public Point center() {
 		int centerX = (lowerLeft.fst + upperRight.fst) / 2;
 		int centerY = (lowerLeft.snd + upperRight.snd) / 2;
 		return new Point(centerX, centerY);
 	}
 
-    /**
+	/**
 	 * Computes the center of the rectangle using floating point arithmetic.
+	 * <p>
+	 * The result is a pair of floats. While the result lies within the
+	 * rectangle it is not necessarily a valid integer coordinate of it.
 	 *
-	 * The result is a pair of floats. While the result lies within the rectangle
-	 * it is not necessarily a valid integer coordinate of it.
-	 *
-	 * @return Point in the center of the rectangle using floating point arithmetic.
+	 * @return Point in the center of the rectangle using floating point
+	 * arithmetic.
 	 */
 	public Pair<Float, Float> centerFloat() {
 		float centerX =
@@ -223,21 +223,23 @@ public class Rectangle {
 
 	/**
 	 * Computes the size of the rectangle.
+	 *
 	 * @return Point of type (width,height).
 	 */
 	public Point size() {
 		return new Point(
-				(upperRight.fst-lowerLeft.fst)+1,
-				(upperRight.snd-lowerLeft.snd)+1
+				(upperRight.fst - lowerLeft.fst) + 1,
+				(upperRight.snd - lowerLeft.snd) + 1
 		);
 	}
 
 	/**
 	 * Computes the upper left corner of the rectangle.
+	 *
 	 * @return The upper left corner of the rectangle.
 	 */
 	public Point upperLeft() {
-		return new Point(lowerLeft.fst,upperRight.snd);
+		return new Point(lowerLeft.fst, upperRight.snd);
 	}
 
 	/**
@@ -245,13 +247,14 @@ public class Rectangle {
 	 * <p>
 	 * The check is easily done be extending the rectangle and checking whether
 	 * the point is within that rectangle.
-	 *
+	 * <p>
 	 * The parameter size determins how much the rectangle gets extended. This
 	 * is of interest when working with meda chips.
 	 *
 	 * @param p
 	 * 		The point to check for adjacency.
-	 * 	@param size The size of the adjacency to be considered.
+	 * @param size
+	 * 		The size of the adjacency to be considered.
 	 * @return True if the point is adjacent to the rectangle.
 	 */
 	public boolean adjacent(final Point p, final int size) {
@@ -266,7 +269,8 @@ public class Rectangle {
 	/**
 	 * Checks if a point is adjacent to this rectangle using a distance of 1.
 	 *
-	 * @param p The point to check for adjacency.
+	 * @param p
+	 * 		The point to check for adjacency.
 	 * @return True if the point is adjacent to the rectangle, false otherwise.
 	 */
 	public boolean adjacent(final Point p) {
