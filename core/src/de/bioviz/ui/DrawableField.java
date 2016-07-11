@@ -146,7 +146,12 @@ public class DrawableField extends DrawableSprite {
 		} else if (field.getDetector() != null &&
 				   getOption(DetectorIcon)) {
 			texture = TextureE.Detector;
-		} else if (field.isSource()) {
+		} else if (field.getMagnet() != null) {
+			texture = TextureE.Magnet;
+		} else if (field.getHeater() != null) {
+			texture = TextureE.Heater;
+		}
+		else if (field.isSource()) {
 			if (getOption(SourceTargetIcons)) {
 				texture = TextureE.Start;
 			}

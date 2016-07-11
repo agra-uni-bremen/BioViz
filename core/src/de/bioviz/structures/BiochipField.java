@@ -117,6 +117,7 @@ public class BiochipField {
 
 	/**
 	 * Checks whether this field has any area annotations.
+	 *
 	 * @return true if the field as area annotations, false otherwise.
 	 */
 	public boolean hasAnnotations() {
@@ -143,7 +144,7 @@ public class BiochipField {
 
 	/**
 	 * Checks whether there is a resources at this field.
-	 *
+	 * <p>
 	 * It does only check that any resource is present and not for the type of
 	 * resource.
 	 *
@@ -160,11 +161,43 @@ public class BiochipField {
 	 * @return The detector, if present, NULL otherwise
 	 */
 	public Detector getDetector() {
-		if (resource == null  ||
+		if (resource == null ||
 			resource.type != Resource.ResourceType.detector) {
 			return null;
 		}
-		return (Detector)resource;
+		return (Detector) resource;
+	}
+
+	/**
+	 * Returns the magnet of this field.
+	 * <p>
+	 * Note that the result may by NULL as not every field must have a
+	 * magnet.
+	 *
+	 * @return The magnet, if present, NULL otherwise
+	 */
+	public Magnet getMagnet() {
+		if (resource == null ||
+			resource.type != Resource.ResourceType.magnet) {
+			return null;
+		}
+		return (Magnet)resource;
+	}
+
+	/**
+	 * Returns the heater of this field.
+	 * <p>
+	 * Note that the result may by NULL as not every field must have a
+	 * heater.
+	 *
+	 * @return The heater, if present, NULL otherwise
+	 */
+	public Heater getHeater() {
+		if (resource == null ||
+			resource.type != Resource.ResourceType.heater) {
+			return null;
+		}
+		return (Heater)resource;
 	}
 
 	/**
@@ -257,7 +290,7 @@ public class BiochipField {
 		Biochip circ = parent;
 		Actuation act = Actuation.OFF;
 
-		Map<Integer,ActuationVector> actVecs = circ.pinActuations;
+		Map<Integer, ActuationVector> actVecs = circ.pinActuations;
 		if (pin != null && !actVecs.isEmpty()) {
 			ActuationVector vec = actVecs.get(pin.pinID);
 			if (vec != null) {
@@ -311,8 +344,6 @@ public class BiochipField {
 		}
 		return usage;
 	}
-
-
 
 
 }
