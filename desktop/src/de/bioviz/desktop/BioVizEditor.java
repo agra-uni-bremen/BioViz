@@ -13,6 +13,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -65,6 +66,21 @@ public class BioVizEditor {
 		dialog = new JDialog();
 		dialog.setTitle("BioViz Editor");
 		dialog.setLayout(new BorderLayout());
+
+		// stop the canvas from doing stuff when editing
+		dialog.addWindowFocusListener(new WindowFocusListener() {
+
+			@Override
+			public void windowGainedFocus(WindowEvent e) {
+				DesktopLauncher.setAllowHotkeys(false);
+			}
+
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				DesktopLauncher.setAllowHotkeys(true);
+			}
+		});
+
 		editPane = new JEditorPane();
 		dialog.setPreferredSize(new Dimension(width, height));
 		dialog.setMinimumSize(new Dimension(width, height));
@@ -105,6 +121,7 @@ public class BioVizEditor {
 			@Override
 			public void windowClosing(final WindowEvent e) {
 				currentViz.scheduleLoadingOfNewFile(file);
+				//DesktopLauncher.setAllowHotkeys(true);
 			}
 
 		});
