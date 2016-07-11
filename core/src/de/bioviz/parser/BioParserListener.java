@@ -430,7 +430,20 @@ class BioParserListener extends BioBaseListener {
 	 */
 	@Override
 	public void enterDetector(@NotNull final Bio.DetectorContext ctx) {
-		Point pos = getPosition(ctx.position());
+
+		List<PositionContext> positions = ctx.position();
+
+		Point pos = getPosition(positions.get(0));
+
+		Rectangle position = null;
+
+		if (positions.size() > 1) {
+			position = new Rectangle(pos,getPosition(positions.get(1)));
+		}
+		else {
+			position = new Rectangle(pos,1,1);
+		}
+
 		int duration = 0;
 		int fluidType = 0;
 		Bio.Detector_specContext spec = ctx.detector_spec();
@@ -441,7 +454,7 @@ class BioParserListener extends BioBaseListener {
 			}
 		}
 
-		detectors.add(new Detector(pos, duration, fluidType));
+		detectors.add(new Detector(position, duration, fluidType));
 	}
 
 	/**
@@ -823,8 +836,8 @@ class BioParserListener extends BioBaseListener {
 				Validator.checkForDetectorPositions(chip, detectors, true));
 		// only valid detectors are left -> we can happily add them to the chip
 		detectors.forEach(det -> {
-			Point pos = det.position();
-			chip.getFieldAt(pos).setDetector(det);
+			ArrayList<Point> points = det.position().positions();
+			points.forEach(pos -> chip.getFieldAt(pos).setDetector(det));
 		});
 		chip.detectors.addAll(detectors);
 
@@ -856,7 +869,7 @@ class BioParserListener extends BioBaseListener {
 
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(m ->
-							   m.positions.positions().forEach(pos -> {
+							   m.position.positions().forEach(pos -> {
 								   logger.trace("Adding mixer {} to field {}",
 												m, pos);
 								   chip.getFieldAt(pos).mixers.add(m);

@@ -250,7 +250,7 @@ public class BiochipField {
 		}
 
 		for (final Mixer m : mixers) {
-			if (m.positions.contains(pos) && m.timing.inRange(timeStep)) {
+			if (m.position.contains(pos) && m.timing.inRange(timeStep)) {
 				act = Actuation.ON;
 			}
 		}

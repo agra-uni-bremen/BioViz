@@ -32,7 +32,7 @@ public class Resource {
 	 * @param position
 	 * @param type
 	 */
-	public Resource(Rectangle position, ResourceType type) {
+	public Resource(final Rectangle position, final ResourceType type) {
 		this.position = position;
 		this.type = type;
 	}

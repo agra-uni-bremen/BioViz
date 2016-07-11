@@ -9,6 +9,8 @@ bio: (
     mixers|
     sinks|
     detectors|
+    heaters|
+    magnets|
     dispensers|
     routes|
     pinActuations|
@@ -32,8 +34,16 @@ dispensers: Dispensers Newlines (dispenser Newlines)+ END;
 dispenser: fluidID? ioport;
 
 detectors: Detectors Newlines (detector Newlines)+ END;
-detector: position (detector_spec)?;
+detector: position position? (detector_spec)?;
 detector_spec: timeConstraint fluidID?;
+
+heaters: Heaters Newlines (heater Newline)+ END;
+heater: position position?;
+
+magnets: Magnets Newlines (magnet Newline)+ END;
+magnet: position position?;
+
+
 
 // first position: position of the sink/dispenser
 // second position: where the droplet is removed from/dispensed to
