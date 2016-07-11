@@ -449,16 +449,72 @@ class BioParserListener extends BioBaseListener {
 		}
 	}
 
+
+	/**
+	 * Extracts a Rectangle from a list of PositionContext.
+	 * <p>
+	 * If the list contains exactly one element, it is treated as the single
+	 * point defining a 1 by 1 rectangle. If it contains two elements, they are
+	 * considered to be the defining opposite corners of a rectangle. Any
+	 * further elements are ignored.
+	 * <p>
+	 * The parameter positions is assumed to be non-null and having at least
+	 * one
+	 * element. If that criterion is not matched, this method will happily
+	 * crash.
+	 *
+	 * @param positions
+	 * 		List of PositionContext
+	 * @return The rectangle as specified in the list positions.
+	 */
+	private Rectangle extractRectangle(@NotNull List<Bio.PositionContext>
+											   positions) {
+		Point p = getPosition(positions.get(0));
+		Rectangle position;
+
+		if (positions.size() > 1) {
+			position = new Rectangle(p, getPosition(positions.get(1)));
+		} else {
+			position = new Rectangle(p, 1, 1);
+		}
+		return position;
+	}
+
+
+	/**
+	 * Parses a given MagnetContext.
+	 * <p>
+	 * The extracted magnet will be stored in the global heaters list.
+	 *
+	 * @param ctx
+	 * 		The MagnetContext.
+	 */
+	@Override
+	public void enterMagnet(@NotNull Bio.MagnetContext ctx) {
+		List<Bio.PositionContext> positions = ctx.position();
+
+		Rectangle position = extractRectangle(positions);
+
+		magnets.add(new Magnet(position));
+	}
+
 	/**
 	 * Parses a given HeaterContext.
+	 * <p>
+	 * The extracted heater will be stored in the global heaters list.
 	 *
-	 * The extracted heate will be stored in the global heaters list.
-	 *
-	 * @param ctx The HeaterContext.
+	 * @param ctx
+	 * 		The HeaterContext.
 	 */
 	@Override
 	public void enterHeater(@NotNull Bio.HeaterContext ctx) {
-		super.enterHeater(ctx);
+
+		List<Bio.PositionContext> positions = ctx.position();
+
+		Rectangle position = extractRectangle(positions);
+
+		heaters.add(new Heater(position));
+
 	}
 
 	/**
@@ -890,20 +946,53 @@ class BioParserListener extends BioBaseListener {
 
 		errors.addAll(Validator.checkPathForBlockages(chip));
 
+		//#####################################################################
+		// Resource adding begin
+
+		/*
+		In the following we will add detectors, heaters and magnets. If one of
+		these resources is to be placed on a non-existing cell, an error will
+		be logged and the offending resource is removed.
+
+		If there are multiple resources for a single field they will happily
+		override each other. (An error is logged at least).
+		 */
+
 		errors.addAll(
-				Validator.checkForDetectorPositions(chip, detectors, true));
-		// only valid detectors are left -> we can happily add them to the chip
+				Validator.checkForPositions(chip, "detector", detectors));
+		errors.addAll(Validator.checkForResources(chip, "detector",
+												  detectors));
 		detectors.forEach(det -> {
-			ArrayList<Point> points = det.position().positions();
+			ArrayList<Point> points = det.position.positions();
 			points.forEach(pos -> chip.getFieldAt(pos).setDetector(det));
 		});
 		chip.detectors.addAll(detectors);
 
 
-		pins.values().forEach(pin ->
-									  pin.cells.forEach(
-											  pos -> chip.getFieldAt(pos).pin =
-													  pin)
+		errors.addAll(Validator.checkForPositions(chip, "heater", heaters));
+		errors.addAll(Validator.checkForResources(chip, "heater", heaters));
+		chip.heaters.addAll(heaters);
+		heaters.forEach(h -> {
+			ArrayList<Point> points = h.position.positions();
+			points.forEach(pos -> chip.getFieldAt(pos).setHeater(h));
+		});
+
+
+		errors.addAll(Validator.checkForPositions(chip, "magnet", magnets));
+		errors.addAll(Validator.checkForResources(chip, "magnet", magnets));
+		chip.magnets.addAll(magnets);
+		magnets.forEach(m -> {
+			ArrayList<Point> points = m.position.positions();
+			points.forEach(pos -> chip.getFieldAt(pos).setMagnet(m));
+		});
+		// Resource adding end
+		// ####################################################################
+
+
+		pins.values().forEach(
+				pin ->
+						pin.cells.forEach(
+								pos -> chip.getFieldAt(pos).pin = pin)
 		);
 		chip.pins.putAll(pins);
 		errors.addAll(Validator.checkMultiplePinAssignments(pins.values()));
@@ -914,16 +1003,23 @@ class BioParserListener extends BioBaseListener {
 		);
 		chip.cellActuations.putAll(cellActuations);
 
-		errors.addAll(Validator.checkActuationVectorLengths(cellActuations,
-															pinActuations));
-		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,
-																   cellActuations,
-																   pinActuations,
-																   true));
-		errors.addAll(Validator.checkCellPinActuationCompatibility(chip,
-																   cellActuations,
-																   pinActuations,
-																   false));
+		errors.addAll(
+				Validator.checkActuationVectorLengths(
+						cellActuations,
+						pinActuations));
+		errors.addAll(
+				Validator.checkCellPinActuationCompatibility(
+						chip,
+						cellActuations,
+						pinActuations,
+						true));
+		errors.addAll(
+				Validator.checkCellPinActuationCompatibility(
+						chip,
+						cellActuations,
+						pinActuations,
+						false));
+
 
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(
@@ -941,9 +1037,8 @@ class BioParserListener extends BioBaseListener {
 						a.getPosition().positions().forEach(
 								pos -> {
 									logger.trace(
-											"Adding areaAnnotation {} to field" +
-											" {}",
-											a, pos);
+											"Adding areaAnnotation {} to " +
+											"field {}", a, pos);
 									chip.getFieldAt(pos).areaAnnotations.add
 											(a);
 

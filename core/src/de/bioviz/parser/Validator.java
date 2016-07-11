@@ -11,6 +11,7 @@ import de.bioviz.structures.Direction;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
+import de.bioviz.structures.Resource;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -276,36 +277,76 @@ final class Validator {
 
 
 	/**
-	 * This method checks whether provided detectors can actually be placed on
-	 * the chip. It can further remove conflicting detectors from the detectors
-	 * list.
+	 * This method checks whether provided resources can actually be placed on
+	 * the chip. Also, offending resources are removed.
 	 *
 	 * @param chip
-	 * 		The biochip that is supposed to contain the detectors
-	 * @param detectors
-	 * 		List of detectors to be placed on the chip (might be nulll)
+	 * 		The biochip that is supposed to contain the resources
+	 * @param resourceType
+	 * 		The name of the resources that is checked
+	 * @param resources
+	 * 		List of resources to be placed on the chip (might be nulll)
 	 * @return List of errors
 	 */
 	static List<String>
-	checkForDetectorPositions(final Biochip chip,
-							  final List<Detector> detectors) {
+	checkForPositions(final Biochip chip,
+					  final String resourceType,
+					  final ArrayList<? extends Resource> resources) {
 		ArrayList<String> errors = new ArrayList<>();
+		ArrayList<Resource> toRemove = new ArrayList<>();
 
-		if (detectors == null) {
+		// check this way to get rid of indentation issues
+		if (resources == null) {
 			return errors;
 		}
 
-		for (final Detector det : detectors) {
-			List<Point> points = det.position().positions();
-			points.forEach(pos -> {
-				if (!chip.hasFieldAt(pos)) {
-					String msg =
-							"Can not place detectors at position " + pos +
-							". Position does not exist on chip.";
-					errors.add(msg);
-				}
-			});
+		for (final Resource res : resources) {
+			Rectangle pos = res.position;
+
+			if (!chip.allPresent(pos)) {
+				String msg = "Cannot place " + resourceType + " at position " +
+							 pos + "! Some positions do not exit on the chip.";
+				errors.add(msg);
+				toRemove.add(res);
+			}
 		}
+		resources.removeAll(toRemove);
+		return errors;
+	}
+
+	/**
+	 * Checks whether the given list of resources is going to be added to fields
+	 * that already have an attached resource.
+	 *
+	 * @param chip
+	 * 		The biochip that is supposed to contain the resources
+	 * @param resourceType
+	 * 		The name of the resources that is checked
+	 * @param resources
+	 * 		List of resources to be placed on the chip (might be nulll)
+	 * @return List of errors
+	 */
+	static List<String>
+	checkForResources(final Biochip chip,
+					  final String resourceType,
+					  final ArrayList<? extends Resource> resources) {
+		ArrayList<String> errors = new ArrayList<>();
+
+		// check this way to get rid of indentation issues
+		if (resources == null) {
+			return errors;
+		}
+
+		for (final Resource res : resources) {
+			Rectangle pos = res.position;
+
+			if (chip.hasResource(pos)) {
+				String msg = "Cannot place " + resourceType + " at position " +
+							 pos + "! Another resource is already present";
+				errors.add(msg);
+			}
+		}
+
 		return errors;
 	}
 

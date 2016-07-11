@@ -128,7 +128,7 @@ public class BiochipField {
 	 * Sets the detector of this field.
 	 * <p>
 	 * Note that we do not check whether a detector is added to a field that is
-	 * blocked and vice versa.
+	 * blocked and vice versa. Also no check for other resources is performed.
 	 *
 	 * @param det
 	 * 		The detector that is placed at this field.
@@ -136,6 +136,20 @@ public class BiochipField {
 	public void setDetector(final Detector det) {
 		resource = det;
 	}
+
+	public void setHeater(final Heater heater) { resource = heater; }
+
+	public void setMagnet(final Magnet magnet) { resource = magnet;}
+
+	/**
+	 * Checks whether there is a resources at this field.
+	 *
+	 * It does only check that any resource is present and not for the type of
+	 * resource.
+	 *
+	 * @return true if there is a resource at this field.
+	 */
+	public boolean hasResource() { return resource != null; }
 
 	/**
 	 * Returns the detector of this field.
