@@ -17,16 +17,24 @@ package de.bioviz.util;
  * @author Oliver Keszocze
  */
 public class Quadruple<F, S, T, L> {
-	//! First stored data
+	/**
+	 * First stored data.
+	 */
 	public final F fst;
 
-	//! Second stored data
+	/**
+	 * Second stored data.
+	 */
 	public final S snd;
 
-	//! Third stored data
+	/**
+	 * Third stored data.
+	 */
 	public final T thd;
 
-	//! Fourth stored data.
+	/**
+	 * Fourth stored data.
+	 */
 	public final L fth;
 
 	/**

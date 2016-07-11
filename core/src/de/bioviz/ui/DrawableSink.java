@@ -1,10 +1,6 @@
 package de.bioviz.ui;
 
 import de.bioviz.structures.Sink;
-import de.bioviz.ui.BDisplayOptions;
-import de.bioviz.ui.DrawableCircuit;
-import de.bioviz.ui.DrawableField;
-import de.bioviz.ui.TextureE;
 import de.bioviz.util.Pair;
 
 /**
@@ -16,6 +12,9 @@ public class DrawableSink extends DrawableField {
 	 * \copydoc DrawableField::DrawableField()
 	 *
 	 * Note that the field must be of type Sink!
+	 *
+	 * @param sink The sink object that is to be drawn.
+	 * @param parent The parent circuit.
 	 */
 	public DrawableSink(final Sink sink, final DrawableCircuit parent) {
 		super(sink, parent);
