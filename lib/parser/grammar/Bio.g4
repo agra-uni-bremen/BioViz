@@ -37,10 +37,10 @@ detectors: Detectors Newlines (detector Newlines)+ END;
 detector: position position? (detector_spec)?;
 detector_spec: timeConstraint fluidID?;
 
-heaters: Heaters Newlines (heater Newline)+ END;
+heaters: Heaters Newlines (heater Newlines)+ END;
 heater: position position?;
 
-magnets: Magnets Newlines (magnet Newline)+ END;
+magnets: Magnets Newlines (magnet Newlines)+ END;
 magnet: position position?;
 
 
