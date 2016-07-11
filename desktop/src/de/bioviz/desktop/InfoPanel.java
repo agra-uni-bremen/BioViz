@@ -487,6 +487,10 @@ public class InfoPanel extends JPanel {
 	public void updateAnnotations() {
 		List<String> annotations = currentCircuit.getData().getAnnotations();
 		//annotationArea.setRows(annotations.size()-1);
+		annotationArea.setText("");
+		logger.debug("Number of elements in annotation area" +
+				annotationArea.getRows());
+
 		for (final String annotation : annotations) {
 			annotationArea.append(annotation.substring(2));
 		}
