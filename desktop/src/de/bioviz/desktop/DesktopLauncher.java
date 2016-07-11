@@ -163,6 +163,8 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private InfoPanel infoPanel;
 
+	private BioVizEditor editor;
+
 	/**
 	 * This maps the tabs that are open in the visualizationTabs field to the
 	 * filenames being open there. As each tab corresponds to a certain file,
@@ -216,6 +218,7 @@ public class DesktopLauncher extends JFrame {
 			currentViz = new BioViz(file);
 		}
 		canvas = new LwjglAWTCanvas(currentViz);
+		editor = new BioVizEditor(currentViz);
 
 		currentViz.addCloseFileListener(new CloseFileCallback());
 
@@ -225,7 +228,6 @@ public class DesktopLauncher extends JFrame {
 		this.setTitle(BioVizInfo.PROGNAME);
 
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
-
 
 		initializeTabs(file);
 
@@ -425,6 +427,15 @@ public class DesktopLauncher extends JFrame {
 		prevStepButton.addActionListener(
 				e -> currentViz.currentCircuit.prevStep());
 
+		JButton editorButton = new JButton("Editor");
+		editorButton.setPreferredSize(new Dimension(buttonWidth,
+				editorButton.getPreferredSize().height));
+		editorButton.addActionListener(
+				e -> {
+					editor.show();
+				}
+		);
+
 		/*
 		For some reason, adding a separator more then once prevents it from
 		being displayed more
@@ -468,6 +479,7 @@ public class DesktopLauncher extends JFrame {
 		panel.add(prefsSep);
 		panel.add(preferencesButton);
 		panel.add(statisticsButton);
+		panel.add(editorButton);
 		return panel;
 	}
 
@@ -482,10 +494,16 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		visualizationTabs.addChangeListener(
-				l -> currentViz.scheduleLoadingOfNewFile(
-						tabsToFilenames.get(
-								((JTabbedPane) l.getSource())
-										.getSelectedComponent()))
+				l -> {
+					currentViz.scheduleLoadingOfNewFile(
+							tabsToFilenames.get(
+									((JTabbedPane) l.getSource())
+											.getSelectedComponent()));
+					// load new file in editor
+					editor.setFile(	tabsToFilenames.get(
+							((JTabbedPane) l.getSource())
+									.getSelectedComponent()));
+				}
 		);
 
 		// nextTabListener
@@ -498,6 +516,12 @@ public class DesktopLauncher extends JFrame {
 					}
 					// load new file
 					currentViz.scheduleLoadingOfNewFile(
+							tabsToFilenames.get(
+									visualizationTabs.getComponentAt(nextIndex)
+							)
+					);
+					// load new file in editor
+					editor.setFile(
 							tabsToFilenames.get(
 									visualizationTabs.getComponentAt(nextIndex)
 							)
@@ -517,6 +541,12 @@ public class DesktopLauncher extends JFrame {
 					}
 					// load new file
 					currentViz.scheduleLoadingOfNewFile(
+							tabsToFilenames.get(
+									visualizationTabs.getComponentAt(prevIndex)
+							)
+					);
+					// load new file in editor
+					editor.setFile(
 							tabsToFilenames.get(
 									visualizationTabs.getComponentAt(prevIndex)
 							)
@@ -603,6 +633,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setSelectedIndex(
 				visualizationTabs.getTabCount() - 1);
 		tabsToFilenames.put(dummyPanel, file);
+		editor.setFile(file);
 		this.currentViz.scheduleLoadingOfNewFile(file);
 	}
 
@@ -618,6 +649,7 @@ public class DesktopLauncher extends JFrame {
 
 		if (file != null) {
 			currentViz.unloadFile(file);
+			editor.setFile(file);
 			currentViz.scheduleLoadingOfNewFile(file);
 
 		} else {
@@ -1292,6 +1324,7 @@ public class DesktopLauncher extends JFrame {
 					public void run() {
 						File f = askForFile("lastFilePath", true);
 						if (f != null) {
+
 							addNewTab(f);
 						}
 					}
