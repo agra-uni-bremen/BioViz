@@ -449,7 +449,7 @@ public class InfoPanel extends JPanel {
     }
 
     /**
-     *
+     * Updates the annotation text area.
      */
     public void updateAnnotations() {
         List<String> annotations = currentCircuit.getData().getAnnotations();

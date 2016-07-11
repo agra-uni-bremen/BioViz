@@ -57,10 +57,10 @@ public class BioVizEditor {
 	 *
 	 * @param bioViz the BioViz instance.
 	 */
-	public BioVizEditor(BioViz bioViz){
+	public BioVizEditor(final BioViz bioViz) {
 		// width and height of the editor window
-		int height = 500;
-		int width = 400;
+		final int height = 500;
+		final int width = 400;
 		currentViz = bioViz;
 		dialog = new JDialog();
 		dialog.setTitle("BioViz Editor");
@@ -76,14 +76,14 @@ public class BioVizEditor {
 
 		// Save the file into tmp and load the tmp file.
 		reload.addActionListener(
-				(e) -> {
+				(action) -> {
 					logger.debug("Storing file in tmp.");
 					try {
 						File tmpFile = File.createTempFile(file.getName(), ".BioViz_tmp", null);
 						tmpFile.deleteOnExit();
 						writeToFile(tmpFile);
 						currentViz.scheduleLoadingOfNewFile(tmpFile);
-					} catch (IOException e1) {
+					} catch (final IOException e) {
 						logger.error("Could not create tmp file to store preview.");
 					}
 				}
@@ -91,7 +91,7 @@ public class BioVizEditor {
 
 		// Save the file to disk and reload it.
 		save.addActionListener(
-				(e) -> {
+				(action) -> {
 					logger.debug("Saving file.");
 					currentViz.scheduleLoadingOfNewFile(file);
 					writeToFile(file);
@@ -103,7 +103,7 @@ public class BioVizEditor {
 		dialog.addWindowListener(new WindowAdapter() {
 
 			@Override
-			public void windowClosing(WindowEvent e) {
+			public void windowClosing(final WindowEvent e) {
 				currentViz.scheduleLoadingOfNewFile(file);
 			}
 
@@ -125,7 +125,7 @@ public class BioVizEditor {
 	/**
 	 * Shows the Editor window.
 	 */
-	public void show(){
+	public void show() {
 		dialog.setVisible(true);
 	}
 
@@ -134,33 +134,34 @@ public class BioVizEditor {
 	 *
 	 * @param f the file
 	 */
-	public void setFile(final File f){
+	public void setFile(final File f) {
 
 		this.file = f;
-		if(this.file != null) {
+		if (this.file != null) {
 			try {
 				editPane.setPage(this.file.toURI().toURL());
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	/**
-	 * Writed the content of the EditPane into the given file
-	 * @param file the file to write to
+	 * Writed the content of the EditPane into the given file.
+	 * @param storageFile the storageFile to write to
 	 */
-	public void writeToFile(final File file){
-		if(file == null){
-			throw new IllegalArgumentException("No such file.");
+	public void writeToFile(final File storageFile) {
+		if (storageFile == null) {
+			throw new IllegalArgumentException("No such storageFile.");
 		}
 		try {
-			FileWriter fileWriter = new FileWriter(file);
+			FileWriter fileWriter = new FileWriter(storageFile);
 			fileWriter.write(editPane.getText());
 			fileWriter.flush();
 			fileWriter.close();
-		}catch(IOException e){
-			logger.error("File not found or not writable " + file.getAbsolutePath());
+		} catch (final IOException e) {
+			logger.error("File not found or not writable " +
+					storageFile.getAbsolutePath());
 		}
 	}
 }
