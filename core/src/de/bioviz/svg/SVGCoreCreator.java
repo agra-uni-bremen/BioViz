@@ -246,6 +246,8 @@ public class SVGCoreCreator {
 									   final
 									   Color
 											   color) {
+		final int rbgMult = 255;
+
 		int x1 = dir.hasOrientation(Point.WEST) ? 1 : 0;
 		int x2 = dir.hasOrientation(Point.EAST) ? 1 : 0;
 
@@ -256,12 +258,12 @@ public class SVGCoreCreator {
 					   "y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 +
 					   "\" >\n";
 		String offset1 = "<stop offset=\"0%\" " + "style=\"stop-color:rgb(" +
-						 color.r * 255 + "," + color.g * 255 + "," +
-						 color.b * 255 + ");" +
+						 color.r * rbgMult + "," + color.g * rbgMult + "," +
+						 color.b * rbgMult + ");" +
 						 "stop-opacity:0\" />\n";
 		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
-						 color.r * 255 + "," + color.g * 255 + "," +
-						 color.b * 255 + ");" +
+						 color.r * rbgMult + "," + color.g * rbgMult + "," +
+						 color.b * rbgMult + ");" +
 						 "stop-opacity:0.8\" />\n";
 		String end = "</linearGradient>\n";
 		return begin + offset1 + offset2 + end;

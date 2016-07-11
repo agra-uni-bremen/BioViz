@@ -263,13 +263,15 @@ public abstract class DrawableSprite implements Drawable {
 			this.sprite.setColor(currentColor);
 			float[] v = this.sprite.getVertices();
 
+			final int rgbMult = 255;
+
 			if (cornerColors != null) {
 				for (int i = 0; i < 4; i++) {
 					int intBits =
-							(int) (255 * cornerColors[i].a) << 24 |
-							(int) (255 * cornerColors[i].b) << 16 |
-							(int) (255 * cornerColors[i].g) << 8 |
-							(int) (255 * cornerColors[i].r);
+							(int) (rgbMult  * cornerColors[i].a) << 24 |
+							(int) (rgbMult  * cornerColors[i].b) << 16 |
+							(int) (rgbMult  * cornerColors[i].g) << 8 |
+							(int) (rgbMult  * cornerColors[i].r);
 					switch (i) {
 						case 0:
 							v[SpriteBatch.C1] =
