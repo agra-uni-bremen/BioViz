@@ -76,8 +76,8 @@ final class Validator {
 						   });
 					   }
 			);
-			return errors;
 		}
+		return errors;
 	}
 
 	/**
