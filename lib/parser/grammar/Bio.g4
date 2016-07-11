@@ -3,8 +3,25 @@ parser grammar Bio;
 
 options { tokenVocab=BioLexerGrammar; }
 
-
-bio: (grid|nets|mixers|sinks|detectors|dispensers|routes|pinActuations|cellActuations|blockages|pinAssignments|fluids|droplets|Newlines)+;
+bio: (
+    grid|
+    nets|
+    mixers|
+    sinks|
+    detectors|
+    dispensers|
+    routes|
+    pinActuations|
+    cellActuations|
+    blockages|
+    pinAssignments|
+    fluids|
+    droplets|
+    medaRoutes|
+    medaNets|
+    annotations|
+    Newlines
+)+;
 
 
 
@@ -32,9 +49,17 @@ gridblock: position position;
 routes : Routes Newlines (route Newlines)+ END;
 route: dropletID timeConstraint? position+;
 
+medaRoutes: MedaRoutes Newlines (medaRoute Newlines)+ END;
+medaRoute: dropletID timeConstraint? location+;
+
+
 // Definition of mixers
 mixers: Mixers Newlines (mixer Newlines)+ END;
 mixer: mixerID timeRange position position;
+
+// Definition of areaAnnotations
+annotations: Annotations Newlines (areaAnnotation Newlines)+ END;
+areaAnnotation: position position? LessThan AreaAnnotationText;
 
 // Definition of actuation vectors
 //
@@ -49,6 +74,11 @@ nets: Nets Newlines (net Newlines)+ END;
 net: source (Comma source)* Arrow target;
 source: dropletID position timeConstraint?;
 target: position timeConstraint?;
+
+medaNets: MedaNets Newlines (medaNet Newlines)+ END;
+medaNet: medaSource (Comma medaSource)* Arrow medaTarget;
+medaSource: dropletID location timeConstraint?;
+medaTarget: location timeConstraint?;
 
 // Definition of blockages
 blockages: Blockages Newlines (blockage Newlines)+ END;
@@ -82,6 +112,7 @@ fluidID: Integer;
 pinID: Integer;
 mixerID: Integer;
 position: LParen xpos Comma ypos RParen;
+location: LParen position Comma position RParen;
 xpos: Integer;
 ypos: Integer;
 timeConstraint: LBracket Integer RBracket;

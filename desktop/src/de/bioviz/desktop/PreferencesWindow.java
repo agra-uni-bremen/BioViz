@@ -42,7 +42,7 @@ class PreferencesWindow extends JFrame {
 	 * 		Reference to the {@see BioViz} instance that opened the window.
 	 * @throws HeadlessException
 	 */
-	PreferencesWindow(final BioViz viz) throws HeadlessException {
+	PreferencesWindow(final BioViz viz) {
 		super("Preferences");
 
 

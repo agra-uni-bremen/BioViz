@@ -3,10 +3,12 @@ package de.bioviz.svg;
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Rectangle;
 import de.bioviz.ui.Colors;
 import de.bioviz.ui.DrawableCircuit;
 import de.bioviz.ui.DrawableDroplet;
 import de.bioviz.ui.DrawableField;
+import de.bioviz.util.Pair;
 
 /**
  * @author Maximilian Luenert
@@ -104,6 +106,25 @@ public final class SVGUtils {
 	}
 
 	/**
+	 * Transforms a Pair<Float, Float> into svgCoords.
+	 * @param point the coord to transform
+	 * @param circuit the current circuit
+	 * @param coordinateMultiplier the coordinate multiplier
+	 * @return Pair<Float, Float> in svg coordinates
+	 */
+	public static Pair<Float, Float> toSVGCoords(final Pair<Float, Float>	point,
+																							 final DrawableCircuit circuit,
+																							 final int coordinateMultiplier) {
+		float yCoord = -point.snd + circuit.getData().getMaxCoord().snd;
+		float xCoord = point.fst;
+
+		xCoord *= coordinateMultiplier;
+		yCoord *= coordinateMultiplier;
+
+		return new Pair<>(xCoord, yCoord);
+	}
+
+	/**
 	 * Transforms a point to svgCoordinates.
 	 *
 	 * @param point the point to transform
@@ -121,6 +142,25 @@ public final class SVGUtils {
 		yCoord *= coordinateMultiplier;
 
 		return new Point(xCoord, yCoord);
+	}
+
+	/**
+	 * Calculates the needed scale factors for a droplet.
+	 *
+	 * @param droplet the droplet
+	 * @param timeStep the timestep
+	 * @return Pair of Integers with x and y scale factor
+	 */
+	public static Pair<Integer, Integer> getScaleFactors(final DrawableDroplet
+																											 droplet,
+																		final int timeStep) {
+
+		Rectangle position = droplet.droplet.getPositionAt(timeStep);
+
+		int xScale = position.size().fst;
+		int yScale = position.size().snd;
+
+		return new Pair<>(xScale, yScale);
 	}
 
 	/**

@@ -30,19 +30,22 @@ public class BioViz implements ApplicationListener {
     /**
      * The internal logger.
      */
-    static Logger logger = LoggerFactory.getLogger(BioViz.class);
+    private static Logger logger = LoggerFactory.getLogger(BioViz.class);
 
 
-    public OrthographicCamera camera;
+
     public BioVizSpriteBatch batch;
-    public TextureManager textures;
     public MessageCenter messageCenter;
     public DrawableDroplet selectedDroplet;
 
 
     public DrawableCircuit currentCircuit;
+
+    OrthographicCamera camera;
+
+    private TextureManager textures;
     private HashMap<String, DrawableCircuit> loadedCircuits;
-    private Vector<Drawable> drawables = new Vector<Drawable>();
+    private Vector<Drawable> drawables = new Vector<>();
 
 
     private File bioFile;
@@ -128,7 +131,7 @@ public class BioViz implements ApplicationListener {
      * that the manager tries to access the Gdx.files object, which is not
      * available when creating a BioViz instance.
      */
-    public void spawnSVGManager() {
+    private void spawnSVGManager() {
         if (svgManager == null) {
             svgManager = new SVGManager();
         }
@@ -144,15 +147,11 @@ public class BioViz implements ApplicationListener {
 
         camera = new OrthographicCamera(1, h / w);
         batch = new BioVizSpriteBatch(
-                new SpriteBatch(1000, this.createDefaultShader()));
+                new SpriteBatch(1000, BioViz.createDefaultShader()));
 
         inputProcessor = new BioVizInputProcessor(this);
         Gdx.input.setInputProcessor(inputProcessor);
 
-        //DrawableLine.singleton = new DrawableLine(this);
-
-        //this.menu = new Menu();
-        //this.drawables.add(menu);
         logger.trace("BioViz started");
     }
 
@@ -178,7 +177,6 @@ public class BioViz implements ApplicationListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
 
-        //camera.apply(Gdx.gl20);
 
         // clear previous frame
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -186,22 +184,22 @@ public class BioViz implements ApplicationListener {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        for (Drawable drawable : drawables) {
+        for (final Drawable drawable : drawables) {
             drawable.draw();
         }
-
-        //DrawableLine.drawNow();
 
         messageCenter.render();
 
         batch.end();
 
+        /*
+        We limit the frame rate to targetFramerate here
+         */
         long waitUntil = currentTimestamp + (1000 / this.targetFramerate);
         try {
             Thread.sleep(Math.max(0, waitUntil - new Date().getTime()));
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (final InterruptedException e) {
+            logger.info("Sleep was interrupted");
         }
     }
 
@@ -342,11 +340,7 @@ public class BioViz implements ApplicationListener {
         loadedFileListeners.add(listener);
     }
 
-    void callLoadedFileListeners() {
-        logger.trace("Calling " + loadedFileListeners.size() +
-                " listeners for loaded");
-        callListeners(loadedFileListeners);
-    }
+
 
     public void addSaveFileListener(final BioVizEvent listener) {
         saveFileListeners.add(listener);
@@ -377,6 +371,12 @@ public class BioViz implements ApplicationListener {
                 " listeners for picking a colour");
         callListeners(closeFileListeners);
 
+    }
+
+    private void callLoadedFileListeners() {
+        logger.trace("Calling " + loadedFileListeners.size() +
+                     " listeners for loaded");
+        callListeners(loadedFileListeners);
     }
 
     public void saveSVG(final String path, final int timeStep) {
@@ -470,7 +470,7 @@ public class BioViz implements ApplicationListener {
      * @param events The events that are to be called/triggered.
      */
     private void callListeners(final List<BioVizEvent> events) {
-        events.forEach(listener -> listener.bioVizEvent());
+        events.forEach(BioVizEvent::bioVizEvent);
     }
 
 }

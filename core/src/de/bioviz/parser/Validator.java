@@ -10,6 +10,7 @@ import de.bioviz.structures.Detector;
 import de.bioviz.structures.Direction;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Rectangle;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,8 @@ final class Validator {
 	/**
 	 * Logger used for debugging purposes.
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(Validator.class);
+	private static final Logger logger =
+			LoggerFactory.getLogger(Validator.class);
 
 
 	/**
@@ -59,16 +61,22 @@ final class Validator {
 	static ArrayList<String> checkPathsForPositions(
 			final ArrayList<Droplet> drops, final Set<Point> points) {
 		ArrayList<String> errors = new ArrayList<>();
-		for (final Droplet drop : drops) {
-			ArrayList<Point> ps = drop.getPositions();
-			ps.forEach(p -> {
-				if (!points.contains(p)) {
-					errors.add("Droplet " + drop.getID() + ": position " + p +
-							   " of route not on grid!");
-				}
-			});
-		}
 
+		for (final Droplet drop : drops) {
+			ArrayList<Rectangle> ps = drop.getPositions();
+
+			ps.forEach(rect -> {
+						   rect.positions().forEach(pos -> {
+							   if (!points.contains(pos)) {
+								   errors.add("Droplet " + drop.getID() +
+											  ": position " + pos +
+											  " of route not on grid!");
+							   }
+
+						   });
+					   }
+			);
+		}
 		return errors;
 	}
 
@@ -84,11 +92,18 @@ final class Validator {
 		ArrayList<String> errors = new ArrayList<>();
 
 		for (final Droplet drop : droplets) {
-			ArrayList<Point> positions = drop.getPositions();
-			for (int i = 0; i < positions.size(); i++) {
-				Point pos = positions.get(i);
-				if (chip.hasFieldAt(pos)) {
-					int timestep = i + drop.getSpawnTime();
+			ArrayList<Rectangle> rectPositions = drop.getPositions();
+
+			for (int timeStep = 0;
+				 timeStep < rectPositions.size(); timeStep++) {
+				Rectangle rectPos = rectPositions.get(timeStep);
+				ArrayList<Point> positions =
+						rectPos.positions().stream().filter(
+								pos -> chip.hasFieldAt(pos)).collect(
+								Collectors.toCollection(ArrayList::new));
+
+				for (Point pos : positions) {
+					int timestep = timeStep + drop.getSpawnTime();
 					BiochipField field = chip.getFieldAt(pos);
 					if (field.isBlocked(timestep)) {
 						errors.add("Droplet " + drop.getID() +
@@ -98,7 +113,6 @@ final class Validator {
 				}
 			}
 		}
-
 		return errors;
 	}
 
@@ -106,6 +120,8 @@ final class Validator {
 	 * This method checks whether droplets only move a single cell in
 	 * horizontal
 	 * or vertical direction in one time step.
+	 * <p>
+	 * It also checks whether a route has been attached to the droplet at all.
 	 *
 	 * @param drops
 	 * 		Droplets whose positions on the grid will be checked for 'jumps'
@@ -114,29 +130,51 @@ final class Validator {
 	static ArrayList<String> checkPathsForJumps(
 			final ArrayList<Droplet> drops) {
 		ArrayList<String> errors = new ArrayList<>();
+
+		// TODO fix this stupid method!
+
+
 		for (final Droplet drop : drops) {
-			ArrayList<Point> points = drop.getPositions();
+			ArrayList<Rectangle> points = drop.getPositions();
 
 			if (points.isEmpty()) {
 				errors.add("Droplet " + drop.getID() +
 						   " has no route attached to it!");
-			} else {
-				if (points.size() >= 2) {
-					Point prev = points.get(0);
-					for (int i = 1; i < points.size(); i++) {
-						Point curr = points.get(i);
-						if (!Point.reachable(prev, curr)) {
-							errors.add("Droplet " + drop.getID() +
-									   ": Jump in route from " + prev + " to" +
-									   " " +
-									   curr + "!");
-						}
-						prev = curr;
-					}
+				return errors;
+			}
+
+			/**
+			 * This additional check is just here to make the indentation level
+			 * smaller.
+			 */
+			if (points.size() == 1) {
+				return errors;
+			}
+
+			Rectangle prev = points.get(0);
+			for (int i = 1; i < points.size(); i++) {
+				Rectangle curr = points.get(i);
+				boolean upperLeftBadMove =
+						!Point.reachable(prev.upperLeft(), curr.upperLeft());
+				boolean upperRightBadMove =
+						!Point.reachable(prev.upperRight, curr.upperRight);
+				boolean lowerLeftBadMove =
+						!Point.reachable(prev.lowerLeft, curr.lowerLeft);
+				boolean lowerRightBadMove =
+						!Point.reachable(prev.lowerRight(), curr.lowerRight());
+
+
+				if (upperLeftBadMove || upperRightBadMove ||
+					lowerLeftBadMove || lowerRightBadMove) {
+					errors.add("Droplet " + drop.getID() +
+							   ": Jump in route from " + prev + " to " + curr +
+							   "!");
 				}
+				prev = curr;
 			}
 
 		}
+
 		return errors;
 	}
 
@@ -166,7 +204,8 @@ final class Validator {
 			long count = e.getValue();
 			if (count > 1) {
 				errors.add(
-						"Cell " + e.getKey() + " has multiple pins assigned:" +
+						"Cell " + e.getKey() +
+						" has multiple pins assigned:" +
 						" " +
 						count);
 			}
@@ -195,8 +234,9 @@ final class Validator {
 		boolean addedCellError = false;
 
 		if (cellActuations != null && !cellActuations.isEmpty()) {
-			for (final Map.Entry<Point, ActuationVector> pair : cellActuations
-					.entrySet()) {
+			for (final Map.Entry<Point, ActuationVector> pair :
+					cellActuations
+							.entrySet()) {
 				int len = pair.getValue().size();
 				if (cellActs == null) {
 					cellActs = len;
@@ -212,8 +252,9 @@ final class Validator {
 		boolean addedPinError = false;
 		boolean diffError = false;
 		if (pinActuations != null && !pinActuations.isEmpty()) {
-			for (final Map.Entry<Integer, ActuationVector> pair : pinActuations
-					.entrySet()) {
+			for (final Map.Entry<Integer, ActuationVector> pair :
+					pinActuations
+							.entrySet()) {
 				int len = pair.getValue().size();
 				if (pinActs == null) {
 					pinActs = len;
@@ -263,11 +304,13 @@ final class Validator {
 				try {
 					chip.getFieldAt(pos);
 				} catch (final RuntimeException e) {
-					String msg = "Can not place detectors at position " + pos +
-								 ". Position does not exist on chip.";
+					String msg =
+							"Can not place detectors at position " + pos +
+							". Position does not exist on chip.";
 					if (removeWrongDetectors) {
 						removeList.add(det);
-						msg = msg + " Removed erroneous detector from list.";
+						msg = msg +
+							  " Removed erroneous detector from list.";
 					}
 					errors.add(msg);
 				}
@@ -291,6 +334,7 @@ final class Validator {
 	 * 		Position and direction of the dispenser
 	 * @return Error message
 	 */
+
 	private static String checkOutsidePosition(
 			final Biochip chip,
 			final String type,
@@ -519,9 +563,7 @@ final class Validator {
 		// .entrySet().size());
 		for (
 				final Map.Entry<Integer, ActuationVector> e
-				: pinActuations.entrySet())
-
-		{
+				: pinActuations.entrySet()) {
 			Integer pinID = e.getKey();
 			ActuationVector pinActVec = e.getValue();
 			List<BiochipField> fields = chip.getFieldsForPin(pinID);

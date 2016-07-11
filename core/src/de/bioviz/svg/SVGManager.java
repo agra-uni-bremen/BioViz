@@ -13,6 +13,7 @@ import de.bioviz.ui.DrawableDroplet;
 import de.bioviz.ui.DrawableField;
 import de.bioviz.ui.DrawableRoute;
 import de.bioviz.ui.TextureE;
+import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,36 +47,36 @@ public class SVGManager {
 	Warning: magic numbers ahead
 	 */
 	/**
-	 * scaleFactor.
+	 * ScaleFactor.
 	 */
-	private static final double scaleFactor = 1;
+	private static final double SCALE_FACTOR = 1;
 	/**
 	 * size of one block in pixels.
 	 */
-	private static final int coordinateMultiplier = 256;
+	private static final int COORDINATE_MULTIPLIER = 256;
 
 	// font options
 	/**
 	 * the font for the exported texts.
 	 */
-	private static final String font = "Helvetica";
+	private static final String FONT = "Helvetica";
 	/**
 	 * the font size for text.
 	 */
-	private static final int fontSize = 90;
+	private static final int FONT_SIZE = 90;
 	/**
 	 * the font size for the info string.
 	 */
-	private static final int fontSizeInfoString = 100;
+	private static final int FONT_SIZE_INFO_STRING = 100;
 
 	/**
 	 * font color.
 	 */
-	private static final String fontColor = SVGUtils.colorToSVG(Color.WHITE);
+	private static final String FONT_COLOR = SVGUtils.colorToSVG(Color.WHITE);
 	/**
 	 * font color for the info String.
 	 */
-	private static final String fontColorInfoString =
+	private static final String FONT_COLOR_INFO_STRING =
 			SVGUtils.colorToSVG(Color.BLACK);
 
 
@@ -169,7 +170,7 @@ public class SVGManager {
 	 * @return a string for an svg scaling operation
 	 */
 	public String getScale() {
-		return "scale(" + scaleFactor + " " + scaleFactor + ")";
+		return "scale(" + SCALE_FACTOR + " " + SCALE_FACTOR + ")";
 	}
 
 	/**
@@ -212,11 +213,11 @@ public class SVGManager {
 		topLeftCoord = new Point(minX, minY);
 		bottomRightCoord = new Point(maxX, maxY);
 
-		viewBoxX = topLeftCoord.fst * coordinateMultiplier;
-		viewBoxY = topLeftCoord.snd * coordinateMultiplier;
+		viewBoxX = topLeftCoord.fst * COORDINATE_MULTIPLIER;
+		viewBoxY = topLeftCoord.snd * COORDINATE_MULTIPLIER;
 
-		viewBoxWidth = bottomRightCoord.fst * coordinateMultiplier;
-		viewBoxHeight = bottomRightCoord.snd * coordinateMultiplier;
+		viewBoxWidth = bottomRightCoord.fst * COORDINATE_MULTIPLIER;
+		viewBoxHeight = bottomRightCoord.snd * COORDINATE_MULTIPLIER;
 	}
 
 	/**
@@ -239,8 +240,8 @@ public class SVGManager {
 
 		if (circuit.getDisplayOptions().getOption(BDisplayOptions
 														  .Coordinates)) {
-			int coordinateOffsetX = (int) (coordinateMultiplier * 0.75);
-			int coordinateOffsetY = (int) (coordinateMultiplier * 0.75);
+			int coordinateOffsetX = (int) (COORDINATE_MULTIPLIER * 0.75);
+			int coordinateOffsetY = (int) (COORDINATE_MULTIPLIER * 0.75);
 			viewBoxX -= coordinateOffsetX;
 			viewBoxY -= coordinateOffsetY;
 			viewBoxWidth += coordinateOffsetX;
@@ -248,7 +249,7 @@ public class SVGManager {
 		}
 
 		if (svgExportSettings.getInformationString()) {
-			int infoStringOffset = fontSizeInfoString * 2;
+			int infoStringOffset = FONT_SIZE_INFO_STRING * 2;
 			viewBoxHeight += infoStringOffset;
 		}
 
@@ -288,12 +289,10 @@ public class SVGManager {
 		// run over each droplet again and draw the arrows
 		// otherwise arrows can get under droplets
 		for (final DrawableDroplet drop : circuit.getDroplets()) {
-			if (circuit.getDisplayOptions().getOption(BDisplayOptions
-															  .LongNetIndicatorsOnDroplets)) {
-
-				if (SVGUtils.isNotHiddenOrInvisible(drop)) {
+			if (circuit.getDisplayOptions().
+					getOption(BDisplayOptions.LongNetIndicatorsOnDroplets) &&
+					SVGUtils.isNotHiddenOrInvisible(drop)) {
 					sb.append(createDropletArrows(drop));
-				}
 			}
 			// append longNetIndicatorsOnFields when needed
 			if (circuit.getDisplayOptions().getOption(BDisplayOptions
@@ -386,15 +385,30 @@ public class SVGManager {
 	private String toSVG(final DrawableDroplet drawableDrop) {
 
 		Point dropletPos = getDropletPosInSVGCoords(drawableDrop);
+
+		Pair<Integer, Integer> scaleFactors = SVGUtils.getScaleFactors(drawableDrop,
+				circuit.getCurrentTime());
+
+		String scale = "scale(" + scaleFactors.fst + " " + scaleFactors.snd + ")";
+
+		String translateToZero = "translate(" + dropletPos.fst + " " +
+				dropletPos.snd + ")";
+		String translateBack = "translate(-" + dropletPos.fst + " " + "-" +
+				dropletPos.snd + ")";
+
+		// move the object to 0,0 then scale it and move it back to its
+		// original position
+		String transformation = getTransformation(translateToZero + " " +
+				scale + " " +	translateBack);
+
 		String route = toSVG(drawableDrop.route);
 
 		String dropletID = SVGUtils.generateColoredID("Droplet", drawableDrop
 				.getColor());
 
 		String dropShape = "<use x=\"" + dropletPos.fst + "\" " + "y=\"" +
-						   dropletPos.snd + "\"" +
-						   getScaleTransformation() + " xlink:href=\"#" +
-						   dropletID + "\" />\n";
+						   dropletPos.snd + "\"" + transformation + " " +
+				"xlink:href=\"#" + dropletID + "\" />\n";
 
 		return route + dropShape;
 	}
@@ -445,20 +459,22 @@ public class SVGManager {
 
 			LOGGER.debug("displayAt {}", displayAt);
 
-			Point p1 = droplet.droplet.getSafePositionAt(displayAt);
-			Point p2 = droplet.droplet.getSafePositionAt(displayAt + 1);
+			Point p1 = droplet.droplet.getSafePositionAt(displayAt)
+					.upperLeft();
+			Point p2 = droplet.droplet.getSafePositionAt(
+					displayAt + 1).upperLeft();
 
 			LOGGER.debug("p1 {}; p2 {}", p1, p2);
 
 			if (p1 != null && p2 != null) {
-				int x1 = p1.fst * coordinateMultiplier;
-				int x2 = p2.fst * coordinateMultiplier;
+				int x1 = p1.fst * COORDINATE_MULTIPLIER;
+				int x2 = p2.fst * COORDINATE_MULTIPLIER;
 				int y1 = (-p1.snd + biochip.getMaxCoord().snd) *
-						 coordinateMultiplier;
+						COORDINATE_MULTIPLIER;
 				int y2 = (-p2.snd + biochip.getMaxCoord().snd) *
-						 coordinateMultiplier;
+						COORDINATE_MULTIPLIER;
 
-				float targetX = x1 + (0.5f * coordinateMultiplier);
+				float targetX = x1 + (0.5f * COORDINATE_MULTIPLIER);
 				float targetY = y1;
 
 				String position =
@@ -473,15 +489,15 @@ public class SVGManager {
 				} else if (y1 == y2 && x2 < x1) {
 					transFormParams +=
 							" rotate(180 " + targetX + " " +
-							(targetY + 0.5f * coordinateMultiplier) + ") ";
+							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") ";
 				} else if (x1 == x2 && y2 > y1) {
 					transFormParams +=
 							" rotate(90 " + targetX + " " +
-							(targetY + 0.5f * coordinateMultiplier) + ") ";
+							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") ";
 				} else if (x1 == x2 && y2 < y1) {
 					transFormParams +=
 							"rotate(270 " + targetX + " " +
-							(targetY + 0.5f * coordinateMultiplier) + ") ";
+							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") ";
 				} else {
 					app = false;
 				}
@@ -518,8 +534,9 @@ public class SVGManager {
 		String arrow = "";
 
 		if (net != null) {
-			Point startPoint = drawableDrop.droplet.getFirstPosition();
-			Point endPoint = net.getTarget();
+			Pair<Float, Float> startPoint = drawableDrop.droplet.getFirstPosition()
+					.centerFloat();
+			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
 
 			Color arrowColor = Color.BLACK;
 			arrow = createSVGArrow(startPoint, endPoint, arrowColor);
@@ -543,9 +560,11 @@ public class SVGManager {
 		if (net != null) {
 
 			int time = circuit.getCurrentTime();
-			Point startPoint = drawableDrop.droplet.getFirstPosition();
-			Point endPoint = net.getTarget();
-			Point dropletPos = drawableDrop.droplet.getSafePositionAt(time);
+			Pair<Float, Float> startPoint = drawableDrop.droplet.getFirstPosition()
+					.centerFloat();
+			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
+			Pair<Float, Float> dropletPos = drawableDrop.droplet.
+					getSafePositionAt(time).centerFloat();
 
 			Color dropColor = drawableDrop.getColor();
 
@@ -580,13 +599,13 @@ public class SVGManager {
 		String msg = "";
 		if (drawableDrop.getMsg() != null) {
 			msg += "<text text-anchor=\"middle\" " +
-				   "x=\"" + (dropPos.fst + coordinateMultiplier / 2) + "\" " +
-				   "y=\"" + (dropPos.snd + coordinateMultiplier / 2 +
-							 (fontSize / 2)) +
+				   "x=\"" + (dropPos.fst + COORDINATE_MULTIPLIER / 2) + "\" " +
+				   "y=\"" + (dropPos.snd + COORDINATE_MULTIPLIER / 2 +
+							 (FONT_SIZE / 2)) +
 				   "\" " +
-				   "font-family=\"" + font + "\" font-size=\"" + fontSize +
+				   "font-family=\"" + FONT + "\" font-size=\"" + FONT_SIZE +
 				   "\" " +
-				   "fill=\"#" + fontColor + "\">" + drawableDrop.getMsg() +
+				   "fill=\"#" + FONT_COLOR + "\">" + drawableDrop.getMsg() +
 				   "</text>\n";
 		}
 		return msg;
@@ -608,12 +627,12 @@ public class SVGManager {
 		String fieldSvg = "";
 		if (vals.getMsg() != null) {
 			fieldSvg += "<text text-anchor=\"middle\" x=\"" +
-						(fieldPos.fst + coordinateMultiplier / 2) + "\" y=\"" +
-						(fieldPos.snd + coordinateMultiplier / 2 +
-						 (fontSize / 2)) +
-						"\" font-family=\"" + font + "\" font-size=\"" +
-						fontSize +
-						"\" fill=\"#" + fontColor + "\">" + vals.getMsg() +
+						(fieldPos.fst + COORDINATE_MULTIPLIER / 2) + "\" y=\"" +
+						(fieldPos.snd + COORDINATE_MULTIPLIER / 2 +
+						 (FONT_SIZE / 2)) +
+						"\" font-family=\"" + FONT + "\" font-size=\"" +
+					FONT_SIZE +
+						"\" fill=\"#" + FONT_COLOR + "\">" + vals.getMsg() +
 						"</text>\n";
 		}
 		return fieldSvg;
@@ -690,25 +709,26 @@ public class SVGManager {
 	 * 		the color for the arrow
 	 * @return svg string of an arrow
 	 */
-	private String createSVGArrow(final Point startPoint, final Point endPoint,
-								  final Color color) {
+	private String createSVGArrow(final Pair<Float, Float> startPoint,
+																final	Pair<Float, Float> endPoint,
+																final Color	color) {
+		Pair<Float, Float> start = SVGUtils.toSVGCoords(startPoint, circuit,
+				COORDINATE_MULTIPLIER);
+		Pair<Float, Float> end = SVGUtils.toSVGCoords(endPoint, circuit,
+				COORDINATE_MULTIPLIER);
 
-		Point start = SVGUtils.toSVGCoords(startPoint, circuit,
-										   coordinateMultiplier);
-		Point end = SVGUtils.toSVGCoords(endPoint, circuit,
-										 coordinateMultiplier);
-		int x1 = start.fst;
-		int y1 = start.snd;
+		float x1 = start.fst;
+		float y1 = start.snd;
 
-		int x2 = end.fst;
-		int y2 = end.snd;
+		float x2 = end.fst;
+		float y2 = end.snd;
 
 		// move startingPoint to the center of the field
-		x1 += coordinateMultiplier / 2;
-		y1 += coordinateMultiplier / 2;
+		x1 += COORDINATE_MULTIPLIER / 2;
+		y1 += COORDINATE_MULTIPLIER / 2;
 		// move endPoint to the center of the field
-		x2 += coordinateMultiplier / 2;
-		y2 += coordinateMultiplier / 2;
+		x2 += COORDINATE_MULTIPLIER / 2;
+		y2 += COORDINATE_MULTIPLIER / 2;
 
 		double length =
 				Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -727,11 +747,11 @@ public class SVGManager {
 		y2 -= yDiff;
 
 		final String line = "<line x1=\"" + x1 + "\" y1=\"" + y1 +
-							"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-							"\" stroke=\"#" + SVGUtils.colorToSVG(color) +
-							"\" stroke-width=\"10\" marker-end=\"url(#" +
-							SVGUtils.generateColoredID("ArrowHead", color) +
-							")\" />\n";
+				"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
+				"\" stroke=\"#" + SVGUtils.colorToSVG(color) +
+				"\" stroke-width=\"10\" marker-end=\"url(#" +
+				SVGUtils.generateColoredID("ArrowHead", color) +
+				")\" />\n";
 
 		return line;
 	}
@@ -744,19 +764,19 @@ public class SVGManager {
 	private String createInfoString() {
 
 		String coordinates =
-				"x=\"" + (topLeftCoord.fst * coordinateMultiplier) + "\" " +
-				"y=\"" + (bottomRightCoord.snd * coordinateMultiplier + 1.5 *
-																		fontSizeInfoString) +
+				"x=\"" + (topLeftCoord.fst * COORDINATE_MULTIPLIER) + "\" " +
+				"y=\"" + (bottomRightCoord.snd * COORDINATE_MULTIPLIER + 1.5 *
+						FONT_SIZE_INFO_STRING) +
 				"\" ";
 
 		String circName = circuit.getParent().getFileName();
 		String timeStep = String.valueOf(circuit.getCurrentTime());
 
-		return "<text " + coordinates + "fill=\"" + fontColorInfoString +
+		return "<text " + coordinates + "fill=\"" + FONT_COLOR_INFO_STRING +
 			   "\"" +
 			   " " +
-			   "font-family=\"" + font + "\" font-size=\"" +
-			   fontSizeInfoString +
+			   "font-family=\"" + FONT + "\" font-size=\"" +
+				FONT_SIZE_INFO_STRING +
 			   "\">" +
 			   "Filename: " + circName + " Timestep: " + timeStep +
 			   "</text>\n";
@@ -769,16 +789,16 @@ public class SVGManager {
 	 */
 	private String createCoordinates() {
 		StringBuilder coords = new StringBuilder();
-		int coordSize = fontSizeInfoString;
+		int coordSize = FONT_SIZE_INFO_STRING;
 		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
 			 ++xCoord) {
 			coords.append("<text text-anchor=\"middle\" ");
-			coords.append("x=\"" + (xCoord * coordinateMultiplier +
-									0.5 * coordinateMultiplier) + "\" ");
+			coords.append("x=\"" + (xCoord * COORDINATE_MULTIPLIER +
+									0.5 * COORDINATE_MULTIPLIER) + "\" ");
 			coords.append("y=\"" + (topLeftCoord.snd *
-									coordinateMultiplier - coordSize) + "\" ");
+					COORDINATE_MULTIPLIER - coordSize) + "\" ");
 			coords.append(
-					"font-family=\"" + font + "\" font-size=\"" + coordSize +
+					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
 					"\">");
 			coords.append(xCoord);
 			coords.append("</text>\n");
@@ -787,13 +807,13 @@ public class SVGManager {
 		for (int yCoord = topLeftCoord.snd + 1; yCoord <= bottomRightCoord.snd;
 			 ++yCoord) {
 			coords.append("<text text-anchor=\"middle\" ");
-			coords.append("y=\"" + ((yCoord - 1) * coordinateMultiplier +
+			coords.append("y=\"" + ((yCoord - 1) * COORDINATE_MULTIPLIER +
 									0.5 * coordSize +
-									0.5 * coordinateMultiplier) + "\" ");
-			coords.append("x=\"" + (topLeftCoord.fst * coordinateMultiplier -
+									0.5 * COORDINATE_MULTIPLIER) + "\" ");
+			coords.append("x=\"" + (topLeftCoord.fst * COORDINATE_MULTIPLIER -
 									coordSize) + "\" ");
 			coords.append(
-					"font-family=\"" + font + "\" font-size=\"" + coordSize +
+					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
 					"\">");
 			// FIXME the call to getMinCoord() is computing the stuff again
 			// that is unnecessary but I was too stupid to fastly figure out
@@ -864,7 +884,7 @@ public class SVGManager {
 	 */
 	private Point getFieldPosInSVGCoords(final DrawableField drawableField) {
 		return SVGUtils.toSVGCoords(drawableField.getField().pos,
-									circuit, coordinateMultiplier);
+									circuit, COORDINATE_MULTIPLIER);
 	}
 
 	/**
@@ -877,8 +897,8 @@ public class SVGManager {
 	private Point getDropletPosInSVGCoords(final DrawableDroplet
 												   drawableDrop) {
 		return SVGUtils.toSVGCoords(
-				drawableDrop.droplet.getSafePositionAt(circuit
-															   .getCurrentTime()),
-				circuit, coordinateMultiplier);
+				drawableDrop.droplet.getSafePositionAt(
+						circuit.getCurrentTime()).upperLeft(), circuit,
+				COORDINATE_MULTIPLIER);
 	}
 }

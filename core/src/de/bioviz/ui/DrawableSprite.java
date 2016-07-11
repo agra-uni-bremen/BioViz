@@ -64,10 +64,6 @@ public abstract class DrawableSprite implements Drawable {
 	 */
 	private static TextureManager textures;
 
-	/**
-	 * Link to the visualization this sprite is used in.
-	 */
-	BioViz viz;
 
 	/**
 	 * The colors that are set to the four corners of this sprite. This may be
@@ -76,6 +72,12 @@ public abstract class DrawableSprite implements Drawable {
 	 * will be used instead.
 	 */
 	protected Color[] cornerColors = null;
+
+
+	/**
+	 * Link to the visualization this sprite is used in.
+	 */
+	BioViz viz;
 
 	/**
 	 * The x coordinate of this sprite.
@@ -168,6 +170,7 @@ public abstract class DrawableSprite implements Drawable {
 	 *
 	 * @param texture
 	 * 		the texture to use
+	 * 	@param parent The parent BioViz instance
 	 */
 	public DrawableSprite(final TextureE texture,
 						  final float sizeX,
@@ -190,6 +193,10 @@ public abstract class DrawableSprite implements Drawable {
 		this.viz = parent;
 	}
 
+	public DrawableSprite(final TextureE texture, final BioViz parent) {
+		this(texture, 1, 1, parent);
+	}
+
 	private void initializeSprite(final float sizeX,
 								  final float sizeY,
 								  final TextureRegion region) {
@@ -197,10 +204,6 @@ public abstract class DrawableSprite implements Drawable {
 		sprite.setSize(sizeX, sizeY);
 		sprite.setOrigin(sprite.getWidth() / 2f, sprite.getHeight() / 2f);
 		sprite.setPosition(-sprite.getWidth() / 2f, -sprite.getHeight() / 2f);
-	}
-
-	public DrawableSprite(final TextureE texture, final BioViz parent) {
-		this(texture, 1, 1, parent);
 	}
 
 	/**
@@ -217,6 +220,7 @@ public abstract class DrawableSprite implements Drawable {
 		}
 	}
 
+	@Override
 	public void draw() {
 		draw(this.z);
 	}
@@ -262,13 +266,15 @@ public abstract class DrawableSprite implements Drawable {
 			this.sprite.setColor(currentColor);
 			float[] v = this.sprite.getVertices();
 
+			final int rgbMult = 255;
+
 			if (cornerColors != null) {
 				for (int i = 0; i < 4; i++) {
 					int intBits =
-							(int) (255 * cornerColors[i].a) << 24 |
-							(int) (255 * cornerColors[i].b) << 16 |
-							(int) (255 * cornerColors[i].g) << 8 |
-							(int) (255 * cornerColors[i].r);
+							(int) (rgbMult  * cornerColors[i].a) << 24 |
+							(int) (rgbMult  * cornerColors[i].b) << 16 |
+							(int) (rgbMult  * cornerColors[i].g) << 8 |
+							(int) (rgbMult  * cornerColors[i].r);
 					switch (i) {
 						case 0:
 							v[SpriteBatch.C1] =
@@ -303,7 +309,7 @@ public abstract class DrawableSprite implements Drawable {
 	// TODO what is the rationale of this method?
 	private void setTexture() {
 		if (this.sprite != null) {
-			this.sprite.setRegion(this.textures.getTexture(currentTexture));
+			this.sprite.setRegion(DrawableSprite.textures.getTexture(currentTexture));
 		}
 	}
 
@@ -352,7 +358,7 @@ public abstract class DrawableSprite implements Drawable {
 				new Date().getTime() - colorTransitionStartTime) / (float) (
 				colorTransitionEndTime - colorTransitionStartTime)));
 		float totalProgress =
-				(float) -Math.pow((transitionProgress - 1), 4) + 1;
+				(float) -Math.pow(transitionProgress - 1, 4) + 1;
 
 		currentColor = originColor.cpy().mul(1 - totalProgress).add(
 				targetColor.cpy().mul(totalProgress));

@@ -1,6 +1,8 @@
 package de.bioviz.structures;
 
 import java.util.ArrayList;
+import java.util.Map;
+
 
 /**
  * The abstraction of a field on a biochip.
@@ -47,6 +49,8 @@ public class BiochipField {
 	 * List of mixing operations performed on top of this field.
 	 */
 	public ArrayList<Mixer> mixers = new ArrayList<>();
+
+	public ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
 
 
 	/**
@@ -105,6 +109,14 @@ public class BiochipField {
 	 */
 	public int y() {
 		return pos.snd;
+	}
+
+	/**
+	 * Checks whether this field has any area annotations.
+	 * @return true if the field as area annotations, false otherwise.
+	 */
+	public boolean hasAnnotations() {
+		return !areaAnnotations.isEmpty();
 	}
 
 
@@ -223,8 +235,9 @@ public class BiochipField {
 		Biochip circ = parent;
 		Actuation act = Actuation.OFF;
 
-		if (pin != null && !circ.pinActuations.isEmpty()) {
-			ActuationVector vec = circ.pinActuations.get(pin.pinID);
+		Map<Integer,ActuationVector> actVecs = circ.pinActuations;
+		if (pin != null && !actVecs.isEmpty()) {
+			ActuationVector vec = actVecs.get(pin.pinID);
 			if (vec != null) {
 				act = vec.get(timeStep - 1);
 			}
@@ -262,20 +275,22 @@ public class BiochipField {
 	 * <p>
 	 * The usage is considered up to a specified position in time.
 	 *
-	 * @param T
+	 * @param maxT
 	 * 		The upper bound for the time steps to consider when computing the
 	 * 		usage.
 	 * @return The usage of this field up to time step T.
 	 */
-	int computeUsage(int T) {
+	int computeUsage(int maxT) {
 		usage = 0;
-		for (int t = 1; t <= T; t++) {
+		for (int t = 1; t <= maxT; t++) {
 			if (isActuated(t)) {
 				usage++;
 			}
 		}
 		return usage;
 	}
+
+
 
 
 }

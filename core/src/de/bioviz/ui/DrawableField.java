@@ -2,12 +2,15 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Dispenser;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.FluidicConstraintViolation;
 import de.bioviz.structures.Mixer;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Rectangle;
 import de.bioviz.structures.Sink;
 import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
@@ -15,13 +18,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.bioviz.ui.BDisplayOptions.Actuations;
 import static de.bioviz.ui.BDisplayOptions.Adjacency;
 import static de.bioviz.ui.BDisplayOptions.CellUsage;
 import static de.bioviz.ui.BDisplayOptions.CellUsageCount;
 import static de.bioviz.ui.BDisplayOptions.DetectorIcon;
+import static de.bioviz.ui.BDisplayOptions.HighlightAnnotatedFields;
 import static de.bioviz.ui.BDisplayOptions.InterferenceRegion;
+import static de.bioviz.ui.BDisplayOptions.LingeringInterferenceRegions;
 import static de.bioviz.ui.BDisplayOptions.LongNetIndicatorsOnFields;
 import static de.bioviz.ui.BDisplayOptions.NetColorOnFields;
 import static de.bioviz.ui.BDisplayOptions.Pins;
@@ -124,7 +132,7 @@ public class DrawableField extends DrawableSprite {
 
 
         /*
-        Right now, the first options that is tested and set to true determines
+		Right now, the first options that is tested and set to true determines
 		the returned strings. This means that there might be a display of
 		inconsistant data. For example source/target IDs may interfere with a
 		detector ID. This is a real use case as a detector is a very valid
@@ -181,37 +189,31 @@ public class DrawableField extends DrawableSprite {
 		return Pair.mkPair(fieldHUDMsg, texture);
 	}
 
+
 	/**
-	 * Calculates the current color based on the parent circuit's
-	 * displayOptions.
+	 * Computes the cell coloring based on the usage.
 	 *
-	 * @return the field's color.
+	 * @param result
+	 * 		The color that is to be adjusted by this method.
+	 * @return 1 if cell usage was used, 0 otherwise
 	 */
-	@Override
-	public Color getColor() {
-
-		/**
-		 * This value stores the amount of colors being overlaid in the process
-		 * of computing the color. This is currently required to calculate the
-		 * average value of all colors at the end of the process (e.g. if three
-		 * different colors are being added, the final result needs to be
-		 * divided by three).
-		 */
-		int colorOverlayCount = 0;
-
-		/*
-		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
-		final
-		 and thus can not be modified.
-		If that value is unchangeable, the cells all stay white
-		 */
-		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
-
-		if (getField().isBlocked(getParentCircuit().getCurrentTime())) {
-			result.add(Colors.BLOCKED_COLOR);
-			colorOverlayCount++;
+	private int cellUsageColoring(de.bioviz.ui.Color result) {
+		if (getOption(CellUsage)) {
+			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
+			// Usage verwenden)
+			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
+			int usage = field.getUsage();
+			float color = usage / scalingFactor;
+			result.add(new Color(color, color, color, 0));
+			return 1;
 		}
+		return 0;
+	}
 
+	/**
+	 * Decorates cells that are on the corners of a net bounding box.
+	 */
+	private void netColoring() {
 		/**
 		 * The NetColorOnFields display option is a little special and thus
 		 * gets quite some amount of code here.
@@ -241,46 +243,52 @@ public class DrawableField extends DrawableSprite {
 					netCol.add(Colors.HOVER_NET_DIFF_COLOR);
 
 				}
-				Point top = new Point(
-						field.x(), field.y() + 1);
-				Point bottom = new Point(
-						field.x(), field.y() - 1);
-				Point left = new Point(
-						field.x() - 1, field.y());
-				Point right = new Point(
-						field.x() + 1, field.y());
+				Point top = new Point(field.x(), field.y() + 1);
+				Point bottom = new Point(field.x(), field.y() - 1);
+				Point left = new Point(field.x() - 1, field.y());
+				Point right = new Point(field.x() + 1, field.y());
+
+				Color color = netCol.buildGdxColor();
+
 
 				final int bottomleft = 0;
 				final int topleft = 1;
 				final int topright = 2;
 				final int bottomright = 3;
-				if (!getParentCircuit().getData().hasFieldAt(top) ||
-					!n.containsField(
-							getParentCircuit().getData().
-									getFieldAt(top))) {
-					this.cornerColors[topleft].add(netCol.buildGdxColor());
-					this.cornerColors[topright].add(netCol.buildGdxColor());
+
+				boolean fieldAtTop =
+						getParentCircuit().getData().hasFieldAt(top);
+				boolean fieldAtBottom =
+						getParentCircuit().getData().hasFieldAt(bottom);
+				boolean fieldAtLeft =
+						getParentCircuit().getData().hasFieldAt(left);
+				boolean fieldAtRight =
+						getParentCircuit().getData().hasFieldAt(right);
+
+				Biochip parent = getParentCircuit().getData();
+				boolean containsTop = n.containsField(parent.getFieldAt(top));
+				boolean containsBottom =
+						n.containsField(parent.getFieldAt(bottom));
+				boolean containsLeft = n.containsField(parent.getFieldAt
+						(left));
+				boolean containsRight =
+						n.containsField(parent.getFieldAt(right));
+
+				if (!fieldAtTop || containsTop) {
+					this.cornerColors[topleft].add(color);
+					this.cornerColors[topright].add(color);
 				}
-				if (!getParentCircuit().getData().hasFieldAt(bottom) ||
-					!n.containsField(
-							getParentCircuit().getData().
-									getFieldAt(bottom))) {
-					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
-					this.cornerColors[bottomright].add(netCol.buildGdxColor());
+				if (!fieldAtBottom || containsBottom) {
+					this.cornerColors[bottomleft].add(color);
+					this.cornerColors[bottomright].add(color);
 				}
-				if (!getParentCircuit().getData().hasFieldAt(left) ||
-					!n.containsField(
-							getParentCircuit().getData().
-									getFieldAt(left))) {
-					this.cornerColors[bottomleft].add(netCol.buildGdxColor());
-					this.cornerColors[topleft].add(netCol.buildGdxColor());
+				if (!fieldAtLeft || containsLeft) {
+					this.cornerColors[bottomleft].add(color);
+					this.cornerColors[topleft].add(color);
 				}
-				if (!getParentCircuit().getData().hasFieldAt(right) ||
-					!n.containsField(
-							getParentCircuit().getData().
-									getFieldAt(right))) {
-					this.cornerColors[topright].add(netCol.buildGdxColor());
-					this.cornerColors[bottomright].add(netCol.buildGdxColor());
+				if (!fieldAtRight || containsRight) {
+					this.cornerColors[topright].add(color);
+					this.cornerColors[bottomright].add(color);
 				}
 			}
 			for (int i = 0; i < cornerColors.length; i++) {
@@ -291,96 +299,71 @@ public class DrawableField extends DrawableSprite {
 		} else {
 			cornerColors = null;
 		}
+	}
 
-		if (getOption(CellUsage)) {
-			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
-			// Usage verwenden)
-			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
-			int usage = field.getUsage();
-			result.add(new Color(
-					usage / scalingFactor,
-					usage / scalingFactor,
-					usage / scalingFactor,
-					0));
+	/**
+	 * Calculates the current color based on the parent circuit's
+	 * displayOptions.
+	 *
+	 * @return the field's color.
+	 */
+	@Override
+	// TODO put everything in separate methods. The current situation sucks
+	// hard!
+	public Color getColor() {
+
+		/**
+		 * This value stores the amount of colors being overlaid in the process
+		 * of computing the color. This is currently required to calculate the
+		 * average value of all colors at the end of the process (e.g. if three
+		 * different colors are being added, the final result needs to be
+		 * divided by three).
+		 */
+		int colorOverlayCount = 0;
+
+		/*
+		We need to create a copy of the FIELD_EMPTY_COLOR as that value is
+		final and thus can not be modified.
+		If that value is unchangeable, the cells all stay white
+		 */
+		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
+
+		if (getField().isBlocked(getParentCircuit().getCurrentTime())) {
+			result.add(Colors.BLOCKED_COLOR);
+			colorOverlayCount++;
+		}
+
+
+		netColoring();
+
+		colorOverlayCount += cellUsageColoring(result);
+
+		colorOverlayCount += inteferenceRegionColoring(result);
+
+
+		/**
+		 * Here we highlight cells that are currently actuated.
+		 */
+		int t = getParentCircuit().getCurrentTime();
+		if (getOption(Actuations) && field.isActuated(t)) {
+			result.add(Colors.ACTAUTED_COLOR);
 			++colorOverlayCount;
 		}
 
-		/** Colours the interference region **/
-		if (getOption(InterferenceRegion)) {
-			int amountOfInterferenceRegions = 0;
-			for (final Droplet d : getParentCircuit().getData().
-					getDroplets()) {
-				if (isPartOfInterferenceRegion(d)) {
-					boolean interferenceViolation = false;
-					for (final DrawableDroplet d2 :
-							parentCircuit.getDroplets()) {
-						if (d2.droplet.getPositionAt(
-								this.parentCircuit.getCurrentTime()) != null &&
-							d2.droplet.getNet() != d.getNet() &&
-							d2.droplet.getPositionAt(
-									this.parentCircuit.getCurrentTime())
-									.equals(
-											this.field.pos)) {
-							result.add(
-									Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
-							++colorOverlayCount;
-							interferenceViolation = true;
-						}
-					}
-					if (!interferenceViolation) {
-						++amountOfInterferenceRegions;
-					}
-				}
-			}
 
-			if (amountOfInterferenceRegions > 0) {
-				result.add(new de.bioviz.ui.Color(
-						Colors.INTERFERENCE_REGION_COLOR).mul(
-						(float) Math.sqrt(amountOfInterferenceRegions)));
-				++colorOverlayCount;
-			}
-		}
-
-		int t = getParentCircuit().getCurrentTime();
-		if (getOption(Actuations)) {
-			if (getField().isActuated(t)) {
-				result.add(Colors.ACTAUTED_COLOR);
-				++colorOverlayCount;
-			}
-		}
-
-		// TODO why do we only add something if the count is zero? Save
-		// computation time?
-		// nope it seems that the cell usage is supposed to override the other
-		// overlays
 		if (colorOverlayCount == 0) {
-			if (field instanceof Sink) {
-				result.add(Colors.SINK_COLOR);
-				colorOverlayCount++;
-			} else if (field instanceof Dispenser) {
-				result.add(Colors.SOURCE_COLOR);
-				colorOverlayCount++;
-			} else {
-				result.add(Colors.FIELD_COLOR);
-				colorOverlayCount++;
-			}
-
-			if (field.hasMixers()) {
-
-				for (final Mixer m : field.mixers) {
-					if (m.timing.inRange(t)) {
-						result.add(Colors.MIXER_COLOR);
-					}
-				}
-			}
+			colorOverlayCount += typeColoring(result, t);
 		}
 
 
-		// TODO Why does the following work? A "Set<FluidicConstraintViolation>" cannot contain a "BiochipField"
-		if (getOption(Adjacency) &&
-			getParentCircuit().getData().getAdjacentActivations().contains(
-					this.getField())) {
-			result.add(Colors.ADJACENT_ACTIVATION_COLOR);
+		if (getOption(Adjacency)) {
+			final Stream<FluidicConstraintViolation> violations =
+					getParentCircuit().getData().getAdjacentActivations()
+							.stream();
+
+			if (violations.anyMatch(v -> v.containsField(this.field))) {
+				result.add(Colors.ADJACENT_ACTIVATION_COLOR);
+			}
 		}
 
 		if (colorOverlayCount > 0) {
@@ -394,7 +377,96 @@ public class DrawableField extends DrawableSprite {
 			result.add(Colors.HOVER_DIFF_COLOR);
 		}
 
+		if (getOption(HighlightAnnotatedFields) && field.hasAnnotations()) {
+			result = new de.bioviz.ui.Color(Color.VIOLET);
+		}
+
 		return result.buildGdxColor().cpy();
+	}
+
+	/**
+	 * Computes the color based on the type of the field.
+	 *
+	 * @param result
+	 * 		The resulting color.
+	 * @param timeStep
+	 * 		The current time step.
+	 * @return The amount of new color overlays.
+	 */
+	private int typeColoring(de.bioviz.ui.Color result, int timeStep) {
+		int colorOverlayCount = 0;
+		if (field instanceof Sink) {
+			result.add(Colors.SINK_COLOR);
+			colorOverlayCount++;
+		} else if (field instanceof Dispenser) {
+			result.add(Colors.SOURCE_COLOR);
+			colorOverlayCount++;
+		} else {
+			result.add(Colors.FIELD_COLOR);
+			colorOverlayCount++;
+		}
+
+		for (final Mixer m : field.mixers) {
+			if (m.timing.inRange(timeStep)) {
+				result.add(Colors.MIXER_COLOR);
+			}
+		}
+		return colorOverlayCount;
+	}
+
+	/**
+	 * Colors based on the interference region.
+	 *
+	 * @param result
+	 * 		The color that results from this method call.
+	 * @return The amount of color overlays produced by this method.
+	 */
+	private int inteferenceRegionColoring(de.bioviz.ui.Color result) {
+		int colorOverlayCount = 0;
+		/** Colours the interference region **/
+		if (getOption(InterferenceRegion)) {
+			int amountOfInterferenceRegions = 0;
+			final Set<Droplet> dropsSet =
+					getParentCircuit().getData().getDroplets();
+
+			ArrayList<Droplet> drops = dropsSet.stream().
+					filter(d -> isPartOfInterferenceRegion(d)).
+					collect(Collectors.toCollection(ArrayList<Droplet>::new));
+
+			for (int i = 0; i < drops.size(); ++i) {
+				boolean interferenceViolation = false;
+				for (int j = i + 1; j < drops.size(); j++) {
+					final Droplet drop1 = drops.get(i);
+					final Droplet drop2 = drops.get(j);
+					boolean sameNet =
+							getParentCircuit().getData().sameNet(drop1, drop2);
+					if (!sameNet) {
+						result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
+						++colorOverlayCount;
+						interferenceViolation = true;
+					}
+				}
+
+				/*
+				We only increase the amount of interference regions if no
+				violation took place. This makes sense as a violation is
+				handled
+				differently.
+				 */
+				if (!interferenceViolation) {
+					++amountOfInterferenceRegions;
+				}
+			}
+
+			if (amountOfInterferenceRegions > 0) {
+				float scale = (float) Math.sqrt(amountOfInterferenceRegions);
+				Color c = new Color(Colors.INTERFERENCE_REGION_COLOR);
+				result.add(c.mul(scale));
+				++colorOverlayCount;
+			}
+
+		}
+		return colorOverlayCount;
 	}
 
 	@Override
@@ -417,34 +489,40 @@ public class DrawableField extends DrawableSprite {
 
 		super.draw();
 
+		// show the first annotation for this field
+		if (isHovered() && field.areaAnnotations.size() > 0) {
+			displayText(field.areaAnnotations.get(0).getAnnotation());
+		}
+
+		// TODO why is drawing of lines in any way tied to the actual fields?!
 		if (getOption(LongNetIndicatorsOnFields)) {
-			for (final Net net : this.parentCircuit.getData().getNetsOf(this
-																				.field)) {
+			for (final Net net :
+					this.parentCircuit.getData().getNetsOf(this.field)) {
 				for (final Source s : net.getSources()) {
-					if (this.field.pos.equals(s.startPosition)) {
-						Vector2 target = new Vector2(
-								net.getTarget().fst.floatValue(),
-								net.getTarget().snd.floatValue());
+					Pair<Float, Float> targetCenter =
+							net.getTarget().centerFloat();
+					Pair<Float, Float> sourceCenter =
+							s.startPosition.centerFloat();
 
-						Vector2 source = new Vector2(
-								s.startPosition.fst.floatValue(),
-								s.startPosition.snd.floatValue());
+					Vector2 target =
+							new Vector2(targetCenter.fst, targetCenter.snd);
+					Vector2 source =
+							new Vector2(sourceCenter.fst, sourceCenter.snd);
 
-
-						// draw to target
-						if (netIndicator == null) {
-							netIndicator = new DrawableLine(this.viz);
-						}
-						netIndicator.from = source;
-						netIndicator.to = target;
-						netIndicator.setColor(
-								Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
-						netIndicator.draw();
+					// draw to target
+					if (netIndicator == null) {
+						netIndicator = new DrawableLine(this.viz);
 					}
+					netIndicator.from = source;
+					netIndicator.to = target;
+					netIndicator.setColor(
+							Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
+					netIndicator.draw();
 				}
 			}
 		}
 	}
+
 
 	/**
 	 * Calculates whether or not this field is part of a droplet's interference
@@ -455,17 +533,20 @@ public class DrawableField extends DrawableSprite {
 	 * @return whether or not this field is part of its interference region
 	 */
 	private boolean isPartOfInterferenceRegion(final Droplet d) {
-		Point curPos = d.getPositionAt(getParentCircuit().getCurrentTime());
-		Point prevPos =
-				d.getPositionAt(getParentCircuit().getCurrentTime() - 1);
-		if (parentCircuit.getDisplayOptions()
-				.getOption(BDisplayOptions.LingeringInterferenceRegions)) {
-			return (curPos != null &&
-					curPos.adjacent(field.pos)) ||
-				   (prevPos != null &&
-					prevPos.adjacent(field.pos));
+		Rectangle currPos = d.getPositionAt(
+				getParentCircuit().getCurrentTime()
+		);
+		Rectangle prevPos = d.getPositionAt(
+				getParentCircuit().getCurrentTime() - 1
+		);
+
+		boolean currAdj = currPos != null && currPos.adjacent(field.pos);
+
+		if (getOption(LingeringInterferenceRegions)) {
+			boolean prevAdj = prevPos != null && prevPos.adjacent(field.pos);
+			return currAdj || prevAdj;
 		} else {
-			return curPos != null && curPos.adjacent(field.pos);
+			return currAdj;
 		}
 	}
 

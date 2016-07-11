@@ -31,7 +31,8 @@ public class Droplet {
 	 * when
 	 * the droplet vanishes from the chip.
 	 */
-	private ArrayList<Point> positions = new ArrayList<>();
+	private ArrayList<Rectangle> positions = new ArrayList<>();
+
 
 	/**
 	 * The unique ID of the droplet.
@@ -115,7 +116,7 @@ public class Droplet {
 	 * droplet. We could think about returning a copy but than again we believe
 	 * in the non-evilness of our clients :)
 	 */
-	public ArrayList<Point> getPositions() {
+	public ArrayList<Rectangle> getPositions() {
 		return positions;
 	}
 
@@ -126,9 +127,10 @@ public class Droplet {
 	 * @param p
 	 * 		Position that is added
 	 */
-	public void addPosition(final Point p) {
+	public void addPosition(final Rectangle p) {
 		positions.add(p);
 	}
+
 
 	/**
 	 * Tries to return the position of the droplet at specified time step.
@@ -143,7 +145,7 @@ public class Droplet {
 	 * 		Time step for which the position is requested
 	 * @return Position of droplet at time step t oder first/last position.
 	 */
-	public Point getSafePositionAt(final int t) {
+	public Rectangle getSafePositionAt(final int t) {
 
 		int index = t - spawnTime;
 
@@ -165,7 +167,7 @@ public class Droplet {
 	 * 		Time step for which the position is requested
 	 * @return Position at time step t or null if outside time range
 	 */
-	public Point getPositionAt(final int t) {
+	public Rectangle getPositionAt(final int t) {
 
 		int index = t - spawnTime;
 
@@ -176,12 +178,13 @@ public class Droplet {
 	}
 
 
+
 	/**
 	 * @return First position of the droplet
 	 * @throws IndexOutOfBoundsException
 	 * 		if list of positions is empty
 	 */
-	public Point getFirstPosition() {
+	public Rectangle getFirstPosition() {
 		return positions.get(0);
 	}
 
@@ -191,7 +194,7 @@ public class Droplet {
 	 * @throws IndexOutOfBoundsException
 	 * 		if list of positions is empty
 	 */
-	public Point getLastPosition() {
+	public Rectangle getLastPosition() {
 		return positions.get(positions.size() - 1);
 	}
 

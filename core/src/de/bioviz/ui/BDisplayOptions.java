@@ -151,7 +151,12 @@ public enum BDisplayOptions {
 	/**
 	 * When zooming out, hide the on screen text elements.
 	 */
-	HideTextOnZoom("Hide text for small zoom factors");
+	HideTextOnZoom("Hide text for small zoom factors"),
+
+	/**
+	 * Highlight annotated fields.
+	 */
+	HighlightAnnotatedFields("Highlight annotated fields");
 
 	/**
 	 * The description that is used in the menus to display this option.

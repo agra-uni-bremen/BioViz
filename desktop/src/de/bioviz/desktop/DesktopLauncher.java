@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -42,6 +43,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -78,6 +80,8 @@ public class DesktopLauncher extends JFrame {
 	 * elevate this to public as needed.
 	 */
 	private static DesktopLauncher singleton;
+
+
 
 	/**
 	 * Used to handle feedback for the user about the program behaviour (and of
@@ -156,7 +160,7 @@ public class DesktopLauncher extends JFrame {
 	 * once in tabs, there is still only one visualization which then displays
 	 * several different circuits.
 	 */
-	BioViz currentViz;
+	 BioViz currentViz;
 
 	/**
 	 * The infoPanel displaying the statistics.
@@ -188,11 +192,6 @@ public class DesktopLauncher extends JFrame {
 	 * Used to display the tabs for open files.
 	 */
 	private JTabbedPane visualizationTabs;
-
-	/**
-	 * Used for more options than the panel can hold.
-	 */
-	private JMenuBar menubar;
 
 	/**
 	 * Creates a desktop launcher.
@@ -242,9 +241,7 @@ public class DesktopLauncher extends JFrame {
 
 		infoPanel = new InfoPanel(currentViz);
 
-		menubar = initializeMenubar();
-
-		this.setJMenuBar(menubar);
+		this.setJMenuBar(initializeMenubar());
 
 		input = new LwjglAWTInput(canvas);
 
@@ -304,6 +301,8 @@ public class DesktopLauncher extends JFrame {
 
 		BDisplayOptions[] enumValues = BDisplayOptions.values();
 		Arrays.sort(enumValues, new Comparator<BDisplayOptions>() {
+
+			@Override
 			public int compare(final BDisplayOptions left,
 							   final BDisplayOptions right) {
 				return left.description().compareTo(
@@ -338,15 +337,7 @@ public class DesktopLauncher extends JFrame {
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
 
-
-		// This text was completely useless. I leave the code here as a
-		// reference on how to add labels with some kind
-		// of formatting.
-//		JLabel label = new JLabel("<html><body>Totally classic<br/>UI
-// elements<br/></body></html>");
-
-
-		final int buttonWidth = 112;
+        final int buttonWidth = 112;
 		final int sliderWidth = buttonWidth;
 		final int sliderHeight = new JSlider().getPreferredSize().height;
 
@@ -372,9 +363,7 @@ public class DesktopLauncher extends JFrame {
 				new Dimension(buttonWidth,
 							  preferencesButton.getPreferredSize().height)
 		);
-		preferencesButton.addActionListener(e -> {
-			showSettings(currentViz);
-		});
+		preferencesButton.addActionListener(e -> showSettings(currentViz));
 
 		JButton statisticsButton = new JButton("Statistics");
 		statisticsButton.setPreferredSize(
@@ -702,7 +691,7 @@ public class DesktopLauncher extends JFrame {
 		} catch (final CmdLineException e) {
 			String argsLine = String.join(" ", args);
 			System.err.println(
-					"Unable to parse arguments: \"" + argsLine + "\"");
+                    "Unable to parse arguments: \"" + argsLine + "\"");
 			System.err.println("\nusage:");
 			parser.printUsage(System.err);
 			System.exit(1);
@@ -763,10 +752,9 @@ public class DesktopLauncher extends JFrame {
 
 		Biochip chip = BioParser.parseFile(f);
 		if (!chip.errors.isEmpty()) {
-			System.out.println(
-					"Found errors in file \"" + f.getAbsolutePath() + "\":");
+			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath() );
 			for (final String error : chip.errors) {
-				System.out.println(error);
+                logger.error(error);
 			}
 		}
 	}
@@ -780,6 +768,7 @@ public class DesktopLauncher extends JFrame {
 	static void startGUI(final File file) {
 		try {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					initializeLogback();
 
@@ -801,6 +790,7 @@ public class DesktopLauncher extends JFrame {
 
 
 					singleton.addWindowListener(new WindowAdapter() {
+						@Override
 						public void windowClosing(final WindowEvent e) {
 							singleton.canvas.stop();
 						}
@@ -840,7 +830,31 @@ public class DesktopLauncher extends JFrame {
 		if (load) {
 			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
 		} else {
+			// add the svg export options as an accessory to the fileChooser
+			JPanel accessory = new JPanel(new BorderLayout());
+
+			JCheckBox exportColors = new JCheckBox("Export colors");
+			exportColors.setSelected(true);
+			JCheckBox exportInfoString = new JCheckBox("Export info tag");
+			exportInfoString.setSelected(true);
+			JCheckBox exportSeries = new JCheckBox("Export series");
+			exportSeries.setSelected(false);
+
+			JPanel checkBoxes = new JPanel(new GridLayout(0, 1));
+			checkBoxes.add(exportColors);
+			checkBoxes.add(exportInfoString);
+			checkBoxes.add(exportSeries);
+
+			accessory.add(checkBoxes);
+
+			fileDialog.setAccessory(accessory);
+
 			choice = fileDialog.showSaveDialog(DesktopLauncher.singleton);
+
+			svgExportSettings.setColorfulExport(exportColors.isSelected());
+			svgExportSettings.setExportSeries(exportSeries.isSelected());
+			svgExportSettings.setInformationString(
+					exportInfoString.isSelected());
 		}
 
 		if (choice == JFileChooser.APPROVE_OPTION) {
@@ -926,7 +940,7 @@ public class DesktopLauncher extends JFrame {
 			System.err.println(
 					"Error setting up logger: " + je.getStackTrace());
 		}
-		//StatusPrinter.printInCaseOfErrorsOrWarnings(context);
+
 
 	}
 
@@ -938,7 +952,7 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private static void showSettings(final BioViz viz) {
 		logger.debug("Opening preferences window...");
-		PreferencesWindow pw = new PreferencesWindow(viz);
+		new PreferencesWindow(viz);
 		logger.debug("Done opening preferences window.");
 	}
 
@@ -1277,6 +1291,7 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			try {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						Color c =
 								JColorChooser.showDialog(
@@ -1321,6 +1336,7 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			try {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						File f = askForFile("lastFilePath", true);
 						if (f != null) {
@@ -1438,7 +1454,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Empty constructor, does nothing.
 		 */
-		SaveFileCallback() {
+		public SaveFileCallback() {
 		}
 
 		/**
@@ -1462,7 +1478,8 @@ public class DesktopLauncher extends JFrame {
 										.getCurrentTime();
 								// this is problematic if the file contains
 								// .svg inside the name
-								int svgPosition = f.getAbsolutePath().indexOf(".svg");
+								int svgPosition = f.getAbsolutePath().indexOf
+										(".svg");
 								// initialize with absolute path
 								String pathWithoutSuffix = f.getAbsolutePath();
 								// check if suffix was found, if not the path
@@ -1496,8 +1513,8 @@ public class DesktopLauncher extends JFrame {
 					}
 				});
 			} catch (final Exception e) {
-				logger.error("Could not save file: " + e.getMessage() + "\n" +
-						e.getStackTrace());
+				logger.error("Could not save file: " + e.getMessage() + "\n"
+							 + e.getStackTrace());
 			}
 			allowHotkeys = true;
 		}
@@ -1573,7 +1590,7 @@ public class DesktopLauncher extends JFrame {
 		 * @param option the connected BDisplayOptions item
 		 */
 		BioCheckboxMenuItem(final String label,
-								   final BDisplayOptions option) {
+							final BDisplayOptions option) {
 			super(label);
 			this.option = option;
 
@@ -1594,5 +1611,8 @@ public class DesktopLauncher extends JFrame {
 			setState(currentViz.currentCircuit.
 					getDisplayOptions().getOption(option));
 		}
+
+
 	}
+
 }

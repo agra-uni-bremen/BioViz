@@ -48,8 +48,6 @@ public class BioErrorListener extends BaseErrorListener {
 		String stackMsg = "rule stack: " + stack;
 		String lineMsg = "line " + line + ":" + charPositionInLine + ": " +
 						 msg;
-		//System.err.println(stackMsg);
-		//System.err.println(lineMsg);
 		errors.add(lineMsg + " " + stackMsg);
 	}
 
