@@ -60,7 +60,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import static java.awt.SystemColor.info;
 
 /**
  * This class is the single desktop starter class. It starts the cross-platform
@@ -955,6 +954,15 @@ public class DesktopLauncher extends JFrame {
 		new PreferencesWindow(viz);
 		logger.debug("Done opening preferences window.");
 	}
+
+	/**
+	 * Allows to disable or enable the hotkeys from outside of DesktopLauncher.
+	 * @param allow allow hotkeys or not
+	 */
+	static void setAllowHotkeys(final boolean allow) {
+		allowHotkeys = allow;
+	}
+
 
 	/**
 	 * Translates a java.awt keycode to a libgdx keycode.
