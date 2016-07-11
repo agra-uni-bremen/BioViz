@@ -492,7 +492,7 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * If the two scaling factors aren't equal, this sets the larger scaling
-	 * factor to the smaller one in order to display square elements on screen
+	 * factor to the smaller one in order to display square elements on screen.
 	 */
 	public void shrinkToSquareAlignment() {
 		if (getScaleY() < getScaleX()) {
@@ -504,7 +504,8 @@ public class DrawableCircuit implements Drawable {
 
 
 	/**
-	 * retrieves the current x scaling factor
+	 * Retrieves the current x scaling factor.
+	 * @return The Current x scaling factor.
 	 */
 	public float getScaleX() {
 		return scale;
@@ -515,6 +516,8 @@ public class DrawableCircuit implements Drawable {
 	 * actually drawing the circuit is successively approaching the given value
 	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
 	 * supposed to skip those inbetween steps.
+	 *
+	 * @param scaleX The new value for the x scaling value.
 	 */
 	public void setScaleX(final float scaleX) {
 		this.scale = scaleX;
@@ -576,7 +579,7 @@ public class DrawableCircuit implements Drawable {
 	public void setViewBounds(final Rectangle bounds) {
 		float targetHeight = Gdx.graphics.getHeight() / bounds.height;
 		float targetWidth = Gdx.graphics.getWidth() / bounds.width;
-		float targetOffsetX = (bounds.x + (bounds.width / 2f));
+		float targetOffsetX = bounds.x + (bounds.width / 2f);
 		float targetOffsetY = bounds.y + (bounds.height / 2f);
 
 		setScaleX(targetWidth);

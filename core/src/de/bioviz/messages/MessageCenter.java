@@ -48,7 +48,7 @@ public class MessageCenter {
 	private static final float SCALEINCSTEP = 2f;
 
 	/**
-	 * The default z order of text
+	 * The default z order of text.
 	 */
 	private static final float DEFAULT_Z = 100f;
 
@@ -230,7 +230,7 @@ public class MessageCenter {
 			generator.dispose();
 			logger.debug("set up font");
 
-			font = font12;//new BitmapFont();
+			font = font12; //new BitmapFont();
 		}
 		return font;
 	}
@@ -260,6 +260,9 @@ public class MessageCenter {
 		}
 	}
 
+	/**
+	 * Renders the message.
+	 */
 	public void render() {
 		if (!hidden) {
 			if (font == null || fontInvalidated) {
@@ -290,7 +293,7 @@ public class MessageCenter {
 				Color targetColor = s.color.cpy();
 
 				float hideAt = textRenderResolution;
-				float showAt = (textRenderResolution * 2);
+				float showAt = textRenderResolution * 2;
 				if (parent.currentCircuit.getDisplayOptions().getOption(
 						BDisplayOptions.HideTextOnZoom)) {
 					// Hide when zoomed out
@@ -323,7 +326,10 @@ public class MessageCenter {
 										 normalProjection, DEFAULT_Z);
 			}
 
-			while (!this.messages.isEmpty() && this.messages.get(0).expired()) {
+			while (
+					!this.messages.isEmpty() &&
+					this.messages.get(0).expired()
+					) {
 				this.messages.remove(0);
 			}
 		}
@@ -404,62 +410,110 @@ public class MessageCenter {
 		this.HUDMessages.clear();
 	}
 
+	/**
+	 * Resets both the message as well as the HUD scale.
+	 */
 	public void resetScales() {
 		resetMsgScale();
 		resetHUDScale();
 	}
 
+	/**
+	 * Resets the message scale to default.
+	 */
 	public void resetMsgScale() {
 		setmsgTextRenderResolution(DEFAULT_MSG_SIZE);
 	}
 
+	/**
+	 * Resets the HUD scale to default.
+	 */
 	public void resetHUDScale() {
 		setTextRenderResolution(DEFAULT_HUD_SIZE);
 	}
 
+
+	/**
+	 * Increases both the messages as well as the HUD sace.
+	 */
 	public void incScales() {
 		incScaleHUD();
 		incScaleMsg();
 	}
 
+	/**
+	 * Increases the HUD scale.
+	 */
 	public void incScaleHUD() {
 		setTextRenderResolution(getTextRenderResolution() + SCALEINCSTEP);
 	}
 
+	/**
+	 * Increases the message scale.
+	 */
 	public void incScaleMsg() {
 		setmsgTextRenderResolution(getmsgTextRenderResolution() +
 								   SCALEINCSTEP);
 	}
 
+	/**
+	 * Decreases both the message as wel as the HUD scale.
+	 */
 	public void decScales() {
 		decScaleHUD();
 		decScaleMsg();
 	}
 
+	/**
+	 * Decreses the HUD scale.
+	 */
 	public void decScaleHUD() {
 		setTextRenderResolution(getTextRenderResolution() - SCALEINCSTEP);
 	}
 
+
+	/**
+	 * Decreases the message scale.
+	 */
 	public void decScaleMsg() {
 		setmsgTextRenderResolution(getmsgTextRenderResolution() -
 								   SCALEINCSTEP);
 	}
 
+	/**
+	 * Sets the HUD and message scale to the given value.
+	 *
+	 * @param scale
+	 * 		The new scale to use.
+	 */
 	public void setScales(final float scale) {
 		setScaleHUD(scale);
 		setScaleMsg(scale);
 	}
 
+	/**
+	 * Sets the HUD scale to the given value.
+	 *
+	 * @param scaleHUD
+	 * 		The new scale to use.
+	 */
 	public void setScaleHUD(final float scaleHUD) {
 		setTextRenderResolution(scaleHUD);
 	}
 
+	/**
+	 * Sets the message scale to the given value.
+	 *
+	 * @param scaleMsg
+	 * 		The new scale to use.
+	 */
 	public void setScaleMsg(final float scaleMsg) {
 		setmsgTextRenderResolution(scaleMsg);
 	}
 
 	/**
 	 * Retrieves the default text transparency.
+	 *
 	 * @return the current default text transparency.
 	 */
 	private float getDefaultTextTransparency() {
@@ -468,11 +522,13 @@ public class MessageCenter {
 
 	/**
 	 * Sets the default text transparency.
-	 * @param defaultTextTransparency the new transparency value.
+	 *
+	 * @param defaultTextTransparency
+	 * 		the new transparency value.
 	 */
 	public void setDefaultTextTransparency(float defaultTextTransparency) {
 		this.defaultTextTransparency = defaultTextTransparency;
-		logger.debug("Default font transparency is now "
-				+ this.defaultTextTransparency);
+		logger.debug("Default font transparency is now " +
+					 this.defaultTextTransparency);
 	}
 }

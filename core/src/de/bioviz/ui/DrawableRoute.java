@@ -26,8 +26,8 @@ public class DrawableRoute extends DrawableSprite {
 	/**
 	 * Class-wide logging facility.
 	 */
-	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
-																   .class);
+//	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
+//																   .class);
 
 	/**
 	 * Non magic number version for turning off transparency.

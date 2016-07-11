@@ -3,8 +3,7 @@ package de.bioviz.structures;
 import de.bioviz.util.Pair;
 
 import java.util.ArrayList;
-
-import static com.badlogic.gdx.utils.Align.center;
+import java.util.List;
 
 /**
  * @author Oliver Keszocze
@@ -14,12 +13,12 @@ public class Rectangle {
 	/**
 	 * The lower left corner of the rectangle.
 	 */
-	Point lowerLeft;
+	public Point lowerLeft;
 
 	/**
 	 * The upper right corner of the rectangle.
 	 */
-	Point upperRight;
+	public Point upperRight;
 
 
 	/**
@@ -70,6 +69,7 @@ public class Rectangle {
 	}
 
 	/**
+	 *
 	 * Creates a rectangle defined by two corners (provided by their
 	 * coordinates).
 	 *
@@ -104,6 +104,24 @@ public class Rectangle {
 
 	}
 
+	/**
+	 * Checks whether two rectangles are overlapping.
+	 * @param rec1 The first rectangle
+	 * @param rec2 The second rectangle
+	 * @return true if and only if the two rectangles overlap.
+	 */
+	public static boolean overlapping(
+			final Rectangle rec1,
+			final Rectangle rec2) {
+
+		boolean beside1 = rec1.lowerLeft.fst > rec2.upperRight.fst;
+		boolean beside2 = rec2.lowerLeft.fst > rec1.lowerLeft.fst;
+
+		boolean above1 = rec1.upperRight.snd < rec2.lowerLeft.snd;
+		boolean above2 = rec1.upperRight.snd < rec1.lowerLeft.snd;
+
+		return !(beside1 && beside2 && above1 && above2);
+	}
 
 	/**
 	 * Checks whether a given point is within the boundaries of the rectangle.
@@ -111,6 +129,7 @@ public class Rectangle {
 	 * @param p
 	 * 		Point to check for
 	 * @return true if p is within the rectangle, false otherwise
+	 *
 	 */
 	public boolean contains(final Point p) {
 		return contains(p.fst, p.snd);
@@ -125,6 +144,7 @@ public class Rectangle {
 	 * @param y
 	 * 		y-coordinate of Point to check for
 	 * @return true if (x,y) is within the rectangle, false otherwise
+	 *
 	 */
 	public boolean contains(final int x, final int y) {
 
@@ -148,14 +168,13 @@ public class Rectangle {
 		return new Point(centerX, centerY);
 	}
 
-	/**
+    /**
 	 * Computes the center of the rectangle using floating point arithmetic.
-	 * <p>
-	 * The result is a pair of floats. While the result lies within the
-	 * rectangle it is not necessarily a valid integer coordinate of it.
 	 *
-	 * @return Point in the center of the rectangle using floating point
-	 * arithmetic.
+	 * The result is a pair of floats. While the result lies within the rectangle
+	 * it is not necessarily a valid integer coordinate of it.
+	 *
+	 * @return Point in the center of the rectangle using floating point arithmetic.
 	 */
 	public Pair<Float, Float> centerFloat() {
 		float centerX =
@@ -222,15 +241,39 @@ public class Rectangle {
 			return false;
 		}
 
-		Point p1 = r1.getPoint();
-		Point p2 = r2.getPoint();
+		boolean isPoint1 = r1.isPoint();
+		boolean isPoint2 = r2.isPoint();
 
-		if (p1 != null && p2 != null) {
-			return Point.adjacent(p1, p2);
-		} else {
-			// TODO implement for meda droplets!
-			return false;
+		if (isPoint1 && isPoint2) {
+			return Point.adjacent(r1.getPoint(), r2.getPoint());
 		}
+
+		/*
+		Both rectangles are "real" rectangles. The algorithm now is to create
+		a rectangle that is bigger than the other by one cell and then see
+		whether these rectangles overlap.
+		 */
+		if (!isPoint1 && !isPoint2) {
+			// use new Point to create a deep copy
+			Point ll = new Point(r1.lowerLeft.fst - 1, r1.lowerLeft.snd - 1);
+			Point ur = new Point(r1.upperRight.fst + 1, r1.upperRight.snd + 1);
+			Rectangle biggerRect = new Rectangle(ll, ur);
+
+
+			return Rectangle.overlapping(biggerRect, r2);
+		}
+
+		/*
+		Now we know that at least Rectangle is a point and can act accordingly
+		 */
+		Point p = r1.getPoint();
+		Rectangle rec = r2;
+		if (r2.isPoint()) {
+			p = r2.getPoint();
+			rec = r1;
+		}
+
+		return rec.contains(p);
 	}
 
 
@@ -247,12 +290,43 @@ public class Rectangle {
 	}
 
 	/**
+	 * Returns the list of corners of the rectangle.
+	 * <p>
+	 * Note that the list contains either four points (i.e. a "real"
+	 * rectangle")
+	 * or only one (the rectangle actually is a point). No extra test for
+	 * 1xn or
+	 * nx1 rectangles is performed.
+	 *
+	 * @return The corners of the rectangle.
+	 */
+	public List<Point> corners() {
+		ArrayList<Point> cns = new ArrayList<>();
+		cns.add(lowerLeft);
+		if (!isPoint()) {
+			cns.add(upperLeft());
+			cns.add(upperRight);
+			cns.add(lowerRight());
+		}
+		return cns;
+	}
+
+	/**
 	 * Computes the upper left corner of the rectangle.
 	 *
 	 * @return The upper left corner of the rectangle.
 	 */
 	public Point upperLeft() {
-		return new Point(lowerLeft.fst, upperRight.snd);
+		return new Point(lowerLeft.fst,upperRight.snd);
+	}
+
+	/**
+	 * Computes the lower right corner of the rectangle.
+	 *
+	 * @return The lower right corner of the rectangle.
+	 */
+	public Point lowerRight() {
+		return new Point(upperRight.fst, lowerLeft.snd);
 	}
 
 	/**
@@ -260,14 +334,13 @@ public class Rectangle {
 	 * <p>
 	 * The check is easily done be extending the rectangle and checking whether
 	 * the point is within that rectangle.
-	 * <p>
+	 *
 	 * The parameter size determins how much the rectangle gets extended. This
 	 * is of interest when working with meda chips.
 	 *
 	 * @param p
 	 * 		The point to check for adjacency.
-	 * @param size
-	 * 		The size of the adjacency to be considered.
+	 * 	@param size The size of the adjacency to be considered.
 	 * @return True if the point is adjacent to the rectangle.
 	 */
 	public boolean adjacent(final Point p, final int size) {
@@ -282,8 +355,7 @@ public class Rectangle {
 	/**
 	 * Checks if a point is adjacent to this rectangle using a distance of 1.
 	 *
-	 * @param p
-	 * 		The point to check for adjacency.
+	 * @param p The point to check for adjacency.
 	 * @return True if the point is adjacent to the rectangle, false otherwise.
 	 */
 	public boolean adjacent(final Point p) {

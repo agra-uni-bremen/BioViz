@@ -62,23 +62,21 @@ final class Validator {
 			final ArrayList<Droplet> drops, final Set<Point> points) {
 		ArrayList<String> errors = new ArrayList<>();
 
-		// TODO fix this stupid method
+		for (final Droplet drop : drops) {
+			ArrayList<Rectangle> ps = drop.getPositions();
 
-//		for (final Droplet drop : drops) {
-//			ArrayList<Rectangle> ps = drop.getPositions();
-//
-//
-//			ps.forEach(rect -> {
-//						   rect.positions().forEach(pos -> {
-//							   if (!points.contains(pos)) {
-//								   errors.add("Droplet " + drop.getID() +
-//											  ": position " + pos +
-//											  " of route not on grid!");
-//							   }
-//
-//						   })
-//					   }
-//			);
+			ps.forEach(rect -> {
+						   rect.positions().forEach(pos -> {
+							   if (!points.contains(pos)) {
+								   errors.add("Droplet " + drop.getID() +
+											  ": position " + pos +
+											  " of route not on grid!");
+							   }
+
+						   });
+					   }
+			);
+		}
 		return errors;
 	}
 
@@ -93,24 +91,28 @@ final class Validator {
 		Set<Droplet> droplets = chip.getDroplets();
 		ArrayList<String> errors = new ArrayList<>();
 
-		// TODO fix this stupid method
+		for (final Droplet drop : droplets) {
+			ArrayList<Rectangle> rectPositions = drop.getPositions();
 
-//			for (final Droplet drop : droplets) {
-//				ArrayList<Point> positions = drop.getPositions();
-//				for (int i = 0; i < positions.size(); i++) {
-//					Point pos = positions.get(i);
-//					if (chip.hasFieldAt(pos)) {
-//						int timestep = i + drop.getSpawnTime();
-//						BiochipField field = chip.getFieldAt(pos);
-//						if (field.isBlocked(timestep)) {
-//							errors.add("Droplet " + drop.getID() +
-//									   " moves into blockage at " + pos +
-//									   " in time step " + timestep);
-//						}
-//					}
-//				}
-//			}
+			for (int timeStep = 0;
+				 timeStep < rectPositions.size(); timeStep++) {
+				Rectangle rectPos = rectPositions.get(timeStep);
+				ArrayList<Point> positions =
+						rectPos.positions().stream().filter(
+								pos -> chip.hasFieldAt(pos)).collect(
+								Collectors.toCollection(ArrayList::new));
 
+				for (Point pos : positions) {
+					int timestep = timeStep + drop.getSpawnTime();
+					BiochipField field = chip.getFieldAt(pos);
+					if (field.isBlocked(timestep)) {
+						errors.add("Droplet " + drop.getID() +
+								   " moves into blockage at " + pos +
+								   " in time step " + timestep);
+					}
+				}
+			}
+		}
 		return errors;
 	}
 
@@ -118,6 +120,8 @@ final class Validator {
 	 * This method checks whether droplets only move a single cell in
 	 * horizontal
 	 * or vertical direction in one time step.
+	 * <p>
+	 * It also checks whether a route has been attached to the droplet at all.
 	 *
 	 * @param drops
 	 * 		Droplets whose positions on the grid will be checked for 'jumps'
@@ -130,30 +134,47 @@ final class Validator {
 		// TODO fix this stupid method!
 
 
-//			for (final Droplet drop : drops) {
-//				ArrayList<Point> points = drop.getPositions();
-//
-//				if (points.isEmpty()) {
-//					errors.add("Droplet " + drop.getID() +
-//							   " has no route attached to it!");
-//				} else {
-//					if (points.size() >= 2) {
-//						Point prev = points.get(0);
-//						for (int i = 1; i < points.size(); i++) {
-//							Point curr = points.get(i);
-//							if (!Point.reachable(prev, curr)) {
-//								errors.add("Droplet " + drop.getID() +
-//										   ": Jump in route from " + prev +
-//										   " to" +
-//										   " " +
-//										   curr + "!");
-//							}
-//							prev = curr;
-//						}
-//					}
-//				}
-//
-//			}
+		for (final Droplet drop : drops) {
+			ArrayList<Rectangle> points = drop.getPositions();
+
+			if (points.isEmpty()) {
+				errors.add("Droplet " + drop.getID() +
+						   " has no route attached to it!");
+				return errors;
+			}
+
+			/**
+			 * This additional check is just here to make the indentation level
+			 * smaller.
+			 */
+			if (points.size() == 1) {
+				return errors;
+			}
+
+			Rectangle prev = points.get(0);
+			for (int i = 1; i < points.size(); i++) {
+				Rectangle curr = points.get(i);
+				boolean upperLeftBadMove =
+						!Point.reachable(prev.upperLeft(), curr.upperLeft());
+				boolean upperRightBadMove =
+						!Point.reachable(prev.upperRight, curr.upperRight);
+				boolean lowerLeftBadMove =
+						!Point.reachable(prev.lowerLeft, curr.lowerLeft);
+				boolean lowerRightBadMove =
+						!Point.reachable(prev.lowerRight(), curr.lowerRight());
+
+
+				if (upperLeftBadMove || upperRightBadMove ||
+					lowerLeftBadMove || lowerRightBadMove) {
+					errors.add("Droplet " + drop.getID() +
+							   ": Jump in route from " + prev + " to " + curr +
+							   "!");
+				}
+				prev = curr;
+			}
+
+		}
+
 		return errors;
 	}
 
@@ -279,20 +300,20 @@ final class Validator {
 		if (detectors != null && !detectors.isEmpty()) {
 			ArrayList<Detector> removeList = new ArrayList<>();
 			for (final Detector det : detectors) {
-				ArrayList<Point> position = det.position().positions();
-				position.forEach(pos -> {
-					if (!chip.hasFieldAt(pos)) {
-						String msg =
-								"Can not place detectors at position " + pos +
-								". Position does not exist on chip.";
-						if (removeWrongDetectors) {
-							removeList.add(det);
-							msg = msg +
-								  " Removed erroneous detector from list.";
-						}
-						errors.add(msg);
+				Point pos = det.position();
+				try {
+					chip.getFieldAt(pos);
+				} catch (final RuntimeException e) {
+					String msg =
+							"Can not place detectors at position " + pos +
+							". Position does not exist on chip.";
+					if (removeWrongDetectors) {
+						removeList.add(det);
+						msg = msg +
+							  " Removed erroneous detector from list.";
 					}
-				});
+					errors.add(msg);
+				}
 			}
 			detectors.removeAll(removeList);
 		}

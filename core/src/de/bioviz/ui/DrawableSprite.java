@@ -64,10 +64,6 @@ public abstract class DrawableSprite implements Drawable {
 	 */
 	private static TextureManager textures;
 
-	/**
-	 * Link to the visualization this sprite is used in.
-	 */
-	BioViz viz;
 
 	/**
 	 * The colors that are set to the four corners of this sprite. This may be
@@ -76,6 +72,12 @@ public abstract class DrawableSprite implements Drawable {
 	 * will be used instead.
 	 */
 	protected Color[] cornerColors = null;
+
+
+	/**
+	 * Link to the visualization this sprite is used in.
+	 */
+	BioViz viz;
 
 	/**
 	 * The x coordinate of this sprite.
@@ -168,6 +170,7 @@ public abstract class DrawableSprite implements Drawable {
 	 *
 	 * @param texture
 	 * 		the texture to use
+	 * 	@param parent The parent BioViz instance
 	 */
 	public DrawableSprite(final TextureE texture,
 						  final float sizeX,
@@ -263,13 +266,15 @@ public abstract class DrawableSprite implements Drawable {
 			this.sprite.setColor(currentColor);
 			float[] v = this.sprite.getVertices();
 
+			final int rgbMult = 255;
+
 			if (cornerColors != null) {
 				for (int i = 0; i < 4; i++) {
 					int intBits =
-							(int) (255 * cornerColors[i].a) << 24 |
-							(int) (255 * cornerColors[i].b) << 16 |
-							(int) (255 * cornerColors[i].g) << 8 |
-							(int) (255 * cornerColors[i].r);
+							(int) (rgbMult  * cornerColors[i].a) << 24 |
+							(int) (rgbMult  * cornerColors[i].b) << 16 |
+							(int) (rgbMult  * cornerColors[i].g) << 8 |
+							(int) (rgbMult  * cornerColors[i].r);
 					switch (i) {
 						case 0:
 							v[SpriteBatch.C1] =

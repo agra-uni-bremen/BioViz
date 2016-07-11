@@ -33,13 +33,16 @@ public class BioViz implements ApplicationListener {
     private static Logger logger = LoggerFactory.getLogger(BioViz.class);
 
 
-    OrthographicCamera camera;
+
     public BioVizSpriteBatch batch;
     public MessageCenter messageCenter;
     public DrawableDroplet selectedDroplet;
 
 
     public DrawableCircuit currentCircuit;
+
+    OrthographicCamera camera;
+
     private TextureManager textures;
     private HashMap<String, DrawableCircuit> loadedCircuits;
     private Vector<Drawable> drawables = new Vector<>();
@@ -181,7 +184,7 @@ public class BioViz implements ApplicationListener {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        for (Drawable drawable : drawables) {
+        for (final Drawable drawable : drawables) {
             drawable.draw();
         }
 
@@ -195,7 +198,7 @@ public class BioViz implements ApplicationListener {
         long waitUntil = currentTimestamp + (1000 / this.targetFramerate);
         try {
             Thread.sleep(Math.max(0, waitUntil - new Date().getTime()));
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             logger.info("Sleep was interrupted");
         }
     }
