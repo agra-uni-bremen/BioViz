@@ -273,6 +273,8 @@ public class DesktopLauncher extends JFrame {
 						 " with path: " + iconPath);
 		}
 
+		editor.setIcon(iconPath);
+
 		pack();
 		setVisible(true);
 

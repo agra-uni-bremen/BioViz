@@ -4,6 +4,7 @@ import de.bioviz.ui.BioViz;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -17,6 +18,8 @@ import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import static de.bioviz.desktop.DesktopLauncher.getFileFromStream;
 
 /**
  * This class provides an editor to change the currently opened Bio file.
@@ -52,6 +55,7 @@ public class BioVizEditor {
 	 * The edited file.
 	 */
 	private File file;
+
 
 	/**
 	 * Constructs the editor.
@@ -143,6 +147,18 @@ public class BioVizEditor {
 	 */
 	public void show() {
 		dialog.setVisible(true);
+	}
+
+	/**
+	 * Sets the path to the icon image to use.
+	 * @param iconPath the path to the icon image
+	 */
+	public void setIcon(final String iconPath) {
+		try {
+			dialog.setIconImage(ImageIO.read(getFileFromStream(iconPath)));
+		} catch (final IOException e) {
+			logger.error("Could not load icon image.");
+		}
 	}
 
 	/**
