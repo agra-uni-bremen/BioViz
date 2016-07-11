@@ -109,8 +109,8 @@ public class BioVizEditor {
 		save.addActionListener(
 				(action) -> {
 					logger.debug("Saving file.");
-					currentViz.scheduleLoadingOfNewFile(file);
 					writeToFile(file);
+					currentViz.callReloadFileListeners();
 				}
 		);
 
@@ -120,8 +120,7 @@ public class BioVizEditor {
 
 			@Override
 			public void windowClosing(final WindowEvent e) {
-				currentViz.scheduleLoadingOfNewFile(file);
-				//DesktopLauncher.setAllowHotkeys(true);
+				currentViz.callReloadFileListeners();
 			}
 
 		});
