@@ -66,7 +66,7 @@ public class Source {
 	 * @param dropletID
 	 * 		Unique ID of the droplet that is to be routed
 	 * @param pos
-	 * 		The initial position of the droplet
+	 * 		The initial upper left corner position of the droplet
 	 * @param spawnTime
 	 * 		The time step the droplet appears on the chip
 	 * @param size

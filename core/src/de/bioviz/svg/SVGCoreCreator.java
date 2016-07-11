@@ -247,6 +247,7 @@ public class SVGCoreCreator {
 									   final
 									   Color
 											   color) {
+
 		int x1 = dir.hasOrientation(Point.WEST) ? 1 : 0;
 		int x2 = dir.hasOrientation(Point.EAST) ? 1 : 0;
 
@@ -259,6 +260,7 @@ public class SVGCoreCreator {
 					   "y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 +
 					   "\" >\n";
 		String offset1 = "<stop offset=\"0%\" " + "style=\"stop-color:rgb(" +
+
 						 color.r * colorMult + "," + color.g * colorMult +
 						 "," + color.b * colorMult + ");" +
 						 "stop-opacity:0\" />\n";
