@@ -74,6 +74,7 @@ public class BioVizEditor {
 		JButton reload = new JButton("Preview");
 		JButton save = new JButton("Save");
 
+		// Save the file into tmp and load the tmp file.
 		reload.addActionListener(
 				(e) -> {
 					logger.debug("Storing file in tmp.");
@@ -88,6 +89,7 @@ public class BioVizEditor {
 				}
 		);
 
+		// Save the file to disk and reload it.
 		save.addActionListener(
 				(e) -> {
 					logger.debug("Saving file.");
@@ -96,6 +98,8 @@ public class BioVizEditor {
 				}
 		);
 
+		// Reload the file in currentViz on close.
+		// If the changes were only previewed we reload the old file.
 		dialog.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -112,19 +116,24 @@ public class BioVizEditor {
 
 		JScrollPane editScrollPane = new JScrollPane(editPane);
 		editScrollPane.setPreferredSize(new Dimension(width, height));
-		editScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		editScrollPane.setVerticalScrollBarPolicy(
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 		dialog.add(editScrollPane, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Shows the Editor window.
+	 */
 	public void show(){
 		dialog.setVisible(true);
 	}
 
-	public void hide(){
-		dialog.setVisible(false);
-	}
-
+	/**
+	 * Sets the file to edit.
+	 *
+	 * @param f the file
+	 */
 	public void setFile(final File f){
 
 		this.file = f;
