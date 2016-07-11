@@ -31,16 +31,42 @@ public class Biochip {
 	private static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
 
+	/**
+	 * List of all blockages present on the biochip.
+	 */
 	public final List<Pair<Rectangle, Range>> blockages =
 			new ArrayList<>();
+
+	/**
+	 * List of all detectors present on the biochip.
+	 */
 	public final List<Detector> detectors = new ArrayList<>();
+
+	/**
+	 * List of all heaters present on the biochip.
+	 */
+	public final List<Heater> heaters = new ArrayList<>();
+
+	/**
+	 * List of all magnets present on the biochip.
+	 */
+	public final List<Magnet> magnets= new ArrayList<>();
 	public final Map<Integer, Pin> pins = new HashMap<>();
 	public final Map<Integer, ActuationVector> pinActuations =
 			new HashMap<>();
 	public final Map<Point, ActuationVector> cellActuations =
 			new HashMap<>();
+
+	/**
+	 * List of all mixers present on the biochip.
+	 */
 	public final ArrayList<Mixer> mixers = new ArrayList<>();
-	/** Stores the areaAnnotations. */
+
+	/**
+	 * List of a "area" annotation.
+	 *
+	 * An area annotation means that it will be displayed on top of the cells.
+	 */
 	public final List<AreaAnnotation> areaAnnotations = new ArrayList<>();
 	public List<String> errors = new ArrayList<>();
 	public boolean recalculateAdjacency = false;
@@ -49,6 +75,11 @@ public class Biochip {
 
 	private Map<Integer, String> fluidTypes = new HashMap<>();
 
+
+	// TODO why is this stuff also called annotations? Probably something different would be good.
+	/**
+	 * List of annotations that are displayed in the info panel.
+	 */
 	private List<String> annotations = new ArrayList<>();
 
 

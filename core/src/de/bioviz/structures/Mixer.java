@@ -6,7 +6,7 @@ package de.bioviz.structures;
  *
  * @author Oliver Keszocze
  */
-public class Mixer extends Resource {
+public class Mixer {
 
 	/**
 	 * The unique ID of the mixer.
@@ -19,6 +19,11 @@ public class Mixer extends Resource {
 	public final Range timing;
 
 	/**
+	 * The position of the mixer.
+	 */
+	public final Rectangle position;
+
+	/**
 	 * Standard constructor requiring every value to be present.
 	 *
 	 * @param id
@@ -29,7 +34,7 @@ public class Mixer extends Resource {
 	 * 		When the mixer is present on the chip
 	 */
 	public Mixer(final int id, final Rectangle pos, final Range timing) {
-		super(pos, ResourceType.mixer);
+		this.position=pos;
 		this.id = id;
 		this.timing = timing;
 	}

@@ -6,6 +6,8 @@ package de.bioviz.structures;
  * These resources are: mixer, detector, heater, magnet.
  * <p>
  * They can span multiple cells or just a single one.
+ *
+ * @author Oliver Keszocze
  */
 public class Resource {
 	/**
@@ -24,13 +26,13 @@ public class Resource {
 	 * The supported resources.
 	 */
 	public enum ResourceType {
-		mixer, detector, heater, magnet
+		detector, heater, magnet
 	}
 
 	/**
 	 * Creates a resource of given type at specified position.
-	 * @param position
-	 * @param type
+	 * @param position Position of the resource
+	 * @param type The type of the resource
 	 */
 	public Resource(final Rectangle position, final ResourceType type) {
 		this.position = position;

@@ -3,6 +3,8 @@ package de.bioviz.structures;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static de.bioviz.structures.Resource.ResourceType.detector;
+
 
 /**
  * The abstraction of a field on a biochip.
@@ -50,6 +52,9 @@ public class BiochipField {
 	 */
 	public ArrayList<Mixer> mixers = new ArrayList<>();
 
+	/**
+	 * List of annotations for this field.
+	 */
 	public ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
 
 
@@ -73,12 +78,11 @@ public class BiochipField {
 	private Integer usage = null;
 
 	/**
-	 * Stores the detector that is present at this field.
+	 * Stores the resource of this field.
 	 * <p>
-	 * This variable might be null as not every field must have a detecting
-	 * device.
+	 * This variable might be null as not every field must have a rource.
 	 */
-	private Detector detector;
+	private Resource resource;
 
 	/**
 	 * Creates an empty field at given position on the specified biochip.
@@ -130,7 +134,7 @@ public class BiochipField {
 	 * 		The detector that is placed at this field.
 	 */
 	public void setDetector(final Detector det) {
-		detector = det;
+		resource = det;
 	}
 
 	/**
@@ -142,7 +146,11 @@ public class BiochipField {
 	 * @return The detector, if present, NULL otherwise
 	 */
 	public Detector getDetector() {
-		return detector;
+		if (resource == null  ||
+			resource.type != Resource.ResourceType.detector) {
+			return null;
+		}
+		return (Detector)resource;
 	}
 
 	/**
