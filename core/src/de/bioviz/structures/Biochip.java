@@ -478,6 +478,49 @@ public class Biochip {
 	}
 
 	/**
+	 * Checks the positions of a rectangle for presence on the biochip and
+	 * returns those points who aren't.
+	 * @param rec The rectangle to check.
+	 * @return The list of points of the rectangle that do not belong to the
+	 * biochip.
+	 */
+	public List<Point> nonExistantFields(final Rectangle rec) {
+		return nonExistantFields(rec.positions());
+	}
+
+	/**
+	 * Checks a list of points for presence on the biochip and returns those
+	 * who aren't.
+	 * @param points The list of points to check.
+	 * @return The list of points that do not belong to the biochip.
+	 */
+	public List<Point> nonExistantFields(final ArrayList<Point> points) {
+		ArrayList<Point> filtered = points.stream().
+				filter(p -> !hasFieldAt(p)).
+				collect(Collectors.toCollection(ArrayList<Point>::new));
+		return filtered;
+	}
+
+
+	/**
+	 * Checks whether points of a list do not belong to the chip.
+	 * @param points List of points to test for presence.
+	 * @return true if no point is outside the boundary of the biochip.
+	 */
+	public boolean allPresent(final ArrayList<Point> points) {
+		return points.stream().anyMatch(p->!hasFieldAt(p));
+	}
+
+	/**
+	 * Checks whether points of a rectangle do not belong to the chip.
+	 * @param rec The rectangle whose points are teste.
+	 * @return true if no point is outside the boundary of the biochip.
+	 */
+	public boolean allPresent(final Rectangle rec) {
+		return allPresent(rec.positions());
+	}
+
+	/**
 	 * Retrieves the coordinates of all the fields that are currently set.
 	 *
 	 * @return all valid coordinates
