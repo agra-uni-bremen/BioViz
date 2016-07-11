@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.badlogic.gdx.graphics.g2d.ParticleEmitter.SpawnShape.point;
+
 /**
  * Created by keszocze on 25.08.15.
  * <p>
@@ -131,9 +133,6 @@ final class Validator {
 			final ArrayList<Droplet> drops) {
 		ArrayList<String> errors = new ArrayList<>();
 
-		// TODO fix this stupid method!
-
-
 		for (final Droplet drop : drops) {
 			ArrayList<Rectangle> points = drop.getPositions();
 
@@ -235,8 +234,7 @@ final class Validator {
 
 		if (cellActuations != null && !cellActuations.isEmpty()) {
 			for (final Map.Entry<Point, ActuationVector> pair :
-					cellActuations
-							.entrySet()) {
+					cellActuations.entrySet()) {
 				int len = pair.getValue().size();
 				if (cellActs == null) {
 					cellActs = len;
@@ -286,36 +284,27 @@ final class Validator {
 	 * 		The biochip that is supposed to contain the detectors
 	 * @param detectors
 	 * 		List of detectors to be placed on the chip (might be nulll)
-	 * @param removeWrongDetectors
-	 * 		if true, erroneous detectors will be removed from the list of
-	 * 		detectors
 	 * @return List of errors
 	 */
 	static List<String>
 	checkForDetectorPositions(final Biochip chip,
-							  final List<Detector> detectors,
-							  final boolean removeWrongDetectors) {
+							  final List<Detector> detectors) {
 		ArrayList<String> errors = new ArrayList<>();
 
-		if (detectors != null && !detectors.isEmpty()) {
-			ArrayList<Detector> removeList = new ArrayList<>();
-			for (final Detector det : detectors) {
-				Point pos = det.position();
-				try {
-					chip.getFieldAt(pos);
-				} catch (final RuntimeException e) {
+		if (detectors == null) {
+			return errors;
+		}
+
+		for (final Detector det : detectors) {
+			List<Point> points = det.position().positions();
+			points.forEach(pos -> {
+				if (!chip.hasFieldAt(pos)) {
 					String msg =
 							"Can not place detectors at position " + pos +
 							". Position does not exist on chip.";
-					if (removeWrongDetectors) {
-						removeList.add(det);
-						msg = msg +
-							  " Removed erroneous detector from list.";
-					}
 					errors.add(msg);
 				}
-			}
-			detectors.removeAll(removeList);
+			});
 		}
 		return errors;
 	}
