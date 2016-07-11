@@ -64,10 +64,6 @@ public abstract class DrawableSprite implements Drawable {
 	 */
 	private static TextureManager textures;
 
-	/**
-	 * Link to the visualization this sprite is used in.
-	 */
-	BioViz viz;
 
 	/**
 	 * The colors that are set to the four corners of this sprite. This may be
@@ -76,6 +72,12 @@ public abstract class DrawableSprite implements Drawable {
 	 * will be used instead.
 	 */
 	protected Color[] cornerColors = null;
+
+
+	/**
+	 * Link to the visualization this sprite is used in.
+	 */
+	BioViz viz;
 
 	/**
 	 * The x coordinate of this sprite.
@@ -168,6 +170,7 @@ public abstract class DrawableSprite implements Drawable {
 	 *
 	 * @param texture
 	 * 		the texture to use
+	 * 	@param parent The parent BioViz instance
 	 */
 	public DrawableSprite(final TextureE texture,
 						  final float sizeX,

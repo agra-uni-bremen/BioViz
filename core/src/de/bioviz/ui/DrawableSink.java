@@ -4,7 +4,7 @@ import de.bioviz.structures.Sink;
 import de.bioviz.util.Pair;
 
 /**
- * Specialization of a DrawableField for sinks
+ * Specialization of a DrawableField for sinks.
  * @author Oliver Keszocze
  */
 public class DrawableSink extends DrawableField {
