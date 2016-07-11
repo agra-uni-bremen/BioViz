@@ -189,9 +189,9 @@ public class Rectangle {
 
 
 	/**
-	 * @return ArrayList of the points of this rectangle.
+	 * @return List of the points of this rectangle.
 	 */
-	public ArrayList<Point> positions() {
+	public List<Point> positions() {
 
 		ArrayList<Point> result = new ArrayList<>();
 
@@ -366,6 +366,7 @@ public class Rectangle {
 	 * @return String of the form "Rect[(lowerLeft.x,lowerLeft.y)
 	 * (upperRight.x,upperRight.y)]"
 	 */
+	@Override
 	public String toString() {
 		return "Rect[" + lowerLeft + " " + upperRight + "]";
 	}

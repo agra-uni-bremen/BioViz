@@ -68,16 +68,16 @@ final class Validator {
 		for (final Droplet drop : drops) {
 			ArrayList<Rectangle> ps = drop.getPositions();
 
-			ps.forEach(rect -> {
-						   rect.positions().forEach(pos -> {
-							   if (!points.contains(pos)) {
-								   errors.add("Droplet " + drop.getID() +
-											  ": position " + pos +
-											  " of route not on grid!");
-							   }
+			ps.forEach(rect ->
+							   rect.positions().forEach(pos -> {
+								   if (!points.contains(pos)) {
+									   errors.add("Droplet " + drop.getID() +
+												  ": position " + pos +
+												  " of route not on grid!");
+								   }
 
-						   });
-					   }
+							   })
+
 			);
 		}
 		return errors;
@@ -315,7 +315,8 @@ final class Validator {
 	}
 
 	/**
-	 * Checks whether the given list of resources is going to be added to fields
+	 * Checks whether the given list of resources is going to be added to
+	 * fields
 	 * that already have an attached resource.
 	 *
 	 * @param chip

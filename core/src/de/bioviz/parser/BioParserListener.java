@@ -1053,7 +1053,7 @@ class BioParserListener extends BioBaseListener {
 		}
 
 
-		errors.forEach(logger::info);
+		errors.forEach(logger::error);
 		chip.errors.addAll(errors);
 
 	}
