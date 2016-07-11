@@ -3,6 +3,7 @@ package de.bioviz.structures;
 import de.bioviz.util.Pair;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.badlogic.gdx.utils.Align.center;
 
@@ -14,12 +15,12 @@ public class Rectangle {
 	/**
 	 * The lower left corner of the rectangle.
 	 */
-	Point lowerLeft;
+	public Point lowerLeft;
 
 	/**
 	 * The upper right corner of the rectangle.
 	 */
-	Point upperRight;
+	public Point upperRight;
 
 
 	/**
@@ -233,11 +234,40 @@ public class Rectangle {
 	}
 
 	/**
+	 * Returns the list of corners of the rectangle.
+	 *
+	 * Note that the list contains either four points (i.e. a "real" rectangle")
+	 * or only one (the rectangle actually is a point). No extra test for 1xn or
+	 * nx1 rectangles is performed.
+	 *
+	 * @return The corners of the rectangle.
+	 */
+	public List<Point> corners() {
+		ArrayList<Point> cns = new ArrayList<>();
+		cns.add(lowerLeft);
+		if (!isPoint()) {
+			cns.add(upperLeft());
+			cns.add(upperRight);
+			cns.add(lowerRight());
+		}
+		return cns;
+	}
+
+	/**
 	 * Computes the upper left corner of the rectangle.
 	 * @return The upper left corner of the rectangle.
 	 */
 	public Point upperLeft() {
 		return new Point(lowerLeft.fst,upperRight.snd);
+	}
+
+
+	/**
+	 * Computes the lower right corner of the rectangle.
+	 * @return The lower right corner of the rectangle.
+	 */
+	public Point lowerRight() {
+		return new Point(upperRight.fst,lowerLeft.snd);
 	}
 
 	/**
