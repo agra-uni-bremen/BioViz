@@ -17,7 +17,8 @@
    sodipodi:docname="Magnet.svg"
    inkscape:export-filename="/home/keszocze/proggs/BioViz/core/assets/images/default/Magnet.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   enable-background="new">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -28,16 +29,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="13.345775"
-     inkscape:cy="176.68739"
+     inkscape:cx="60.977841"
+     inkscape:cy="138.0115"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1001"
+     inkscape:window-width="1362"
+     inkscape:window-height="724"
      inkscape:window-x="0"
-     inkscape:window-y="25"
-     inkscape:window-maximized="1"
+     inkscape:window-y="42"
+     inkscape:window-maximized="0"
      inkscape:object-nodes="true"
      inkscape:snap-global="false">
     <inkscape:grid
@@ -74,26 +75,31 @@
        height="224"
        x="16"
        y="16"
-       transform="translate(0,796.36218)"
        rx="32"
-       ry="32" />
+       ry="32"
+       transform="translate(0,796.36218)" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:24;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 80.987297,862.70227 48.000003,48"
-       id="path4167"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:28.81295967;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 162.78724,876.32157 c 6.89603,32.60407 12.66946,54.10903 11.21511,69.24004 -2.8975,41.23307 -27.99243,43.80065 -45.94337,43.82117 -17.95093,-0.0823 -43.045869,-2.6498 -45.943364,-43.88287 -1.454354,-15.13101 4.319084,-36.63597 11.215118,-69.24004"
+       id="path3697-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 81.736129,861.67182 28.177921,5.95762"
+       id="path4594"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:24;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 146.71578,935.93322 48,48"
-       id="path4167-9"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:24;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 73.479718,940.98399 48.000002,48"
-       id="path4167-9-2"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 174.26753,861.7048 -28.17792,5.95762"
+       id="path4594-7"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
   </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="mask"
+     style="display:inline;" />
 </svg>
