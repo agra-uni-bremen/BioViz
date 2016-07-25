@@ -16,12 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.List;
 
 /**
  * This class implements an infoPanel that shows statistics about the biochip.
@@ -107,11 +105,6 @@ public class InfoPanel extends JPanel {
      * DropletId to FluidType table.
      */
     private JTable dropToFluidTable = new JTable(dropToFluidModel);
-
-    /**
-     * The textArea for the annotations.
-     */
-    private JTextArea annotationArea = new JTextArea(1, 1);
 
     /**
      * The current BioViz instance.
@@ -225,14 +218,6 @@ public class InfoPanel extends JPanel {
         numDetectorsValue.setPreferredSize(
                 new Dimension(valueWidth, labelHeight));
 
-        JLabel annotationsLabel = new JLabel("Annotations: ");
-        annotationsLabel.setPreferredSize(
-                new Dimension(labelWidth, labelHeight));
-        JScrollPane annotationsPane = new JScrollPane(annotationArea);
-        annotationArea.setEditable(false);
-        annotationsPane.setPreferredSize(
-                new Dimension(internalWidth, tableHeight));
-
         JSeparator infoSep = new JSeparator(SwingConstants.HORIZONTAL);
         infoSep.setPreferredSize(new Dimension(internalWidth,
                 seperatorHeight));
@@ -268,8 +253,6 @@ public class InfoPanel extends JPanel {
         panel.add(numDetectorsValue);
         panel.add(fluidIdScrollPane);
         panel.add(dropToFluidScrollPane);
-        panel.add(annotationsLabel);
-        panel.add(annotationsPane);
         this.add(panel);
     }
 
@@ -296,7 +279,6 @@ public class InfoPanel extends JPanel {
             updateFieldTypes();
             updateFluidTable();
             updateDropToFluid();
-            updateAnnotations();
         }
     }
 
@@ -445,16 +427,6 @@ public class InfoPanel extends JPanel {
             numDispensersValue.setText(String.valueOf(numDispenser));
             numSinksValue.setText(String.valueOf(numSinks));
             numDetectorsValue.setText(String.valueOf(numDetectors));
-        }
-    }
-
-    /**
-     *
-     */
-    public void updateAnnotations() {
-        List<String> annotations = currentCircuit.getData().getAnnotations();
-        for (final String annotation : annotations) {
-            annotationArea.append(annotation.substring(2));
         }
     }
 

@@ -78,10 +78,12 @@ public final class BioParser {
 			ParseTree tree = parser.bio(); // parse everything
 
 			if (errorListener.hasErrors()) {
+				Biochip chip = new Biochip();
 				for (final String msg : errorListener.getErrors()) {
 					logger.error(msg);
+					chip.hardErrors.add(msg);
 				}
-				return null;
+				return chip;
 			} else {
 				ParseTreeWalker walker = new ParseTreeWalker();
 				// Walk the tree created during the parse, trigger callbacks

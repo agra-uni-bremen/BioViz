@@ -60,7 +60,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import static java.awt.SystemColor.info;
 
 /**
  * This class is the single desktop starter class. It starts the cross-platform
@@ -168,6 +167,27 @@ public class DesktopLauncher extends JFrame {
 	private InfoPanel infoPanel;
 
 	/**
+	 * The biovizEditor instance.
+	 */
+	private BioVizEditor editor;
+
+	/**
+	 * The softErrorViewer instance.
+	 */
+	private ErrorViewer softErrorsViewer;
+
+	/**
+	 * The hardErrorViewer instance.
+	 */
+	private ErrorViewer hardErrorsViewer;
+
+	/**
+	 * The annotationViewer instance.
+	 */
+	private AnnotationViewer annotationViewer;
+
+
+	/**
 	 * This maps the tabs that are open in the visualizationTabs field to the
 	 * filenames being open there. As each tab corresponds to a certain file,
 	 * clicking a particular tab needs to tell the visualization to display the
@@ -215,6 +235,12 @@ public class DesktopLauncher extends JFrame {
 			currentViz = new BioViz(file);
 		}
 		canvas = new LwjglAWTCanvas(currentViz);
+		editor = new BioVizEditor(currentViz);
+		hardErrorsViewer = new ErrorViewer(currentViz, "Parser errors",
+				ErrorViewer.ERRORTYPE.HARD);
+		softErrorsViewer = new ErrorViewer(currentViz, "Parser warnings",
+				ErrorViewer.ERRORTYPE.SOFT);
+		annotationViewer = new AnnotationViewer(currentViz);
 
 		currentViz.addCloseFileListener(new CloseFileCallback());
 
@@ -224,7 +250,6 @@ public class DesktopLauncher extends JFrame {
 		this.setTitle(BioVizInfo.PROGNAME);
 
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
-
 
 		initializeTabs(file);
 
@@ -272,6 +297,11 @@ public class DesktopLauncher extends JFrame {
 						 " with path: " + iconPath);
 		}
 
+		editor.setIcon(iconPath);
+		softErrorsViewer.setIcon(iconPath);
+		hardErrorsViewer.setIcon(iconPath);
+		annotationViewer.setIcon(iconPath);
+
 		pack();
 		setVisible(true);
 
@@ -279,7 +309,10 @@ public class DesktopLauncher extends JFrame {
 
 
 		currentViz.addReloadFileListener(
-				() -> reloadTab()
+				() -> {
+					reloadTab();
+					reloadViewers();
+				}
 		);
 	}
 
@@ -414,6 +447,44 @@ public class DesktopLauncher extends JFrame {
 		prevStepButton.addActionListener(
 				e -> currentViz.currentCircuit.prevStep());
 
+		JButton editorButton = new JButton("Editor");
+		editorButton.setPreferredSize(new Dimension(buttonWidth,
+				editorButton.getPreferredSize().height));
+		editorButton.addActionListener(
+				e -> {
+					editor.show();
+				}
+		);
+
+		JButton annotationsButton = new JButton("Annotations");
+		annotationsButton.setPreferredSize(new Dimension(buttonWidth,
+				annotationsButton.getPreferredSize().height));
+		annotationsButton.addActionListener(
+				e -> {
+					annotationViewer.show();
+				}
+		);
+
+		JButton warningsButton = new JButton("Warnings");
+		warningsButton.setPreferredSize(new Dimension(buttonWidth, warningsButton
+				.getPreferredSize().height));
+		warningsButton.addActionListener(
+				e -> {
+					softErrorsViewer.show();
+				}
+		);
+
+		JButton errorsButton = new JButton("Errors");
+		errorsButton.setPreferredSize(new Dimension(buttonWidth, errorsButton
+				.getPreferredSize().height));
+		errorsButton.addActionListener(
+				e -> {
+					hardErrorsViewer.show();
+				}
+		);
+
+
+
 		/*
 		For some reason, adding a separator more then once prevents it from
 		being displayed more
@@ -457,7 +528,20 @@ public class DesktopLauncher extends JFrame {
 		panel.add(prefsSep);
 		panel.add(preferencesButton);
 		panel.add(statisticsButton);
+		panel.add(editorButton);
+		panel.add(annotationsButton);
+		panel.add(warningsButton);
+		panel.add(errorsButton);
 		return panel;
+	}
+
+	/**
+	 * Reloads all external viewers.
+	 */
+	private void reloadViewers() {
+		hardErrorsViewer.reload();
+		softErrorsViewer.reload();
+		annotationViewer.reload();
 	}
 
 	/**
@@ -471,10 +555,17 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		visualizationTabs.addChangeListener(
-				l -> currentViz.scheduleLoadingOfNewFile(
-						tabsToFilenames.get(
-								((JTabbedPane) l.getSource())
-										.getSelectedComponent()))
+				l -> {
+					currentViz.scheduleLoadingOfNewFile(
+							tabsToFilenames.get(
+									((JTabbedPane) l.getSource())
+											.getSelectedComponent()));
+					// load new file in editor
+					editor.setFile(tabsToFilenames.get(
+							((JTabbedPane) l.getSource())
+									.getSelectedComponent()));
+					reloadViewers();
+				}
 		);
 
 		// nextTabListener
@@ -491,6 +582,13 @@ public class DesktopLauncher extends JFrame {
 									visualizationTabs.getComponentAt(nextIndex)
 							)
 					);
+					// load new file in editor
+					editor.setFile(
+							tabsToFilenames.get(
+									visualizationTabs.getComponentAt(nextIndex)
+							)
+					);
+					reloadViewers();
 					// change to the correct tab in the ui
 					visualizationTabs.setSelectedIndex(nextIndex);
 				}
@@ -510,6 +608,13 @@ public class DesktopLauncher extends JFrame {
 									visualizationTabs.getComponentAt(prevIndex)
 							)
 					);
+					// load new file in editor
+					editor.setFile(
+							tabsToFilenames.get(
+									visualizationTabs.getComponentAt(prevIndex)
+							)
+					);
+					reloadViewers();
 					// change to the correct tab in the ui
 					visualizationTabs.setSelectedIndex(prevIndex);
 				}
@@ -592,6 +697,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setSelectedIndex(
 				visualizationTabs.getTabCount() - 1);
 		tabsToFilenames.put(dummyPanel, file);
+		editor.setFile(file);
 		this.currentViz.scheduleLoadingOfNewFile(file);
 	}
 
@@ -607,6 +713,8 @@ public class DesktopLauncher extends JFrame {
 
 		if (file != null) {
 			currentViz.unloadFile(file);
+			editor.setFile(file);
+			reloadViewers();
 			currentViz.scheduleLoadingOfNewFile(file);
 
 		} else {
@@ -720,7 +828,7 @@ public class DesktopLauncher extends JFrame {
 
 		Biochip chip = BioParser.parseFile(f);
 		if (!chip.errors.isEmpty()) {
-			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath() );
+			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath());
 			for (final String error : chip.errors) {
                 logger.error(error);
 			}
@@ -923,6 +1031,15 @@ public class DesktopLauncher extends JFrame {
 		new PreferencesWindow(viz);
 		logger.debug("Done opening preferences window.");
 	}
+
+	/**
+	 * Allows to disable or enable the hotkeys from outside of DesktopLauncher.
+	 * @param allow allow hotkeys or not
+	 */
+	static void setAllowHotkeys(final boolean allow) {
+		allowHotkeys = allow;
+	}
+
 
 	/**
 	 * Translates a java.awt keycode to a libgdx keycode.
@@ -1366,6 +1483,9 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			logger.trace("calling desktop LoadedFileCallback()");
 			if (currentViz.currentCircuit != null) {
+
+				reloadViewers();
+
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
 				int oldTime = currentViz.currentCircuit.getCurrentTime();
@@ -1445,8 +1565,7 @@ public class DesktopLauncher extends JFrame {
 										.getCurrentTime();
 								// this is problematic if the file contains
 								// .svg inside the name
-								int svgPosition = f.getAbsolutePath().indexOf
-										(".svg");
+								int svgPosition = f.getAbsolutePath().indexOf(".svg");
 								// initialize with absolute path
 								String pathWithoutSuffix = f.getAbsolutePath();
 								// check if suffix was found, if not the path
@@ -1480,8 +1599,8 @@ public class DesktopLauncher extends JFrame {
 					}
 				});
 			} catch (final Exception e) {
-				logger.error("Could not save file: " + e.getMessage() + "\n"
-							 + e.getStackTrace());
+				logger.error("Could not save file: " + e.getMessage() + "\n" +
+						e.getStackTrace());
 			}
 			allowHotkeys = true;
 		}
@@ -1546,7 +1665,7 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
 		/**
-		 * A BDisplayOption to store the checkboxValues
+		 * A BDisplayOption to store the checkboxValues.
 		 */
 		private BDisplayOptions option;
 
