@@ -342,7 +342,7 @@ public class BioViz implements ApplicationListener {
         reloadFileListeners.add(listener);
     }
 
-    void callReloadFileListeners() {
+    public void callReloadFileListeners() {
         callListeners(reloadFileListeners);
     }
 

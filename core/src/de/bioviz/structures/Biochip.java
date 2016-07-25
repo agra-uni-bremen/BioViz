@@ -69,6 +69,7 @@ public class Biochip {
 	 */
 	public final List<AreaAnnotation> areaAnnotations = new ArrayList<>();
 	public List<String> errors = new ArrayList<>();
+	public List<String> hardErrors = new ArrayList<>();
 	public boolean recalculateAdjacency = false;
 
 	private Map<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
