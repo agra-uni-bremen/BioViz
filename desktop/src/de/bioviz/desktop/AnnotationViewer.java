@@ -27,9 +27,9 @@ public class AnnotationViewer extends TextViewer {
 	 */
 	private void loadAnnotations() {
 		DrawableCircuit currentCircuit = currentViz.currentCircuit;
-		if (currentCircuit!=null) {
+		if (currentCircuit != null) {
 			List<String> annotations = currentCircuit.getData().getAnnotations();
-			for (String annotation : annotations) {
+			for (final String annotation : annotations) {
 				addLine(annotation.substring(2));
 			}
 		}

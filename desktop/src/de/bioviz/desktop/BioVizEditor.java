@@ -5,7 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -71,12 +75,12 @@ public class BioVizEditor {
 		frame.addWindowFocusListener(new WindowFocusListener() {
 
 			@Override
-			public void windowGainedFocus(WindowEvent e) {
+			public void windowGainedFocus(final WindowEvent e) {
 				DesktopLauncher.setAllowHotkeys(false);
 			}
 
 			@Override
-			public void windowLostFocus(WindowEvent e) {
+			public void windowLostFocus(final WindowEvent e) {
 				DesktopLauncher.setAllowHotkeys(true);
 			}
 		});

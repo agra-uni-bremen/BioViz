@@ -16,12 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.List;
 
 /**
  * This class implements an infoPanel that shows statistics about the biochip.

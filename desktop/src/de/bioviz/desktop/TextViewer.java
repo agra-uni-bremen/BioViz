@@ -32,12 +32,12 @@ public class TextViewer {
 	/**
 	 * Creates a new TextViewer with a default size.
 	 */
-	public TextViewer(){
+	public TextViewer() {
 		final int height = 400;
 		final int width = 300;
 		frame = new JFrame();
 		frame.setPreferredSize(new Dimension(width, height));
-		textArea = new JTextArea(1,1);
+		textArea = new JTextArea(1, 1);
 		textArea.setEditable(false);
 
 		JScrollPane scrollPane = new JScrollPane(textArea);
@@ -69,10 +69,10 @@ public class TextViewer {
 	 * Sets the icon image.
 	 * @param iconPath the icon image path
 	 */
-	public void setIcon(final String iconPath){
+	public void setIcon(final String iconPath) {
 		try {
 			frame.setIconImage(ImageIO.read(getFileFromStream(iconPath)));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logger.error("Could not load icon image.");
 		}
 	}

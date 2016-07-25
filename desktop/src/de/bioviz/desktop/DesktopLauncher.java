@@ -237,9 +237,9 @@ public class DesktopLauncher extends JFrame {
 		canvas = new LwjglAWTCanvas(currentViz);
 		editor = new BioVizEditor(currentViz);
 		hardErrorsViewer = new ErrorViewer(currentViz, "Parser errors",
-				ErrorViewer.ERROR_TYPE.HARD);
+				ErrorViewer.ERRORTYPE.HARD);
 		softErrorsViewer = new ErrorViewer(currentViz, "Parser warnings",
-				ErrorViewer.ERROR_TYPE.SOFT);
+				ErrorViewer.ERRORTYPE.SOFT);
 		annotationViewer = new AnnotationViewer(currentViz);
 
 		currentViz.addCloseFileListener(new CloseFileCallback());
@@ -538,7 +538,7 @@ public class DesktopLauncher extends JFrame {
 	/**
 	 * Reloads all external viewers.
 	 */
-	private void reloadViewers(){
+	private void reloadViewers() {
 		hardErrorsViewer.reload();
 		softErrorsViewer.reload();
 		annotationViewer.reload();
@@ -561,7 +561,7 @@ public class DesktopLauncher extends JFrame {
 									((JTabbedPane) l.getSource())
 											.getSelectedComponent()));
 					// load new file in editor
-					editor.setFile(	tabsToFilenames.get(
+					editor.setFile(tabsToFilenames.get(
 							((JTabbedPane) l.getSource())
 									.getSelectedComponent()));
 					reloadViewers();
@@ -828,7 +828,7 @@ public class DesktopLauncher extends JFrame {
 
 		Biochip chip = BioParser.parseFile(f);
 		if (!chip.errors.isEmpty()) {
-			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath() );
+			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath());
 			for (final String error : chip.errors) {
                 logger.error(error);
 			}
@@ -1565,8 +1565,7 @@ public class DesktopLauncher extends JFrame {
 										.getCurrentTime();
 								// this is problematic if the file contains
 								// .svg inside the name
-								int svgPosition = f.getAbsolutePath().indexOf
-										(".svg");
+								int svgPosition = f.getAbsolutePath().indexOf(".svg");
 								// initialize with absolute path
 								String pathWithoutSuffix = f.getAbsolutePath();
 								// check if suffix was found, if not the path
@@ -1600,8 +1599,8 @@ public class DesktopLauncher extends JFrame {
 					}
 				});
 			} catch (final Exception e) {
-				logger.error("Could not save file: " + e.getMessage() + "\n"
-							 + e.getStackTrace());
+				logger.error("Could not save file: " + e.getMessage() + "\n" +
+						e.getStackTrace());
 			}
 			allowHotkeys = true;
 		}
@@ -1666,7 +1665,7 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
 		/**
-		 * A BDisplayOption to store the checkboxValues
+		 * A BDisplayOption to store the checkboxValues.
 		 */
 		private BDisplayOptions option;
 

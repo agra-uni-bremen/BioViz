@@ -6,10 +6,10 @@ import de.bioviz.ui.BioViz;
  * This class implements an errorViewer for parser errors.
  *
  */
-public class ErrorViewer extends TextViewer{
+public class ErrorViewer extends TextViewer {
 
 	/** The error type. */
-	ERROR_TYPE type;
+	ERRORTYPE type;
 	/** The bioViz instance. */
 	private BioViz currentViz;
 
@@ -19,10 +19,9 @@ public class ErrorViewer extends TextViewer{
 	 * @param bioViz the bioviz instance
 	 * @param title the title for the frame
 	 * @param type the type of errors to show
-	 * @param iconPath the path to the icon
 	 */
 	public ErrorViewer(final BioViz bioViz, final String title, final
-	ERROR_TYPE type) {
+	ERRORTYPE type) {
 		super();
 		frame.setTitle(title);
 		currentViz = bioViz;
@@ -32,7 +31,7 @@ public class ErrorViewer extends TextViewer{
 	/**
 	 * Adds hard errors to the textArea.
 	 */
-	private void addErrors(){
+	private void addErrors() {
 		if (currentViz.currentCircuit != null) {
 			addLines(currentViz.currentCircuit.getData().hardErrors);
 		}
@@ -41,7 +40,7 @@ public class ErrorViewer extends TextViewer{
 	/**
 	 * Adds soft errors to the textArea.
 	 */
-	private void addWarnings(){
+	private void addWarnings() {
 		if (currentViz.currentCircuit != null) {
 			addLines(currentViz.currentCircuit.getData().errors);
 		}
@@ -50,13 +49,13 @@ public class ErrorViewer extends TextViewer{
 	/**
 	 * Reloads the content for the current bioviz.
 	 */
-	public void reload(){
+	public void reload() {
 		textArea.setText("");
-		if (type.equals(ERROR_TYPE.HARD)) {
+		if (type.equals(ERRORTYPE.HARD)) {
 			addErrors();
-		} else if (type.equals(ERROR_TYPE.SOFT)) {
+		} else if (type.equals(ERRORTYPE.SOFT)) {
 			addWarnings();
-		} else if (type.equals(ERROR_TYPE.BOTH)) {
+		} else if (type.equals(ERRORTYPE.BOTH)) {
 			addErrors();
 			addWarnings();
 		}
@@ -65,9 +64,9 @@ public class ErrorViewer extends TextViewer{
 	/**
 	 * Enum for the errorTypes.
 	 */
-	public enum ERROR_TYPE {
-		HARD,
-		SOFT,
-		BOTH
+	public enum ERRORTYPE {
+		HARD, /** Error where the parsing failed completely. */
+		SOFT, /** Warnings. */
+		BOTH /** Both types together. */
 	}
 }
