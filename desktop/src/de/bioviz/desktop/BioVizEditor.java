@@ -5,11 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -39,7 +35,7 @@ public class BioVizEditor {
 	/**
 	 * Dialog window.
 	 */
-	private JDialog dialog;
+	private JFrame frame;
 
 	/**
 	 * BioViz instance.
@@ -67,12 +63,12 @@ public class BioVizEditor {
 		final int height = 500;
 		final int width = 400;
 		currentViz = bioViz;
-		dialog = new JDialog();
-		dialog.setTitle("BioViz Editor");
-		dialog.setLayout(new BorderLayout());
+		frame = new JFrame();
+		frame.setTitle("BioViz Editor");
+		frame.setLayout(new BorderLayout());
 
 		// stop the canvas from doing stuff when editing
-		dialog.addWindowFocusListener(new WindowFocusListener() {
+		frame.addWindowFocusListener(new WindowFocusListener() {
 
 			@Override
 			public void windowGainedFocus(WindowEvent e) {
@@ -86,8 +82,8 @@ public class BioVizEditor {
 		});
 
 		editPane = new JEditorPane();
-		dialog.setPreferredSize(new Dimension(width, height));
-		dialog.setMinimumSize(new Dimension(width, height));
+		frame.setPreferredSize(new Dimension(width, height));
+		frame.setMinimumSize(new Dimension(width, height));
 
 		JToolBar toolBar = new JToolBar("Hello");
 		toolBar.setFloatable(false);
@@ -120,7 +116,7 @@ public class BioVizEditor {
 
 		// Reload the file in currentViz on close.
 		// If the changes were only previewed we reload the old file.
-		dialog.addWindowListener(new WindowAdapter() {
+		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
 			public void windowClosing(final WindowEvent e) {
@@ -132,21 +128,21 @@ public class BioVizEditor {
 		toolBar.add(reload);
 		toolBar.add(save);
 
-		dialog.add(toolBar, BorderLayout.NORTH);
+		frame.add(toolBar, BorderLayout.NORTH);
 
 		JScrollPane editScrollPane = new JScrollPane(editPane);
 		editScrollPane.setPreferredSize(new Dimension(width, height));
 		editScrollPane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		dialog.add(editScrollPane, BorderLayout.CENTER);
+		frame.add(editScrollPane, BorderLayout.CENTER);
 	}
 
 	/**
 	 * Shows the Editor window.
 	 */
 	public void show() {
-		dialog.setVisible(true);
+		frame.setVisible(true);
 	}
 
 	/**
@@ -155,7 +151,7 @@ public class BioVizEditor {
 	 */
 	public void setIcon(final String iconPath) {
 		try {
-			dialog.setIconImage(ImageIO.read(getFileFromStream(iconPath)));
+			frame.setIconImage(ImageIO.read(getFileFromStream(iconPath)));
 		} catch (final IOException e) {
 			logger.error("Could not load icon image.");
 		}
