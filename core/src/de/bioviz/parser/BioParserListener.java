@@ -963,7 +963,7 @@ class BioParserListener extends BioBaseListener {
 		errors.addAll(Validator.checkForResources(chip, "detector",
 												  detectors));
 		detectors.forEach(det -> {
-			ArrayList<Point> points = det.position.positions();
+			List<Point> points = det.position.positions();
 			points.forEach(pos -> chip.getFieldAt(pos).setDetector(det));
 		});
 		chip.detectors.addAll(detectors);
@@ -973,7 +973,7 @@ class BioParserListener extends BioBaseListener {
 		errors.addAll(Validator.checkForResources(chip, "heater", heaters));
 		chip.heaters.addAll(heaters);
 		heaters.forEach(h -> {
-			ArrayList<Point> points = h.position.positions();
+			List<Point> points = h.position.positions();
 			points.forEach(pos -> chip.getFieldAt(pos).setHeater(h));
 		});
 
@@ -982,7 +982,7 @@ class BioParserListener extends BioBaseListener {
 		errors.addAll(Validator.checkForResources(chip, "magnet", magnets));
 		chip.magnets.addAll(magnets);
 		magnets.forEach(m -> {
-			ArrayList<Point> points = m.position.positions();
+			List<Point> points = m.position.positions();
 			points.forEach(pos -> chip.getFieldAt(pos).setMagnet(m));
 		});
 		// Resource adding end

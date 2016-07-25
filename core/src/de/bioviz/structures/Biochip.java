@@ -510,7 +510,7 @@ public class Biochip {
 	 * 		The list of points to check.
 	 * @return The list of points that do not belong to the biochip.
 	 */
-	public List<Point> nonExistantFields(final ArrayList<Point> points) {
+	public List<Point> nonExistantFields(final List<Point> points) {
 		ArrayList<Point> filtered = points.stream().
 				filter(p -> !hasFieldAt(p)).
 				collect(Collectors.toCollection(ArrayList<Point>::new));
@@ -525,7 +525,7 @@ public class Biochip {
 	 * 		List of points to test for presence.
 	 * @return true if no point is outside the boundary of the biochip.
 	 */
-	public boolean allPresent(final ArrayList<Point> points) {
+	public boolean allPresent(final List<Point> points) {
 		return !points.stream().anyMatch(p -> !hasFieldAt(p));
 	}
 
@@ -564,7 +564,7 @@ public class Biochip {
 	 * @param points The points to check for resources.
 	 * @return true if any of the points has a resource, false otherwise.
 	 */
-	public boolean hasResource(final ArrayList<Point> points) {
+	public boolean hasResource(final List<Point> points) {
 		return points.stream().anyMatch(p->{
 			if (hasFieldAt(p)) {
 				return getFieldAt(p).hasResource();
