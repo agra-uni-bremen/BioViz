@@ -26,7 +26,18 @@ public class Resource {
 	 * The supported resources.
 	 */
 	public enum ResourceType {
-		detector, heater, magnet
+		/**
+		 * Detector type
+		 */
+		detector,
+		/**
+		 * Heater type
+		 */
+		heater,
+		/**
+		 * Magnet type
+		 */
+		magnet
 	}
 
 	/**
