@@ -19,7 +19,7 @@ import static de.bioviz.desktop.DesktopLauncher.getFileFromStream;
  * This class implements an errorViewer for parser errors.
  *
  */
-public class ErrorViewer{
+public class ErrorViewer extends TextViewer{
 
 	/**
 	 * Logger instance.
@@ -27,10 +27,6 @@ public class ErrorViewer{
 	private static Logger logger =
 			LoggerFactory.getLogger(ErrorViewer.class);
 
-	/** The JFrame instance. */
-	private JFrame frame;
-	/** The texArea instance. */
-	private JTextArea textArea;
 	/** The error type. */
 	ERROR_TYPE type;
 	/** The bioViz instance. */
@@ -46,19 +42,8 @@ public class ErrorViewer{
 	 */
 	public ErrorViewer(final BioViz bioViz, final String title, final
 	ERROR_TYPE type) {
-		final int height = 400;
-		final int width = 300;
-		frame = new JFrame(title);
-
-		frame.setPreferredSize(new Dimension(width, height));
-		textArea = new JTextArea(1,1);
-		textArea.setEditable(false);
-
-		JScrollPane scrollPane = new JScrollPane(textArea);
-		scrollPane.setPreferredSize(new Dimension(width, height));
-		frame.add(scrollPane);
-		frame.pack();
-
+		super();
+		frame.setTitle(title);
 		currentViz = bioViz;
 		this.type = type;
 	}
@@ -106,32 +91,6 @@ public class ErrorViewer{
 			addErrors();
 			addWarnings();
 		}
-	}
-
-	/**
-	 * Adds a line to the textArea.
-	 * @param s the string
-	 */
-	private void addLine(final String s) {
-		textArea.append(s);
-		textArea.append("\n");
-	}
-
-	/**
-	 * Adds a list of strings to the textArea.
-	 * @param stringList the list of strings
-	 */
-	private void addLines(final List<String> stringList) {
-		for (final String s : stringList) {
-			addLine(s);
-		}
-	}
-
-	/**
-	 * Makes the errorviewer visible.
-	 */
-	public void show() {
-		frame.setVisible(true);
 	}
 
 	/**
