@@ -109,11 +109,6 @@ public class InfoPanel extends JPanel {
     private JTable dropToFluidTable = new JTable(dropToFluidModel);
 
     /**
-     * The textArea for the annotations.
-     */
-    private JTextArea annotationArea = new JTextArea(1, 1);
-
-    /**
      * The current BioViz instance.
      */
     private BioViz bioViz;
@@ -225,14 +220,6 @@ public class InfoPanel extends JPanel {
         numDetectorsValue.setPreferredSize(
                 new Dimension(valueWidth, labelHeight));
 
-        JLabel annotationsLabel = new JLabel("Annotations: ");
-        annotationsLabel.setPreferredSize(
-                new Dimension(labelWidth, labelHeight));
-        JScrollPane annotationsPane = new JScrollPane(annotationArea);
-        annotationArea.setEditable(false);
-        annotationsPane.setPreferredSize(
-                new Dimension(internalWidth, tableHeight));
-
         JSeparator infoSep = new JSeparator(SwingConstants.HORIZONTAL);
         infoSep.setPreferredSize(new Dimension(internalWidth,
                 seperatorHeight));
@@ -268,8 +255,6 @@ public class InfoPanel extends JPanel {
         panel.add(numDetectorsValue);
         panel.add(fluidIdScrollPane);
         panel.add(dropToFluidScrollPane);
-        panel.add(annotationsLabel);
-        panel.add(annotationsPane);
         this.add(panel);
     }
 
@@ -296,7 +281,6 @@ public class InfoPanel extends JPanel {
             updateFieldTypes();
             updateFluidTable();
             updateDropToFluid();
-            updateAnnotations();
         }
     }
 
@@ -445,17 +429,6 @@ public class InfoPanel extends JPanel {
             numDispensersValue.setText(String.valueOf(numDispenser));
             numSinksValue.setText(String.valueOf(numSinks));
             numDetectorsValue.setText(String.valueOf(numDetectors));
-        }
-    }
-
-    /**
-     * Updates the annotation text area.
-     */
-    public void updateAnnotations() {
-        List<String> annotations = currentCircuit.getData().getAnnotations();
-				annotationArea.setText("");
-        for (final String annotation : annotations) {
-            annotationArea.append(annotation.substring(2));
         }
     }
 

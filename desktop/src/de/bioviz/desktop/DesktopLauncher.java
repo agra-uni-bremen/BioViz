@@ -181,6 +181,11 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private ErrorViewer hardErrorsViewer;
 
+	/**
+	 * The annotationViewer instance.
+	 */
+	private AnnotationViewer annotationViewer;
+
 
 	/**
 	 * This maps the tabs that are open in the visualizationTabs field to the
@@ -235,6 +240,7 @@ public class DesktopLauncher extends JFrame {
 				ErrorViewer.ERROR_TYPE.HARD);
 		softErrorsViewer = new ErrorViewer(currentViz, "Parser warnings",
 				ErrorViewer.ERROR_TYPE.SOFT);
+		annotationViewer = new AnnotationViewer(currentViz);
 
 		currentViz.addCloseFileListener(new CloseFileCallback());
 
@@ -294,6 +300,7 @@ public class DesktopLauncher extends JFrame {
 		editor.setIcon(iconPath);
 		softErrorsViewer.setIcon(iconPath);
 		hardErrorsViewer.setIcon(iconPath);
+		annotationViewer.setIcon(iconPath);
 
 		pack();
 		setVisible(true);
@@ -304,8 +311,7 @@ public class DesktopLauncher extends JFrame {
 		currentViz.addReloadFileListener(
 				() -> {
 					reloadTab();
-					hardErrorsViewer.reload();
-					softErrorsViewer.reload();
+					reloadViewers();
 				}
 		);
 	}
@@ -450,6 +456,15 @@ public class DesktopLauncher extends JFrame {
 				}
 		);
 
+		JButton annotationsButton = new JButton("Annotations");
+		annotationsButton.setPreferredSize(new Dimension(buttonWidth,
+				annotationsButton.getPreferredSize().height));
+		annotationsButton.addActionListener(
+				e -> {
+					annotationViewer.show();
+				}
+		);
+
 		JButton warningsButton = new JButton("Warnings");
 		warningsButton.setPreferredSize(new Dimension(buttonWidth, warningsButton
 				.getPreferredSize().height));
@@ -514,9 +529,19 @@ public class DesktopLauncher extends JFrame {
 		panel.add(preferencesButton);
 		panel.add(statisticsButton);
 		panel.add(editorButton);
+		panel.add(annotationsButton);
 		panel.add(warningsButton);
 		panel.add(errorsButton);
 		return panel;
+	}
+
+	/**
+	 * Reloads all external viewers.
+	 */
+	private void reloadViewers(){
+		hardErrorsViewer.reload();
+		softErrorsViewer.reload();
+		annotationViewer.reload();
 	}
 
 	/**
@@ -539,8 +564,7 @@ public class DesktopLauncher extends JFrame {
 					editor.setFile(	tabsToFilenames.get(
 							((JTabbedPane) l.getSource())
 									.getSelectedComponent()));
-					hardErrorsViewer.reload();
-					softErrorsViewer.reload();
+					reloadViewers();
 				}
 		);
 
@@ -564,8 +588,7 @@ public class DesktopLauncher extends JFrame {
 									visualizationTabs.getComponentAt(nextIndex)
 							)
 					);
-					hardErrorsViewer.reload();
-					softErrorsViewer.reload();
+					reloadViewers();
 					// change to the correct tab in the ui
 					visualizationTabs.setSelectedIndex(nextIndex);
 				}
@@ -591,8 +614,7 @@ public class DesktopLauncher extends JFrame {
 									visualizationTabs.getComponentAt(prevIndex)
 							)
 					);
-					hardErrorsViewer.reload();
-					softErrorsViewer.reload();
+					reloadViewers();
 					// change to the correct tab in the ui
 					visualizationTabs.setSelectedIndex(prevIndex);
 				}
@@ -692,8 +714,7 @@ public class DesktopLauncher extends JFrame {
 		if (file != null) {
 			currentViz.unloadFile(file);
 			editor.setFile(file);
-			hardErrorsViewer.reload();
-			softErrorsViewer.reload();
+			reloadViewers();
 			currentViz.scheduleLoadingOfNewFile(file);
 
 		} else {
@@ -1463,8 +1484,7 @@ public class DesktopLauncher extends JFrame {
 			logger.trace("calling desktop LoadedFileCallback()");
 			if (currentViz.currentCircuit != null) {
 
-				hardErrorsViewer.reload();
-				softErrorsViewer.reload();
+				reloadViewers();
 
 				logger.trace(
 						"Desktop received loaded event, setting slider...");

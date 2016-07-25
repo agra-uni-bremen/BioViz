@@ -1,15 +1,29 @@
 package de.bioviz.desktop;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.Dimension;
+import java.io.IOException;
 import java.util.List;
+
+import static de.bioviz.desktop.DesktopLauncher.getFileFromStream;
 
 /**
  * Created by max on 7/25/16.
  */
 public class TextViewer {
+
+	/**
+	 * Logger instance.
+	 */
+	private static Logger logger =
+			LoggerFactory.getLogger(TextViewer.class);
+
 	/** The JFrame instance. */
 	JFrame frame;
 	/** The texArea instance. */
@@ -36,7 +50,7 @@ public class TextViewer {
 	 * Adds a line to the textArea.
 	 * @param s the string
 	 */
-	private void addLine(final String s) {
+	void addLine(final String s) {
 		textArea.append(s);
 		textArea.append("\n");
 	}
@@ -48,6 +62,18 @@ public class TextViewer {
 	void addLines(final List<String> stringList) {
 		for (final String s : stringList) {
 			addLine(s);
+		}
+	}
+
+	/**
+	 * Sets the icon image.
+	 * @param iconPath the icon image path
+	 */
+	public void setIcon(final String iconPath){
+		try {
+			frame.setIconImage(ImageIO.read(getFileFromStream(iconPath)));
+		} catch (IOException e) {
+			logger.error("Could not load icon image.");
 		}
 	}
 

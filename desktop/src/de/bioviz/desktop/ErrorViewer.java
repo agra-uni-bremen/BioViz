@@ -1,31 +1,12 @@
 package de.bioviz.desktop;
 
 import de.bioviz.ui.BioViz;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import java.awt.Dimension;
-import java.io.IOException;
-import java.util.List;
-
-import static de.bioviz.desktop.DesktopLauncher.getFileFromStream;
-
 
 /**
  * This class implements an errorViewer for parser errors.
  *
  */
 public class ErrorViewer extends TextViewer{
-
-	/**
-	 * Logger instance.
-	 */
-	private static Logger logger =
-			LoggerFactory.getLogger(ErrorViewer.class);
 
 	/** The error type. */
 	ERROR_TYPE type;
@@ -46,18 +27,6 @@ public class ErrorViewer extends TextViewer{
 		frame.setTitle(title);
 		currentViz = bioViz;
 		this.type = type;
-	}
-
-	/**
-	 * Sets the icon image.
-	 * @param iconPath the icon image path
-	 */
-	public void setIcon(final String iconPath){
-		try {
-			frame.setIconImage(ImageIO.read(getFileFromStream(iconPath)));
-		} catch (IOException e) {
-			logger.error("Could not load icon image.");
-		}
 	}
 
 	/**
