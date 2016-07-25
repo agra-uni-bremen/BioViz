@@ -166,7 +166,21 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private InfoPanel infoPanel;
 
+	/**
+	 * The biovizEditor instance.
+	 */
 	private BioVizEditor editor;
+
+	/**
+	 * The softErrorViewer instance.
+	 */
+	private ErrorViewer softErrorsViewer;
+
+	/**
+	 * The hardErrorViewer instance.
+	 */
+	private ErrorViewer hardErrorsViewer;
+
 
 	/**
 	 * This maps the tabs that are open in the visualizationTabs field to the
@@ -217,6 +231,10 @@ public class DesktopLauncher extends JFrame {
 		}
 		canvas = new LwjglAWTCanvas(currentViz);
 		editor = new BioVizEditor(currentViz);
+		hardErrorsViewer = new ErrorViewer(currentViz, "Parser errors",
+				ErrorViewer.ERROR_TYPE.HARD);
+		softErrorsViewer = new ErrorViewer(currentViz, "Parser warnings",
+				ErrorViewer.ERROR_TYPE.SOFT);
 
 		currentViz.addCloseFileListener(new CloseFileCallback());
 
@@ -282,7 +300,11 @@ public class DesktopLauncher extends JFrame {
 
 
 		currentViz.addReloadFileListener(
-				() -> reloadTab()
+				() -> {
+					reloadTab();
+					hardErrorsViewer.reload();
+					softErrorsViewer.reload();
+				}
 		);
 	}
 
@@ -426,6 +448,26 @@ public class DesktopLauncher extends JFrame {
 				}
 		);
 
+		JButton warningsButton = new JButton("Warnings");
+		warningsButton.setPreferredSize(new Dimension(buttonWidth, warningsButton
+				.getPreferredSize().height));
+		warningsButton.addActionListener(
+				e -> {
+					softErrorsViewer.show();
+				}
+		);
+
+		JButton errorsButton = new JButton("Errors");
+		errorsButton.setPreferredSize(new Dimension(buttonWidth, errorsButton
+				.getPreferredSize().height));
+		errorsButton.addActionListener(
+				e -> {
+					hardErrorsViewer.show();
+				}
+		);
+
+
+
 		/*
 		For some reason, adding a separator more then once prevents it from
 		being displayed more
@@ -470,6 +512,8 @@ public class DesktopLauncher extends JFrame {
 		panel.add(preferencesButton);
 		panel.add(statisticsButton);
 		panel.add(editorButton);
+		panel.add(warningsButton);
+		panel.add(errorsButton);
 		return panel;
 	}
 
@@ -493,6 +537,8 @@ public class DesktopLauncher extends JFrame {
 					editor.setFile(	tabsToFilenames.get(
 							((JTabbedPane) l.getSource())
 									.getSelectedComponent()));
+					hardErrorsViewer.reload();
+					softErrorsViewer.reload();
 				}
 		);
 
@@ -516,6 +562,8 @@ public class DesktopLauncher extends JFrame {
 									visualizationTabs.getComponentAt(nextIndex)
 							)
 					);
+					hardErrorsViewer.reload();
+					softErrorsViewer.reload();
 					// change to the correct tab in the ui
 					visualizationTabs.setSelectedIndex(nextIndex);
 				}
@@ -541,6 +589,8 @@ public class DesktopLauncher extends JFrame {
 									visualizationTabs.getComponentAt(prevIndex)
 							)
 					);
+					hardErrorsViewer.reload();
+					softErrorsViewer.reload();
 					// change to the correct tab in the ui
 					visualizationTabs.setSelectedIndex(prevIndex);
 				}
@@ -640,6 +690,8 @@ public class DesktopLauncher extends JFrame {
 		if (file != null) {
 			currentViz.unloadFile(file);
 			editor.setFile(file);
+			hardErrorsViewer.reload();
+			softErrorsViewer.reload();
 			currentViz.scheduleLoadingOfNewFile(file);
 
 		} else {
@@ -1350,7 +1402,6 @@ public class DesktopLauncher extends JFrame {
 					public void run() {
 						File f = askForFile("lastFilePath", true);
 						if (f != null) {
-
 							addNewTab(f);
 						}
 					}
@@ -1409,6 +1460,10 @@ public class DesktopLauncher extends JFrame {
 		public void bioVizEvent() {
 			logger.trace("calling desktop LoadedFileCallback()");
 			if (currentViz.currentCircuit != null) {
+
+				hardErrorsViewer.reload();
+				softErrorsViewer.reload();
+
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
 				int oldTime = currentViz.currentCircuit.getCurrentTime();
