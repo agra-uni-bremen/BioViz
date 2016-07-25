@@ -1,12 +1,18 @@
 package de.bioviz.desktop;
 
 import de.bioviz.ui.BioViz;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.Dimension;
+import java.io.IOException;
 import java.util.List;
+
+import static de.bioviz.desktop.DesktopLauncher.getFileFromStream;
 
 
 /**
@@ -14,6 +20,12 @@ import java.util.List;
  *
  */
 public class ErrorViewer{
+
+	/**
+	 * Logger instance.
+	 */
+	private static Logger logger =
+			LoggerFactory.getLogger(ErrorViewer.class);
 
 	/** The JFrame instance. */
 	private JFrame frame;
@@ -30,12 +42,14 @@ public class ErrorViewer{
 	 * @param bioViz the bioviz instance
 	 * @param title the title for the frame
 	 * @param type the type of errors to show
+	 * @param iconPath the path to the icon
 	 */
 	public ErrorViewer(final BioViz bioViz, final String title, final
 	ERROR_TYPE type) {
 		final int height = 400;
 		final int width = 300;
-		frame = new JFrame("TextViewer");
+		frame = new JFrame(title);
+
 		frame.setPreferredSize(new Dimension(width, height));
 		textArea = new JTextArea(1,1);
 		textArea.setEditable(false);
@@ -45,9 +59,20 @@ public class ErrorViewer{
 		frame.add(scrollPane);
 		frame.pack();
 
-		frame.setTitle(title);
 		currentViz = bioViz;
 		this.type = type;
+	}
+
+	/**
+	 * Sets the icon image.
+	 * @param iconPath the icon image path
+	 */
+	public void setIcon(final String iconPath){
+		try {
+			frame.setIconImage(ImageIO.read(getFileFromStream(iconPath)));
+		} catch (IOException e) {
+			logger.error("Could not load icon image.");
+		}
 	}
 
 	/**

@@ -292,6 +292,8 @@ public class DesktopLauncher extends JFrame {
 		}
 
 		editor.setIcon(iconPath);
+		softErrorsViewer.setIcon(iconPath);
+		hardErrorsViewer.setIcon(iconPath);
 
 		pack();
 		setVisible(true);
