@@ -131,9 +131,6 @@ final class Validator {
 			final ArrayList<Droplet> drops) {
 		ArrayList<String> errors = new ArrayList<>();
 
-		// TODO fix this stupid method!
-
-
 		for (final Droplet drop : drops) {
 			ArrayList<Rectangle> points = drop.getPositions();
 
