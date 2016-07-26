@@ -225,7 +225,6 @@ class BioParserListener extends BioBaseListener {
 	 * @return int value of the fluidId
 	 * 					or 0 if ctx is null
 	 */
-	// TODO remove this code duplicity!
 	private int getFluidID(final FluidIDContext ctx) {
 		if (ctx == null) {
 			return 0;
