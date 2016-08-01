@@ -5,11 +5,38 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    enable-background="new"
    version="1.1"
    id="svg2"
    height="256"
-   width="256">
+   width="256"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="Magnet.svg"
+   inkscape:export-filename="/home/jannis/Quellcode/BioViz/core/assets/images/default/Magnet.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="995"
+     id="namedview4294"
+     showgrid="false"
+     inkscape:zoom="1.84375"
+     inkscape:cx="42.688852"
+     inkscape:cy="151.58469"
+     inkscape:window-x="1366"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
   <defs
      id="defs4" />
   <metadata
@@ -40,15 +67,15 @@
     <path
        id="path3697-6"
        d="m 162.78724,876.32157 c 6.89603,32.60407 12.66946,54.10903 11.21511,69.24004 -2.8975,41.23307 -27.99243,43.80065 -45.94337,43.82117 -17.95093,-0.0823 -43.045869,-2.6498 -45.943364,-43.88287 -1.454354,-15.13101 4.319084,-36.63597 11.215118,-69.24004"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:28.81295967;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-rule:evenodd;stroke:#4d4d4d;stroke-width:28.81295967;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        id="path4594"
        d="m 81.736129,861.67182 28.177921,5.95762"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-rule:evenodd;stroke:#4d4d4d;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        id="path4594-7"
        d="m 174.26753,861.7048 -28.17792,5.95762"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-rule:evenodd;stroke:#4d4d4d;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
   <g
      style="display:inline;"
