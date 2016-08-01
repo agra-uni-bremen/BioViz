@@ -612,25 +612,13 @@ public class Biochip {
 	/**
 	 * Adds a field to the chip.
 	 *
-	 * @param coordinates
-	 * 		The coordinates to which the field is to be added.
 	 * @param biochipField
 	 * 		The field to be added.
 	 */
-	// TODO why the heck do we provide the coordinates twice? --> check the
-	// parsing procedure.
-	public void addField(final Point coordinates, final BiochipField
-			biochipField) {
-		Point coords = coordinates;
-		if (biochipField.x() != coords.fst ||
-			biochipField.y() != coords.snd) {
-			logger.error(
-					"Field coordinates differ from those transmitted to the " +
-					"chip for this instance");
-			coords = new Point(biochipField.x(), biochipField.y());
-		}
+	public void addField(final BiochipField biochipField) {
+		Point coords = new Point(biochipField.x(),biochipField.y());
 		if (this.field.containsKey(coords)) {
-			logger.trace("Field added twice at " + coords +
+			logger.info("Field added twice at " + coords +
 						 ", removed older instance");
 		}
 		this.field.put(coords, biochipField);
