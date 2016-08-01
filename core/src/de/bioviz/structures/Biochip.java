@@ -542,7 +542,8 @@ public class Biochip {
 	}
 
 	/**
-	 * Checks whether any of the positions of a rectangle is occupied by a resource.
+	 * Checks whether any of the positions of a rectangle is occupied by a
+	 * resource.
 	 *
 	 * Note that non-existant fields are counted as not having a resource. That
 	 * means that giving points that are entirely outside the biochip would
@@ -566,11 +567,10 @@ public class Biochip {
 	 * @return true if any of the points has a resource, false otherwise.
 	 */
 	public boolean hasResource(final List<Point> points) {
-		return points.stream().anyMatch(p->{
+		return points.stream().anyMatch(p -> {
 			if (hasFieldAt(p)) {
 				return getFieldAt(p).hasResource();
-			}
-			else {
+			}	else {
 				return false;
 			}
 		});

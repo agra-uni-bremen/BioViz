@@ -467,7 +467,7 @@ class BioParserListener extends BioBaseListener {
 	 * 		List of PositionContext
 	 * @return The rectangle as specified in the list positions.
 	 */
-	private Rectangle extractRectangle(@NotNull List<Bio.PositionContext>
+	private Rectangle extractRectangle(final @NotNull List<Bio.PositionContext>
 											   positions) {
 		Point p = getPosition(positions.get(0));
 		Rectangle position;
@@ -490,7 +490,7 @@ class BioParserListener extends BioBaseListener {
 	 * 		The MagnetContext.
 	 */
 	@Override
-	public void enterMagnet(@NotNull Bio.MagnetContext ctx) {
+	public void enterMagnet(final @NotNull Bio.MagnetContext ctx) {
 		List<Bio.PositionContext> positions = ctx.position();
 
 		Rectangle position = extractRectangle(positions);
@@ -507,7 +507,7 @@ class BioParserListener extends BioBaseListener {
 	 * 		The HeaterContext.
 	 */
 	@Override
-	public void enterHeater(@NotNull Bio.HeaterContext ctx) {
+	public void enterHeater(final @NotNull Bio.HeaterContext ctx) {
 
 		List<Bio.PositionContext> positions = ctx.position();
 
@@ -589,7 +589,7 @@ class BioParserListener extends BioBaseListener {
 	}
 
 	/**
-	 * Parses a LocationContext
+	 * Parses a LocationContext.
 	 *
 	 * @param loc
 	 * 		the location context
@@ -1039,8 +1039,7 @@ class BioParserListener extends BioBaseListener {
 									logger.trace(
 											"Adding areaAnnotation {} to " +
 											"field {}", a, pos);
-									chip.getFieldAt(pos).areaAnnotations.add
-											(a);
+									chip.getFieldAt(pos).areaAnnotations.add(a);
 
 								})
 		);

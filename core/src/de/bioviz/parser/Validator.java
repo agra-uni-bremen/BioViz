@@ -6,7 +6,6 @@ import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Pin;
 import de.bioviz.structures.Actuation;
 import de.bioviz.structures.ActuationVector;
-import de.bioviz.structures.Detector;
 import de.bioviz.structures.Direction;
 import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
@@ -24,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.badlogic.gdx.graphics.g2d.ParticleEmitter.SpawnShape.point;
 
 /**
  * Created by keszocze on 25.08.15.
@@ -105,7 +103,7 @@ final class Validator {
 								pos -> chip.hasFieldAt(pos)).collect(
 								Collectors.toCollection(ArrayList::new));
 
-				for (Point pos : positions) {
+				for (final Point pos : positions) {
 					int timestep = timeStep + drop.getSpawnTime();
 					BiochipField field = chip.getFieldAt(pos);
 					if (field.isBlocked(timestep)) {
