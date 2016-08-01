@@ -60,8 +60,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import static java.awt.SystemColor.info;
-
 /**
  * This class is the single desktop starter class. It starts the cross-platform
  * core application and provides a basic java desktop UI to control it.
@@ -168,6 +166,27 @@ public class DesktopLauncher extends JFrame {
 	private InfoPanel infoPanel;
 
 	/**
+	 * The biovizEditor instance.
+	 */
+	private BioVizEditor editor;
+
+	/**
+	 * The softErrorViewer instance.
+	 */
+	private ErrorViewer softErrorsViewer;
+
+	/**
+	 * The hardErrorViewer instance.
+	 */
+	private ErrorViewer hardErrorsViewer;
+
+	/**
+	 * The annotationViewer instance.
+	 */
+	private AnnotationViewer annotationViewer;
+
+
+	/**
 	 * This maps the tabs that are open in the visualizationTabs field to the
 	 * filenames being open there. As each tab corresponds to a certain file,
 	 * clicking a particular tab needs to tell the visualization to display the
@@ -215,6 +234,12 @@ public class DesktopLauncher extends JFrame {
 			currentViz = new BioViz(file);
 		}
 		canvas = new LwjglAWTCanvas(currentViz);
+		editor = new BioVizEditor(currentViz);
+		hardErrorsViewer = new ErrorViewer(currentViz, "Parser errors",
+				ErrorViewer.ERRORTYPE.HARD);
+		softErrorsViewer = new ErrorViewer(currentViz, "Parser warnings",
+				ErrorViewer.ERRORTYPE.SOFT);
+		annotationViewer = new AnnotationViewer(currentViz);
 
 		currentViz.addCloseFileListener(new CloseFileCallback());
 
@@ -224,7 +249,6 @@ public class DesktopLauncher extends JFrame {
 		this.setTitle(BioVizInfo.PROGNAME);
 
 		logger.debug("Starting DesktopLauncher with file \"{}\"", file);
-
 
 		initializeTabs(file);
 
@@ -272,6 +296,11 @@ public class DesktopLauncher extends JFrame {
 						 " with path: " + iconPath);
 		}
 
+		editor.setIcon(iconPath);
+		softErrorsViewer.setIcon(iconPath);
+		hardErrorsViewer.setIcon(iconPath);
+		annotationViewer.setIcon(iconPath);
+
 		pack();
 		setVisible(true);
 
@@ -279,7 +308,10 @@ public class DesktopLauncher extends JFrame {
 
 
 		currentViz.addReloadFileListener(
-				() -> reloadTab()
+				() -> {
+					reloadTab();
+					reloadViewers();
+				}
 		);
 	}
 
@@ -345,7 +377,7 @@ public class DesktopLauncher extends JFrame {
 							  autoplayButton.getPreferredSize().height)
 		);
 		autoplayButton.addActionListener(
-				e -> currentViz.currentCircuit.toggleAutoAdvance());
+				e -> currentViz.currentBiochip.toggleAutoAdvance());
 
 		JButton openButton = new JButton("Open File");
 		openButton.setPreferredSize(
@@ -387,12 +419,12 @@ public class DesktopLauncher extends JFrame {
 							  zoomButton.getPreferredSize().height)
 		);
 		zoomButton.addActionListener(
-				e -> currentViz.currentCircuit.zoomExtents());
+				e -> currentViz.currentBiochip.zoomExtents());
 
 		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, 1, 1);
 		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		timeSlider.addChangeListener(
-				ce -> currentViz.currentCircuit.setCurrentTime(
+				ce -> currentViz.currentBiochip.setCurrentTime(
 						((JSlider) ce.getSource()).getValue()));
 		tc = new TimerCallback(timeSlider, timeInfo);
 
@@ -409,10 +441,48 @@ public class DesktopLauncher extends JFrame {
 
 		JButton nextStepButton = new JButton("->");
 		nextStepButton.addActionListener(
-				e -> currentViz.currentCircuit.nextStep());
+				e -> currentViz.currentBiochip.nextStep());
 		JButton prevStepButton = new JButton("<-");
 		prevStepButton.addActionListener(
-				e -> currentViz.currentCircuit.prevStep());
+				e -> currentViz.currentBiochip.prevStep());
+
+		JButton editorButton = new JButton("Editor");
+		editorButton.setPreferredSize(new Dimension(buttonWidth,
+				editorButton.getPreferredSize().height));
+		editorButton.addActionListener(
+				e -> {
+					editor.show();
+				}
+		);
+
+		JButton annotationsButton = new JButton("Annotations");
+		annotationsButton.setPreferredSize(new Dimension(buttonWidth,
+				annotationsButton.getPreferredSize().height));
+		annotationsButton.addActionListener(
+				e -> {
+					annotationViewer.show();
+				}
+		);
+
+		JButton warningsButton = new JButton("Warnings");
+		warningsButton.setPreferredSize(new Dimension(buttonWidth, warningsButton
+				.getPreferredSize().height));
+		warningsButton.addActionListener(
+				e -> {
+					softErrorsViewer.show();
+				}
+		);
+
+		JButton errorsButton = new JButton("Errors");
+		errorsButton.setPreferredSize(new Dimension(buttonWidth, errorsButton
+				.getPreferredSize().height));
+		errorsButton.addActionListener(
+				e -> {
+					hardErrorsViewer.show();
+				}
+		);
+
+
 
 		/*
 		For some reason, adding a separator more then once prevents it from
@@ -457,7 +527,20 @@ public class DesktopLauncher extends JFrame {
 		panel.add(prefsSep);
 		panel.add(preferencesButton);
 		panel.add(statisticsButton);
+		panel.add(editorButton);
+		panel.add(annotationsButton);
+		panel.add(warningsButton);
+		panel.add(errorsButton);
 		return panel;
+	}
+
+	/**
+	 * Reloads all external viewers.
+	 */
+	private void reloadViewers() {
+		hardErrorsViewer.reload();
+		softErrorsViewer.reload();
+		annotationViewer.reload();
 	}
 
 	/**
@@ -471,10 +554,17 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		visualizationTabs.addChangeListener(
-				l -> currentViz.scheduleLoadingOfNewFile(
-						tabsToFilenames.get(
-								((JTabbedPane) l.getSource())
-										.getSelectedComponent()))
+				l -> {
+					currentViz.scheduleLoadingOfNewFile(
+							tabsToFilenames.get(
+									((JTabbedPane) l.getSource())
+											.getSelectedComponent()));
+					// load new file in editor
+					editor.setFile(tabsToFilenames.get(
+							((JTabbedPane) l.getSource())
+									.getSelectedComponent()));
+					reloadViewers();
+				}
 		);
 
 		// nextTabListener
@@ -491,6 +581,13 @@ public class DesktopLauncher extends JFrame {
 									visualizationTabs.getComponentAt(nextIndex)
 							)
 					);
+					// load new file in editor
+					editor.setFile(
+							tabsToFilenames.get(
+									visualizationTabs.getComponentAt(nextIndex)
+							)
+					);
+					reloadViewers();
 					// change to the correct tab in the ui
 					visualizationTabs.setSelectedIndex(nextIndex);
 				}
@@ -510,6 +607,13 @@ public class DesktopLauncher extends JFrame {
 									visualizationTabs.getComponentAt(prevIndex)
 							)
 					);
+					// load new file in editor
+					editor.setFile(
+							tabsToFilenames.get(
+									visualizationTabs.getComponentAt(prevIndex)
+							)
+					);
+					reloadViewers();
 					// change to the correct tab in the ui
 					visualizationTabs.setSelectedIndex(prevIndex);
 				}
@@ -592,6 +696,7 @@ public class DesktopLauncher extends JFrame {
 		visualizationTabs.setSelectedIndex(
 				visualizationTabs.getTabCount() - 1);
 		tabsToFilenames.put(dummyPanel, file);
+		editor.setFile(file);
 		this.currentViz.scheduleLoadingOfNewFile(file);
 	}
 
@@ -607,6 +712,8 @@ public class DesktopLauncher extends JFrame {
 
 		if (file != null) {
 			currentViz.unloadFile(file);
+			editor.setFile(file);
+			reloadViewers();
 			currentViz.scheduleLoadingOfNewFile(file);
 
 		} else {
@@ -720,7 +827,7 @@ public class DesktopLauncher extends JFrame {
 
 		Biochip chip = BioParser.parseFile(f);
 		if (!chip.errors.isEmpty()) {
-			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath() );
+			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath());
 			for (final String error : chip.errors) {
                 logger.error(error);
 			}
@@ -923,6 +1030,15 @@ public class DesktopLauncher extends JFrame {
 		new PreferencesWindow(viz);
 		logger.debug("Done opening preferences window.");
 	}
+
+	/**
+	 * Allows to disable or enable the hotkeys from outside of DesktopLauncher.
+	 * @param allow allow hotkeys or not
+	 */
+	static void setAllowHotkeys(final boolean allow) {
+		allowHotkeys = allow;
+	}
+
 
 	/**
 	 * Translates a java.awt keycode to a libgdx keycode.
@@ -1241,11 +1357,11 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.trace("Received timer event (" +
-						 currentViz.currentCircuit.getCurrentTime() + ")");
-			this.time.setValue(currentViz.currentCircuit.getCurrentTime());
+						 currentViz.currentBiochip.getCurrentTime() + ")");
+			this.time.setValue(currentViz.currentBiochip.getCurrentTime());
 			this.timeInfo.setText(
 					Integer.toString(
-							currentViz.currentCircuit.getCurrentTime()));
+							currentViz.currentBiochip.getCurrentTime()));
 
 		}
 	}
@@ -1365,30 +1481,33 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.trace("calling desktop LoadedFileCallback()");
-			if (currentViz.currentCircuit != null) {
+			if (currentViz.currentBiochip != null) {
+
+				reloadViewers();
+
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
-				int oldTime = currentViz.currentCircuit.getCurrentTime();
+				int oldTime = currentViz.currentBiochip.getCurrentTime();
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
 				// altering the max/min values already invokes the timer
-				// event, thus altering the currentCircuit's currenTime value.
+				// event, thus altering the currentBiochip's currenTime value.
 				// In order to still be able to set the current value as it
 				// was before, the oldTime value is being stored above and then
 				// used to set the slider's value, thus again reverting the
-				// currentCircuit's currentTime value to its original state.
+				// currentBiochip's currentTime value to its original state.
 				// This means we're actually changing its time back and forth,
 				// but although this is a little ugly, it doesn't seem to have
 				// any problematic effect.
 				d.timeSlider.setMaximum(
-						currentViz.currentCircuit.getData().getMaxT());
+						currentViz.currentBiochip.getData().getMaxT());
 				d.timeSlider.setMinimum(1);
 				logger.trace("setting time slider to " + oldTime);
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
-						currentViz.currentCircuit.getData().getMaxRouteLength());
+						currentViz.currentBiochip.getData().getMaxRouteLength());
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
@@ -1441,12 +1560,11 @@ public class DesktopLauncher extends JFrame {
 						if (f != null) {
 							if (svgExportSettings.getExportSeries()) {
 
-								int oldTime = currentViz.currentCircuit
+								int oldTime = currentViz.currentBiochip
 										.getCurrentTime();
 								// this is problematic if the file contains
 								// .svg inside the name
-								int svgPosition = f.getAbsolutePath().indexOf
-										(".svg");
+								int svgPosition = f.getAbsolutePath().indexOf(".svg");
 								// initialize with absolute path
 								String pathWithoutSuffix = f.getAbsolutePath();
 								// check if suffix was found, if not the path
@@ -1460,7 +1578,7 @@ public class DesktopLauncher extends JFrame {
 								}
 								// create a series of files
 								for (int t = 1; t <=
-												currentViz.currentCircuit
+												currentViz.currentBiochip
 														.getData().getMaxT();
 									 t++) {
 									currentViz.saveSVG(
@@ -1468,20 +1586,20 @@ public class DesktopLauncher extends JFrame {
 											".svg", t);
 								}
 								// restore time from start
-								currentViz.currentCircuit.setCurrentTime(
+								currentViz.currentBiochip.setCurrentTime(
 										oldTime);
 							} else {
 								currentViz.saveSVG(f.getAbsolutePath(),
 												   currentViz
-														   .currentCircuit
+														   .currentBiochip
 														   .getCurrentTime());
 							}
 						}
 					}
 				});
 			} catch (final Exception e) {
-				logger.error("Could not save file: " + e.getMessage() + "\n"
-							 + e.getStackTrace());
+				logger.error("Could not save file: " + e.getMessage() + "\n" +
+						e.getStackTrace());
 			}
 			allowHotkeys = true;
 		}
@@ -1546,7 +1664,7 @@ public class DesktopLauncher extends JFrame {
 	 */
 	private class BioCheckboxMenuItem extends JCheckBoxMenuItem {
 		/**
-		 * A BDisplayOption to store the checkboxValues
+		 * A BDisplayOption to store the checkboxValues.
 		 */
 		private BDisplayOptions option;
 
@@ -1562,10 +1680,10 @@ public class DesktopLauncher extends JFrame {
 			this.option = option;
 
 			this.addActionListener(l -> {
-				currentViz.currentCircuit.getDisplayOptions().toggleOption(
+				currentViz.currentBiochip.getDisplayOptions().toggleOption(
 						option);
 				setState(
-						currentViz.currentCircuit.getDisplayOptions()
+						currentViz.currentBiochip.getDisplayOptions()
 								.getOption(
 										option));
 			});
@@ -1575,7 +1693,7 @@ public class DesktopLauncher extends JFrame {
 		 * Updates the state of the selected option.
 		 */
 		void updateState() {
-			setState(currentViz.currentCircuit.
+			setState(currentViz.currentBiochip.
 					getDisplayOptions().getOption(option));
 		}
 

@@ -78,10 +78,12 @@ public final class BioParser {
 			ParseTree tree = parser.bio(); // parse everything
 
 			if (errorListener.hasErrors()) {
+				Biochip chip = new Biochip();
 				for (final String msg : errorListener.getErrors()) {
 					logger.error(msg);
+					chip.hardErrors.add(msg);
 				}
-				return null;
+				return chip;
 			} else {
 				ParseTreeWalker walker = new ParseTreeWalker();
 				// Walk the tree created during the parse, trigger callbacks
@@ -103,12 +105,13 @@ public final class BioParser {
 	/**
 	 * Parses the annotations in a file.
 	 * @param input an ANTLRInputStream
+	 * @channel the channel to parse
 	 * @return A List of Strings containing the annotations.
 	 */
 	private static List<String> parseChannel(final ANTLRInputStream input,
-																					 final int channel){
+																					 final int channel) {
 		BioLexerGrammar lexer = new BioLexerGrammar(input);
-		// @keszocze this one is needed. I don't know why.
+
 		lexer.reset();
 		CommonTokenStream cts = new CommonTokenStream(lexer);
 		List<String> channelTokens = new ArrayList<>();
@@ -116,10 +119,10 @@ public final class BioParser {
 		// this one gets everything that is in the stream.
 		cts.getText();
 		// now we can use size() to run over the tokens
-		for (int i = 0; i < cts.size(); i++){
+		for (int i = 0; i < cts.size(); i++) {
 			Token token = cts.get(i);
 			// and check here if the token is on the right channel
-			if(token.getChannel() == channel) {
+			if (token.getChannel() == channel) {
 				logger.trace("Parsing Comment: " + token.getText());
 				channelTokens.add(token.getText());
 			}

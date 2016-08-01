@@ -121,7 +121,7 @@ public class MessageCenter {
 	 * The messages that should be displayed on top of the circuit, mapped from
 	 * their specific id to the message itself.
 	 */
-	private HashMap<Integer, HUDMessage> HUDMessages = new HashMap<>();
+	private HashMap<Integer, HUDMessage> hudMessages = new HashMap<>();
 
 	/**
 	 * If this flag is set to true, the font bitmaps will be re-rendered before
@@ -151,7 +151,9 @@ public class MessageCenter {
 	 *
 	 * @return The text rendering resolution.
 	 */
-	public float getTextRenderResolution() { return textRenderResolution; }
+	public float getTextRenderResolution() {
+		return textRenderResolution;
+	}
 
 	/**
 	 * Sets the resolution at which the HUD messages should be rendered and
@@ -289,19 +291,19 @@ public class MessageCenter {
 				yCoord -= spacing;
 			}
 
-			for (final HUDMessage s : this.HUDMessages.values()) {
+			for (final HUDMessage s : this.hudMessages.values()) {
 				Color targetColor = s.color.cpy();
 
 				float hideAt = textRenderResolution;
 				float showAt = textRenderResolution * 2;
-				if (parent.currentCircuit.getDisplayOptions().getOption(
+				if (parent.currentBiochip.getDisplayOptions().getOption(
 						BDisplayOptions.HideTextOnZoom)) {
 					// Hide when zoomed out
-					if (this.parent.currentCircuit.getScaleX() < hideAt) {
+					if (this.parent.currentBiochip.getScaleX() < hideAt) {
 						targetColor.a = 0;
-					} else if (this.parent.currentCircuit.getScaleX() <
+					} else if (this.parent.currentBiochip.getScaleX() <
 							   showAt) {
-						float val = this.parent.currentCircuit.getScaleX();
+						float val = this.parent.currentBiochip.getScaleX();
 						val = (val - hideAt) / (showAt - hideAt);
 						targetColor.a = val * getDefaultTextTransparency();
 					} else {
@@ -376,11 +378,11 @@ public class MessageCenter {
 							  final float x, final float y,
 							  final Color col, final float size) {
 		HUDMessage hm;
-		if (!this.HUDMessages.containsKey(key)) {
+		if (!this.hudMessages.containsKey(key)) {
 			hm = new HUDMessage(message, x, y);
-			HUDMessages.put(key, hm);
+			hudMessages.put(key, hm);
 		} else {
-			hm = HUDMessages.get(key);
+			hm = hudMessages.get(key);
 			hm.message = message;
 			hm.x = x;
 			hm.y = y;
@@ -398,8 +400,8 @@ public class MessageCenter {
 	 * 		ID of the message to be removed.
 	 */
 	public void removeHUDMessage(final int key) {
-		if (this.HUDMessages.containsKey(key)) {
-			this.HUDMessages.remove(key);
+		if (this.hudMessages.containsKey(key)) {
+			this.hudMessages.remove(key);
 		}
 	}
 
@@ -407,7 +409,7 @@ public class MessageCenter {
 	 * Clears all HUD messages.
 	 */
 	public void clearHUDMessages() {
-		this.HUDMessages.clear();
+		this.hudMessages.clear();
 	}
 
 	/**
@@ -526,7 +528,7 @@ public class MessageCenter {
 	 * @param defaultTextTransparency
 	 * 		the new transparency value.
 	 */
-	public void setDefaultTextTransparency(float defaultTextTransparency) {
+	public void setDefaultTextTransparency(final float defaultTextTransparency) {
 		this.defaultTextTransparency = defaultTextTransparency;
 		logger.debug("Default font transparency is now " +
 					 this.defaultTextTransparency);

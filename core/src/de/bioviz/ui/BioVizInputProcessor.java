@@ -73,10 +73,10 @@ class BioVizInputProcessor implements InputProcessor {
 			shift = false;
 		} else if ((keycode == Keys.RIGHT || keycode == Keys.UP)
 				   && !ctrl && !alt) {
-			parentViz.currentCircuit.nextStep();
+			parentViz.currentBiochip.nextStep();
 		} else if ((keycode == Keys.LEFT || keycode == Keys.DOWN)
 				   && !ctrl && !alt) {
-			parentViz.currentCircuit.prevStep();
+			parentViz.currentBiochip.prevStep();
 		} else if ((keycode == Keys.PAGE_UP && ctrl) ||
 				   (keycode == Keys.LEFT && alt)) {
 			parentViz.callPreviousTabListeners();
@@ -98,15 +98,15 @@ class BioVizInputProcessor implements InputProcessor {
 			if (ctrl) {
 				parentViz.callSaveFileListeners();
 			} else {
-				parentViz.currentCircuit.shrinkToSquareAlignment();
+				parentViz.currentBiochip.shrinkToSquareAlignment();
 			}
 		} else if (keycode == Keys.T && ctrl) {
 			parentViz.callLoadFileListeners();
 		} else if (keycode == Keys.Z) {
 			if (shift) {
-				parentViz.currentCircuit.zoomExtents();
+				parentViz.currentBiochip.zoomExtents();
 			} else {
-				parentViz.currentCircuit.zoomTo1Px();
+				parentViz.currentBiochip.zoomTo1Px();
 			}
 		}
 
@@ -117,7 +117,7 @@ class BioVizInputProcessor implements InputProcessor {
 
 	void toggleOptions(final int keycode) {
 		BDisplayOptions.findOption(keycode, ctrl, shift, alt).ifPresent(
-				it -> parentViz.currentCircuit.getDisplayOptions().toggleOption
+				it -> parentViz.currentBiochip.getDisplayOptions().toggleOption
 						(it));
 	}
 
@@ -153,7 +153,7 @@ class BioVizInputProcessor implements InputProcessor {
 		}
 
 		for (final DrawableDroplet d :
-				parentViz.currentCircuit.getDroplets()) {
+				parentViz.currentBiochip.getDroplets()) {
 			if (d.isHovered()) {
 				if (button == Buttons.LEFT) {
 					d.toggleGridVisibility();
@@ -173,12 +173,12 @@ class BioVizInputProcessor implements InputProcessor {
 	@Override
 	public boolean touchDragged(final int x, final int y, final int pointer) {
 		if (isMoving) {
-			parentViz.currentCircuit.setOffsetX(
-					parentViz.currentCircuit.getOffsetX() +
-					(x - oldX) / parentViz.currentCircuit.getScaleX());
-			parentViz.currentCircuit.setOffsetY(
-					parentViz.currentCircuit.getOffsetY() -
-					(y - oldY) / parentViz.currentCircuit.getScaleY());
+			parentViz.currentBiochip.setOffsetX(
+					parentViz.currentBiochip.getOffsetX() +
+					(x - oldX) / parentViz.currentBiochip.getScaleX());
+			parentViz.currentBiochip.setOffsetY(
+					parentViz.currentBiochip.getOffsetY() -
+					(y - oldY) / parentViz.currentBiochip.getScaleY());
 			oldX = x;
 			oldY = y;
 		} else if (multiTouchZoom) {
@@ -198,14 +198,14 @@ class BioVizInputProcessor implements InputProcessor {
 
 				if (oldX - oldX2 != 0) {
 					float zoomFactorX = (float) zoomX / Math.abs(oldX - oldX2);
-					parentViz.currentCircuit.setScaleX(
-							parentViz.currentCircuit.getScaleX()
+					parentViz.currentBiochip.setScaleX(
+							parentViz.currentBiochip.getScaleX()
 							* Math.max(1 - zoomFactorX, 0.01f));
 				}
 				if (oldY - oldY2 != 0) {
 					float zoomFactorY = (float) zoomY / Math.abs(oldY - oldY2);
-					parentViz.currentCircuit.setScaleY(
-							parentViz.currentCircuit.getScaleY()
+					parentViz.currentBiochip.setScaleY(
+							parentViz.currentBiochip.getScaleY()
 							* Math.max(1 - zoomFactorY, 0.01f));
 				}
 			}
@@ -218,7 +218,7 @@ class BioVizInputProcessor implements InputProcessor {
 		float mouseAtWidth = (float) oldX / Gdx.graphics.getWidth();
 		float mouseAtHeight = (float) oldY / Gdx.graphics.getHeight();
 
-		Rectangle current = parentViz.currentCircuit.getViewBounds();
+		Rectangle current = parentViz.currentBiochip.getViewBounds();
 
 		float mouseToLeftOriginal = current.width * mouseAtWidth;
 		float mouseToBottomOriginal = current.height * mouseAtHeight;
@@ -235,7 +235,7 @@ class BioVizInputProcessor implements InputProcessor {
 		float mouseDiffY = mouseToBottomOriginal - expectedMouseToBottom;
 		current.y += mouseDiffY;
 
-		parentViz.currentCircuit.setViewBounds(current);
+		parentViz.currentBiochip.setViewBounds(current);
 		return false;
 	}
 

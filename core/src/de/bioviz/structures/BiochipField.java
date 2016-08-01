@@ -3,6 +3,8 @@ package de.bioviz.structures;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static de.bioviz.structures.Resource.ResourceType.detector;
+
 
 /**
  * The abstraction of a field on a biochip.
@@ -50,6 +52,9 @@ public class BiochipField {
 	 */
 	public ArrayList<Mixer> mixers = new ArrayList<>();
 
+	/**
+	 * List of annotations for this field.
+	 */
 	public ArrayList<AreaAnnotation> areaAnnotations = new ArrayList<>();
 
 
@@ -73,12 +78,11 @@ public class BiochipField {
 	private Integer usage = null;
 
 	/**
-	 * Stores the detector that is present at this field.
+	 * Stores the resource of this field.
 	 * <p>
-	 * This variable might be null as not every field must have a detecting
-	 * device.
+	 * This variable might be null as not every field must have a rource.
 	 */
-	private Detector detector;
+	private Resource resource;
 
 	/**
 	 * Creates an empty field at given position on the specified biochip.
@@ -113,6 +117,7 @@ public class BiochipField {
 
 	/**
 	 * Checks whether this field has any area annotations.
+	 *
 	 * @return true if the field as area annotations, false otherwise.
 	 */
 	public boolean hasAnnotations() {
@@ -124,14 +129,28 @@ public class BiochipField {
 	 * Sets the detector of this field.
 	 * <p>
 	 * Note that we do not check whether a detector is added to a field that is
-	 * blocked and vice versa.
+	 * blocked and vice versa. Also no check for other resources is performed.
 	 *
 	 * @param det
 	 * 		The detector that is placed at this field.
 	 */
 	public void setDetector(final Detector det) {
-		detector = det;
+		resource = det;
 	}
+
+	public void setHeater(final Heater heater) { resource = heater; }
+
+	public void setMagnet(final Magnet magnet) { resource = magnet;}
+
+	/**
+	 * Checks whether there is a resources at this field.
+	 * <p>
+	 * It does only check that any resource is present and not for the type of
+	 * resource.
+	 *
+	 * @return true if there is a resource at this field.
+	 */
+	public boolean hasResource() { return resource != null; }
 
 	/**
 	 * Returns the detector of this field.
@@ -142,7 +161,43 @@ public class BiochipField {
 	 * @return The detector, if present, NULL otherwise
 	 */
 	public Detector getDetector() {
-		return detector;
+		if (resource == null ||
+			resource.type != Resource.ResourceType.detector) {
+			return null;
+		}
+		return (Detector) resource;
+	}
+
+	/**
+	 * Returns the magnet of this field.
+	 * <p>
+	 * Note that the result may by NULL as not every field must have a
+	 * magnet.
+	 *
+	 * @return The magnet, if present, NULL otherwise
+	 */
+	public Magnet getMagnet() {
+		if (resource == null ||
+			resource.type != Resource.ResourceType.magnet) {
+			return null;
+		}
+		return (Magnet)resource;
+	}
+
+	/**
+	 * Returns the heater of this field.
+	 * <p>
+	 * Note that the result may by NULL as not every field must have a
+	 * heater.
+	 *
+	 * @return The heater, if present, NULL otherwise
+	 */
+	public Heater getHeater() {
+		if (resource == null ||
+			resource.type != Resource.ResourceType.heater) {
+			return null;
+		}
+		return (Heater)resource;
 	}
 
 	/**
@@ -235,7 +290,7 @@ public class BiochipField {
 		Biochip circ = parent;
 		Actuation act = Actuation.OFF;
 
-		Map<Integer,ActuationVector> actVecs = circ.pinActuations;
+		Map<Integer, ActuationVector> actVecs = circ.pinActuations;
 		if (pin != null && !actVecs.isEmpty()) {
 			ActuationVector vec = actVecs.get(pin.pinID);
 			if (vec != null) {
@@ -250,7 +305,7 @@ public class BiochipField {
 		}
 
 		for (final Mixer m : mixers) {
-			if (m.positions.contains(pos) && m.timing.inRange(timeStep)) {
+			if (m.position.contains(pos) && m.timing.inRange(timeStep)) {
 				act = Actuation.ON;
 			}
 		}
@@ -289,8 +344,6 @@ public class BiochipField {
 		}
 		return usage;
 	}
-
-
 
 
 }

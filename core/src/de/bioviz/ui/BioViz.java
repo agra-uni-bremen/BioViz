@@ -35,21 +35,35 @@ public class BioViz implements ApplicationListener {
 
 
     public BioVizSpriteBatch batch;
+
+	/**
+     * Handles displaying of messages during interactive exploration of biochips.
+     */
     public MessageCenter messageCenter;
     public DrawableDroplet selectedDroplet;
 
 
-    public DrawableCircuit currentCircuit;
+	/**
+     * The currently displayed biochip.
+     */
+    public DrawableCircuit currentBiochip;
 
     OrthographicCamera camera;
 
+	/**
+     * Manages the textures that are used to display the biochip.
+     */
     private TextureManager textures;
-    private HashMap<String, DrawableCircuit> loadedCircuits;
+    private HashMap<String, DrawableCircuit> loadedBiochips;
     private Vector<Drawable> drawables = new Vector<>();
 
 
     private File bioFile;
     private BioVizInputProcessor inputProcessor;
+
+	/**
+     * Manages exporting the biochips to svg images.
+     */
     private SVGManager svgManager;
 
     /**
@@ -79,7 +93,7 @@ public class BioViz implements ApplicationListener {
                 "Starting withouth filename being specified; loading example");
         logger.info("Usage: java -jar BioViz.jar <filename>");
         this.bioFile = null;
-        loadedCircuits = new HashMap<>();
+        loadedBiochips = new HashMap<>();
         textures = new TextureManager();
 
         // Weird static assignment needed to enable parameterless construction
@@ -208,8 +222,8 @@ public class BioViz implements ApplicationListener {
     public void resize(final int width, final int height) {
         camera.viewportHeight = height;
         camera.viewportWidth = width;
-        if (firstRun && currentCircuit != null) {
-            currentCircuit.zoomExtents();
+        if (firstRun && currentBiochip != null) {
+            currentBiochip.zoomExtents();
             firstRun = false;
         }
     }
@@ -225,35 +239,40 @@ public class BioViz implements ApplicationListener {
     public void unloadFile(final File f) {
         try {
             String path = f.getCanonicalPath();
-            if (this.loadedCircuits.containsKey(path)) {
-                DrawableCircuit c = loadedCircuits.get(path);
+            if (this.loadedBiochips.containsKey(path)) {
+                DrawableCircuit c = loadedBiochips.get(path);
 
                 // remove the visualization if it is currently active.
-                if (currentCircuit == c) {
+                if (currentBiochip == c) {
                     this.drawables.remove(c);
-                    currentCircuit = new DrawableCircuit(
+                    currentBiochip = new DrawableCircuit(
                             new Biochip(), this);
                 }
                 logger.info("Removing {}", path);
-                this.loadedCircuits.remove(path);
+                this.loadedBiochips.remove(path);
             }
         } catch (final Exception e) {
             logger.error("Could not unload file \"{}\"", f);
         }
     }
 
+	/**
+     * Loads a new file.
+     *
+     *
+     */
     private void loadNewFile() {
         Biochip bc;
 
         try {
-            drawables.remove(currentCircuit);
+            drawables.remove(currentBiochip);
             if (bioFile != null) {
-                if (this.loadedCircuits.containsKey(
+                if (this.loadedBiochips.containsKey(
                         bioFile.getCanonicalPath())) {
                     logger.debug("re-fetching previously loaded file " +
                             bioFile.getCanonicalPath());
-                    currentCircuit =
-                            this.loadedCircuits.get(
+                    currentBiochip =
+                            this.loadedBiochips.get(
                                     bioFile.getCanonicalPath());
                 } else {
                     logger.debug("Loading \"{}\"", bioFile);
@@ -266,14 +285,14 @@ public class BioViz implements ApplicationListener {
                     }
                     logger.debug("Creating drawable elements...");
                     DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
-                    currentCircuit = newCircuit;
-                    this.loadedCircuits.put(bioFile.getCanonicalPath(),
-                            newCircuit);
-                    currentCircuit.zoomExtents();
+                    currentBiochip = newCircuit;
+                    this.loadedBiochips.put(bioFile.getCanonicalPath(),
+                                            newCircuit);
+                    currentBiochip.zoomExtents();
                 }
                 logger.debug("Drawable created, replacing old elements...");
-                drawables.add(currentCircuit);
-                currentCircuit.getData().recalculateAdjacency = true;
+                drawables.add(currentBiochip);
+                currentBiochip.getData().recalculateAdjacency = true;
 
                 logger.info("Done loading file {}", bioFile);
             } else {
@@ -281,7 +300,7 @@ public class BioViz implements ApplicationListener {
                         "File to be set is empty, setting empty " +
                                 "visualization" +
                                 ".");
-                currentCircuit = new DrawableCircuit(new Biochip(), this);
+                currentBiochip = new DrawableCircuit(new Biochip(), this);
             }
         } catch (final Exception e) {
             logger.error("Error when parsing {}:\n{}", bioFile, e.getMessage
@@ -295,6 +314,10 @@ public class BioViz implements ApplicationListener {
         this.callLoadedFileListeners();
     }
 
+	/**
+     * Schedules the loading of a new file.
+     * @param f The file to load.
+     */
     public void scheduleLoadingOfNewFile(final File f) {
 
         // only do stuff if there actually was a file provided
@@ -319,7 +342,7 @@ public class BioViz implements ApplicationListener {
         reloadFileListeners.add(listener);
     }
 
-    void callReloadFileListeners() {
+    public void callReloadFileListeners() {
         callListeners(reloadFileListeners);
     }
 
@@ -379,13 +402,20 @@ public class BioViz implements ApplicationListener {
         callListeners(loadedFileListeners);
     }
 
+
+	/**
+     * Exports the currently displayed biochip to a svg image file.
+     *
+     * @param path The path where the image is stored.
+     * @param timeStep The timestep of the current biochip to store.
+     */
     public void saveSVG(final String path, final int timeStep) {
         spawnSVGManager();
         logger.debug("[SVG] Within saveSVG(String) method");
         logger.debug("[SVG] svgManager: {}", svgManager);
 
         try {
-            String svg = svgManager.toSVG(currentCircuit, timeStep);
+            String svg = svgManager.toSVG(currentBiochip, timeStep);
             //logger.debug("[SVG] generated SVG: {}",svg);
             FileHandle handle = Gdx.files.absolute(path);
             logger.debug("[SVG] File handle for storing the SVG: {}", handle);
@@ -397,6 +427,14 @@ public class BioViz implements ApplicationListener {
         }
     }
 
+	/**
+     * Choses the icon used by the application.
+     *
+     * There is a dice roll deciding which icon from {droplet, dispenser, sink}
+     * will be used.
+     *
+     * @return The icon to use for the application
+     */
     public FileHandle getApplicationIcon() {
         Random rnd = new Random();
         int r = rnd.nextInt(3);
@@ -449,6 +487,10 @@ public class BioViz implements ApplicationListener {
     }
 
 
+	/**
+     * Creates the defailt shader program.
+     * @return The default shader program.
+     */
     private static ShaderProgram createDefaultShader() {
         FileHandle vertexShaderHandle = Gdx.files.internal("vertexShader.shd");
         FileHandle fragmentShaderHandle =
