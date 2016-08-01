@@ -101,6 +101,16 @@ public class SVGManager {
 	private Point bottomRightCoord;
 
 	/**
+	 * Stores the y position for the x coordinates.
+	 */
+	private int xCoordStart;
+
+	/**
+	 * Stores the x position for the y coordinates.
+	 */
+	private int yCoordStart;
+
+	/**
 	 * ViewBox X coordinate.
 	 */
 	private int viewBoxX;
@@ -205,19 +215,30 @@ public class SVGManager {
 		Point minCoord = circuit.getData().getMinCoord();
 		Point maxCoord = circuit.getData().getMaxCoord();
 
+		LOGGER.error("Min X: " + minCoord.fst + " Min Y: " + minCoord.snd);
+		LOGGER.error("Max X: " + maxCoord.fst + " Max Y: " + maxCoord.snd);
+
+
 		int minX = minCoord.fst;
-		int minY = minCoord.snd == 0 ? minCoord.snd : (minCoord.snd - 1);
-		int maxX = minCoord.fst == 0 ? (maxCoord.fst + 1) : maxCoord.fst;
-		int maxY = minCoord.snd == 0 ? (maxCoord.snd + 1) : maxCoord.snd;
+		int minY = minCoord.snd;
+		int maxX = maxCoord.fst;
+		int maxY = maxCoord.snd;
 
 		topLeftCoord = new Point(minX, minY);
 		bottomRightCoord = new Point(maxX, maxY);
 
-		viewBoxX = topLeftCoord.fst * COORDINATE_MULTIPLIER;
-		viewBoxY = topLeftCoord.snd * COORDINATE_MULTIPLIER;
+		viewBoxX = minX * COORDINATE_MULTIPLIER;
+		viewBoxY = (minY == 0 ? minY : (minY - 1)) *
+				COORDINATE_MULTIPLIER;
 
-		viewBoxWidth = bottomRightCoord.fst * COORDINATE_MULTIPLIER;
-		viewBoxHeight = bottomRightCoord.snd * COORDINATE_MULTIPLIER;
+		// save the viewBox start coordinates as they change in the future
+		xCoordStart = viewBoxX;
+		yCoordStart = viewBoxY;
+
+		viewBoxWidth = (minX == 0 ? (maxX + 1) : maxX) *
+				COORDINATE_MULTIPLIER;
+		viewBoxHeight = (minY == 0 ? (maxY + 1) : maxY) *
+				COORDINATE_MULTIPLIER;
 	}
 
 	/**
@@ -764,8 +785,8 @@ public class SVGManager {
 	private String createInfoString() {
 
 		String coordinates =
-				"x=\"" + (topLeftCoord.fst * COORDINATE_MULTIPLIER) + "\" " +
-				"y=\"" + (bottomRightCoord.snd * COORDINATE_MULTIPLIER + 1.5 *
+				"x=\"" + viewBoxX + "\" " +
+				"y=\"" + (viewBoxHeight + 1.5 *
 						FONT_SIZE_INFO_STRING) +
 				"\" ";
 
@@ -795,8 +816,7 @@ public class SVGManager {
 			coords.append("<text text-anchor=\"middle\" ");
 			coords.append("x=\"" + (xCoord * COORDINATE_MULTIPLIER +
 									0.5 * COORDINATE_MULTIPLIER) + "\" ");
-			coords.append("y=\"" + (topLeftCoord.snd *
-					COORDINATE_MULTIPLIER - coordSize) + "\" ");
+			coords.append("y=\"" + (yCoordStart - coordSize) + "\" ");
 			coords.append(
 					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
 					"\">");
@@ -804,23 +824,18 @@ public class SVGManager {
 			coords.append("</text>\n");
 		}
 
-		for (int yCoord = topLeftCoord.snd + 1; yCoord <= bottomRightCoord.snd;
+		for (int yCoord = topLeftCoord.snd; yCoord <= bottomRightCoord.snd;
 			 ++yCoord) {
 			coords.append("<text text-anchor=\"middle\" ");
-			coords.append("y=\"" + ((yCoord - 1) * COORDINATE_MULTIPLIER +
+			coords.append("y=\"" + ((bottomRightCoord.snd - yCoord) *
+					COORDINATE_MULTIPLIER +
 									0.5 * coordSize +
 									0.5 * COORDINATE_MULTIPLIER) + "\" ");
-			coords.append("x=\"" + (topLeftCoord.fst * COORDINATE_MULTIPLIER -
-									coordSize) + "\" ");
+			coords.append("x=\"" + (xCoordStart -	coordSize) + "\" ");
 			coords.append(
 					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
 					"\">");
-			// FIXME the call to getMinCoord() is computing the stuff again
-			// that is unnecessary but I was too stupid to fastly figure out
-			// what you do with the stuff before you fill the bottomRightCoord
-			// and topLeftCoord variables.
-			coords.append(bottomRightCoord.snd - yCoord +
-						  circuit.getData().getMinCoord().snd);
+			coords.append(yCoord);
 			coords.append("</text>\n");
 		}
 		return coords.toString();
