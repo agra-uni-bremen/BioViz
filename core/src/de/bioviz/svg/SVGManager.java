@@ -101,14 +101,14 @@ public class SVGManager {
 	private Point bottomRightCoord;
 
 	/**
-	 * Stores the y position for the x coordinates.
+	 * Stores the position for the coordinate system.
 	 */
-	private int xCoordStart;
+	private Point coordPos;
 
 	/**
-	 * Stores the x position for the y coordinates.
+	 * Stores the position for the info string.
 	 */
-	private int yCoordStart;
+	private Point infoPos;
 
 	/**
 	 * ViewBox X coordinate.
@@ -215,9 +215,8 @@ public class SVGManager {
 		Point minCoord = circuit.getData().getMinCoord();
 		Point maxCoord = circuit.getData().getMaxCoord();
 
-		LOGGER.error("Min X: " + minCoord.fst + " Min Y: " + minCoord.snd);
-		LOGGER.error("Max X: " + maxCoord.fst + " Max Y: " + maxCoord.snd);
-
+		LOGGER.trace("Min X: " + minCoord.fst + " Min Y: " + minCoord.snd);
+		LOGGER.trace("Max X: " + maxCoord.fst + " Max Y: " + maxCoord.snd);
 
 		int minX = minCoord.fst;
 		int minY = minCoord.snd;
@@ -231,14 +230,14 @@ public class SVGManager {
 		viewBoxY = (minY == 0 ? minY : (minY - 1)) *
 				COORDINATE_MULTIPLIER;
 
-		// save the viewBox start coordinates as they change in the future
-		xCoordStart = viewBoxX;
-		yCoordStart = viewBoxY;
-
 		viewBoxWidth = (minX == 0 ? (maxX + 1) : maxX) *
 				COORDINATE_MULTIPLIER;
 		viewBoxHeight = (minY == 0 ? (maxY + 1) : maxY) *
 				COORDINATE_MULTIPLIER;
+
+		coordPos = new Point(viewBoxX, viewBoxY);
+		infoPos = new Point(viewBoxX, viewBoxHeight);
+
 	}
 
 	/**
@@ -785,8 +784,8 @@ public class SVGManager {
 	private String createInfoString() {
 
 		String coordinates =
-				"x=\"" + viewBoxX + "\" " +
-				"y=\"" + (viewBoxHeight + 1.5 *
+				"x=\"" + infoPos.fst + "\" " +
+				"y=\"" + (infoPos.snd + 1.5 *
 						FONT_SIZE_INFO_STRING) +
 				"\" ";
 
@@ -816,7 +815,7 @@ public class SVGManager {
 			coords.append("<text text-anchor=\"middle\" ");
 			coords.append("x=\"" + (xCoord * COORDINATE_MULTIPLIER +
 									0.5 * COORDINATE_MULTIPLIER) + "\" ");
-			coords.append("y=\"" + (yCoordStart - coordSize) + "\" ");
+			coords.append("y=\"" + (coordPos.snd - coordSize) + "\" ");
 			coords.append(
 					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
 					"\">");
@@ -831,7 +830,7 @@ public class SVGManager {
 					COORDINATE_MULTIPLIER +
 									0.5 * coordSize +
 									0.5 * COORDINATE_MULTIPLIER) + "\" ");
-			coords.append("x=\"" + (xCoordStart -	coordSize) + "\" ");
+			coords.append("x=\"" + (coordPos.fst -	coordSize) + "\" ");
 			coords.append(
 					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
 					"\">");
