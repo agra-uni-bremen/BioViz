@@ -38,6 +38,7 @@ import de.bioviz.structures.Rectangle;
 import de.bioviz.structures.Sink;
 import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.Nullable;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -208,57 +209,28 @@ class BioParserListener extends BioBaseListener {
 	}
 
 	/**
-	 * Parses the given dropletIDContext.
+	 * This gets an ID for Droplets, Fluids, Mixers and Pins.
 	 *
-	 * @param ctx The DropletIdContext
-	 * @return int value of the dropletId
-	 */
-	private int getDropletID(final DropletIDContext ctx) {
-		return Integer.parseInt(ctx.Integer().getText());
-	}
-
-
-	/**
-	 * Parses the given fluidIdContext.
+	 * The parameters should be of Type FluidIDContext, DropletIDContext,
+	 * MixerIDContext or PinIDContext, otherwise an IllegalArgumentException is
+	 * thrown.
 	 *
-	 * @param ctx The fluidIdContext
-	 * @return int value of the fluidId
-	 * 					or 0 if ctx is null
+	 * @param ctx the context
+	 * @throws IllegalArgumentException if the type is wrong
+	 * @return the ID as int
 	 */
-	private int getFluidID(final FluidIDContext ctx) {
+	private int getID(final ParserRuleContext ctx) {
 		if (ctx == null) {
 			return 0;
 		} else {
-			return Integer.parseInt(ctx.Integer().getText());
-		}
-	}
-
-	/**
-	 * Parses the given PinIdContext.
-	 * @param ctx The PinIdContext
-	 * @return int value of the PinId or
-	 * 					0 if ctx is null
-	 */
-	private int getPinID(final PinIDContext ctx) {
-		if (ctx == null) {
-			return 0;
-		} else {
-			return Integer.parseInt(ctx.Integer().getText());
-		}
-	}
-
-	/**
-	 * Parses the given MixerIdContext.
-	 *
-	 * @param ctx The MixerIdContext
-	 * @return int value of the parsed mixerId
-	 * 					or 0 if ctx is null
-	 */
-	private int getMixerID(final MixerIDContext ctx) {
-		if (ctx == null) {
-			return 0;
-		} else {
-			return Integer.parseInt(ctx.Integer().getText());
+			if (!(ctx instanceof FluidIDContext || ctx instanceof
+					DropletIDContext || ctx instanceof PinIDContext || ctx instanceof
+					MixerIDContext)) {
+				logger.error("Could not parse an ID for the given type.");
+				throw new IllegalArgumentException(
+						"Could not parse an ID for the given type.");
+			}
+			return Integer.parseInt(ctx.getToken(Bio.Integer, 0).getText());
 		}
 	}
 
@@ -270,7 +242,7 @@ class BioParserListener extends BioBaseListener {
 	 */
 	private Source getSource(final SourceContext ctx) {
 		Point pos = getPosition(ctx.position());
-		int id = getDropletID(ctx.dropletID());
+		int id = getID(ctx.dropletID());
 		if (ctx.timeConstraint() != null) {
 			return new Source(
 					id,
@@ -303,7 +275,7 @@ class BioParserListener extends BioBaseListener {
 
 	@Override
 	public void enterDispenser(@NotNull final DispenserContext ctx) {
-		int fluidID = getFluidID(ctx.fluidID());
+		int fluidID = getID(ctx.fluidID());
 
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
 		if (dispenser != null) {
@@ -413,7 +385,7 @@ class BioParserListener extends BioBaseListener {
 	@Override
 	public void enterAssignment(@NotNull final Bio.AssignmentContext ctx) {
 		Point pos = getPosition(ctx.position());
-		int pinID = getPinID(ctx.pinID());
+		int pinID = getID(ctx.pinID());
 
 		if (pins.containsKey(pinID)) {
 			pins.get(pinID).cells.add(pos);
@@ -436,7 +408,7 @@ class BioParserListener extends BioBaseListener {
 		if (spec != null) {
 			duration = getTimeConstraint(spec.timeConstraint());
 			if (spec.fluidID() == null) {
-				fluidType = getFluidID(spec.fluidID());
+				fluidType = getID(spec.fluidID());
 			}
 		}
 
@@ -450,8 +422,8 @@ class BioParserListener extends BioBaseListener {
 	 */
 	@Override
 	public void enterDropToFluid(@NotNull final Bio.DropToFluidContext ctx) {
-		int dropID = getDropletID(ctx.dropletID());
-		int fluidID = getFluidID(ctx.fluidID());
+		int dropID = getID(ctx.dropletID());
+		int fluidID = getID(ctx.fluidID());
 		logger.debug("Adding droplet ID to fluid ID mapping: {} -> {}", dropID,
 					 fluidID);
 		dropletIDsToFluidTypes.put(dropID, fluidID);
@@ -596,7 +568,7 @@ class BioParserListener extends BioBaseListener {
 	 */
 	@Override
 	public void enterPinActuation(@NotNull final PinActuationContext ctx) {
-		int pinID = getPinID(ctx.pinID());
+		int pinID = getID(ctx.pinID());
 		ActuationVector actVec =
 				new ActuationVector(ctx.ActuationVector().getText());
 		pinActuations.put(pinID, actVec);
@@ -689,7 +661,7 @@ class BioParserListener extends BioBaseListener {
 	@Override
 	public void enterMixer(@NotNull final Bio.MixerContext ctx) {
 
-		int id = getMixerID(ctx.mixerID());
+		int id = getID(ctx.mixerID());
 		Rectangle rect = new Rectangle(getPosition(ctx.position(0)),
 									   getPosition(ctx.position(1)));
 		Range time = getTimeRange(ctx.timeRange());
