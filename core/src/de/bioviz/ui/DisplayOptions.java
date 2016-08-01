@@ -80,7 +80,7 @@ public class DisplayOptions {
 	 */
 	public void setOption(final BDisplayOptions opt, final boolean val) {
 
-		logger.debug("Setting option \"{}\" to {}", opt, val);
+		logger.trace("Setting option \"{}\" to {}", opt, val);
 		options.put(opt, val);
 		callOptionChangedEvents(opt);
 	}

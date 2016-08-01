@@ -32,8 +32,8 @@ public class ErrorViewer extends TextViewer {
 	 * Adds hard errors to the textArea.
 	 */
 	private void addErrors() {
-		if (currentViz.currentCircuit != null) {
-			addLines(currentViz.currentCircuit.getData().hardErrors);
+		if (currentViz.currentBiochip != null) {
+			addLines(currentViz.currentBiochip.getData().hardErrors);
 		}
 	}
 
@@ -41,8 +41,8 @@ public class ErrorViewer extends TextViewer {
 	 * Adds soft errors to the textArea.
 	 */
 	private void addWarnings() {
-		if (currentViz.currentCircuit != null) {
-			addLines(currentViz.currentCircuit.getData().errors);
+		if (currentViz.currentBiochip != null) {
+			addLines(currentViz.currentBiochip.getData().errors);
 		}
 	}
 

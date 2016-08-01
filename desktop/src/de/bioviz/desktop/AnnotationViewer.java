@@ -26,7 +26,7 @@ public class AnnotationViewer extends TextViewer {
 	 * Loads the annotations.
 	 */
 	private void loadAnnotations() {
-		DrawableCircuit currentCircuit = currentViz.currentCircuit;
+		DrawableCircuit currentCircuit = currentViz.currentBiochip;
 		if (currentCircuit != null) {
 			List<String> annotations = currentCircuit.getData().getAnnotations();
 			for (final String annotation : annotations) {

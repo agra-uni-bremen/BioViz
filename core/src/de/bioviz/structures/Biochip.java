@@ -31,16 +31,42 @@ public class Biochip {
 	private static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
 
+	/**
+	 * List of all blockages present on the biochip.
+	 */
 	public final List<Pair<Rectangle, Range>> blockages =
 			new ArrayList<>();
+
+	/**
+	 * List of all detectors present on the biochip.
+	 */
 	public final List<Detector> detectors = new ArrayList<>();
+
+	/**
+	 * List of all heaters present on the biochip.
+	 */
+	public final List<Heater> heaters = new ArrayList<>();
+
+	/**
+	 * List of all magnets present on the biochip.
+	 */
+	public final List<Magnet> magnets = new ArrayList<>();
 	public final Map<Integer, Pin> pins = new HashMap<>();
 	public final Map<Integer, ActuationVector> pinActuations =
 			new HashMap<>();
 	public final Map<Point, ActuationVector> cellActuations =
 			new HashMap<>();
+
+	/**
+	 * List of all mixers present on the biochip.
+	 */
 	public final ArrayList<Mixer> mixers = new ArrayList<>();
-	/** Stores the areaAnnotations. */
+
+	/**
+	 * List of a "area" annotation.
+	 * <p>
+	 * An area annotation means that it will be displayed on top of the cells.
+	 */
 	public final List<AreaAnnotation> areaAnnotations = new ArrayList<>();
 	public List<String> errors = new ArrayList<>();
 	public List<String> hardErrors = new ArrayList<>();
@@ -50,6 +76,12 @@ public class Biochip {
 
 	private Map<Integer, String> fluidTypes = new HashMap<>();
 
+
+	// TODO why is this stuff also called annotations? Probably something
+	// different would be good.
+	/**
+	 * List of annotations that are displayed in the info panel.
+	 */
 	private List<String> annotations = new ArrayList<>();
 
 
@@ -185,8 +217,10 @@ public class Biochip {
 	 *
 	 * @param fluidID
 	 * 		The fluid ID of the droplet whose fluid type is to be determined.
-	 * 	    May be null to support easy chaining.
-	 * @return The fluid type of the given droplet. Might be NULL. If fluidID is
+	 * 		May
+	 * 		be null to support easy chaining.
+	 * @return The fluid type of the given droplet. Might be NULL. If
+	 * fluidID is
 	 * NULL the return value is also NULL.
 	 */
 	public String fluidType(final Integer fluidID) {
@@ -294,22 +328,26 @@ public class Biochip {
 	}
 
 
-	void addAdjacentPoint(final Rectangle p1, final Droplet d1, final Rectangle p2,
+	void addAdjacentPoint(final Rectangle p1, final Droplet d1, final
+	Rectangle p2,
 						  final Droplet d2, final Set s, final int timestep) {
 		if (Rectangle.adjacent(p1, p2)) {
 			logger.info("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 +
-						 ") are adjacent in time step " + timestep);
+						") are adjacent in time step " + timestep);
 			BiochipField f1 = field.get(p1.upperLeft());
 			BiochipField f2 = field.get(p2.upperLeft());
 
-			logger.info("New violation: "+ d1+ " " +f1 + " " + d2 + " " + f2);
+			logger.info(
+					"New violation: " + d1 + " " + f1 + " " + d2 + " " + f2);
 			s.add(new FluidicConstraintViolation(d1, f1, d2, f2, timestep));
 		}
 	}
 
 	/**
 	 * Adds a single annotation to the chip.
-	 * @param annotation the annotation
+	 *
+	 * @param annotation
+	 * 		the annotation
 	 */
 	public void addAnnotation(final String annotation) {
 		this.annotations.add(annotation);
@@ -317,9 +355,11 @@ public class Biochip {
 
 	/**
 	 * Adds multiple annotations to the chip.
-	 * @param annotations the annotations
+	 *
+	 * @param annotations
+	 * 		the annotations
 	 */
-	public void addAnnotations(final List<String> annotations){
+	public void addAnnotations(final List<String> annotations) {
 		this.annotations.addAll(annotations);
 	}
 
@@ -357,8 +397,10 @@ public class Biochip {
 							time step violates one of the constraints.
 							 */
 							addAdjacentPoint(p1, d1, p2, d2, result, timestep);
-							addAdjacentPoint(pp1, d1, p2, d2, result, timestep);
-							addAdjacentPoint(p1, d1, pp2, d2, result, timestep);
+							addAdjacentPoint(pp1, d1, p2, d2, result,
+											 timestep);
+							addAdjacentPoint(p1, d1, pp2, d2, result,
+											 timestep);
 						}
 					}
 				}
@@ -445,6 +487,93 @@ public class Biochip {
 	 */
 	public boolean hasFieldAt(final Point coords) {
 		return this.field.containsKey(coords);
+	}
+
+	/**
+	 * Checks the positions of a rectangle for presence on the biochip and
+	 * returns those points who aren't.
+	 *
+	 * @param rec
+	 * 		The rectangle to check.
+	 * @return The list of points of the rectangle that do not belong to the
+	 * biochip.
+	 */
+	public List<Point> nonExistantFields(final Rectangle rec) {
+		return nonExistantFields(rec.positions());
+	}
+
+	/**
+	 * Checks a list of points for presence on the biochip and returns those
+	 * who
+	 * aren't.
+	 *
+	 * @param points
+	 * 		The list of points to check.
+	 * @return The list of points that do not belong to the biochip.
+	 */
+	public List<Point> nonExistantFields(final List<Point> points) {
+		ArrayList<Point> filtered = points.stream().
+				filter(p -> !hasFieldAt(p)).
+				collect(Collectors.toCollection(ArrayList<Point>::new));
+		return filtered;
+	}
+
+
+	/**
+	 * Checks whether points of a list do not belong to the chip.
+	 *
+	 * @param points
+	 * 		List of points to test for presence.
+	 * @return true if no point is outside the boundary of the biochip.
+	 */
+	public boolean allPresent(final List<Point> points) {
+		return !points.stream().anyMatch(p -> !hasFieldAt(p));
+	}
+
+	/**
+	 * Checks whether points of a rectangle do not belong to the chip.
+	 *
+	 * @param rec
+	 * 		The rectangle whose points are teste.
+	 * @return true if no point is outside the boundary of the biochip.
+	 */
+	public boolean allPresent(final Rectangle rec) {
+		return allPresent(rec.positions());
+	}
+
+	/**
+	 * Checks whether any of the positions of a rectangle is occupied by a
+	 * resource.
+	 *
+	 * Note that non-existant fields are counted as not having a resource. That
+	 * means that giving points that are entirely outside the biochip would
+	 * result in false being returned (and no error is raised!).
+	 *
+	 * @param rec The rectangle to check.
+	 * @return true if any of the points has a resource, false otherwise.
+	 */
+	public boolean hasResource(final Rectangle rec) {
+		return hasResource(rec.positions());
+	}
+
+	/**
+	 * Checks whether any of the supplied positions is occupied by a resource.
+	 *
+	 * Note that non-existant fields are counted as not having a resource. That
+	 * means that giving points that are entirely outside the biochip would
+	 * result in false being returned (and no error is raised!).
+	 *
+	 * @param points The points to check for resources.
+	 * @return true if any of the points has a resource, false otherwise.
+	 */
+	public boolean hasResource(final List<Point> points) {
+		return points.stream().anyMatch(p -> {
+			if (hasFieldAt(p)) {
+				return getFieldAt(p).hasResource();
+			}	else {
+				return false;
+			}
+		});
 	}
 
 	/**
@@ -575,6 +704,7 @@ public class Biochip {
 
 	/**
 	 * Get the annotations stored in the chip.
+	 *
 	 * @return List of strings containing the annotations.
 	 */
 	public List<String> getAnnotations() {

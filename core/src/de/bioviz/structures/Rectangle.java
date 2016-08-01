@@ -42,6 +42,17 @@ public class Rectangle {
 		this(p1.fst, p1.snd, p2.fst, p2.snd);
 	}
 
+	/**
+	 * Copy constructur for Rectangles.
+	 * @param rec The rectangle that is to be copied.
+	 */
+	public Rectangle(final Rectangle rec) {
+		this(new Integer(rec.lowerLeft.fst),
+			 new Integer(rec.lowerLeft.snd),
+			 new Integer(rec.upperRight.fst),
+			 new Integer(rec.upperRight.snd));
+	}
+
 
 	/**
 	 * Creates a Rectangle defined by the upper left corner and a size.
@@ -58,6 +69,7 @@ public class Rectangle {
 	}
 
 	/**
+	 *
 	 * Creates a rectangle defined by two corners (provided by their
 	 * coordinates).
 	 *
@@ -117,6 +129,7 @@ public class Rectangle {
 	 * @param p
 	 * 		Point to check for
 	 * @return true if p is within the rectangle, false otherwise
+	 *
 	 */
 	public boolean contains(final Point p) {
 		return contains(p.fst, p.snd);
@@ -131,6 +144,7 @@ public class Rectangle {
 	 * @param y
 	 * 		y-coordinate of Point to check for
 	 * @return true if (x,y) is within the rectangle, false otherwise
+	 *
 	 */
 	public boolean contains(final int x, final int y) {
 
@@ -154,14 +168,13 @@ public class Rectangle {
 		return new Point(centerX, centerY);
 	}
 
-	/**
+    /**
 	 * Computes the center of the rectangle using floating point arithmetic.
-	 * <p>
-	 * The result is a pair of floats. While the result lies within the
-	 * rectangle it is not necessarily a valid integer coordinate of it.
 	 *
-	 * @return Point in the center of the rectangle using floating point
-	 * arithmetic.
+	 * The result is a pair of floats. While the result lies within the rectangle
+	 * it is not necessarily a valid integer coordinate of it.
+	 *
+	 * @return Point in the center of the rectangle using floating point arithmetic.
 	 */
 	public Pair<Float, Float> centerFloat() {
 		float centerX =
@@ -176,9 +189,9 @@ public class Rectangle {
 
 
 	/**
-	 * @return ArrayList of the points of this rectangle.
+	 * @return List of the points of this rectangle.
 	 */
-	public ArrayList<Point> positions() {
+	public List<Point> positions() {
 
 		ArrayList<Point> result = new ArrayList<>();
 
@@ -264,8 +277,6 @@ public class Rectangle {
 	}
 
 
-
-
 	/**
 	 * Computes the size of the rectangle.
 	 *
@@ -306,9 +317,8 @@ public class Rectangle {
 	 * @return The upper left corner of the rectangle.
 	 */
 	public Point upperLeft() {
-		return new Point(lowerLeft.fst, upperRight.snd);
+		return new Point(lowerLeft.fst,upperRight.snd);
 	}
-
 
 	/**
 	 * Computes the lower right corner of the rectangle.
@@ -324,14 +334,13 @@ public class Rectangle {
 	 * <p>
 	 * The check is easily done be extending the rectangle and checking whether
 	 * the point is within that rectangle.
-	 * <p>
+	 *
 	 * The parameter size determins how much the rectangle gets extended. This
 	 * is of interest when working with meda chips.
 	 *
 	 * @param p
 	 * 		The point to check for adjacency.
-	 * @param size
-	 * 		The size of the adjacency to be considered.
+	 * 	@param size The size of the adjacency to be considered.
 	 * @return True if the point is adjacent to the rectangle.
 	 */
 	public boolean adjacent(final Point p, final int size) {
@@ -346,8 +355,7 @@ public class Rectangle {
 	/**
 	 * Checks if a point is adjacent to this rectangle using a distance of 1.
 	 *
-	 * @param p
-	 * 		The point to check for adjacency.
+	 * @param p The point to check for adjacency.
 	 * @return True if the point is adjacent to the rectangle, false otherwise.
 	 */
 	public boolean adjacent(final Point p) {
@@ -358,6 +366,7 @@ public class Rectangle {
 	 * @return String of the form "Rect[(lowerLeft.x,lowerLeft.y)
 	 * (upperRight.x,upperRight.y)]"
 	 */
+	@Override
 	public String toString() {
 		return "Rect[" + lowerLeft + " " + upperRight + "]";
 	}
