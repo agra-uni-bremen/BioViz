@@ -696,7 +696,7 @@ class BioParserListener extends BioBaseListener {
 
 		for (final Rectangle rect : rectangles) {
 			for (final Point cell : rect.positions()) {
-				chip.addField(cell, new BiochipField(cell, chip));
+				chip.addField(new BiochipField(cell, chip));
 			}
 		}
 
@@ -761,7 +761,7 @@ class BioParserListener extends BioBaseListener {
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point sinkPoint = p.add(dirPoint);
 			Sink sinkField = new Sink(sinkPoint, dir, chip);
-			chip.addField(sinkPoint, sinkField);
+			chip.addField(sinkField);
 		});
 
 		errors.addAll(Validator.checkDispenserPositions(chip,
@@ -775,7 +775,7 @@ class BioParserListener extends BioBaseListener {
 			Point dispPoint = p.add(dirPoint);
 			Dispenser dispField =
 					new Dispenser(dispPoint, fluidID, dir, chip);
-			chip.addField(dispPoint, dispField);
+			chip.addField( dispField);
 
 		});
 
