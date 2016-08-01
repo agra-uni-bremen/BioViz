@@ -172,10 +172,7 @@ public abstract class DrawableSprite implements Drawable {
 	 * 		the texture to use
 	 * 	@param parent The parent BioViz instance
 	 */
-	public DrawableSprite(final TextureE texture,
-						  final float sizeX,
-						  final float sizeY,
-						  final BioViz parent) {
+	public DrawableSprite(final TextureE texture, final BioViz parent) {
 		if (parent == null) {
 			throw new RuntimeException("sprite parent must not be null");
 		}
@@ -191,10 +188,6 @@ public abstract class DrawableSprite implements Drawable {
 		this.targetColor.a = DEFAULT_ALPHA;
 		this.currentColor.a = DEFAULT_ALPHA;
 		this.viz = parent;
-	}
-
-	public DrawableSprite(final TextureE texture, final BioViz parent) {
-		this(texture, 1, 1, parent);
 	}
 
 	private void initializeSprite(final float sizeX,

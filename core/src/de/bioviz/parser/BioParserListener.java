@@ -502,7 +502,7 @@ class BioParserListener extends BioBaseListener {
 			if (spec.fluidID() == null) {
 				fluidType = getID(spec.fluidID());
 			}
-		}	
+		}
 
 		detectors.add(new Detector(position, duration, fluidType));
 	}
