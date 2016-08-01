@@ -75,10 +75,7 @@ public class Biochip {
 	private Map<Integer, Integer> dropletIDsToFluidTypes = new HashMap<>();
 
 	private Map<Integer, String> fluidTypes = new HashMap<>();
-
-
-	// TODO why is this stuff also called annotations? Probably something
-	// different would be good.
+	
 	/**
 	 * List of annotations that are displayed in the info panel.
 	 */
