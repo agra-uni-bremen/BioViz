@@ -31,9 +31,6 @@ public class Biochip {
 	private static Logger logger = LoggerFactory.getLogger(Biochip.class);
 
 
-	/**
-	 * List of all blockages present on the biochip.
-	 */
 	public final List<Pair<Rectangle, Range>> blockages =
 			new ArrayList<>();
 
@@ -76,9 +73,6 @@ public class Biochip {
 
 	private Map<Integer, String> fluidTypes = new HashMap<>();
 
-
-	// TODO why is this stuff also called annotations? Probably something
-	// different would be good.
 	/**
 	 * List of annotations that are displayed in the info panel.
 	 */
@@ -217,10 +211,8 @@ public class Biochip {
 	 *
 	 * @param fluidID
 	 * 		The fluid ID of the droplet whose fluid type is to be determined.
-	 * 		May
-	 * 		be null to support easy chaining.
-	 * @return The fluid type of the given droplet. Might be NULL. If
-	 * fluidID is
+	 * 	    May be null to support easy chaining.
+	 * @return The fluid type of the given droplet. Might be NULL. If fluidID is
 	 * NULL the return value is also NULL.
 	 */
 	public String fluidType(final Integer fluidID) {
@@ -328,26 +320,22 @@ public class Biochip {
 	}
 
 
-	void addAdjacentPoint(final Rectangle p1, final Droplet d1, final
-	Rectangle p2,
+	void addAdjacentPoint(final Rectangle p1, final Droplet d1, final Rectangle p2,
 						  final Droplet d2, final Set s, final int timestep) {
 		if (Rectangle.adjacent(p1, p2)) {
 			logger.info("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 +
-						") are adjacent in time step " + timestep);
+						 ") are adjacent in time step " + timestep);
 			BiochipField f1 = field.get(p1.upperLeft());
 			BiochipField f2 = field.get(p2.upperLeft());
 
-			logger.info(
-					"New violation: " + d1 + " " + f1 + " " + d2 + " " + f2);
+			logger.info("New violation: "+ d1+ " " +f1 + " " + d2 + " " + f2);
 			s.add(new FluidicConstraintViolation(d1, f1, d2, f2, timestep));
 		}
 	}
 
 	/**
 	 * Adds a single annotation to the chip.
-	 *
-	 * @param annotation
-	 * 		the annotation
+	 * @param annotation the annotation
 	 */
 	public void addAnnotation(final String annotation) {
 		this.annotations.add(annotation);
@@ -355,11 +343,9 @@ public class Biochip {
 
 	/**
 	 * Adds multiple annotations to the chip.
-	 *
-	 * @param annotations
-	 * 		the annotations
+	 * @param annotations the annotations
 	 */
-	public void addAnnotations(final List<String> annotations) {
+	public void addAnnotations(final List<String> annotations){
 		this.annotations.addAll(annotations);
 	}
 
@@ -397,10 +383,8 @@ public class Biochip {
 							time step violates one of the constraints.
 							 */
 							addAdjacentPoint(p1, d1, p2, d2, result, timestep);
-							addAdjacentPoint(pp1, d1, p2, d2, result,
-											 timestep);
-							addAdjacentPoint(p1, d1, pp2, d2, result,
-											 timestep);
+							addAdjacentPoint(pp1, d1, p2, d2, result, timestep);
+							addAdjacentPoint(p1, d1, pp2, d2, result, timestep);
 						}
 					}
 				}
@@ -616,23 +600,11 @@ public class Biochip {
 	/**
 	 * Adds a field to the chip.
 	 *
-	 * @param coordinates
-	 * 		The coordinates to which the field is to be added.
 	 * @param biochipField
 	 * 		The field to be added.
 	 */
-	// TODO why the heck do we provide the coordinates twice? --> check the
-	// parsing procedure.
-	public void addField(final Point coordinates, final BiochipField
-			biochipField) {
-		Point coords = coordinates;
-		if (biochipField.x() != coords.fst ||
-			biochipField.y() != coords.snd) {
-			logger.error(
-					"Field coordinates differ from those transmitted to the " +
-					"chip for this instance");
-			coords = new Point(biochipField.x(), biochipField.y());
-		}
+	public void addField(final BiochipField biochipField) {
+		Point coords = new Point(biochipField.x(),biochipField.y());
 		if (this.field.containsKey(coords)) {
 			logger.trace("Field added twice at " + coords +
 						 ", removed older instance");
@@ -704,7 +676,6 @@ public class Biochip {
 
 	/**
 	 * Get the annotations stored in the chip.
-	 *
 	 * @return List of strings containing the annotations.
 	 */
 	public List<String> getAnnotations() {

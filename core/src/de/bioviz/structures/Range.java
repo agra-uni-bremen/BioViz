@@ -15,7 +15,7 @@ public class Range {
 	/**
 	 * The begin of the range.
 	 */
-	public final int begin;
+	private final int begin;
 
 	/**
 	 * The end of the range.
@@ -46,11 +46,7 @@ public class Range {
 	 * @return true if th the integer is within the range, false otherwise
 	 */
 	public boolean inRange(final int i) {
-		if (i < 0) {
-			return false;
-		} else {
-			return i >= begin && (end == DONTCARE || i <= end);
-		}
+		return i >= 0 && i >= begin && (end == DONTCARE || i <= end);
 	}
 
 
@@ -61,6 +57,7 @@ public class Range {
 	 *
 	 * @return "(" [begin] "," [end] ")"
 	 */
+	@Override
 	public String toString() {
 		String fst = (begin == DONTCARE) ? "*" : String.valueOf(begin);
 		String snd = (end == DONTCARE) ? "*" : String.valueOf(end);

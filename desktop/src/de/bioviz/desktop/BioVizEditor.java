@@ -96,7 +96,7 @@ public class BioVizEditor {
 
 		// Save the file into tmp and load the tmp file.
 		reload.addActionListener(
-				(action) -> {
+				action -> {
 					logger.debug("Storing file in tmp.");
 					try {
 						File tmpFile = File.createTempFile(file.getName(), ".BioViz_tmp", null);
@@ -111,7 +111,7 @@ public class BioVizEditor {
 
 		// Save the file to disk and reload it.
 		save.addActionListener(
-				(action) -> {
+				action -> {
 					logger.debug("Saving file.");
 					writeToFile(file);
 					currentViz.callReloadFileListeners();
