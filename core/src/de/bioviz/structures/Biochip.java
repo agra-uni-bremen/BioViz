@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Collection;
 import java.util.List;
@@ -88,28 +89,26 @@ public class Biochip {
 	/**
 	 * The latest time step in the operation of this biochip.
 	 * <p>
-	 * The initial value of null indicates that the maximal amount of time
-	 * steps
-	 * has not been computed yet.
+	 * The initially empty object indicates that the maximal amount of time
+	 * steps has not been computed yet.
 	 */
-	private Integer maxT = null;
+	private Optional<Integer> maxT = Optional.empty();
 
 	/**
 	 * The length of the longest route.
 	 * <p>
-	 * The initial value of null indicates that the length has not been
-	 * computed
-	 * yet.
+	 * The initially empty object indicates that the length has not been
+	 * computed yet.
 	 */
-	private Integer maxRouteLength = null;
+	private Optional<Integer> maxRouteLength = Optional.empty();
 
 	/**
 	 * Caches the maximum usage of all fields to save computation time.
 	 * <p>
-	 * The initial value of null indicates that the max usage has not been
+	 * The initially empty object indicates that the maximal usage has not been
 	 * computed yet.
 	 */
-	private Integer maxUsageCache = null;
+	private Optional<Integer> maxUsageCache = Optional.empty();
 
 	/**
 	 * The fields of this chip.
@@ -411,27 +410,31 @@ public class Biochip {
 	 * @return the last timestamp of the currently loaded simulation
 	 */
 	public int getMaxT() {
-		if (maxT != null) {
-			return maxT;
+
+		if (!maxT.isPresent()) {
+
+			int tmp = 0;
+
+			for (final Droplet d : droplets) {
+				tmp = Math.max(tmp, d.getMaxTime());
+			}
+			for (final Mixer m : mixers) {
+				tmp = Math.max(tmp, m.timing.end);
+			}
+			for (final Pair<Rectangle, Range> b : blockages) {
+				tmp = Math.max(tmp, b.snd.end);
+			}
+			for (final ActuationVector a : pinActuations.values()) {
+				tmp = Math.max(tmp, a.size());
+			}
+			for (final ActuationVector a : cellActuations.values()) {
+				tmp = Math.max(tmp, a.size());
+			}
+
+			maxT = Optional.of(tmp);
 		}
 
-		maxT = 0;
-		for (final Droplet d : droplets) {
-			maxT = Math.max(maxT, d.getMaxTime());
-		}
-		for (final Mixer m : mixers) {
-			maxT = Math.max(maxT, m.timing.end);
-		}
-		for (final Pair<Rectangle, Range> b : blockages) {
-			maxT = Math.max(maxT, b.snd.end);
-		}
-		for (final ActuationVector a : pinActuations.values()) {
-			maxT = Math.max(maxT, a.size());
-		}
-		for (final ActuationVector a : cellActuations.values()) {
-			maxT = Math.max(maxT, a.size());
-		}
-		return maxT;
+		return maxT.get();
 
 	}
 
@@ -442,13 +445,15 @@ public class Biochip {
 	 * @return Length of the longest route
 	 */
 	public int getMaxRouteLength() {
-		if (maxRouteLength == null) {
-			maxRouteLength = 0;
-			for (final Droplet d : droplets) {
-				maxRouteLength = Math.max(maxRouteLength, d.getRouteLength());
-			}
+
+
+		if (!maxRouteLength.isPresent()) {
+			maxRouteLength = Optional.of(
+					droplets.stream().map(Droplet::getRouteLength).max(
+							Integer::compare).orElse(0)
+			);
 		}
-		return maxRouteLength;
+		return maxRouteLength.get();
 	}
 
 
@@ -563,7 +568,8 @@ public class Biochip {
 	 */
 	public boolean hasResource(final List<Point> points) {
 		return points.stream().anyMatch(p ->
-			hasFieldAt(p) && getFieldAt(p).hasResource()
+												hasFieldAt(p) &&
+												getFieldAt(p).hasResource()
 		);
 	}
 
@@ -670,11 +676,14 @@ public class Biochip {
 	 * @return The maximal amount of times a cell is actuated.
 	 */
 	public int getMaxUsage() {
-		if (maxUsageCache == null) {
-			maxUsageCache = this.field.values().stream().
-					map(f -> f.getUsage()).max(Integer::compare).orElse(0);
+		if (!maxUsageCache.isPresent()) {
+			maxUsageCache = Optional.of(
+					this.field.values().stream().
+							map(BiochipField::getUsage).max(Integer::compare).
+							orElse(0)
+			);
 		}
-		return maxUsageCache;
+		return maxUsageCache.get();
 	}
 
 	/**
