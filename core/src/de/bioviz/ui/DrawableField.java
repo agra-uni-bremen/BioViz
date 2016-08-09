@@ -312,8 +312,6 @@ public class DrawableField extends DrawableSprite {
 	 * @return the field's color.
 	 */
 	@Override
-	// TODO put everything in separate methods. The current situation sucks
-	// hard!
 	public Color getColor() {
 
 		/**
