@@ -390,7 +390,6 @@ public class MessageCenter {
 		if (col != null) {
 			hm.color = col;
 		}
-		hm.size = size;
 	}
 
 	/**
