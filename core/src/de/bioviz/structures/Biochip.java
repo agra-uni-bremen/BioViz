@@ -253,9 +253,9 @@ public class Biochip {
 	 * You need to manually call the reCompute() method.
 	 */
 	public void resetCaches() {
-		maxT = null;
-		maxRouteLength = null;
-		maxUsageCache = null;
+		maxT = Optional.empty();
+		maxRouteLength = Optional.empty();
+		maxUsageCache = Optional.empty();
 	}
 
 
