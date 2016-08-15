@@ -20,25 +20,7 @@ import de.bioviz.parser.generated.Bio.TimeConstraintContext;
 import de.bioviz.parser.generated.Bio.TimeRangeContext;
 import de.bioviz.parser.generated.Bio.TimingContext;
 import de.bioviz.parser.generated.BioBaseListener;
-import de.bioviz.structures.ActuationVector;
-import de.bioviz.structures.AreaAnnotation;
-import de.bioviz.structures.Biochip;
-import de.bioviz.structures.BiochipField;
-import de.bioviz.structures.Detector;
-import de.bioviz.structures.Direction;
-import de.bioviz.structures.Dispenser;
-import de.bioviz.structures.Droplet;
-import de.bioviz.structures.FluidicConstraintViolation;
-import de.bioviz.structures.Heater;
-import de.bioviz.structures.Magnet;
-import de.bioviz.structures.Mixer;
-import de.bioviz.structures.Net;
-import de.bioviz.structures.Pin;
-import de.bioviz.structures.Point;
-import de.bioviz.structures.Range;
-import de.bioviz.structures.Rectangle;
-import de.bioviz.structures.Sink;
-import de.bioviz.structures.Source;
+import de.bioviz.structures.*;
 import de.bioviz.util.Pair;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -967,16 +949,18 @@ class BioParserListener extends BioBaseListener {
 						})
 		);
 
+		errors.addAll(Validator.checkForPositions(chip, "AreaAnnotation", this
+				.areaAnnotations));
+
 		chip.areaAnnotations.addAll(this.areaAnnotations);
 		areaAnnotations.forEach(
 				a ->
-						a.getPosition().positions().forEach(
+						a.position.positions().forEach(
 								pos -> {
 									logger.trace(
 											"Adding areaAnnotation {} to " +
 											"field {}", a, pos);
 									chip.getFieldAt(pos).areaAnnotations.add(a);
-
 								})
 		);
 
