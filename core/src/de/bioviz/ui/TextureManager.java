@@ -151,4 +151,9 @@ public class TextureManager {
 		return baseFolder + "/" + textureFolder + "/" + texture + ".png";
 	}
 
+	public void dispose() {
+		for (TextureRegion tr : this.textures.values()) {
+			tr.getTexture().dispose();
+		}
+	}
 }
