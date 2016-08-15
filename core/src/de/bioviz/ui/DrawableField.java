@@ -270,13 +270,19 @@ public class DrawableField extends DrawableSprite {
 				boolean fieldAtLeft = parent.hasFieldAt(left);
 				boolean fieldAtRight = parent.hasFieldAt(right);
 
-				boolean containsTop = net.containsField(parent.getFieldAt(top));
-				boolean containsBottom =
-						net.containsField(parent.getFieldAt(bottom));
-				boolean containsLeft = net.containsField(parent.getFieldAt
-						(left));
-				boolean containsRight =
-						net.containsField(parent.getFieldAt(right));
+
+				boolean containsTop =
+						fieldAtTop && net.containsField(parent.getFieldAt
+								(top));
+				boolean containsBottom = fieldAtBottom &&
+										 net.containsField(
+												 parent.getFieldAt(bottom));
+				boolean containsLeft =
+						fieldAtLeft &&
+						net.containsField(parent.getFieldAt(left));
+				boolean containsRight = fieldAtRight &&
+										net.containsField(
+												parent.getFieldAt(right));
 
 				if (!fieldAtTop || !containsTop) {
 					this.cornerColors[topleft].add(color);
