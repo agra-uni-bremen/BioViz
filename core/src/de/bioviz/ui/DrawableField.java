@@ -260,16 +260,13 @@ public class DrawableField extends DrawableSprite {
 				final int topright = 2;
 				final int bottomright = 3;
 
-				boolean fieldAtTop =
-						getParentCircuit().getData().hasFieldAt(top);
-				boolean fieldAtBottom =
-						getParentCircuit().getData().hasFieldAt(bottom);
-				boolean fieldAtLeft =
-						getParentCircuit().getData().hasFieldAt(left);
-				boolean fieldAtRight =
-						getParentCircuit().getData().hasFieldAt(right);
-
 				Biochip parent = getParentCircuit().getData();
+
+				boolean fieldAtTop = parent.hasFieldAt(top);
+				boolean fieldAtBottom = parent.hasFieldAt(bottom);
+				boolean fieldAtLeft = parent.hasFieldAt(left);
+				boolean fieldAtRight = parent.hasFieldAt(right);
+
 				boolean containsTop = n.containsField(parent.getFieldAt(top));
 				boolean containsBottom =
 						n.containsField(parent.getFieldAt(bottom));
