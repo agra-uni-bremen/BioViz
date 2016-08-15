@@ -367,7 +367,6 @@ public class DrawableCircuit implements Drawable {
 									(startFadingAtScale - endFadingAtScale));
 				col.a = alpha;
 			} else {
-				// TODO: don't draw!
 				col.a = 0;
 			}
 		}
