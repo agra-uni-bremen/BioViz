@@ -170,7 +170,8 @@ public abstract class DrawableSprite implements Drawable {
 	 *
 	 * @param texture
 	 * 		the texture to use
-	 * 	@param parent The parent BioViz instance
+	 * @param parent
+	 * 		The parent BioViz instance
 	 */
 	public DrawableSprite(final TextureE texture, final BioViz parent) {
 		if (parent == null) {
@@ -264,10 +265,10 @@ public abstract class DrawableSprite implements Drawable {
 			if (cornerColors != null) {
 				for (int i = 0; i < 4; i++) {
 					int intBits =
-							(int) (rgbMult  * cornerColors[i].a) << 24 |
-							(int) (rgbMult  * cornerColors[i].b) << 16 |
-							(int) (rgbMult  * cornerColors[i].g) << 8 |
-							(int) (rgbMult  * cornerColors[i].r);
+							(int) (rgbMult * cornerColors[i].a) << 24 |
+							(int) (rgbMult * cornerColors[i].b) << 16 |
+							(int) (rgbMult * cornerColors[i].g) << 8 |
+							(int) (rgbMult * cornerColors[i].r);
 					switch (i) {
 						case 0:
 							v[SpriteBatch.C1] =
@@ -310,7 +311,7 @@ public abstract class DrawableSprite implements Drawable {
 	private void setTexture() {
 		if (this.sprite != null) {
 			this.sprite.setRegion(
-				DrawableSprite.textures.getTexture(currentTexture));
+					DrawableSprite.textures.getTexture(currentTexture));
 		}
 	}
 
@@ -334,7 +335,7 @@ public abstract class DrawableSprite implements Drawable {
 
 			float viewMouseX =
 					((float) mouseX / (float) resX) * viewport.width +
-					 viewport.x;
+					viewport.x;
 			float viewMouseY =
 					-(((float) mouseY / (float) resY) * viewport.height +
 					  viewport.y);
