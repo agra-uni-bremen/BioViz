@@ -284,6 +284,9 @@ public class DrawableCircuit implements Drawable {
 
 	@Override
 	public void draw() {
+		System.out.print(this.droplets.firstElement().smoothWidth + "/");
+		System.out.println(this.droplets.firstElement().smoothHeight);
+		
 		setSmoothScale(getSmoothScale() +
 					   (getScaleX() - getSmoothScale()) / scalingDelay);
 		setSmoothOffsetX(getSmoothOffsetX() +
