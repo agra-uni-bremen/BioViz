@@ -174,6 +174,7 @@ public class BioVizEditor {
 				editPane.setPage(this.file.toURI().toURL());
 			} catch (final IOException e) {
 				e.printStackTrace();
+				logger.error("Failed to set editPane page");
 			}
 		}
 	}
