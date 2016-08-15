@@ -306,10 +306,18 @@ public abstract class DrawableSprite implements Drawable {
 		this.setScaleY(dimY / this.sprite.getHeight());
 	}
 
-	// TODO what is the rationale of this method?
+	/**
+	 * This sets the texture of the sprite object that is used to actually draw
+	 * this DrawableSprite to the data that is supplied by (our) currentTexture
+	 * and TextureManager data.</br>
+	 * This therefore does not use any parameters.
+	 * Instead, you should set the currentTexture field before drawing this
+	 * instance.
+	 */
 	private void setTexture() {
 		if (this.sprite != null) {
-			this.sprite.setRegion(DrawableSprite.textures.getTexture(currentTexture));
+			this.sprite.setRegion(
+				DrawableSprite.textures.getTexture(currentTexture));
 		}
 	}
 
