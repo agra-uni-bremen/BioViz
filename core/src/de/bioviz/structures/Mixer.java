@@ -17,7 +17,7 @@ public class Mixer extends Resource{
 	 * Stores the timing information on this mixer.
 	 */
 	public final Range timing;
-	
+
 	/**
 	 * Standard constructor requiring every value to be present.
 	 *

@@ -939,6 +939,8 @@ class BioParserListener extends BioBaseListener {
 						false));
 
 
+		errors.addAll(Validator.checkForPositions(chip, "Mixer", this.mixers));
+
 		chip.mixers.addAll(this.mixers);
 		mixers.forEach(
 				m ->
