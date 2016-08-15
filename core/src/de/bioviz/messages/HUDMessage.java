@@ -17,10 +17,6 @@ public class HUDMessage extends MessageBase {
 	 */
 	public float y;
 
-	/**
-	 * The message's size.
-	 */
-	public float size;
 
 	/**
 	 *
@@ -37,6 +33,5 @@ public class HUDMessage extends MessageBase {
 		super(message);
 		this.x = x;
 		this.y = y;
-		this.size = -1f;
 	}
 }

@@ -332,7 +332,7 @@ public class DrawableDroplet extends DrawableSprite {
 			this.updateCoords();
 			route.draw();
 
-			if (isVisible() && viz.currentCircuit.getDisplayOptions().
+			if (isVisible() && viz.currentBiochip.getDisplayOptions().
 					getOption(BDisplayOptions.Droplets)) {
 
 				float xCoord = circ.xCoordOnScreen(smoothX + (size.fst - 1) / 2f);

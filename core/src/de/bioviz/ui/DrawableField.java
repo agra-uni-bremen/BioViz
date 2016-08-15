@@ -58,6 +58,12 @@ public class DrawableField extends DrawableSprite {
 	public static final float PIXELIZED_ZOOM_LEVEL = 8;
 
 	/**
+	 * The underlying structure that is drawn by this {@link DrawableField}'s
+	 * instance.
+	 */
+	protected BiochipField field;
+
+	/**
 	 * Used to log anything related to the {@link DrawableField} activities.
 	 */
 	private static Logger logger = LoggerFactory.getLogger(DrawableField
@@ -69,12 +75,6 @@ public class DrawableField extends DrawableSprite {
 	 * itself.
 	 */
 	private DrawableCircuit parentCircuit;
-
-	/**
-	 * The underlying structure that is drawn by this {@link DrawableField}'s
-	 * instance.
-	 */
-	protected BiochipField field;
 
 	private DrawableLine netIndicator = null;
 
@@ -146,6 +146,10 @@ public class DrawableField extends DrawableSprite {
 		} else if (field.getDetector() != null &&
 				   getOption(DetectorIcon)) {
 			texture = TextureE.Detector;
+		} else if (field.getMagnet() != null) {
+			texture = TextureE.Magnet;
+		} else if (field.getHeater() != null) {
+			texture = TextureE.Heater;
 		} else if (field.isSource()) {
 			if (getOption(SourceTargetIcons)) {
 				texture = TextureE.Start;
@@ -199,8 +203,6 @@ public class DrawableField extends DrawableSprite {
 	 */
 	private int cellUsageColoring(de.bioviz.ui.Color result) {
 		if (getOption(CellUsage)) {
-			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
-			// Usage verwenden)
 			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
 			int usage = field.getUsage();
 			float color = usage / scalingFactor;
@@ -308,8 +310,6 @@ public class DrawableField extends DrawableSprite {
 	 * @return the field's color.
 	 */
 	@Override
-	// TODO put everything in separate methods. The current situation sucks
-	// hard!
 	public Color getColor() {
 
 		/**
@@ -393,7 +393,7 @@ public class DrawableField extends DrawableSprite {
 	 * 		The current time step.
 	 * @return The amount of new color overlays.
 	 */
-	private int typeColoring(de.bioviz.ui.Color result, int timeStep) {
+	private int typeColoring(de.bioviz.ui.Color result, final int timeStep) {
 		int colorOverlayCount = 0;
 		if (field instanceof Sink) {
 			result.add(Colors.SINK_COLOR);

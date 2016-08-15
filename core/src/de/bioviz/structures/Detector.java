@@ -10,7 +10,7 @@ package de.bioviz.structures;
  *
  * @author Oliver Keszocze
  */
-public class Detector {
+public class Detector extends Resource {
 	/**
 	 * The fluid type the detector works on.
 	 */
@@ -21,11 +21,6 @@ public class Detector {
 	 */
 	private int completionTime;
 
-	/**
-	 * The position of the detector on the biochip.
-	 */
-	private Point position;
-
 
 	/**
 	 * @param position
@@ -35,9 +30,11 @@ public class Detector {
 	 * @param fluidType
 	 * 		The fluid type the detector operates on
 	 */
-	public Detector(final Point position, final int completionTime, final int
-			fluidType) {
-		this.position = position;
+	public Detector(final Rectangle position,
+					final int completionTime,
+					final int fluidType) {
+		super(position,ResourceType.detector);
+
 		this.completionTime = completionTime;
 		this.fluidType = fluidType;
 	}
@@ -46,8 +43,8 @@ public class Detector {
 	/**
 	 * @return The detector's position on the biochip
 	 */
-	public Point position() {
-		return new Point(position);
+	public Rectangle position() {
+		return new Rectangle(position);
 	}
 
 	/**

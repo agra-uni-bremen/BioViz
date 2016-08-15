@@ -7,5 +7,5 @@ package de.bioviz.ui;
  */
 public enum TextureE {
 	Droplet, Sink, Dispenser, Detector, Start, Target, AdjacencyMarker,
-	BlackPixel, Blockage, GridMarker, StepMarker
+	BlackPixel, Blockage, GridMarker, StepMarker, Heater, Magnet
 }

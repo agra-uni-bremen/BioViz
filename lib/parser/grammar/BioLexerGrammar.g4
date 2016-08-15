@@ -16,6 +16,8 @@ Grid: 'grid';
 Dispensers: 'dispensers';
 Detectors: 'detectors';
 Mixers: 'mixers';
+Heaters: 'heaters';
+Magnets: 'magnets';
 Annotations: 'annotations';
 
 MedaRoutes: 'meda routes';

@@ -160,6 +160,8 @@ public class SVGCoreCreator {
 					case Start:
 					case Target:
 					case GridMarker:
+					case Heater:
+					case Magnet:
 						// change fillColor of the rectangle
 						setStyleForElement((Element) group, "rect",
 										   fillColor, strokeColor);
