@@ -22,9 +22,6 @@ public class HUDMessage extends MessageBase {
 	 *
 	 * Creates a HUDMessage that is to be displayed at the specified position.
 	 *
-	 * The initial size of the message is negative.
-	 * TODO What does this actually mean?
-	 *
 	 * @param message The message to display
 	 * @param x The x-position for the message
 	 * @param y The y-position for the message
