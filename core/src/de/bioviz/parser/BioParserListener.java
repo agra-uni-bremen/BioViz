@@ -951,7 +951,7 @@ class BioParserListener extends BioBaseListener {
 						})
 		);
 
-		errors.addAll(Validator.checkForPositions(chip, "AreaAnnotation", this
+		errors.addAll(Validator.checkForPositions(chip, "Annotation", this
 				.areaAnnotations));
 
 		chip.areaAnnotations.addAll(this.areaAnnotations);
