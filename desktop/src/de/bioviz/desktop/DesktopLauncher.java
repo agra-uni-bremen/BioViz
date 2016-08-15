@@ -849,8 +849,12 @@ public class DesktopLauncher extends JFrame {
 
 					try {
 						// Set System L&F
-						UIManager.setLookAndFeel(
-								UIManager.getSystemLookAndFeelClassName());
+						for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+							if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {   
+								javax.swing.UIManager.setLookAndFeel(info.getClassName());
+								break;
+							} 
+						}
 					} catch (final UnsupportedLookAndFeelException e) {
 						logger.error("System look and feel is unsupported: " +
 									 e.getMessage() + "\n" +
