@@ -235,15 +235,15 @@ public class DrawableField extends DrawableSprite {
 				// Create non-null array contents
 				cornerColors[i] = Color.BLACK.cpy();
 			}
-			for (final Net n : this.getParentCircuit().getData().
+			for (final Net net : this.getParentCircuit().getData().
 					getNetsOf(this.getField())) {
-				de.bioviz.ui.Color netCol = n.getColor().cpy();
+				de.bioviz.ui.Color netCol = net.getColor().cpy();
 
 				// Increase brightness for hovered nets
 				if (this.parentCircuit.getHoveredField() != null &&
 					this.getParentCircuit().getData().
 							getNetsOf(this.getParentCircuit().
-									getHoveredField().field).contains(n)) {
+									getHoveredField().field).contains(net)) {
 					netCol.add(Colors.HOVER_NET_DIFF_COLOR);
 
 				}
@@ -267,27 +267,27 @@ public class DrawableField extends DrawableSprite {
 				boolean fieldAtLeft = parent.hasFieldAt(left);
 				boolean fieldAtRight = parent.hasFieldAt(right);
 
-				boolean containsTop = n.containsField(parent.getFieldAt(top));
+				boolean containsTop = net.containsField(parent.getFieldAt(top));
 				boolean containsBottom =
-						n.containsField(parent.getFieldAt(bottom));
-				boolean containsLeft = n.containsField(parent.getFieldAt
+						net.containsField(parent.getFieldAt(bottom));
+				boolean containsLeft = net.containsField(parent.getFieldAt
 						(left));
 				boolean containsRight =
-						n.containsField(parent.getFieldAt(right));
+						net.containsField(parent.getFieldAt(right));
 
-				if (!fieldAtTop || containsTop) {
+				if (!fieldAtTop || !containsTop) {
 					this.cornerColors[topleft].add(color);
 					this.cornerColors[topright].add(color);
 				}
-				if (!fieldAtBottom || containsBottom) {
+				if (!fieldAtBottom || !containsBottom) {
 					this.cornerColors[bottomleft].add(color);
 					this.cornerColors[bottomright].add(color);
 				}
-				if (!fieldAtLeft || containsLeft) {
+				if (!fieldAtLeft || !containsLeft) {
 					this.cornerColors[bottomleft].add(color);
 					this.cornerColors[topleft].add(color);
 				}
-				if (!fieldAtRight || containsRight) {
+				if (!fieldAtRight || !containsRight) {
 					this.cornerColors[topright].add(color);
 					this.cornerColors[bottomright].add(color);
 				}
