@@ -314,11 +314,22 @@ public abstract class DrawableSprite implements Drawable {
 		}
 	}
 
-	// TODO check whether this is still needed
+	/**
+	 * Adds a texture to the list of LOD textures.
+	 * @param scaleFactorMax the scaling factor at which the respective
+	 * texture should be shown.
+	 * @param texture the texture to be added.
+	 */
 	public void addLOD(final float scaleFactorMax, final TextureE texture) {
 		this.levelOfDetailTextures.put(scaleFactorMax, texture);
 	}
 
+	/**
+	 * Removes a texture from this sprite's LOD list.
+	 * Notice that this is currently not used but is simply added as the
+	 * counterpart to to the respective add method.
+	 * @param scaleFactorMax the scale factor at which the LOD texture is used.
+	 */
 	public void removeLOD(final float scaleFactorMax) {
 		this.levelOfDetailTextures.remove(scaleFactorMax);
 	}
