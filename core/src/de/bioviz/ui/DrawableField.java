@@ -203,8 +203,6 @@ public class DrawableField extends DrawableSprite {
 	 */
 	private int cellUsageColoring(de.bioviz.ui.Color result) {
 		if (getOption(CellUsage)) {
-			// TODO clevere Methode zum Bestimmen der Farbe wählen (evtl. max
-			// Usage verwenden)
 			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
 			int usage = field.getUsage();
 			float color = usage / scalingFactor;
