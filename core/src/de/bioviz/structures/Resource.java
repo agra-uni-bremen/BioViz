@@ -37,7 +37,15 @@ public class Resource {
 		/**
 		 * Magnet type
 		 */
-		magnet
+		magnet,
+		/**
+		 * Mixer type
+		 */
+		mixer,
+		/**
+		 * AreaAnnotation type
+		 */
+		areaAnnotation
 	}
 
 	/**
