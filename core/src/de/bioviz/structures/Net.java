@@ -80,8 +80,11 @@ public final class Net {
 		this.sources.addAll(sources);
 		Random rnd = new Random();
 
-		// TODO be more sophisticated here ^^
-		rnd.setSeed((long)target.upperRight.fst + target.lowerLeft.snd);
+		long seed = ((target.upperRight.fst % 65536) << 48) |
+				((target.upperRight.snd % 65536) << 32) |
+				((target.lowerLeft.fst % 65536) << 16) |
+				(target.lowerLeft.snd % 65536);
+		rnd.setSeed(seed);
 
 		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(),
 						  1f);
