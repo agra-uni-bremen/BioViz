@@ -231,6 +231,14 @@ public class DrawableField extends DrawableSprite {
 			if (cornerColors == null) {
 				cornerColors = new Color[4];    // one color for each corner
 			}
+
+
+			final int bottomleft = 0;
+			final int topleft = 1;
+			final int topright = 2;
+			final int bottomright = 3;
+
+
 			for (int i = 0; i < cornerColors.length; i++) {
 				// Create non-null array contents
 				cornerColors[i] = Color.BLACK.cpy();
@@ -254,11 +262,6 @@ public class DrawableField extends DrawableSprite {
 
 				Color color = netCol.buildGdxColor();
 
-
-				final int bottomleft = 0;
-				final int topleft = 1;
-				final int topright = 2;
-				final int bottomright = 3;
 
 				Biochip parent = getParentCircuit().getData();
 
