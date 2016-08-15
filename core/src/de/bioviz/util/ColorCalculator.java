@@ -33,7 +33,7 @@ public final class ColorCalculator {
 		float saturation = 1f;
 		float lightness = 1f;
 
-		float[] vals = hslToRgb(hue, saturation, lightness);
+		float[] vals = hsvToRgb(hue, saturation, lightness);
 		result.r = vals[0];
 		result.g = vals[1];
 		result.b = vals[2];
@@ -97,10 +97,8 @@ public final class ColorCalculator {
 	//http://stackoverflow.com/questions/7896280/converting-from-hsv-hsb-in
 	// -java-to-rgb-without-using-java-awt-color-disallowe
 
-	// TODO Jannis is this converting HSV instead of HSL?
-
 	/**
-	 * Conververts HSL to RGB.
+	 * Conververts HSV to RGB.
 	 *
 	 * @param hue
 	 * 		The hue value
@@ -109,7 +107,7 @@ public final class ColorCalculator {
 	 * @param value The value value :D
 	 * @return RGB value of the provided HSL value.
 	 */
-	private static float[] hslToRgb(
+	private static float[] hsvToRgb(
 			final float hue,
 			final float saturation,
 			final float value) {
