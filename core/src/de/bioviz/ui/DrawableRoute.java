@@ -191,7 +191,9 @@ public class DrawableRoute extends DrawableSprite {
 
 
 			// TODO need to have something like a smoothCenterX/smoothCenterY
-			Vector2 current = new Vector2(droplet.smoothX, droplet.smoothY);
+			Vector2 current = new Vector2(
+					droplet.smoothX + (droplet.smoothWidth - 1f) / 2f,
+					droplet.smoothY - (droplet.smoothHeight - 1f) / 2f);
 
 			// draw to target
 			toTarget.from = current;

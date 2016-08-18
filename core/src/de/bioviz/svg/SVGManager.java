@@ -472,7 +472,6 @@ public class SVGManager {
 
 			LOGGER.debug("i: {}", i);
 
-			// TODO possible problem here due to casting
 			float alpha = 1 - (Math.abs((float) i) / ((float) displayLength));
 
 			displayAt = currentTime + i;

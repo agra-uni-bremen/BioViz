@@ -449,38 +449,22 @@ public class DesktopLauncher extends JFrame {
 		JButton editorButton = new JButton("Editor");
 		editorButton.setPreferredSize(new Dimension(buttonWidth,
 				editorButton.getPreferredSize().height));
-		editorButton.addActionListener(
-				e -> {
-					editor.show();
-				}
-		);
+		editorButton.addActionListener(e ->  editor.show() );
 
 		JButton annotationsButton = new JButton("Annotations");
 		annotationsButton.setPreferredSize(new Dimension(buttonWidth,
 				annotationsButton.getPreferredSize().height));
-		annotationsButton.addActionListener(
-				e -> {
-					annotationViewer.show();
-				}
-		);
+		annotationsButton.addActionListener(e -> annotationViewer.show());
 
 		JButton warningsButton = new JButton("Warnings");
 		warningsButton.setPreferredSize(new Dimension(buttonWidth, warningsButton
 				.getPreferredSize().height));
-		warningsButton.addActionListener(
-				e -> {
-					softErrorsViewer.show();
-				}
-		);
+		warningsButton.addActionListener(e -> softErrorsViewer.show());
 
 		JButton errorsButton = new JButton("Errors");
 		errorsButton.setPreferredSize(new Dimension(buttonWidth, errorsButton
 				.getPreferredSize().height));
-		errorsButton.addActionListener(
-				e -> {
-					hardErrorsViewer.show();
-				}
-		);
+		errorsButton.addActionListener(e -> hardErrorsViewer.show());
 
 
 

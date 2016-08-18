@@ -172,7 +172,7 @@ public class BioViz implements ApplicationListener {
     @Override
     public void dispose() {
         batch.dispose();
-        // TODO: Dispose textures?
+        this.textures.dispose();
         Gdx.app.exit();
     }
 

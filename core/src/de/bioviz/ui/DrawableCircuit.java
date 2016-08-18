@@ -157,11 +157,19 @@ public class DrawableCircuit implements Drawable {
 	/**
 	 * This is a helper member that is incremented as soon as the time of the
 	 * circuit advances beyond the maximum time. This value can then be
-	 * compared
-	 * to an arbitrary value and the whole circuit be reset to time 0 after a
-	 * certain grace period of being already past its final timestamp.
+	 * compared to an arbitrary value and the whole circuit be reset to time 0
+	 * after a certain grace period of being already past its final timestamp.
 	 */
 	private int autoloopOvertimeCounter = 0;
+
+
+	/**
+	 * This member stores the grace period after which the auto loop starts from
+	 * the beginning.
+	 *
+	 * @see autoloopOvertimeCounter
+	 */
+	private int autoloopOvertimeGracePeriod = 5;
 
 	/**
 	 * The field that is currently hovered by the mouse. May be null, so be
@@ -276,6 +284,7 @@ public class DrawableCircuit implements Drawable {
 
 	@Override
 	public void draw() {
+		
 		setSmoothScale(getSmoothScale() +
 					   (getScaleX() - getSmoothScale()) / scalingDelay);
 		setSmoothOffsetX(getSmoothOffsetX() +
@@ -302,7 +311,7 @@ public class DrawableCircuit implements Drawable {
 					this.getDisplayOptions().getOption(
 							BDisplayOptions.LoopAutoplay)) {
 					++autoloopOvertimeCounter;
-					if (autoloopOvertimeCounter > 5) { //todo magic number
+					if (autoloopOvertimeCounter > autoloopOvertimeGracePeriod) {
 						setCurrentTime(1);
 						autoloopOvertimeCounter = 0;
 					}
@@ -358,7 +367,6 @@ public class DrawableCircuit implements Drawable {
 									(startFadingAtScale - endFadingAtScale));
 				col.a = alpha;
 			} else {
-				// TODO: don't draw!
 				col.a = 0;
 			}
 		}
@@ -505,6 +513,7 @@ public class DrawableCircuit implements Drawable {
 
 	/**
 	 * Retrieves the current x scaling factor.
+	 *
 	 * @return The Current x scaling factor.
 	 */
 	public float getScaleX() {
@@ -517,7 +526,8 @@ public class DrawableCircuit implements Drawable {
 	 * for a smooth camera movement. Use setScaleImmediately if the viewport is
 	 * supposed to skip those inbetween steps.
 	 *
-	 * @param scaleX The new value for the x scaling value.
+	 * @param scaleX
+	 * 		The new value for the x scaling value.
 	 */
 	public void setScaleX(final float scaleX) {
 		this.scale = scaleX;

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Collection;
 import java.util.List;
@@ -88,28 +89,26 @@ public class Biochip {
 	/**
 	 * The latest time step in the operation of this biochip.
 	 * <p>
-	 * The initial value of null indicates that the maximal amount of time
-	 * steps
-	 * has not been computed yet.
+	 * The initially empty object indicates that the maximal amount of time
+	 * steps has not been computed yet.
 	 */
-	private Integer maxT = null;
+	private Optional<Integer> maxT = Optional.empty();
 
 	/**
 	 * The length of the longest route.
 	 * <p>
-	 * The initial value of null indicates that the length has not been
-	 * computed
-	 * yet.
+	 * The initially empty object indicates that the length has not been
+	 * computed yet.
 	 */
-	private Integer maxRouteLength = null;
+	private Optional<Integer> maxRouteLength = Optional.empty();
 
 	/**
 	 * Caches the maximum usage of all fields to save computation time.
 	 * <p>
-	 * The initial value of null indicates that the max usage has not been
+	 * The initially empty object indicates that the maximal usage has not been
 	 * computed yet.
 	 */
-	private Integer maxUsageCache = null;
+	private Optional<Integer> maxUsageCache = Optional.empty();
 
 	/**
 	 * The fields of this chip.
@@ -211,8 +210,10 @@ public class Biochip {
 	 *
 	 * @param fluidID
 	 * 		The fluid ID of the droplet whose fluid type is to be determined.
-	 * 	    May be null to support easy chaining.
-	 * @return The fluid type of the given droplet. Might be NULL. If fluidID is
+	 * 		May
+	 * 		be null to support easy chaining.
+	 * @return The fluid type of the given droplet. Might be NULL. If
+	 * fluidID is
 	 * NULL the return value is also NULL.
 	 */
 	public String fluidType(final Integer fluidID) {
@@ -252,9 +253,9 @@ public class Biochip {
 	 * You need to manually call the reCompute() method.
 	 */
 	public void resetCaches() {
-		maxT = null;
-		maxRouteLength = null;
-		maxUsageCache = null;
+		maxT = Optional.empty();
+		maxRouteLength = Optional.empty();
+		maxUsageCache = Optional.empty();
 	}
 
 
@@ -320,22 +321,26 @@ public class Biochip {
 	}
 
 
-	void addAdjacentPoint(final Rectangle p1, final Droplet d1, final Rectangle p2,
+	void addAdjacentPoint(final Rectangle p1, final Droplet d1, final
+	Rectangle p2,
 						  final Droplet d2, final Set s, final int timestep) {
 		if (Rectangle.adjacent(p1, p2)) {
 			logger.info("Points " + p1 + "(" + d1 + ") and " + p2 + "(" + d2 +
-						 ") are adjacent in time step " + timestep);
+						") are adjacent in time step " + timestep);
 			BiochipField f1 = field.get(p1.upperLeft());
 			BiochipField f2 = field.get(p2.upperLeft());
 
-			logger.info("New violation: "+ d1+ " " +f1 + " " + d2 + " " + f2);
+			logger.info(
+					"New violation: " + d1 + " " + f1 + " " + d2 + " " + f2);
 			s.add(new FluidicConstraintViolation(d1, f1, d2, f2, timestep));
 		}
 	}
 
 	/**
 	 * Adds a single annotation to the chip.
-	 * @param annotation the annotation
+	 *
+	 * @param annotation
+	 * 		the annotation
 	 */
 	public void addAnnotation(final String annotation) {
 		this.annotations.add(annotation);
@@ -343,9 +348,11 @@ public class Biochip {
 
 	/**
 	 * Adds multiple annotations to the chip.
-	 * @param annotations the annotations
+	 *
+	 * @param annotations
+	 * 		the annotations
 	 */
-	public void addAnnotations(final List<String> annotations){
+	public void addAnnotations(final List<String> annotations) {
 		this.annotations.addAll(annotations);
 	}
 
@@ -383,8 +390,10 @@ public class Biochip {
 							time step violates one of the constraints.
 							 */
 							addAdjacentPoint(p1, d1, p2, d2, result, timestep);
-							addAdjacentPoint(pp1, d1, p2, d2, result, timestep);
-							addAdjacentPoint(p1, d1, pp2, d2, result, timestep);
+							addAdjacentPoint(pp1, d1, p2, d2, result,
+											 timestep);
+							addAdjacentPoint(p1, d1, pp2, d2, result,
+											 timestep);
 						}
 					}
 				}
@@ -401,27 +410,31 @@ public class Biochip {
 	 * @return the last timestamp of the currently loaded simulation
 	 */
 	public int getMaxT() {
-		if (maxT != null) {
-			return maxT;
+
+		if (!maxT.isPresent()) {
+
+			int tmp = 0;
+
+			for (final Droplet d : droplets) {
+				tmp = Math.max(tmp, d.getMaxTime());
+			}
+			for (final Mixer m : mixers) {
+				tmp = Math.max(tmp, m.timing.end);
+			}
+			for (final Pair<Rectangle, Range> b : blockages) {
+				tmp = Math.max(tmp, b.snd.end);
+			}
+			for (final ActuationVector a : pinActuations.values()) {
+				tmp = Math.max(tmp, a.size());
+			}
+			for (final ActuationVector a : cellActuations.values()) {
+				tmp = Math.max(tmp, a.size());
+			}
+
+			maxT = Optional.of(tmp);
 		}
 
-		maxT = 0;
-		for (final Droplet d : droplets) {
-			maxT = Math.max(maxT, d.getMaxTime());
-		}
-		for (final Mixer m : mixers) {
-			maxT = Math.max(maxT, m.timing.end);
-		}
-		for (final Pair<Rectangle, Range> b : blockages) {
-			maxT = Math.max(maxT, b.snd.end);
-		}
-		for (final ActuationVector a : pinActuations.values()) {
-			maxT = Math.max(maxT, a.size());
-		}
-		for (final ActuationVector a : cellActuations.values()) {
-			maxT = Math.max(maxT, a.size());
-		}
-		return maxT;
+		return maxT.get();
 
 	}
 
@@ -432,13 +445,15 @@ public class Biochip {
 	 * @return Length of the longest route
 	 */
 	public int getMaxRouteLength() {
-		if (maxRouteLength == null) {
-			maxRouteLength = 0;
-			for (final Droplet d : droplets) {
-				maxRouteLength = Math.max(maxRouteLength, d.getRouteLength());
-			}
+
+
+		if (!maxRouteLength.isPresent()) {
+			maxRouteLength = Optional.of(
+					droplets.stream().map(Droplet::getRouteLength).max(
+							Integer::compare).orElse(0)
+			);
 		}
-		return maxRouteLength;
+		return maxRouteLength.get();
 	}
 
 
@@ -528,12 +543,13 @@ public class Biochip {
 	/**
 	 * Checks whether any of the positions of a rectangle is occupied by a
 	 * resource.
-	 *
+	 * <p>
 	 * Note that non-existant fields are counted as not having a resource. That
 	 * means that giving points that are entirely outside the biochip would
 	 * result in false being returned (and no error is raised!).
 	 *
-	 * @param rec The rectangle to check.
+	 * @param rec
+	 * 		The rectangle to check.
 	 * @return true if any of the points has a resource, false otherwise.
 	 */
 	public boolean hasResource(final Rectangle rec) {
@@ -542,22 +558,20 @@ public class Biochip {
 
 	/**
 	 * Checks whether any of the supplied positions is occupied by a resource.
-	 *
+	 * <p>
 	 * Note that non-existant fields are counted as not having a resource. That
 	 * means that giving points that are entirely outside the biochip would
 	 * result in false being returned (and no error is raised!).
 	 *
-	 * @param points The points to check for resources.
+	 * @param points
+	 * 		The points to check for resources.
 	 * @return true if any of the points has a resource, false otherwise.
 	 */
 	public boolean hasResource(final List<Point> points) {
-		return points.stream().anyMatch(p -> {
-			if (hasFieldAt(p)) {
-				return getFieldAt(p).hasResource();
-			}	else {
-				return false;
-			}
-		});
+		return points.stream().anyMatch(p ->
+												hasFieldAt(p) &&
+												getFieldAt(p).hasResource()
+		);
 	}
 
 	/**
@@ -604,7 +618,7 @@ public class Biochip {
 	 * 		The field to be added.
 	 */
 	public void addField(final BiochipField biochipField) {
-		Point coords = new Point(biochipField.x(),biochipField.y());
+		Point coords = new Point(biochipField.x(), biochipField.y());
 		if (this.field.containsKey(coords)) {
 			logger.trace("Field added twice at " + coords +
 						 ", removed older instance");
@@ -663,19 +677,19 @@ public class Biochip {
 	 * @return The maximal amount of times a cell is actuated.
 	 */
 	public int getMaxUsage() {
-		if (maxUsageCache == null) {
-			maxUsageCache = 0;
-			for (final BiochipField f : this.field.values()) {
-				if (f.getUsage() > this.maxUsageCache) {
-					this.maxUsageCache = f.getUsage();
-				}
-			}
+		if (!maxUsageCache.isPresent()) {
+			maxUsageCache = Optional.of(
+					this.field.values().stream().
+							map(BiochipField::getUsage).max(Integer::compare).
+							orElse(0)
+			);
 		}
-		return maxUsageCache;
+		return maxUsageCache.get();
 	}
 
 	/**
 	 * Get the annotations stored in the chip.
+	 *
 	 * @return List of strings containing the annotations.
 	 */
 	public List<String> getAnnotations() {

@@ -314,18 +314,21 @@ public class MessageCenter {
 				}
 
 				font.setColor(targetColor);
+				
+				if (targetColor.a > 0) {
 
-				final GlyphLayout layout = new GlyphLayout(font, s.message);
+					final GlyphLayout layout = new GlyphLayout(font, s.message);
 
-				final float fontX = s.x -
-									layout.width / 2f +
-									Gdx.graphics.getWidth() / 2f;
-				final float fontY = s.y +
-									layout.height / 2f +
-									Gdx.graphics.getHeight() / 2f;
+					final float fontX = s.x -
+							layout.width / 2f +
+							Gdx.graphics.getWidth() / 2f;
+					final float fontY = s.y +
+							layout.height / 2f +
+							Gdx.graphics.getHeight() / 2f;
 
-				parent.batch.drawMessage(font, layout, fontX, fontY,
-										 normalProjection, DEFAULT_Z);
+					parent.batch.drawMessage(font, layout, fontX, fontY,
+							normalProjection, DEFAULT_Z);
+				}
 			}
 
 			while (
@@ -390,7 +393,6 @@ public class MessageCenter {
 		if (col != null) {
 			hm.color = col;
 		}
-		hm.size = size;
 	}
 
 	/**

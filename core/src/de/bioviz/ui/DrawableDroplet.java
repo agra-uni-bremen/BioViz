@@ -52,8 +52,26 @@ public class DrawableDroplet extends DrawableSprite {
 	 */
 	public DrawableCircuit parentCircuit;
 
+	/**
+	 * The x coordinate the droplet is currently drawn at.
+	 */
 	public float smoothX;
+
+	/**
+	 * The y coordinate the droplet is currently drawn at.
+	 */
 	public float smoothY;
+
+	/**
+	 * The width the droplet is currently drawn with.
+	 */
+	public float smoothWidth;
+
+	/**
+	 * The height the droplet is currently drawn with.
+	 */
+	public float smoothHeight;
+
 	/**
 	 * The next x position the droplet moves to.
 	 */
@@ -63,6 +81,16 @@ public class DrawableDroplet extends DrawableSprite {
 	 * The next y position the droplet moves to.
 	 */
 	private float targetY;
+
+	/**
+	 * The next width the droplet should be.
+	 */
+	private float targetWidth;
+
+	/**
+	 * The next height the droplet should be.
+	 */
+	private float targetHeight;
 
 
 	/**
@@ -74,6 +102,16 @@ public class DrawableDroplet extends DrawableSprite {
 	 * The droplet's current y position.
 	 */
 	private float originY;
+
+	/**
+	 * The droplet's smooth starting width.
+	 */
+	private float originWidth;
+
+	/**
+	 * The droplet's smooth starting height.
+	 */
+	private float originHeight;
 
 
 	/**
@@ -177,6 +215,10 @@ public class DrawableDroplet extends DrawableSprite {
 				  this.targetX * totalProgress;
 		smoothY = this.originY * (1 - totalProgress) +
 				  this.targetY * totalProgress;
+		smoothWidth = this.originWidth * (1 - totalProgress) +
+					  this.targetWidth * totalProgress;
+		smoothHeight = this.originHeight * (1 - totalProgress) +
+					   this.targetHeight * totalProgress;
 	}
 
 	/**
@@ -197,6 +239,23 @@ public class DrawableDroplet extends DrawableSprite {
 			originY = this.smoothY;
 			this.targetX = x;
 			this.targetY = y;
+			Date d = new Date();
+			this.movementTransitionStartTime = d.getTime();
+			this.movementTransitionEndTime =
+					d.getTime() + transitionDuration;
+		}
+	}
+
+	private void setScale(final float width, final float height) {
+		boolean done = false;
+		if (this.targetWidth != width || this.targetHeight != height) {
+			done = true;
+		}
+		this.targetWidth = width;
+		this.originWidth = this.smoothWidth;
+		this.targetHeight = height;
+		this.originHeight = this.smoothHeight;
+		if (done) {
 			Date d = new Date();
 			this.movementTransitionStartTime = d.getTime();
 			this.movementTransitionEndTime =
@@ -324,6 +383,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 		Point upperLeft = p.upperLeft();
 		Point size = p.size();
+		setScale(size.fst, size.snd);
 
 		// at this point, p is definitely not null. The getFirst/LastPosition
 		// methods would have thrown an exception
@@ -335,11 +395,13 @@ public class DrawableDroplet extends DrawableSprite {
 			if (isVisible() && viz.currentBiochip.getDisplayOptions().
 					getOption(BDisplayOptions.Droplets)) {
 
-				float xCoord = circ.xCoordOnScreen(smoothX + (size.fst - 1) / 2f);
-				float yCoord = circ.yCoordOnScreen(smoothY - (size.snd - 1) / 2f);
+				float xCoord = circ.xCoordOnScreen(
+						smoothX + (smoothWidth - 1) / 2f);
+				float yCoord = circ.yCoordOnScreen(
+						smoothY - (smoothHeight - 1) / 2f);
 
-				this.setScaleX(circ.getSmoothScale() * size.fst);
-				this.setScaleY(circ.getSmoothScale() * size.snd);
+				this.setScaleX(circ.getSmoothScale() * smoothWidth);
+				this.setScaleY(circ.getSmoothScale() * smoothHeight);
 
 				// if hidden, place below grid
 				int invisibleIndex =

@@ -170,7 +170,8 @@ public abstract class DrawableSprite implements Drawable {
 	 *
 	 * @param texture
 	 * 		the texture to use
-	 * 	@param parent The parent BioViz instance
+	 * @param parent
+	 * 		The parent BioViz instance
 	 */
 	public DrawableSprite(final TextureE texture, final BioViz parent) {
 		if (parent == null) {
@@ -264,10 +265,10 @@ public abstract class DrawableSprite implements Drawable {
 			if (cornerColors != null) {
 				for (int i = 0; i < 4; i++) {
 					int intBits =
-							(int) (rgbMult  * cornerColors[i].a) << 24 |
-							(int) (rgbMult  * cornerColors[i].b) << 16 |
-							(int) (rgbMult  * cornerColors[i].g) << 8 |
-							(int) (rgbMult  * cornerColors[i].r);
+							(int) (rgbMult * cornerColors[i].a) << 24 |
+							(int) (rgbMult * cornerColors[i].b) << 16 |
+							(int) (rgbMult * cornerColors[i].g) << 8 |
+							(int) (rgbMult * cornerColors[i].r);
 					switch (i) {
 						case 0:
 							v[SpriteBatch.C1] =
@@ -299,18 +300,37 @@ public abstract class DrawableSprite implements Drawable {
 		this.setScaleY(dimY / this.sprite.getHeight());
 	}
 
-	// TODO what is the rationale of this method?
+	/**
+	 * This sets the texture of the sprite object that is used to actually draw
+	 * this DrawableSprite to the data that is supplied by (our) currentTexture
+	 * and TextureManager data.</br>
+	 * This therefore does not use any parameters.
+	 * Instead, you should set the currentTexture field before drawing this
+	 * instance.
+	 */
 	private void setTexture() {
 		if (this.sprite != null) {
-			this.sprite.setRegion(DrawableSprite.textures.getTexture(currentTexture));
+			this.sprite.setRegion(
+					DrawableSprite.textures.getTexture(currentTexture));
 		}
 	}
 
-	// TODO check whether this is still needed
+	/**
+	 * Adds a texture to the list of LOD textures.
+	 * @param scaleFactorMax the scaling factor at which the respective
+	 * texture should be shown.
+	 * @param texture the texture to be added.
+	 */
 	public void addLOD(final float scaleFactorMax, final TextureE texture) {
 		this.levelOfDetailTextures.put(scaleFactorMax, texture);
 	}
 
+	/**
+	 * Removes a texture from this sprite's LOD list.
+	 * Notice that this is currently not used but is simply added as the
+	 * counterpart to to the respective add method.
+	 * @param scaleFactorMax the scale factor at which the LOD texture is used.
+	 */
 	public void removeLOD(final float scaleFactorMax) {
 		this.levelOfDetailTextures.remove(scaleFactorMax);
 	}
@@ -326,7 +346,7 @@ public abstract class DrawableSprite implements Drawable {
 
 			float viewMouseX =
 					((float) mouseX / (float) resX) * viewport.width +
-					 viewport.x;
+					viewport.x;
 			float viewMouseY =
 					-(((float) mouseY / (float) resY) * viewport.height +
 					  viewport.y);

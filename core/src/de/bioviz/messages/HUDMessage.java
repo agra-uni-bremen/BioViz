@@ -17,17 +17,10 @@ public class HUDMessage extends MessageBase {
 	 */
 	public float y;
 
-	/**
-	 * The message's size.
-	 */
-	public float size;
 
 	/**
 	 *
 	 * Creates a HUDMessage that is to be displayed at the specified position.
-	 *
-	 * The initial size of the message is negative.
-	 * TODO What does this actually mean?
 	 *
 	 * @param message The message to display
 	 * @param x The x-position for the message
@@ -37,6 +30,5 @@ public class HUDMessage extends MessageBase {
 		super(message);
 		this.x = x;
 		this.y = y;
-		this.size = -1f;
 	}
 }
