@@ -497,8 +497,8 @@ public class Biochip {
 	 * @return The list of points of the rectangle that do not belong to the
 	 * biochip.
 	 */
-	public List<Point> nonExistantFields(final Rectangle rec) {
-		return nonExistantFields(rec.positions());
+	public List<Point> nonExistentFields(final Rectangle rec) {
+		return nonExistentFields(rec.positions());
 	}
 
 	/**
@@ -510,10 +510,11 @@ public class Biochip {
 	 * 		The list of points to check.
 	 * @return The list of points that do not belong to the biochip.
 	 */
-	public List<Point> nonExistantFields(final List<Point> points) {
-		return points.stream().
+	public List<Point> nonExistentFields(final List<Point> points) {
+		ArrayList<Point> filtered = points.stream().
 				filter(p -> !hasFieldAt(p)).
 				collect(Collectors.toCollection(ArrayList<Point>::new));
+		return filtered;
 	}
 
 

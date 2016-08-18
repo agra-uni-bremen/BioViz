@@ -229,19 +229,27 @@ public class DrawableField extends DrawableSprite {
 			if (cornerColors == null) {
 				cornerColors = new Color[4];    // one color for each corner
 			}
+
+
+			final int bottomleft = 0;
+			final int topleft = 1;
+			final int topright = 2;
+			final int bottomright = 3;
+
+
 			for (int i = 0; i < cornerColors.length; i++) {
 				// Create non-null array contents
 				cornerColors[i] = Color.BLACK.cpy();
 			}
-			for (final Net n : this.getParentCircuit().getData().
+			for (final Net net : this.getParentCircuit().getData().
 					getNetsOf(this.getField())) {
-				de.bioviz.ui.Color netCol = n.getColor().cpy();
+				de.bioviz.ui.Color netCol = net.getColor().cpy();
 
 				// Increase brightness for hovered nets
 				if (this.parentCircuit.getHoveredField() != null &&
 					this.getParentCircuit().getData().
 							getNetsOf(this.getParentCircuit().
-									getHoveredField().field).contains(n)) {
+									getHoveredField().field).contains(net)) {
 					netCol.add(Colors.HOVER_NET_DIFF_COLOR);
 
 				}
@@ -253,42 +261,40 @@ public class DrawableField extends DrawableSprite {
 				Color color = netCol.buildGdxColor();
 
 
-				final int bottomleft = 0;
-				final int topleft = 1;
-				final int topright = 2;
-				final int bottomright = 3;
-
-				boolean fieldAtTop =
-						getParentCircuit().getData().hasFieldAt(top);
-				boolean fieldAtBottom =
-						getParentCircuit().getData().hasFieldAt(bottom);
-				boolean fieldAtLeft =
-						getParentCircuit().getData().hasFieldAt(left);
-				boolean fieldAtRight =
-						getParentCircuit().getData().hasFieldAt(right);
-
 				Biochip parent = getParentCircuit().getData();
-				boolean containsTop = n.containsField(parent.getFieldAt(top));
-				boolean containsBottom =
-						n.containsField(parent.getFieldAt(bottom));
-				boolean containsLeft = n.containsField(parent.getFieldAt
-						(left));
-				boolean containsRight =
-						n.containsField(parent.getFieldAt(right));
 
-				if (!fieldAtTop || containsTop) {
+				boolean fieldAtTop = parent.hasFieldAt(top);
+				boolean fieldAtBottom = parent.hasFieldAt(bottom);
+				boolean fieldAtLeft = parent.hasFieldAt(left);
+				boolean fieldAtRight = parent.hasFieldAt(right);
+
+
+				boolean containsTop =
+						fieldAtTop && net.containsField(parent.getFieldAt
+								(top));
+				boolean containsBottom = fieldAtBottom &&
+										 net.containsField(
+												 parent.getFieldAt(bottom));
+				boolean containsLeft =
+						fieldAtLeft &&
+						net.containsField(parent.getFieldAt(left));
+				boolean containsRight = fieldAtRight &&
+										net.containsField(
+												parent.getFieldAt(right));
+
+				if (!fieldAtTop || !containsTop) {
 					this.cornerColors[topleft].add(color);
 					this.cornerColors[topright].add(color);
 				}
-				if (!fieldAtBottom || containsBottom) {
+				if (!fieldAtBottom || !containsBottom) {
 					this.cornerColors[bottomleft].add(color);
 					this.cornerColors[bottomright].add(color);
 				}
-				if (!fieldAtLeft || containsLeft) {
+				if (!fieldAtLeft || !containsLeft) {
 					this.cornerColors[bottomleft].add(color);
 					this.cornerColors[topleft].add(color);
 				}
-				if (!fieldAtRight || containsRight) {
+				if (!fieldAtRight || !containsRight) {
 					this.cornerColors[topright].add(color);
 					this.cornerColors[bottomright].add(color);
 				}
