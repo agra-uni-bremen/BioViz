@@ -367,11 +367,14 @@ public abstract class DrawableSprite implements Drawable {
 	}
 
 	protected void update() {
-		float transitionProgress = Math.max(0, Math.min(1, (float) (
-				new Date().getTime() - colorTransitionStartTime) / (float) (
-				colorTransitionEndTime - colorTransitionStartTime)));
-		float totalProgress =
-				(float) -Math.pow(transitionProgress - 1, 4) + 1;
+		float totalProgress = 1;
+		if (colorTransitionEndTime > colorTransitionStartTime) {
+			float transitionProgress = Math.max(0, Math.min(1, (float) (
+					new Date().getTime() - colorTransitionStartTime) / (float) (
+					colorTransitionEndTime - colorTransitionStartTime)));
+			totalProgress =
+					(float) -Math.pow(transitionProgress - 1, 4) + 1;
+		}
 
 		currentColor = originColor.cpy().mul(1 - totalProgress).add(
 				targetColor.cpy().mul(totalProgress));
