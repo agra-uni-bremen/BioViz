@@ -50,7 +50,7 @@ public class DrawableDispenser extends DrawableField {
 		}
 		if (getOption(DispenserFluidName)) {
 			String fluidName =
-					getParentCircuit().getData().fluidType(fluidID);
+					getParentAssay().getData().fluidType(fluidID);
 			if (fluidName != null) {
 				msgs.add(fluidName);
 			}

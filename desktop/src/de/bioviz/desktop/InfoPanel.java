@@ -112,7 +112,7 @@ public class InfoPanel extends JPanel {
     private BioViz bioViz;
 
     /**
-     * The currentBiochip.
+     * The currentAssay.
      */
     private DrawableAssay currentCircuit;
 
@@ -262,7 +262,7 @@ public class InfoPanel extends JPanel {
     public void refreshPanelData() {
 
         if (bioViz != null) {
-            currentCircuit = this.bioViz.currentBiochip;
+            currentCircuit = this.bioViz.currentAssay;
             if (currentCircuit != null) {
                 data = currentCircuit.getData();
             }
@@ -335,7 +335,7 @@ public class InfoPanel extends JPanel {
      */
     public void updateFluidTable() {
         if (data != null) {
-            for (final DrawableDroplet droplet : bioViz.currentBiochip
+            for (final DrawableDroplet droplet : bioViz.currentAssay
                     .getDroplets()) {
                 final int dropletID = droplet.droplet.getID();
                 final Integer fluidID = data.fluidID(dropletID);
@@ -380,7 +380,7 @@ public class InfoPanel extends JPanel {
      * Updates the number of fields.
      */
     public void updateFieldCount() {
-        int numFields = bioViz.currentBiochip.getFields().size();
+        int numFields = bioViz.currentAssay.getFields().size();
         fieldNumValue.setText(String.valueOf(numFields));
     }
 

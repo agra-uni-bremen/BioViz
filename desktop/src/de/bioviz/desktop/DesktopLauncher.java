@@ -36,7 +36,6 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -377,7 +376,7 @@ public class DesktopLauncher extends JFrame {
 							  autoplayButton.getPreferredSize().height)
 		);
 		autoplayButton.addActionListener(
-				e -> currentViz.currentBiochip.toggleAutoAdvance());
+				e -> currentViz.currentAssay.toggleAutoAdvance());
 
 		JButton openButton = new JButton("Open File");
 		openButton.setPreferredSize(
@@ -419,12 +418,12 @@ public class DesktopLauncher extends JFrame {
 							  zoomButton.getPreferredSize().height)
 		);
 		zoomButton.addActionListener(
-				e -> currentViz.currentBiochip.zoomExtents());
+				e -> currentViz.currentAssay.zoomExtents());
 
 		timeSlider = new JSlider(JSlider.HORIZONTAL, 1, 1, 1);
 		timeSlider.setPreferredSize(new Dimension(sliderWidth, sliderHeight));
 		timeSlider.addChangeListener(
-				ce -> currentViz.currentBiochip.setCurrentTime(
+				ce -> currentViz.currentAssay.setCurrentTime(
 						((JSlider) ce.getSource()).getValue()));
 		tc = new TimerCallback(timeSlider, timeInfo);
 
@@ -441,10 +440,10 @@ public class DesktopLauncher extends JFrame {
 
 		JButton nextStepButton = new JButton("->");
 		nextStepButton.addActionListener(
-				e -> currentViz.currentBiochip.nextStep());
+				e -> currentViz.currentAssay.nextStep());
 		JButton prevStepButton = new JButton("<-");
 		prevStepButton.addActionListener(
-				e -> currentViz.currentBiochip.prevStep());
+				e -> currentViz.currentAssay.prevStep());
 
 		JButton editorButton = new JButton("Editor");
 		editorButton.setPreferredSize(new Dimension(buttonWidth,
@@ -1345,11 +1344,11 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.trace("Received timer event (" +
-						 currentViz.currentBiochip.getCurrentTime() + ")");
-			this.time.setValue(currentViz.currentBiochip.getCurrentTime());
+						 currentViz.currentAssay.getCurrentTime() + ")");
+			this.time.setValue(currentViz.currentAssay.getCurrentTime());
 			this.timeInfo.setText(
 					Integer.toString(
-							currentViz.currentBiochip.getCurrentTime()));
+							currentViz.currentAssay.getCurrentTime()));
 
 		}
 	}
@@ -1469,33 +1468,33 @@ public class DesktopLauncher extends JFrame {
 		@Override
 		public void bioVizEvent() {
 			logger.trace("calling desktop LoadedFileCallback()");
-			if (currentViz.currentBiochip != null) {
+			if (currentViz.currentAssay != null) {
 
 				reloadViewers();
 
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
-				int oldTime = currentViz.currentBiochip.getCurrentTime();
+				int oldTime = currentViz.currentAssay.getCurrentTime();
 
 				DesktopLauncher d = DesktopLauncher.singleton;
 
 				// altering the max/min values already invokes the timer
-				// event, thus altering the currentBiochip's currenTime value.
+				// event, thus altering the currentAssay's currenTime value.
 				// In order to still be able to set the current value as it
 				// was before, the oldTime value is being stored above and then
 				// used to set the slider's value, thus again reverting the
-				// currentBiochip's currentTime value to its original state.
+				// currentAssay's currentTime value to its original state.
 				// This means we're actually changing its time back and forth,
 				// but although this is a little ugly, it doesn't seem to have
 				// any problematic effect.
 				d.timeSlider.setMaximum(
-						currentViz.currentBiochip.getData().getMaxT());
+						currentViz.currentAssay.getData().getMaxT());
 				d.timeSlider.setMinimum(1);
 				logger.trace("setting time slider to " + oldTime);
 				d.timeSlider.setValue(oldTime);
 
 				d.displayRouteLengthSlider.setMaximum(
-						currentViz.currentBiochip.getData().getMaxRouteLength());
+						currentViz.currentAssay.getData().getMaxRouteLength());
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(0);
 
@@ -1548,7 +1547,7 @@ public class DesktopLauncher extends JFrame {
 						if (f != null) {
 							if (svgExportSettings.getExportSeries()) {
 
-								int oldTime = currentViz.currentBiochip
+								int oldTime = currentViz.currentAssay
 										.getCurrentTime();
 								// this is problematic if the file contains
 								// .svg inside the name
@@ -1566,7 +1565,7 @@ public class DesktopLauncher extends JFrame {
 								}
 								// create a series of files
 								for (int t = 1; t <=
-												currentViz.currentBiochip
+												currentViz.currentAssay
 														.getData().getMaxT();
 									 t++) {
 									currentViz.saveSVG(
@@ -1574,12 +1573,12 @@ public class DesktopLauncher extends JFrame {
 											".svg", t);
 								}
 								// restore time from start
-								currentViz.currentBiochip.setCurrentTime(
+								currentViz.currentAssay.setCurrentTime(
 										oldTime);
 							} else {
 								currentViz.saveSVG(f.getAbsolutePath(),
 												   currentViz
-														   .currentBiochip
+														   .currentAssay
 														   .getCurrentTime());
 							}
 						}
@@ -1668,10 +1667,10 @@ public class DesktopLauncher extends JFrame {
 			this.option = option;
 
 			this.addActionListener(l -> {
-				currentViz.currentBiochip.getDisplayOptions().toggleOption(
+				currentViz.currentAssay.getDisplayOptions().toggleOption(
 						option);
 				setState(
-						currentViz.currentBiochip.getDisplayOptions()
+						currentViz.currentAssay.getDisplayOptions()
 								.getOption(
 										option));
 			});
@@ -1681,7 +1680,7 @@ public class DesktopLauncher extends JFrame {
 		 * Updates the state of the selected option.
 		 */
 		void updateState() {
-			setState(currentViz.currentBiochip.
+			setState(currentViz.currentAssay.
 					getDisplayOptions().getOption(option));
 		}
 

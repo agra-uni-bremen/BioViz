@@ -73,10 +73,10 @@ class BioVizInputProcessor implements InputProcessor {
 			shift = false;
 		} else if ((keycode == Keys.RIGHT || keycode == Keys.UP)
 				   && !ctrl && !alt) {
-			parentViz.currentBiochip.nextStep();
+			parentViz.currentAssay.nextStep();
 		} else if ((keycode == Keys.LEFT || keycode == Keys.DOWN)
 				   && !ctrl && !alt) {
-			parentViz.currentBiochip.prevStep();
+			parentViz.currentAssay.prevStep();
 		} else if ((keycode == Keys.PAGE_UP && ctrl) ||
 				   (keycode == Keys.LEFT && alt)) {
 			parentViz.callPreviousTabListeners();
@@ -98,15 +98,15 @@ class BioVizInputProcessor implements InputProcessor {
 			if (ctrl) {
 				parentViz.callSaveFileListeners();
 			} else {
-				parentViz.currentBiochip.shrinkToSquareAlignment();
+				parentViz.currentAssay.shrinkToSquareAlignment();
 			}
 		} else if (keycode == Keys.T && ctrl) {
 			parentViz.callLoadFileListeners();
 		} else if (keycode == Keys.Z) {
 			if (shift) {
-				parentViz.currentBiochip.zoomExtents();
+				parentViz.currentAssay.zoomExtents();
 			} else {
-				parentViz.currentBiochip.zoomTo1Px();
+				parentViz.currentAssay.zoomTo1Px();
 			}
 		}
 
@@ -117,7 +117,7 @@ class BioVizInputProcessor implements InputProcessor {
 
 	void toggleOptions(final int keycode) {
 		BDisplayOptions.findOption(keycode, ctrl, shift, alt).ifPresent(
-				it -> parentViz.currentBiochip.getDisplayOptions().toggleOption
+				it -> parentViz.currentAssay.getDisplayOptions().toggleOption
 						(it));
 	}
 
@@ -153,7 +153,7 @@ class BioVizInputProcessor implements InputProcessor {
 		}
 
 		for (final DrawableDroplet d :
-				parentViz.currentBiochip.getDroplets()) {
+				parentViz.currentAssay.getDroplets()) {
 			if (d.isHovered()) {
 				if (button == Buttons.LEFT) {
 					d.toggleGridVisibility();
@@ -173,12 +173,12 @@ class BioVizInputProcessor implements InputProcessor {
 	@Override
 	public boolean touchDragged(final int x, final int y, final int pointer) {
 		if (isMoving) {
-			parentViz.currentBiochip.setOffsetX(
-					parentViz.currentBiochip.getOffsetX() +
-					(x - oldX) / parentViz.currentBiochip.getScaleX());
-			parentViz.currentBiochip.setOffsetY(
-					parentViz.currentBiochip.getOffsetY() -
-					(y - oldY) / parentViz.currentBiochip.getScaleY());
+			parentViz.currentAssay.setOffsetX(
+					parentViz.currentAssay.getOffsetX() +
+					(x - oldX) / parentViz.currentAssay.getScaleX());
+			parentViz.currentAssay.setOffsetY(
+					parentViz.currentAssay.getOffsetY() -
+					(y - oldY) / parentViz.currentAssay.getScaleY());
 			oldX = x;
 			oldY = y;
 		} else if (multiTouchZoom) {
@@ -198,14 +198,14 @@ class BioVizInputProcessor implements InputProcessor {
 
 				if (oldX - oldX2 != 0) {
 					float zoomFactorX = (float) zoomX / Math.abs(oldX - oldX2);
-					parentViz.currentBiochip.setScaleX(
-							parentViz.currentBiochip.getScaleX()
+					parentViz.currentAssay.setScaleX(
+							parentViz.currentAssay.getScaleX()
 							* Math.max(1 - zoomFactorX, 0.01f));
 				}
 				if (oldY - oldY2 != 0) {
 					float zoomFactorY = (float) zoomY / Math.abs(oldY - oldY2);
-					parentViz.currentBiochip.setScaleY(
-							parentViz.currentBiochip.getScaleY()
+					parentViz.currentAssay.setScaleY(
+							parentViz.currentAssay.getScaleY()
 							* Math.max(1 - zoomFactorY, 0.01f));
 				}
 			}
@@ -218,7 +218,7 @@ class BioVizInputProcessor implements InputProcessor {
 		float mouseAtWidth = (float) oldX / Gdx.graphics.getWidth();
 		float mouseAtHeight = (float) oldY / Gdx.graphics.getHeight();
 
-		Rectangle current = parentViz.currentBiochip.getViewBounds();
+		Rectangle current = parentViz.currentAssay.getViewBounds();
 
 		float mouseToLeftOriginal = current.width * mouseAtWidth;
 		float mouseToBottomOriginal = current.height * mouseAtHeight;
@@ -235,7 +235,7 @@ class BioVizInputProcessor implements InputProcessor {
 		float mouseDiffY = mouseToBottomOriginal - expectedMouseToBottom;
 		current.y += mouseDiffY;
 
-		parentViz.currentBiochip.setViewBounds(current);
+		parentViz.currentAssay.setViewBounds(current);
 		return false;
 	}
 

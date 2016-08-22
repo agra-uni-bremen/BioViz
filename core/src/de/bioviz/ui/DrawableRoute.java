@@ -81,7 +81,7 @@ public class DrawableRoute extends DrawableSprite {
 	@Override
 	public Color getColor() {
 		Color c = baseColor.cpy();
-		if (droplet.parentCircuit.getDisplayOptions().getOption(
+		if (droplet.parentAssay.getDisplayOptions().getOption(
 				BDisplayOptions.ColorfulRoutes)) {
 			c = droplet.getColor();
 		}
@@ -97,7 +97,7 @@ public class DrawableRoute extends DrawableSprite {
 	 * and the transparency.
 	 */
 	public void draw() {
-		DrawableAssay circ = droplet.parentCircuit;
+		DrawableAssay circ = droplet.parentAssay;
 		int currentTime = circ.getCurrentTime();
 		int displayAt;
 

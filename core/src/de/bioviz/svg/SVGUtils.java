@@ -185,6 +185,6 @@ public final class SVGUtils {
 	 */
 	public static boolean isNotHiddenOrInvisible(final DrawableDroplet droplet) {
 		return droplet.getDisplayColor().a > 0.1f &&
-				!droplet.parentCircuit.isHidden(droplet);
+				!droplet.parentAssay.isHidden(droplet);
 	}
 }

@@ -342,7 +342,7 @@ public abstract class DrawableSprite implements Drawable {
 			int resX = Gdx.graphics.getWidth();
 			int resY = Gdx.graphics.getHeight();
 
-			Rectangle viewport = viz.currentBiochip.getViewBounds();
+			Rectangle viewport = viz.currentAssay.getViewBounds();
 
 			float viewMouseX =
 					((float) mouseX / (float) resX) * viewport.width +
@@ -351,8 +351,8 @@ public abstract class DrawableSprite implements Drawable {
 					-(((float) mouseY / (float) resY) * viewport.height +
 					  viewport.y);
 
-			float xCoord = viz.currentBiochip.xCoordInCells(this.getX());
-			float yCoord = viz.currentBiochip.yCoordInCells(this.getY());
+			float xCoord = viz.currentAssay.xCoordInCells(this.getX());
+			float yCoord = viz.currentAssay.yCoordInCells(this.getY());
 
 			boolean aboveX = viewMouseX > xCoord - COORDINATE_SHIFT;
 			boolean belowX = viewMouseX < xCoord + COORDINATE_SHIFT;

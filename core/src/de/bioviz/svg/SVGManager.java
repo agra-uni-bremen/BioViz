@@ -358,7 +358,7 @@ public class SVGManager {
 	 */
 	private String toSVG(final DrawableField field) {
 		// why would we need to acces " (-this.field.y + BioViz.singleton
-		// .currentBiochip.data.field[0].length - 1)"?
+		// .currentAssay.data.field[0].length - 1)"?
 		// @jannis please check and fix
 		// @keszocze Because the coordinate system in SVG is inverted on its
 		//		y-axis. I need to first put it upside down (-this.field.y) and

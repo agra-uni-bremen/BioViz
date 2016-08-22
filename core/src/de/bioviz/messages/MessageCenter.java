@@ -296,14 +296,14 @@ public class MessageCenter {
 
 				float hideAt = textRenderResolution;
 				float showAt = textRenderResolution * 2;
-				if (parent.currentBiochip.getDisplayOptions().getOption(
+				if (parent.currentAssay.getDisplayOptions().getOption(
 						BDisplayOptions.HideTextOnZoom)) {
 					// Hide when zoomed out
-					if (this.parent.currentBiochip.getScaleX() < hideAt) {
+					if (this.parent.currentAssay.getScaleX() < hideAt) {
 						targetColor.a = 0;
-					} else if (this.parent.currentBiochip.getScaleX() <
+					} else if (this.parent.currentAssay.getScaleX() <
 							   showAt) {
-						float val = this.parent.currentBiochip.getScaleX();
+						float val = this.parent.currentAssay.getScaleX();
 						val = (val - hideAt) / (showAt - hideAt);
 						targetColor.a = val * getDefaultTextTransparency();
 					} else {

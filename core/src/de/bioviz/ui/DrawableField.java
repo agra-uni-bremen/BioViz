@@ -74,7 +74,7 @@ public class DrawableField extends DrawableSprite {
 	 * version of the circuit, not the structure that represents the circuit
 	 * itself.
 	 */
-	private DrawableAssay parentCircuit;
+	private DrawableAssay parentAssay;
 
 	private DrawableLine netIndicator = null;
 
@@ -99,7 +99,7 @@ public class DrawableField extends DrawableSprite {
 	public DrawableField(
 			final BiochipField field, final DrawableAssay parent) {
 		super(TextureE.GridMarker, parent.getParent());
-		this.setParentCircuit(parent);
+		this.setParentAssay(parent);
 		this.setField(field);
 		super.addLOD(PIXELIZED_ZOOM_LEVEL, TextureE.BlackPixel);
 		this.setZ(DisplayValues.DEFAULT_FIELD_DEPTH);
@@ -203,7 +203,7 @@ public class DrawableField extends DrawableSprite {
 	 */
 	private int cellUsageColoring(de.bioviz.ui.Color result) {
 		if (getOption(CellUsage)) {
-			float scalingFactor = this.parentCircuit.getData().getMaxUsage();
+			float scalingFactor = this.parentAssay.getData().getMaxUsage();
 			int usage = field.getUsage();
 			float color = usage / scalingFactor;
 			result.add(new Color(color, color, color, 0));
@@ -241,14 +241,14 @@ public class DrawableField extends DrawableSprite {
 				// Create non-null array contents
 				cornerColors[i] = Color.BLACK.cpy();
 			}
-			for (final Net net : this.getParentCircuit().getData().
+			for (final Net net : this.getParentAssay().getData().
 					getNetsOf(this.getField())) {
 				de.bioviz.ui.Color netCol = net.getColor().cpy();
 
 				// Increase brightness for hovered nets
-				if (this.parentCircuit.getHoveredField() != null &&
-					this.getParentCircuit().getData().
-							getNetsOf(this.getParentCircuit().
+				if (this.parentAssay.getHoveredField() != null &&
+					this.getParentAssay().getData().
+							getNetsOf(this.getParentAssay().
 									getHoveredField().field).contains(net)) {
 					netCol.add(Colors.HOVER_NET_DIFF_COLOR);
 
@@ -261,7 +261,7 @@ public class DrawableField extends DrawableSprite {
 				Color color = netCol.buildGdxColor();
 
 
-				Biochip parent = getParentCircuit().getData();
+				Biochip parent = getParentAssay().getData();
 
 				boolean fieldAtTop = parent.hasFieldAt(top);
 				boolean fieldAtBottom = parent.hasFieldAt(bottom);
@@ -334,7 +334,7 @@ public class DrawableField extends DrawableSprite {
 		 */
 		de.bioviz.ui.Color result = new de.bioviz.ui.Color(Color.BLACK);
 
-		if (getField().isBlocked(getParentCircuit().getCurrentTime())) {
+		if (getField().isBlocked(getParentAssay().getCurrentTime())) {
 			result.add(Colors.BLOCKED_COLOR);
 			colorOverlayCount++;
 		}
@@ -350,7 +350,7 @@ public class DrawableField extends DrawableSprite {
 		/**
 		 * Here we highlight cells that are currently actuated.
 		 */
-		int t = getParentCircuit().getCurrentTime();
+		int t = getParentAssay().getCurrentTime();
 		if (getOption(Actuations) && field.isActuated(t)) {
 			result.add(Colors.ACTAUTED_COLOR);
 			++colorOverlayCount;
@@ -364,7 +364,7 @@ public class DrawableField extends DrawableSprite {
 
 		if (getOption(Adjacency)) {
 			final Stream<FluidicConstraintViolation> violations =
-					getParentCircuit().getData().getAdjacentActivations()
+					getParentAssay().getData().getAdjacentActivations()
 							.stream();
 
 			if (violations.anyMatch(v -> v.containsField(this.field))) {
@@ -433,7 +433,7 @@ public class DrawableField extends DrawableSprite {
 		if (getOption(InterferenceRegion)) {
 			int amountOfInterferenceRegions = 0;
 			final Set<Droplet> dropsSet =
-					getParentCircuit().getData().getDroplets();
+					getParentAssay().getData().getDroplets();
 
 			ArrayList<Droplet> drops = dropsSet.stream().
 					filter(d -> isPartOfInterferenceRegion(d)).
@@ -445,7 +445,7 @@ public class DrawableField extends DrawableSprite {
 					final Droplet drop1 = drops.get(i);
 					final Droplet drop2 = drops.get(j);
 					boolean sameNet =
-							getParentCircuit().getData().sameNet(drop1, drop2);
+							getParentAssay().getData().sameNet(drop1, drop2);
 					if (!sameNet) {
 						result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 						++colorOverlayCount;
@@ -482,7 +482,7 @@ public class DrawableField extends DrawableSprite {
 		displayText(vals.getMsg());
 		setColor(vals.getColor());
 
-		DrawableAssay circ = getParentCircuit();
+		DrawableAssay circ = getParentAssay();
 		float xCoord = circ.xCoordOnScreen(getField().x());
 		float yCoord = circ.yCoordOnScreen(getField().y());
 		this.setX(xCoord);
@@ -503,7 +503,7 @@ public class DrawableField extends DrawableSprite {
 		// TODO why is drawing of lines in any way tied to the actual fields?!
 		if (getOption(LongNetIndicatorsOnFields)) {
 			for (final Net net :
-					this.parentCircuit.getData().getNetsOf(this.field)) {
+					this.parentAssay.getData().getNetsOf(this.field)) {
 				for (final Source s : net.getSources()) {
 					Pair<Float, Float> targetCenter =
 							net.getTarget().centerFloat();
@@ -540,10 +540,10 @@ public class DrawableField extends DrawableSprite {
 	 */
 	private boolean isPartOfInterferenceRegion(final Droplet d) {
 		Rectangle currPos = d.getPositionAt(
-				getParentCircuit().getCurrentTime()
+				getParentAssay().getCurrentTime()
 		);
 		Rectangle prevPos = d.getPositionAt(
-				getParentCircuit().getCurrentTime() - 1
+				getParentAssay().getCurrentTime() - 1
 		);
 
 		boolean currAdj = currPos != null && currPos.adjacent(field.pos);
@@ -584,19 +584,19 @@ public class DrawableField extends DrawableSprite {
 	 *
 	 * @return the circuit that contains this field
 	 */
-	public DrawableAssay getParentCircuit() {
-		return parentCircuit;
+	public DrawableAssay getParentAssay() {
+		return parentAssay;
 	}
 
 	/**
 	 * Sets the parent circuit of this field. This shouldn't really be used
 	 * after the whole circuit has been initialized.
 	 *
-	 * @param parentCircuit
+	 * @param parentAssay
 	 * 		the circuit that contains this field.
 	 */
-	public void setParentCircuit(final DrawableAssay parentCircuit) {
-		this.parentCircuit = parentCircuit;
+	public void setParentAssay(final DrawableAssay parentAssay) {
+		this.parentAssay = parentAssay;
 	}
 
 	/**
@@ -607,6 +607,6 @@ public class DrawableField extends DrawableSprite {
 	 * @return true if option is true
 	 */
 	protected boolean getOption(final BDisplayOptions optn) {
-		return getParentCircuit().getDisplayOptions().getOption(optn);
+		return getParentAssay().getDisplayOptions().getOption(optn);
 	}
 }

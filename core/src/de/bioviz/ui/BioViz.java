@@ -46,7 +46,7 @@ public class BioViz implements ApplicationListener {
 	/**
      * The currently displayed biochip.
      */
-    public DrawableAssay currentBiochip;
+    public DrawableAssay currentAssay;
 
     OrthographicCamera camera;
 
@@ -222,8 +222,8 @@ public class BioViz implements ApplicationListener {
     public void resize(final int width, final int height) {
         camera.viewportHeight = height;
         camera.viewportWidth = width;
-        if (firstRun && currentBiochip != null) {
-            currentBiochip.zoomExtents();
+        if (firstRun && currentAssay != null) {
+            currentAssay.zoomExtents();
             firstRun = false;
         }
     }
@@ -243,9 +243,9 @@ public class BioViz implements ApplicationListener {
                 DrawableAssay c = loadedBiochips.get(path);
 
                 // remove the visualization if it is currently active.
-                if (currentBiochip == c) {
+                if (currentAssay == c) {
                     this.drawables.remove(c);
-                    currentBiochip = new DrawableAssay(
+                    currentAssay = new DrawableAssay(
                             new Biochip(), this);
                 }
                 logger.info("Removing {}", path);
@@ -265,13 +265,13 @@ public class BioViz implements ApplicationListener {
         Biochip bc;
 
         try {
-            drawables.remove(currentBiochip);
+            drawables.remove(currentAssay);
             if (bioFile != null) {
                 if (this.loadedBiochips.containsKey(
                         bioFile.getCanonicalPath())) {
                     logger.debug("re-fetching previously loaded file " +
                             bioFile.getCanonicalPath());
-                    currentBiochip =
+                    currentAssay =
                             this.loadedBiochips.get(
                                     bioFile.getCanonicalPath());
                 } else {
@@ -284,15 +284,15 @@ public class BioViz implements ApplicationListener {
                         bc = new Biochip();
                     }
                     logger.debug("Creating drawable elements...");
-                    DrawableAssay newCircuit = new DrawableAssay(bc, this);
-                    currentBiochip = newCircuit;
+                    DrawableAssay newAssay = new DrawableAssay(bc, this);
+                    currentAssay = newAssay;
                     this.loadedBiochips.put(bioFile.getCanonicalPath(),
-                                            newCircuit);
-                    currentBiochip.zoomExtents();
+                                            newAssay);
+                    currentAssay.zoomExtents();
                 }
                 logger.debug("Drawable created, replacing old elements...");
-                drawables.add(currentBiochip);
-                currentBiochip.getData().recalculateAdjacency = true;
+                drawables.add(currentAssay);
+                currentAssay.getData().recalculateAdjacency = true;
 
                 logger.info("Done loading file {}", bioFile);
             } else {
@@ -300,7 +300,7 @@ public class BioViz implements ApplicationListener {
                         "File to be set is empty, setting empty " +
                                 "visualization" +
                                 ".");
-                currentBiochip = new DrawableAssay(new Biochip(), this);
+                currentAssay = new DrawableAssay(new Biochip(), this);
             }
         } catch (final Exception e) {
             logger.error("Error when parsing {}:\n{}", bioFile, e.getMessage
@@ -415,7 +415,7 @@ public class BioViz implements ApplicationListener {
         logger.debug("[SVG] svgManager: {}", svgManager);
 
         try {
-            String svg = svgManager.toSVG(currentBiochip, timeStep);
+            String svg = svgManager.toSVG(currentAssay, timeStep);
             //logger.debug("[SVG] generated SVG: {}",svg);
             FileHandle handle = Gdx.files.absolute(path);
             logger.debug("[SVG] File handle for storing the SVG: {}", handle);
