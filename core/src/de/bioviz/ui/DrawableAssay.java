@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
 
 /**
  * The DrawableAssay class collects the data of an assay that is executed on
