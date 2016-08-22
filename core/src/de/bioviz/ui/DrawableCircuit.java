@@ -164,7 +164,8 @@ public class DrawableCircuit implements Drawable {
 
 
 	/**
-	 * This member stores the grace period after which the auto loop starts from
+	 * This member stores the grace period after which the auto loop starts
+	 * from
 	 * the beginning.
 	 *
 	 * @see autoloopOvertimeCounter
@@ -284,7 +285,7 @@ public class DrawableCircuit implements Drawable {
 
 	@Override
 	public void draw() {
-		
+
 		setSmoothScale(getSmoothScale() +
 					   (getScaleX() - getSmoothScale()) / scalingDelay);
 		setSmoothOffsetX(getSmoothOffsetX() +
@@ -311,7 +312,8 @@ public class DrawableCircuit implements Drawable {
 					this.getDisplayOptions().getOption(
 							BDisplayOptions.LoopAutoplay)) {
 					++autoloopOvertimeCounter;
-					if (autoloopOvertimeCounter > autoloopOvertimeGracePeriod) {
+					if (autoloopOvertimeCounter >
+						autoloopOvertimeGracePeriod) {
 						setCurrentTime(1);
 						autoloopOvertimeCounter = 0;
 					}
@@ -611,7 +613,6 @@ public class DrawableCircuit implements Drawable {
 	 * Resets the zoom so that the whole chip is shown.
 	 */
 	public void zoomExtents() {
-		// FIXME Does not properly handle non-0 minimum coordinates yet
 		Point max = this.getData().getMaxCoord();
 		Point min = this.getData().getMinCoord();
 		LOGGER.debug("Auto zoom around " + min + " <--/--> " + max);
