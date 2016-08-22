@@ -35,8 +35,6 @@ public final class Net {
 	private final Rectangle target;
 
 
-
-
 	/**
 	 * The list of all starting points of this net's droplets.
 	 */
@@ -56,9 +54,8 @@ public final class Net {
 	 * 		this net's droplets' common target
 	 */
 	public Net(final ArrayList<Source> sources, final Point target) {
-		this(sources,new Rectangle(target,1,1));
+		this(sources, new Rectangle(target, 1, 1));
 	}
-
 
 
 	/**
@@ -80,10 +77,16 @@ public final class Net {
 		this.sources.addAll(sources);
 		Random rnd = new Random();
 
-		long seed = ((target.upperRight.fst % 65536) << 48) |
-				((target.upperRight.snd % 65536) << 32) |
-				((target.lowerLeft.fst % 65536) << 16) |
-				(target.lowerLeft.snd % 65536);
+		long upperRightX = (long) target.upperRight.fst;
+		long upperRightY = (long) target.upperRight.snd;
+		long lowerLeftX = (long) target.lowerLeft.fst;
+		long lowerLeftY = (long) target.lowerLeft.snd;
+
+
+		long seed = ((upperRightX % 65536) << 48) |
+					((upperRightY % 65536) << 32) |
+					((lowerLeftX % 65536) << 16) |
+					(lowerLeftY % 65536);
 		rnd.setSeed(seed);
 
 		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(),
@@ -166,7 +169,7 @@ public final class Net {
 			yMax = ur.snd;
 		}
 
-		final Rectangle netBoundingBox = new Rectangle(xMin,yMin,xMax,yMax);
+		final Rectangle netBoundingBox = new Rectangle(xMin, yMin, xMax, yMax);
 
 		return netBoundingBox.contains(f.pos);
 	}
