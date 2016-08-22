@@ -5,10 +5,8 @@ package de.bioviz.structures;
  *
  * @author Maximilian Luenert
  */
-public class AreaAnnotation {
+public class AreaAnnotation extends Resource {
 
-	/** The annotated fields. */
-	private Rectangle position;
 	/** The annotation text. */
 	private String annotation;
 
@@ -19,7 +17,7 @@ public class AreaAnnotation {
 	 * @param annotation the text of the new AreaAnnotation
 	 */
 	public AreaAnnotation(final Rectangle rectangle, final String annotation) {
-		this.position = rectangle;
+		super(rectangle,ResourceType.areaAnnotation);
 		this.annotation = annotation;
 	}
 
@@ -31,24 +29,6 @@ public class AreaAnnotation {
 	@Override
 	public String toString() {
 		return annotation + position;
-	}
-
-	/**
-	 * Gets the annotation position.
-	 *
-	 * @return Rectangle
-	 */
-	public Rectangle getPosition() {
-		return position;
-	}
-
-	/**
-	 * Sets the annotation position.
-	 *
-	 * @param position the position
-	 */
-	public void setPosition(final Rectangle position) {
-		this.position = position;
 	}
 
 	/**
