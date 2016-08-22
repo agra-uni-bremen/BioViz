@@ -373,11 +373,6 @@ public class DrawableCircuit implements Drawable {
 			}
 		}
 
-		// scale text
-		float scale = Math.min(
-				this.parent.messageCenter.getTextRenderResolution(),
-				getSmoothScale() / 2f);
-
 		// indeed draw, top first, then left
 		for (int i = minX; i < maxX + 1; i++) {
 			this.getParent().messageCenter.addHUDMessage(
@@ -385,8 +380,8 @@ public class DrawableCircuit implements Drawable {
 					Integer.toString(i).trim(),    // message
 					this.xCoordOnScreen(i),    // x
 					topYCoord,                // y
-					col,                    // message color, used for fading
-					scale);
+					col                 // message color, used for fading
+					);
 		}
 
 		for (int i = minY; i < maxY + 1; i++) {
@@ -398,8 +393,8 @@ public class DrawableCircuit implements Drawable {
 					Integer.toString(i).trim(),    // message
 					leftXCoord,                // x
 					this.yCoordOnScreen(i), // y
-					col,                    // message color, used for fading
-					scale);
+					col                    // message color, used for fading
+					);
 		}
 	}
 

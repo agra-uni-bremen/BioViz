@@ -314,7 +314,7 @@ public class MessageCenter {
 				}
 
 				font.setColor(targetColor);
-				
+
 				if (targetColor.a > 0) {
 
 					final GlyphLayout layout = new GlyphLayout(font, s.message);
@@ -356,7 +356,7 @@ public class MessageCenter {
 	 */
 	public void addHUDMessage(final int key, final String message,
 							  final float x, final float y) {
-		addHUDMessage(key, message, x, y, null, -1f);
+		addHUDMessage(key, message, x, y, null);
 	}
 
 	/**
@@ -374,12 +374,10 @@ public class MessageCenter {
 	 * 		the y coordinate to show the message at
 	 * @param col
 	 * 		the color of the message
-	 * @param size
-	 * 		the size of the HUD message
 	 */
 	public void addHUDMessage(final int key, final String message,
 							  final float x, final float y,
-							  final Color col, final float size) {
+							  final Color col) {
 		HUDMessage hm;
 		if (!this.hudMessages.containsKey(key)) {
 			hm = new HUDMessage(message, x, y);
