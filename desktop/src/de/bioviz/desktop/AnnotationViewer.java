@@ -1,7 +1,7 @@
 package de.bioviz.desktop;
 
 import de.bioviz.ui.BioViz;
-import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableAssay;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class AnnotationViewer extends TextViewer {
 	 * Loads the annotations.
 	 */
 	private void loadAnnotations() {
-		DrawableCircuit currentCircuit = currentViz.currentBiochip;
+		DrawableAssay currentCircuit = currentViz.currentBiochip;
 		if (currentCircuit != null) {
 			List<String> annotations = currentCircuit.getData().getAnnotations();
 			for (final String annotation : annotations) {

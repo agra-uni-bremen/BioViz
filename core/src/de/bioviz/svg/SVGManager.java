@@ -8,7 +8,7 @@ import de.bioviz.structures.Point;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.Colors;
 import de.bioviz.ui.DisplayValues;
-import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableAssay;
 import de.bioviz.ui.DrawableDroplet;
 import de.bioviz.ui.DrawableField;
 import de.bioviz.ui.DrawableRoute;
@@ -130,7 +130,7 @@ public class SVGManager {
 	/**
 	 * Reference to the drawableCircuit.
 	 */
-	private DrawableCircuit circuit;
+	private DrawableAssay circuit;
 
 	/**
 	 * SVGManager loading the default theme.
@@ -249,7 +249,7 @@ public class SVGManager {
 	 * 		The timeStep for the export
 	 * @return svg string representation
 	 */
-	public String toSVG(final DrawableCircuit circ, final int timeStep) {
+	public String toSVG(final DrawableAssay circ, final int timeStep) {
 
 		circuit = circ;
 

@@ -50,7 +50,7 @@ public class DrawableDroplet extends DrawableSprite {
 	/**
 	 * The circuit the droplet belongs to.
 	 */
-	public DrawableCircuit parentCircuit;
+	public DrawableAssay parentCircuit;
 
 	/**
 	 * The x coordinate the droplet is currently drawn at.
@@ -137,7 +137,7 @@ public class DrawableDroplet extends DrawableSprite {
 	 * 		The circuit the droplet belongs to.
 	 */
 	public DrawableDroplet(final Droplet droplet,
-						   final DrawableCircuit parent) {
+						   final DrawableAssay parent) {
 		super(TextureE.Droplet, parent.getParent());
 
 
@@ -363,7 +363,7 @@ public class DrawableDroplet extends DrawableSprite {
 	 */
 	public void draw() {
 
-		DrawableCircuit circ = parentCircuit;
+		DrawableAssay circ = parentCircuit;
 
 		Rectangle p = droplet.getPositionAt(circ.getCurrentTime());
 		boolean withinTimeRange = false;

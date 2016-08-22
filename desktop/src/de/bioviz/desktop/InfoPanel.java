@@ -6,7 +6,7 @@ import de.bioviz.structures.Dispenser;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Sink;
 import de.bioviz.ui.BioViz;
-import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableAssay;
 import de.bioviz.ui.DrawableDroplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +114,7 @@ public class InfoPanel extends JPanel {
     /**
      * The currentBiochip.
      */
-    private DrawableCircuit currentCircuit;
+    private DrawableAssay currentCircuit;
 
     /**
      * The biochip data.

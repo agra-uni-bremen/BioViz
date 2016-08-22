@@ -27,7 +27,7 @@ public class DrawableDispenser extends DrawableField {
 	 * 		The parent circuit, i.e. the circuit this dispenser belongs to.
 	 */
 	public DrawableDispenser(final Dispenser dispenser,
-							 final DrawableCircuit parent) {
+							 final DrawableAssay parent) {
 		super(dispenser, parent);
 	}
 

@@ -5,7 +5,7 @@ import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
 import de.bioviz.ui.Colors;
-import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableAssay;
 import de.bioviz.ui.DrawableDroplet;
 import de.bioviz.ui.DrawableField;
 import de.bioviz.util.Pair;
@@ -113,7 +113,7 @@ public final class SVGUtils {
 	 * @return Pair<Float, Float> in svg coordinates
 	 */
 	public static Pair<Float, Float> toSVGCoords(final Pair<Float, Float>	point,
-																							 final DrawableCircuit circuit,
+																							 final DrawableAssay circuit,
 																							 final int coordinateMultiplier) {
 		float yCoord = -point.snd + circuit.getData().getMaxCoord().snd;
 		float xCoord = point.fst;
@@ -133,7 +133,7 @@ public final class SVGUtils {
 	 * @return Point with SVG coordinates
 	 */
 	public static Point toSVGCoords(final Point point,
-																	final DrawableCircuit circuit,
+																	final DrawableAssay circuit,
 																	final int coordinateMultiplier) {
 		int yCoord = -point.snd + circuit.getData().getMaxCoord().snd;
 		int xCoord = point.fst;

@@ -5,8 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
 import de.bioviz.util.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class responsible for drawing the routes that droplets may follow.
@@ -99,7 +97,7 @@ public class DrawableRoute extends DrawableSprite {
 	 * and the transparency.
 	 */
 	public void draw() {
-		DrawableCircuit circ = droplet.parentCircuit;
+		DrawableAssay circ = droplet.parentCircuit;
 		int currentTime = circ.getCurrentTime();
 		int displayAt;
 

@@ -74,7 +74,7 @@ public class DrawableField extends DrawableSprite {
 	 * version of the circuit, not the structure that represents the circuit
 	 * itself.
 	 */
-	private DrawableCircuit parentCircuit;
+	private DrawableAssay parentCircuit;
 
 	private DrawableLine netIndicator = null;
 
@@ -97,7 +97,7 @@ public class DrawableField extends DrawableSprite {
 	 * 		this field's drawable parent
 	 */
 	public DrawableField(
-			final BiochipField field, final DrawableCircuit parent) {
+			final BiochipField field, final DrawableAssay parent) {
 		super(TextureE.GridMarker, parent.getParent());
 		this.setParentCircuit(parent);
 		this.setField(field);
@@ -482,7 +482,7 @@ public class DrawableField extends DrawableSprite {
 		displayText(vals.getMsg());
 		setColor(vals.getColor());
 
-		DrawableCircuit circ = getParentCircuit();
+		DrawableAssay circ = getParentCircuit();
 		float xCoord = circ.xCoordOnScreen(getField().x());
 		float yCoord = circ.yCoordOnScreen(getField().y());
 		this.setX(xCoord);
@@ -569,7 +569,7 @@ public class DrawableField extends DrawableSprite {
 
 	/**
 	 * Sets the field that is drawn by this {@link DrawableField}. This
-	 * shouldn't really be used at any point after the {@link DrawableCircuit}
+	 * shouldn't really be used at any point after the {@link DrawableAssay}
 	 * has been fully initialized.
 	 *
 	 * @param field
@@ -584,7 +584,7 @@ public class DrawableField extends DrawableSprite {
 	 *
 	 * @return the circuit that contains this field
 	 */
-	public DrawableCircuit getParentCircuit() {
+	public DrawableAssay getParentCircuit() {
 		return parentCircuit;
 	}
 
@@ -595,7 +595,7 @@ public class DrawableField extends DrawableSprite {
 	 * @param parentCircuit
 	 * 		the circuit that contains this field.
 	 */
-	public void setParentCircuit(final DrawableCircuit parentCircuit) {
+	public void setParentCircuit(final DrawableAssay parentCircuit) {
 		this.parentCircuit = parentCircuit;
 	}
 

@@ -46,7 +46,7 @@ public class BioViz implements ApplicationListener {
 	/**
      * The currently displayed biochip.
      */
-    public DrawableCircuit currentBiochip;
+    public DrawableAssay currentBiochip;
 
     OrthographicCamera camera;
 
@@ -54,7 +54,7 @@ public class BioViz implements ApplicationListener {
      * Manages the textures that are used to display the biochip.
      */
     private TextureManager textures;
-    private HashMap<String, DrawableCircuit> loadedBiochips;
+    private HashMap<String, DrawableAssay> loadedBiochips;
     private Vector<Drawable> drawables = new Vector<>();
 
 
@@ -240,12 +240,12 @@ public class BioViz implements ApplicationListener {
         try {
             String path = f.getCanonicalPath();
             if (this.loadedBiochips.containsKey(path)) {
-                DrawableCircuit c = loadedBiochips.get(path);
+                DrawableAssay c = loadedBiochips.get(path);
 
                 // remove the visualization if it is currently active.
                 if (currentBiochip == c) {
                     this.drawables.remove(c);
-                    currentBiochip = new DrawableCircuit(
+                    currentBiochip = new DrawableAssay(
                             new Biochip(), this);
                 }
                 logger.info("Removing {}", path);
@@ -284,7 +284,7 @@ public class BioViz implements ApplicationListener {
                         bc = new Biochip();
                     }
                     logger.debug("Creating drawable elements...");
-                    DrawableCircuit newCircuit = new DrawableCircuit(bc, this);
+                    DrawableAssay newCircuit = new DrawableAssay(bc, this);
                     currentBiochip = newCircuit;
                     this.loadedBiochips.put(bioFile.getCanonicalPath(),
                                             newCircuit);
@@ -300,7 +300,7 @@ public class BioViz implements ApplicationListener {
                         "File to be set is empty, setting empty " +
                                 "visualization" +
                                 ".");
-                currentBiochip = new DrawableCircuit(new Biochip(), this);
+                currentBiochip = new DrawableAssay(new Biochip(), this);
             }
         } catch (final Exception e) {
             logger.error("Error when parsing {}:\n{}", bioFile, e.getMessage
