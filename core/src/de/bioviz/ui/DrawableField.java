@@ -30,7 +30,6 @@ import static de.bioviz.ui.BDisplayOptions.DetectorIcon;
 import static de.bioviz.ui.BDisplayOptions.HighlightAnnotatedFields;
 import static de.bioviz.ui.BDisplayOptions.InterferenceRegion;
 import static de.bioviz.ui.BDisplayOptions.LingeringInterferenceRegions;
-import static de.bioviz.ui.BDisplayOptions.LongNetIndicatorsOnFields;
 import static de.bioviz.ui.BDisplayOptions.NetColorOnFields;
 import static de.bioviz.ui.BDisplayOptions.Pins;
 import static de.bioviz.ui.BDisplayOptions.SourceTargetIDs;
@@ -75,8 +74,6 @@ public class DrawableField extends DrawableSprite {
 	 * itself.
 	 */
 	private DrawableAssay parentAssay;
-
-	private DrawableLine netIndicator = null;
 
 	/**
 	 * Creates an object that draws a given field for a biochip.
@@ -501,32 +498,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		// TODO why is drawing of lines in any way tied to the actual fields?!
-		if (getOption(LongNetIndicatorsOnFields)) {
-			for (final Net net :
-					this.parentAssay.getData().getNetsOf(this.field)) {
-				for (final Source s : net.getSources()) {
-					Pair<Float, Float> targetCenter =
-							net.getTarget().centerFloat();
-					Pair<Float, Float> sourceCenter =
-							s.startPosition.centerFloat();
 
-					Vector2 target =
-							new Vector2(targetCenter.fst, targetCenter.snd);
-					Vector2 source =
-							new Vector2(sourceCenter.fst, sourceCenter.snd);
-
-					// draw to target
-					if (netIndicator == null) {
-						netIndicator = new DrawableLine(this.viz);
-					}
-					netIndicator.from = source;
-					netIndicator.to = target;
-					netIndicator.setColor(
-							Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
-					netIndicator.draw();
-				}
-			}
-		}
 	}
 
 
