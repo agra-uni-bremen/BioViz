@@ -239,7 +239,7 @@ public class DrawableAssay implements Drawable {
 				getParent().callTimeChangedListeners();
 			}
 		} else {
-			throw new RuntimeException("circuit parent is null");
+			throw new RuntimeException("assay parent is null");
 		}
 	}
 

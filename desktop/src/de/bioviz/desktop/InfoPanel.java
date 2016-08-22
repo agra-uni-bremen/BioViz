@@ -114,7 +114,7 @@ public class InfoPanel extends JPanel {
     /**
      * The currentAssay.
      */
-    private DrawableAssay currentCircuit;
+    private DrawableAssay currentAssay;
 
     /**
      * The biochip data.
@@ -262,15 +262,15 @@ public class InfoPanel extends JPanel {
     public void refreshPanelData() {
 
         if (bioViz != null) {
-            currentCircuit = this.bioViz.currentAssay;
-            if (currentCircuit != null) {
-                data = currentCircuit.getData();
+            currentAssay = this.bioViz.currentAssay;
+            if (currentAssay != null) {
+                data = currentAssay.getData();
             }
         }
 
         fluidToTypeModel.setRowCount(0);
         dropToFluidModel.setRowCount(0);
-        if (currentCircuit != null && data != null) {
+        if (currentAssay != null && data != null) {
             updateMaxT();
             updateDropletCount();
             updateUsage();
@@ -310,7 +310,7 @@ public class InfoPanel extends JPanel {
      * Updates the number of droplets.
      */
     public void updateDropletCount() {
-        final int dropletCount = currentCircuit.getDroplets().size();
+        final int dropletCount = currentAssay.getDroplets().size();
         dropletCountValue.setText(String.valueOf(dropletCount));
     }
 
@@ -319,7 +319,7 @@ public class InfoPanel extends JPanel {
      */
     private void updateDropToFluid() {
         if (data != null) {
-            for (final DrawableDroplet droplet : currentCircuit.getDroplets()) {
+            for (final DrawableDroplet droplet : currentAssay.getDroplets()) {
                 final int dropletID = droplet.droplet.getID();
                 String fluidType = data.fluidType(data.fluidID(dropletID));
                 if (fluidType != null) {
