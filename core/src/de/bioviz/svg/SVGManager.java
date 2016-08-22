@@ -130,7 +130,7 @@ public class SVGManager {
 	/**
 	 * Reference to the drawableCircuit.
 	 */
-	private DrawableAssay circuit;
+	private DrawableAssay assay;
 
 	/**
 	 * SVGManager loading the default theme.
@@ -212,8 +212,8 @@ public class SVGManager {
 	 * Calculates min and max values for the resulting svg viewbox.
 	 */
 	private void calculateViewboxDimensions() {
-		Point minCoord = circuit.getData().getMinCoord();
-		Point maxCoord = circuit.getData().getMaxCoord();
+		Point minCoord = assay.getData().getMinCoord();
+		Point maxCoord = assay.getData().getMaxCoord();
 
 		LOGGER.trace("Min X: " + minCoord.fst + " Min Y: " + minCoord.snd);
 		LOGGER.trace("Max X: " + maxCoord.fst + " Max Y: " + maxCoord.snd);
@@ -228,12 +228,12 @@ public class SVGManager {
 
 		viewBoxX = minX * COORDINATE_MULTIPLIER;
 		viewBoxY = (minY == 0 ? minY : (minY - 1)) *
-				COORDINATE_MULTIPLIER;
+				   COORDINATE_MULTIPLIER;
 
 		viewBoxWidth = (minX == 0 ? (maxX + 1) : maxX) *
-				COORDINATE_MULTIPLIER;
+					   COORDINATE_MULTIPLIER;
 		viewBoxHeight = (minY == 0 ? (maxY + 1) : maxY) *
-				COORDINATE_MULTIPLIER;
+						COORDINATE_MULTIPLIER;
 
 		coordPos = new Point(viewBoxX, viewBoxY);
 		infoPos = new Point(viewBoxX, viewBoxHeight);
@@ -241,25 +241,25 @@ public class SVGManager {
 	}
 
 	/**
-	 * Export the circuit to svg.
+	 * Export the assay to svg.
 	 *
 	 * @param circ
-	 * 		The circuit to export
+	 * 		The assay to export
 	 * @param timeStep
 	 * 		The timeStep for the export
 	 * @return svg string representation
 	 */
 	public String toSVG(final DrawableAssay circ, final int timeStep) {
 
-		circuit = circ;
+		assay = circ;
 
 		// set the export timeStep
-		circuit.setCurrentTime(timeStep);
+		assay.setCurrentTime(timeStep);
 
 		calculateViewboxDimensions();
 
-		if (circuit.getDisplayOptions().getOption(BDisplayOptions
-														  .Coordinates)) {
+		if (assay.getDisplayOptions().getOption(BDisplayOptions
+														.Coordinates)) {
 			int coordinateOffsetX = (int) (COORDINATE_MULTIPLIER * 0.75);
 			int coordinateOffsetY = (int) (COORDINATE_MULTIPLIER * 0.75);
 			viewBoxX -= coordinateOffsetX;
@@ -298,36 +298,36 @@ public class SVGManager {
 		svgs.forEach((name, svgcode) -> sb.append(svgcode));
 		sb.append("</defs>\n");
 
-		for (final DrawableField field : circuit.getFields()) {
+		for (final DrawableField field : assay.getFields()) {
 			sb.append(toSVG(field));
 		}
-		for (final DrawableDroplet drop : circuit.getDroplets()) {
+		for (final DrawableDroplet drop : assay.getDroplets()) {
 			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
 				sb.append(toSVG(drop));
 			}
 		}
 		// run over each droplet again and draw the arrows
 		// otherwise arrows can get under droplets
-		for (final DrawableDroplet drop : circuit.getDroplets()) {
-			if (circuit.getDisplayOptions().
+		for (final DrawableDroplet drop : assay.getDroplets()) {
+			if (assay.getDisplayOptions().
 					getOption(BDisplayOptions.LongNetIndicatorsOnDroplets) &&
-					SVGUtils.isNotHiddenOrInvisible(drop)) {
-					sb.append(createDropletArrows(drop));
+				SVGUtils.isNotHiddenOrInvisible(drop)) {
+				sb.append(createDropletArrows(drop));
 			}
 			// append longNetIndicatorsOnFields when needed
-			if (circuit.getDisplayOptions().getOption(BDisplayOptions
-															  .LongNetIndicatorsOnFields)) {
+			if (assay.getDisplayOptions().getOption(BDisplayOptions
+															.LongNetIndicatorsOnFields)) {
 				sb.append(createSourceTargetArrow(drop));
 			}
 		}
 
 
 		// export msg strings for fields
-		for (final DrawableField field : circuit.getFields()) {
+		for (final DrawableField field : assay.getFields()) {
 			sb.append(createFieldMsg(field));
 		}
 		// export msg strings for droplets
-		for (final DrawableDroplet drop : circuit.getDroplets()) {
+		for (final DrawableDroplet drop : assay.getDroplets()) {
 			//
 			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
 				sb.append(createDropletMsg(drop));
@@ -339,7 +339,7 @@ public class SVGManager {
 			sb.append(createInfoString());
 		}
 
-		if (circuit.getDisplayOptions().getOption(
+		if (assay.getDisplayOptions().getOption(
 				BDisplayOptions.Coordinates)) {
 			sb.append(createCoordinates());
 		}
@@ -362,7 +362,7 @@ public class SVGManager {
 		// @jannis please check and fix
 		// @keszocze Because the coordinate system in SVG is inverted on its
 		//		y-axis. I need to first put it upside down (-this.field.y) and
-		//		then add the total height of the circuit to have the element
+		//		then add the total height of the assay to have the element
 		// put
 		//		back into the positive coordinate range in order to be placed
 		//		on the canvas.
@@ -387,7 +387,7 @@ public class SVGManager {
 						  fieldID +
 						  "\" />\n";
 
-		if (circuit.getDisplayOptions().getOption(
+		if (assay.getDisplayOptions().getOption(
 				BDisplayOptions.NetColorOnFields)) {
 			fieldSvg += createGradient(field);
 		}
@@ -406,20 +406,23 @@ public class SVGManager {
 
 		Point dropletPos = getDropletPosInSVGCoords(drawableDrop);
 
-		Pair<Integer, Integer> scaleFactors = SVGUtils.getScaleFactors(drawableDrop,
-				circuit.getCurrentTime());
+		Pair<Integer, Integer> scaleFactors = SVGUtils.getScaleFactors
+				(drawableDrop,
+				 assay
+						 .getCurrentTime());
 
-		String scale = "scale(" + scaleFactors.fst + " " + scaleFactors.snd + ")";
+		String scale =
+				"scale(" + scaleFactors.fst + " " + scaleFactors.snd + ")";
 
 		String translateToZero = "translate(" + dropletPos.fst + " " +
-				dropletPos.snd + ")";
+								 dropletPos.snd + ")";
 		String translateBack = "translate(-" + dropletPos.fst + " " + "-" +
-				dropletPos.snd + ")";
+							   dropletPos.snd + ")";
 
 		// move the object to 0,0 then scale it and move it back to its
 		// original position
 		String transformation = getTransformation(translateToZero + " " +
-				scale + " " +	translateBack);
+												  scale + " " + translateBack);
 
 		String route = toSVG(drawableDrop.route);
 
@@ -428,7 +431,7 @@ public class SVGManager {
 
 		String dropShape = "<use x=\"" + dropletPos.fst + "\" " + "y=\"" +
 						   dropletPos.snd + "\"" + transformation + " " +
-				"xlink:href=\"#" + dropletID + "\" />\n";
+						   "xlink:href=\"#" + dropletID + "\" />\n";
 
 		return route + dropShape;
 	}
@@ -455,7 +458,7 @@ public class SVGManager {
 
 		int displayLength = DrawableRoute.routeDisplayLength;
 
-		Biochip biochip = circuit.getData();
+		Biochip biochip = assay.getData();
 
 		Color routeColor = drawableRoute.getColor();
 
@@ -489,9 +492,9 @@ public class SVGManager {
 				int x1 = p1.fst * COORDINATE_MULTIPLIER;
 				int x2 = p2.fst * COORDINATE_MULTIPLIER;
 				int y1 = (-p1.snd + biochip.getMaxCoord().snd) *
-						COORDINATE_MULTIPLIER;
+						 COORDINATE_MULTIPLIER;
 				int y2 = (-p2.snd + biochip.getMaxCoord().snd) *
-						COORDINATE_MULTIPLIER;
+						 COORDINATE_MULTIPLIER;
 
 				float targetX = x1 + (0.5f * COORDINATE_MULTIPLIER);
 				float targetY = y1;
@@ -553,7 +556,8 @@ public class SVGManager {
 		String arrow = "";
 
 		if (net != null) {
-			Pair<Float, Float> startPoint = drawableDrop.droplet.getFirstPosition()
+			Pair<Float, Float> startPoint = drawableDrop.droplet
+					.getFirstPosition()
 					.centerFloat();
 			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
 
@@ -578,8 +582,9 @@ public class SVGManager {
 		String arrows = "";
 		if (net != null) {
 
-			int time = circuit.getCurrentTime();
-			Pair<Float, Float> startPoint = drawableDrop.droplet.getFirstPosition()
+			int time = assay.getCurrentTime();
+			Pair<Float, Float> startPoint = drawableDrop.droplet
+					.getFirstPosition()
 					.centerFloat();
 			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
 			Pair<Float, Float> dropletPos = drawableDrop.droplet.
@@ -646,11 +651,12 @@ public class SVGManager {
 		String fieldSvg = "";
 		if (vals.getMsg() != null) {
 			fieldSvg += "<text text-anchor=\"middle\" x=\"" +
-						(fieldPos.fst + COORDINATE_MULTIPLIER / 2) + "\" y=\"" +
+						(fieldPos.fst + COORDINATE_MULTIPLIER / 2) + "\" " +
+						"y=\"" +
 						(fieldPos.snd + COORDINATE_MULTIPLIER / 2 +
 						 (FONT_SIZE / 2)) +
 						"\" font-family=\"" + FONT + "\" font-size=\"" +
-					FONT_SIZE +
+						FONT_SIZE +
 						"\" fill=\"#" + FONT_COLOR + "\">" + vals.getMsg() +
 						"</text>\n";
 		}
@@ -667,7 +673,7 @@ public class SVGManager {
 	private String createGradient(final DrawableField field) {
 		String gradientSvg = "";
 
-		for (final Net n : circuit.getData().getNetsOf(field.getField())) {
+		for (final Net n : assay.getData().getNetsOf(field.getField())) {
 			GradDir dir = getGradientDirection(field, n);
 			Point fieldPos = getFieldPosInSVGCoords(field);
 			if (dir != null) {
@@ -705,8 +711,8 @@ public class SVGManager {
 			List<Point> dirs = dir.getOrientation();
 			boolean dirMatch = true;
 			for (final Point p : dirs) {
-				dirMatch &= !circuit.getData().hasFieldAt(fieldPos.add(p)) ||
-							!net.containsField(circuit.getData().
+				dirMatch &= !assay.getData().hasFieldAt(fieldPos.add(p)) ||
+							!net.containsField(assay.getData().
 									getFieldAt(fieldPos.add(p)));
 			}
 			if (dirMatch) {
@@ -729,12 +735,13 @@ public class SVGManager {
 	 * @return svg string of an arrow
 	 */
 	private String createSVGArrow(final Pair<Float, Float> startPoint,
-																final	Pair<Float, Float> endPoint,
-																final Color	color) {
-		Pair<Float, Float> start = SVGUtils.toSVGCoords(startPoint, circuit,
-				COORDINATE_MULTIPLIER);
-		Pair<Float, Float> end = SVGUtils.toSVGCoords(endPoint, circuit,
-				COORDINATE_MULTIPLIER);
+								  final Pair<Float, Float> endPoint,
+								  final Color
+										  color) {
+		Pair<Float, Float> start = SVGUtils.toSVGCoords(startPoint, assay,
+														COORDINATE_MULTIPLIER);
+		Pair<Float, Float> end = SVGUtils.toSVGCoords(endPoint, assay,
+													  COORDINATE_MULTIPLIER);
 
 		float x1 = start.fst;
 		float y1 = start.snd;
@@ -766,11 +773,11 @@ public class SVGManager {
 		y2 -= yDiff;
 
 		final String line = "<line x1=\"" + x1 + "\" y1=\"" + y1 +
-				"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-				"\" stroke=\"#" + SVGUtils.colorToSVG(color) +
-				"\" stroke-width=\"10\" marker-end=\"url(#" +
-				SVGUtils.generateColoredID("ArrowHead", color) +
-				")\" />\n";
+							"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
+							"\" stroke=\"#" + SVGUtils.colorToSVG(color) +
+							"\" stroke-width=\"10\" marker-end=\"url(#" +
+							SVGUtils.generateColoredID("ArrowHead", color) +
+							")\" />\n";
 
 		return line;
 	}
@@ -785,17 +792,17 @@ public class SVGManager {
 		String coordinates =
 				"x=\"" + infoPos.fst + "\" " +
 				"y=\"" + (infoPos.snd + 1.5 *
-						FONT_SIZE_INFO_STRING) +
+										FONT_SIZE_INFO_STRING) +
 				"\" ";
 
-		String circName = circuit.getParent().getFileName();
-		String timeStep = String.valueOf(circuit.getCurrentTime());
+		String circName = assay.getParent().getFileName();
+		String timeStep = String.valueOf(assay.getCurrentTime());
 
 		return "<text " + coordinates + "fill=\"" + FONT_COLOR_INFO_STRING +
 			   "\"" +
 			   " " +
 			   "font-family=\"" + FONT + "\" font-size=\"" +
-				FONT_SIZE_INFO_STRING +
+			   FONT_SIZE_INFO_STRING +
 			   "\">" +
 			   "Filename: " + circName + " Timestep: " + timeStep +
 			   "</text>\n";
@@ -826,10 +833,10 @@ public class SVGManager {
 			 ++yCoord) {
 			coords.append("<text text-anchor=\"middle\" ");
 			coords.append("y=\"" + ((bottomRightCoord.snd - yCoord) *
-					COORDINATE_MULTIPLIER +
+									COORDINATE_MULTIPLIER +
 									0.5 * coordSize +
 									0.5 * COORDINATE_MULTIPLIER) + "\" ");
-			coords.append("x=\"" + (coordPos.fst -	coordSize) + "\" ");
+			coords.append("x=\"" + (coordPos.fst - coordSize) + "\" ");
 			coords.append(
 					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
 					"\">");
@@ -849,18 +856,18 @@ public class SVGManager {
 		createCores();
 
 		// create the svg def for the arrowhead for the source target arrows
-		if (circuit.getDisplayOptions().getOption(BDisplayOptions
-														  .LongNetIndicatorsOnFields)) {
+		if (assay.getDisplayOptions().getOption(BDisplayOptions
+														.LongNetIndicatorsOnFields)) {
 			// this is needed for source target arrows
 			svgCoreCreator.appendSourceTargetArrowHead(svgs);
 		}
 
 		// create all needed svg defs for the fields
-		for (final DrawableField f : circuit.getFields()) {
+		for (final DrawableField f : assay.getFields()) {
 
 			svgCoreCreator.appendFieldSVG(svgs, f);
 
-			Set<Net> nets = circuit.getData().getNetsOf(f.getField());
+			Set<Net> nets = assay.getData().getNetsOf(f.getField());
 			for (final Net n : nets) {
 				for (final GradDir dir : GradDir.values()) {
 					svgCoreCreator.appendGradSVG(svgs, n, dir);
@@ -870,12 +877,12 @@ public class SVGManager {
 
 		// create all needed svg defs for the droplets
 		// and droplet based features
-		for (final DrawableDroplet d : circuit.getDroplets()) {
+		for (final DrawableDroplet d : assay.getDroplets()) {
 			svgCoreCreator.appendDropletSVG(svgs, d);
 
 			// Add every needed color for the arrowheads
-			if (circuit.getDisplayOptions().getOption(BDisplayOptions
-															  .LongNetIndicatorsOnDroplets)) {
+			if (assay.getDisplayOptions().getOption(BDisplayOptions
+															.LongNetIndicatorsOnDroplets)) {
 				svgCoreCreator.appendArrowheads(svgs, d.getColor());
 
 			}
@@ -897,7 +904,7 @@ public class SVGManager {
 	 */
 	private Point getFieldPosInSVGCoords(final DrawableField drawableField) {
 		return SVGUtils.toSVGCoords(drawableField.getField().pos,
-									circuit, COORDINATE_MULTIPLIER);
+									assay, COORDINATE_MULTIPLIER);
 	}
 
 	/**
@@ -911,7 +918,7 @@ public class SVGManager {
 												   drawableDrop) {
 		return SVGUtils.toSVGCoords(
 				drawableDrop.droplet.getSafePositionAt(
-						circuit.getCurrentTime()).upperLeft(), circuit,
+						assay.getCurrentTime()).upperLeft(), assay,
 				COORDINATE_MULTIPLIER);
 	}
 }
