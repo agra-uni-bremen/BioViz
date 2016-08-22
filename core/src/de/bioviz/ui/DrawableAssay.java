@@ -12,6 +12,7 @@ import de.bioviz.util.Quadruple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 
@@ -126,23 +127,23 @@ public class DrawableAssay implements Drawable {
 	 * This contains instances that need to be notified as soon as the
 	 * currentTime value is altered.
 	 */
-	private Vector<BioVizEvent> timeChangedListeners = new Vector<>();
+	private ArrayList<BioVizEvent> timeChangedListeners = new ArrayList<>();
 
 	/**
 	 * The fields that are present on this circuit.
 	 */
-	private Vector<DrawableField> fields = new Vector<>();
+	private ArrayList<DrawableField> fields = new ArrayList<>();
 
 	/**
 	 * The droplets that are present on this circuit.
 	 */
-	private Vector<DrawableDroplet> droplets = new Vector<>();
+	private ArrayList<DrawableDroplet> droplets = new ArrayList<>();
 
 	/**
 	 * The droplets that are present on this circuit but should not be drawn at
 	 * this moment.
 	 */
-	private Vector<DrawableDroplet> hiddenDroplets = new Vector<>();
+	private ArrayList<DrawableDroplet> hiddenDroplets = new ArrayList<>();
 
 	/**
 	 * The current displayOptions that determine drawing parameters.
@@ -726,19 +727,19 @@ public class DrawableAssay implements Drawable {
 		this.autoDelay = autoDelay;
 	}
 
-	public Vector<DrawableField> getFields() {
+	public ArrayList<DrawableField> getFields() {
 		return fields;
 	}
 
-	public void setFields(final Vector<DrawableField> fields) {
+	public void setFields(final ArrayList<DrawableField> fields) {
 		this.fields = fields;
 	}
 
-	public Vector<DrawableDroplet> getDroplets() {
+	public ArrayList<DrawableDroplet> getDroplets() {
 		return droplets;
 	}
 
-	public void setDroplets(final Vector<DrawableDroplet> droplets) {
+	public void setDroplets(final ArrayList<DrawableDroplet> droplets) {
 		this.droplets = droplets;
 	}
 
@@ -776,11 +777,11 @@ public class DrawableAssay implements Drawable {
 		hiddenDroplets.remove(drop);
 	}
 
-	public Vector<DrawableDroplet> getHiddenDroplets() {
+	public ArrayList<DrawableDroplet> getHiddenDroplets() {
 		return hiddenDroplets;
 	}
 
-	public void setHiddenDroplets(final Vector<DrawableDroplet>
+	public void setHiddenDroplets(final ArrayList<DrawableDroplet>
 										  hiddenDroplets) {
 		this.hiddenDroplets = hiddenDroplets;
 	}
