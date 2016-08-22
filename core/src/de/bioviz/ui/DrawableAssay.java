@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * The DrawableAssay class collects the data of an assay that is executed on
@@ -727,7 +727,7 @@ public class DrawableAssay implements Drawable {
 		this.autoDelay = autoDelay;
 	}
 
-	public ArrayList<DrawableField> getFields() {
+	public List<DrawableField> getFields() {
 		return fields;
 	}
 
@@ -735,7 +735,7 @@ public class DrawableAssay implements Drawable {
 		this.fields = fields;
 	}
 
-	public ArrayList<DrawableDroplet> getDroplets() {
+	public List<DrawableDroplet> getDroplets() {
 		return droplets;
 	}
 
@@ -777,7 +777,7 @@ public class DrawableAssay implements Drawable {
 		hiddenDroplets.remove(drop);
 	}
 
-	public ArrayList<DrawableDroplet> getHiddenDroplets() {
+	public List<DrawableDroplet> getHiddenDroplets() {
 		return hiddenDroplets;
 	}
 
