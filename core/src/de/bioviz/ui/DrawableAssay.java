@@ -16,14 +16,14 @@ import java.util.Date;
 import java.util.Vector;
 
 /**
- * The DrawableCircuit class provides methods to draw a given ReversibleCircuit.
- * Create a ReversibleCircuit first (e.g. by loading a given .real file), then
- * create a DrawableCircuit instance for the ReversibleCircuit to draw the
- * latter.
+ * The DrawableAssay class collects the data of an assay that is executed on
+ * a biochip.
+ *
+ * It also provides the means to draw it using libgdx.
  *
  * @author Jannis Stoppe
  */
-public class DrawableCircuit implements Drawable {
+public class DrawableAssay implements Drawable {
 
 	/**
 	 * The default value for the scalingDelay field.
@@ -34,11 +34,11 @@ public class DrawableCircuit implements Drawable {
 	 * The logger for this instance.
 	 */
 	private static final Logger LOGGER =
-			LoggerFactory.getLogger(DrawableCircuit.class);
+			LoggerFactory.getLogger(DrawableAssay.class);
 
 	/**
 	 * This represents the actual biochip structure that is drawn by this
-	 * DrawableCircuit.
+	 * DrawableAssay.
 	 */
 	private Biochip data;
 
@@ -186,7 +186,7 @@ public class DrawableCircuit implements Drawable {
 	 * @param parent
 	 * 		The visualization this circuit belongs to.
 	 */
-	DrawableCircuit(final Biochip toDraw, final BioViz parent) {
+	DrawableAssay(final Biochip toDraw, final BioViz parent) {
 		LOGGER.debug("Creating new drawable chip based on " + toDraw);
 		this.setData(toDraw);
 		this.setParent(parent);
@@ -200,7 +200,7 @@ public class DrawableCircuit implements Drawable {
 				}
 			}
 		});
-		LOGGER.debug("New DrawableCircuit created successfully.");
+		LOGGER.debug("New DrawableAssay created successfully.");
 	}
 
 	/**
@@ -240,7 +240,7 @@ public class DrawableCircuit implements Drawable {
 				getParent().callTimeChangedListeners();
 			}
 		} else {
-			throw new RuntimeException("circuit parent is null");
+			throw new RuntimeException("assay parent is null");
 		}
 	}
 

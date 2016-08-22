@@ -50,7 +50,7 @@ public class DrawableDroplet extends DrawableSprite {
 	/**
 	 * The circuit the droplet belongs to.
 	 */
-	public DrawableCircuit parentCircuit;
+	public DrawableAssay parentAssay;
 
 	/**
 	 * The x coordinate the droplet is currently drawn at.
@@ -137,11 +137,11 @@ public class DrawableDroplet extends DrawableSprite {
 	 * 		The circuit the droplet belongs to.
 	 */
 	public DrawableDroplet(final Droplet droplet,
-						   final DrawableCircuit parent) {
+						   final DrawableAssay parent) {
 		super(TextureE.Droplet, parent.getParent());
 
 
-		this.parentCircuit = parent;
+		this.parentAssay = parent;
 		this.droplet = droplet;
 
 
@@ -275,12 +275,12 @@ public class DrawableDroplet extends DrawableSprite {
 
 		Net net = droplet.getNet();
 		if (net != null &&
-			parentCircuit.getDisplayOptions().getOption(
+			parentAssay.getDisplayOptions().getOption(
 					BDisplayOptions.NetColorOnDroplets)) {
 			color = net.getColor().buildGdxColor();
 		}
 
-		Rectangle pos = droplet.getPositionAt(parentCircuit.getCurrentTime());
+		Rectangle pos = droplet.getPositionAt(parentAssay.getCurrentTime());
 
 		if (pos != null) {
 			Point p = pos.upperLeft();
@@ -291,7 +291,7 @@ public class DrawableDroplet extends DrawableSprite {
 				color.sub(Color.BLACK).clamp();
 
 			} else {
-				if (parentCircuit.getHiddenDroplets().contains(this)) {
+				if (parentAssay.getHiddenDroplets().contains(this)) {
 					color.a = 0.25f;
 				} else {
 					color.add(Color.BLACK).clamp();
@@ -317,16 +317,16 @@ public class DrawableDroplet extends DrawableSprite {
 
 		int dropID = droplet.getID();
 
-		boolean dispDropIDs = parentCircuit.getDisplayOptions().getOption(
+		boolean dispDropIDs = parentAssay.getDisplayOptions().getOption(
 				BDisplayOptions.DropletIDs);
 
-		boolean dispFluidIDs = parentCircuit.getDisplayOptions().getOption(
+		boolean dispFluidIDs = parentAssay.getDisplayOptions().getOption(
 				BDisplayOptions.FluidIDs);
 
-		boolean dispFluidName = parentCircuit.getDisplayOptions()
+		boolean dispFluidName = parentAssay.getDisplayOptions()
 				.getOption(BDisplayOptions.FluidNames);
 
-		Integer fluidID = parentCircuit.getData().fluidID(dropID);
+		Integer fluidID = parentAssay.getData().fluidID(dropID);
 
 		if (dispDropIDs) {
 			msgs.add(Integer.toString(dropID));
@@ -337,7 +337,7 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 
 		if (dispFluidName && fluidID != null) {
-			String fname = parentCircuit.getData().fluidType(fluidID);
+			String fname = parentAssay.getData().fluidType(fluidID);
 
 			if (fname != null) {
 				msgs.add(fname);
@@ -363,7 +363,7 @@ public class DrawableDroplet extends DrawableSprite {
 	 */
 	public void draw() {
 
-		DrawableCircuit circ = parentCircuit;
+		DrawableAssay circ = parentAssay;
 
 		Rectangle p = droplet.getPositionAt(circ.getCurrentTime());
 		boolean withinTimeRange = false;
@@ -392,7 +392,7 @@ public class DrawableDroplet extends DrawableSprite {
 			this.updateCoords();
 			route.draw();
 
-			if (isVisible() && viz.currentBiochip.getDisplayOptions().
+			if (isVisible() && viz.currentAssay.getDisplayOptions().
 					getOption(BDisplayOptions.Droplets)) {
 
 				float xCoord = circ.xCoordOnScreen(
@@ -405,7 +405,7 @@ public class DrawableDroplet extends DrawableSprite {
 
 				// if hidden, place below grid
 				int invisibleIndex =
-						this.parentCircuit.getHiddenDroplets().indexOf(this);
+						this.parentAssay.getHiddenDroplets().indexOf(this);
 				if (invisibleIndex >= 0) {
 
 					this.setScaleX(32f);
@@ -437,10 +437,10 @@ public class DrawableDroplet extends DrawableSprite {
 	 * Toggles the visibility of the droplet.
 	 */
 	public void toggleGridVisibility() {
-		if (parentCircuit.isHidden(this)) {
-			parentCircuit.unHideDroplet(this);
+		if (parentAssay.isHidden(this)) {
+			parentAssay.unHideDroplet(this);
 		} else {
-			parentCircuit.hideDroplet(this);
+			parentAssay.hideDroplet(this);
 		}
 	}
 

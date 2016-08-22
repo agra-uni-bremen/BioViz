@@ -53,7 +53,7 @@ class PreferencesWindow extends JFrame {
 		final int minDurationBetweenSteps = maxAnimationDuration;
 		final int maxDurationBetweenSteps = maxAnimationDuration * 10;
 		final int defaultDurationBetweenSteps =
-				Math.round(viz.currentBiochip.getAutoDelay() * 1000);
+				Math.round(viz.currentAssay.getAutoDelay() * 1000);
 
 		try {
 			this.setIconImage(
@@ -96,12 +96,12 @@ class PreferencesWindow extends JFrame {
 		animSlider.addChangeListener(
 				e -> {
 					logger.info("Current speed: {}",
-								viz.currentBiochip.getAutoDelay());
+								viz.currentAssay.getAutoDelay());
 					int sliderVal = animSlider.getValue();
 					float newSpeed = sliderVal / 1000f;
 					logger.info("sliderVal: {}, newSpeed: {}", sliderVal,
 								newSpeed);
-					viz.currentBiochip.setAutoDelay(newSpeed);
+					viz.currentAssay.setAutoDelay(newSpeed);
 					timestepLabel.setText(Float.toString(newSpeed));
 				});
 

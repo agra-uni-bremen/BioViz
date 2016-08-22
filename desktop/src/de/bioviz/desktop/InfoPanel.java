@@ -6,7 +6,7 @@ import de.bioviz.structures.Dispenser;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Sink;
 import de.bioviz.ui.BioViz;
-import de.bioviz.ui.DrawableCircuit;
+import de.bioviz.ui.DrawableAssay;
 import de.bioviz.ui.DrawableDroplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,9 +112,9 @@ public class InfoPanel extends JPanel {
     private BioViz bioViz;
 
     /**
-     * The currentBiochip.
+     * The currentAssay.
      */
-    private DrawableCircuit currentCircuit;
+    private DrawableAssay currentAssay;
 
     /**
      * The biochip data.
@@ -262,15 +262,15 @@ public class InfoPanel extends JPanel {
     public void refreshPanelData() {
 
         if (bioViz != null) {
-            currentCircuit = this.bioViz.currentBiochip;
-            if (currentCircuit != null) {
-                data = currentCircuit.getData();
+            currentAssay = this.bioViz.currentAssay;
+            if (currentAssay != null) {
+                data = currentAssay.getData();
             }
         }
 
         fluidToTypeModel.setRowCount(0);
         dropToFluidModel.setRowCount(0);
-        if (currentCircuit != null && data != null) {
+        if (currentAssay != null && data != null) {
             updateMaxT();
             updateDropletCount();
             updateUsage();
@@ -310,7 +310,7 @@ public class InfoPanel extends JPanel {
      * Updates the number of droplets.
      */
     public void updateDropletCount() {
-        final int dropletCount = currentCircuit.getDroplets().size();
+        final int dropletCount = currentAssay.getDroplets().size();
         dropletCountValue.setText(String.valueOf(dropletCount));
     }
 
@@ -319,7 +319,7 @@ public class InfoPanel extends JPanel {
      */
     private void updateDropToFluid() {
         if (data != null) {
-            for (final DrawableDroplet droplet : currentCircuit.getDroplets()) {
+            for (final DrawableDroplet droplet : currentAssay.getDroplets()) {
                 final int dropletID = droplet.droplet.getID();
                 String fluidType = data.fluidType(data.fluidID(dropletID));
                 if (fluidType != null) {
@@ -335,7 +335,7 @@ public class InfoPanel extends JPanel {
      */
     public void updateFluidTable() {
         if (data != null) {
-            for (final DrawableDroplet droplet : bioViz.currentBiochip
+            for (final DrawableDroplet droplet : bioViz.currentAssay
                     .getDroplets()) {
                 final int dropletID = droplet.droplet.getID();
                 final Integer fluidID = data.fluidID(dropletID);
@@ -380,7 +380,7 @@ public class InfoPanel extends JPanel {
      * Updates the number of fields.
      */
     public void updateFieldCount() {
-        int numFields = bioViz.currentBiochip.getFields().size();
+        int numFields = bioViz.currentAssay.getFields().size();
         fieldNumValue.setText(String.valueOf(numFields));
     }
 

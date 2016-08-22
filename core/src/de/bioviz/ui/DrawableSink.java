@@ -16,7 +16,7 @@ public class DrawableSink extends DrawableField {
 	 * @param sink The sink object that is to be drawn.
 	 * @param parent The parent circuit.
 	 */
-	public DrawableSink(final Sink sink, final DrawableCircuit parent) {
+	public DrawableSink(final Sink sink, final DrawableAssay parent) {
 		super(sink, parent);
 	}
 
