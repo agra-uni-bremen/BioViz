@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Dispenser;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Sink;
 import de.bioviz.util.Quadruple;
@@ -145,6 +146,8 @@ public class DrawableAssay implements Drawable {
 	 */
 	private ArrayList<DrawableDroplet> hiddenDroplets = new ArrayList<>();
 
+	private List<DrawableNet> nets = new ArrayList<>();
+
 	/**
 	 * The current displayOptions that determine drawing parameters.
 	 */
@@ -281,6 +284,15 @@ public class DrawableAssay implements Drawable {
 
 		LOGGER.debug("Droplets set up.");
 
+
+		//setup nets
+		for (final Net n : getData().getNets()) {
+			DrawableNet nn = new DrawableNet(n, this);
+			this.getNets().add(nn);
+		}
+
+		LOGGER.debug("Nets set up.");
+
 		LOGGER.debug("Drawable initialization successfully done.");
 	}
 
@@ -331,6 +343,10 @@ public class DrawableAssay implements Drawable {
 
 		for (final DrawableDroplet d : this.getDroplets()) {
 			d.draw();
+		}
+
+		for (final DrawableNet n : this.getNets()) {
+			n.draw();
 		}
 
 	}
@@ -784,6 +800,14 @@ public class DrawableAssay implements Drawable {
 	public void setHiddenDroplets(final ArrayList<DrawableDroplet>
 										  hiddenDroplets) {
 		this.hiddenDroplets = hiddenDroplets;
+	}
+
+	public List<DrawableNet> getNets() {
+		return nets;
+	}
+
+	public void setNets(final ArrayList<DrawableNet> nets) {
+		this.nets = nets;
 	}
 
 	public DisplayOptions getDisplayOptions() {
