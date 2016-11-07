@@ -806,8 +806,9 @@ public class DrawableAssay implements Drawable {
 		return nets;
 	}
 
-	public void setNets(final ArrayList<DrawableNet> nets) {
-		this.nets = nets;
+	public void setNets(final List<DrawableNet> nets) {
+		this.nets.clear();
+		this.nets.addAll(nets);
 	}
 
 	public DisplayOptions getDisplayOptions() {
