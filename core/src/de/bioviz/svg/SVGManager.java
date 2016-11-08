@@ -5,14 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
-import de.bioviz.ui.BDisplayOptions;
-import de.bioviz.ui.Colors;
-import de.bioviz.ui.DisplayValues;
-import de.bioviz.ui.DrawableAssay;
-import de.bioviz.ui.DrawableDroplet;
-import de.bioviz.ui.DrawableField;
-import de.bioviz.ui.DrawableRoute;
-import de.bioviz.ui.TextureE;
+import de.bioviz.structures.Source;
+import de.bioviz.ui.*;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -314,14 +308,16 @@ public class SVGManager {
 				SVGUtils.isNotHiddenOrInvisible(drop)) {
 				sb.append(createDropletArrows(drop));
 			}
-			// append longNetIndicatorsOnFields when needed
-			if (assay.getDisplayOptions().getOption(BDisplayOptions
-															.LongNetIndicatorsOnFields)) {
-				sb.append(createSourceTargetArrow(drop));
-			}
 		}
 
-
+		// append longNetIndicatorsOnFields when needed
+		for (final Net net : assay.getData().getNets()) {
+			if(assay.getDisplayOptions().getOption(BDisplayOptions
+					.LongNetIndicatorsOnFields)) {
+				sb.append(createSourceTargetArrow(net));
+			}
+		}
+		
 		// export msg strings for fields
 		for (final DrawableField field : assay.getFields()) {
 			sb.append(createFieldMsg(field));
@@ -545,24 +541,23 @@ public class SVGManager {
 	/**
 	 * Creates svg arrows from all net sources to their net targets.
 	 *
-	 * @param drawableDrop
+	 * @param net
 	 * 		the droplet
 	 * @return svg string containing all start end arrows
 	 */
-	private String createSourceTargetArrow(final DrawableDroplet
-												   drawableDrop) {
+	private String createSourceTargetArrow(final Net net){
 
-		Net net = drawableDrop.droplet.getNet();
 		String arrow = "";
 
 		if (net != null) {
-			Pair<Float, Float> startPoint = drawableDrop.droplet
-					.getFirstPosition()
-					.centerFloat();
+			List<Source> startPoints = net.getSources();
 			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
 
 			Color arrowColor = Color.BLACK;
-			arrow = createSVGArrow(startPoint, endPoint, arrowColor);
+			for(final Source startPoint : startPoints) {
+				arrow += createSVGArrow(startPoint.startPosition.centerFloat(),
+						endPoint, arrowColor);
+			}
 		}
 
 		return arrow;
