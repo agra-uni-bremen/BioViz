@@ -312,12 +312,12 @@ public class SVGManager {
 
 		// append longNetIndicatorsOnFields when needed
 		for (final Net net : assay.getData().getNets()) {
-			if(assay.getDisplayOptions().getOption(BDisplayOptions
-					.LongNetIndicatorsOnFields)) {
+			if (assay.getDisplayOptions().getOption(BDisplayOptions
+															.LongNetIndicatorsOnFields)) {
 				sb.append(createSourceTargetArrow(net));
 			}
 		}
-		
+
 		// export msg strings for fields
 		for (final DrawableField field : assay.getFields()) {
 			sb.append(createFieldMsg(field));
@@ -470,8 +470,12 @@ public class SVGManager {
 		for (int i = 0; i < nSteps; ++i) {
 
 			LOGGER.debug("i: {}", i);
+			float alpha = 1;
 
-			float alpha = 1 - (Math.abs((float) i) / ((float) displayLength));
+			if (!droplet.parentAssay.getDisplayOptions().getOption(
+					BDisplayOptions.SolidPaths)) {
+				alpha -= (Math.abs((float) i) / ((float) displayLength));
+			}
 
 			displayAt = currentTime + i;
 
@@ -545,7 +549,7 @@ public class SVGManager {
 	 * 		the droplet
 	 * @return svg string containing all start end arrows
 	 */
-	private String createSourceTargetArrow(final Net net){
+	private String createSourceTargetArrow(final Net net) {
 
 		String arrow = "";
 
@@ -554,9 +558,9 @@ public class SVGManager {
 			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
 
 			Color arrowColor = Color.BLACK;
-			for(final Source startPoint : startPoints) {
+			for (final Source startPoint : startPoints) {
 				arrow += createSVGArrow(startPoint.startPosition.centerFloat(),
-						endPoint, arrowColor);
+										endPoint, arrowColor);
 			}
 		}
 

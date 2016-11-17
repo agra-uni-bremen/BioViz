@@ -58,7 +58,7 @@ public class DrawableRoute extends DrawableSprite {
 	}
 
 	/**
-	 * Returns the color used for drawingf the route.
+	 * Returns the color used for drawing the route.
 	 * <p/>
 	 * The color depends on the {@link BDisplayOptions} option ColorfulRoutes.
 	 * If it is set to true, the droplet's color is used instead of black.
