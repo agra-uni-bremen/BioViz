@@ -472,7 +472,7 @@ public class SVGManager {
 			LOGGER.debug("i: {}", i);
 			float alpha = 1;
 
-			if (!droplet.parentAssay.getDisplayOptions().getOption(
+			if (!assay.getDisplayOptions().getOption(
 					BDisplayOptions.SolidPaths)) {
 				alpha -= (Math.abs((float) i) / ((float) displayLength));
 			}
