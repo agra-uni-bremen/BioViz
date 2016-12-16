@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static de.bioviz.ui.BDisplayOptions.Actuations;
+import static de.bioviz.ui.BDisplayOptions.ActuationSymbols;
 import static de.bioviz.ui.BDisplayOptions.Adjacency;
 import static de.bioviz.ui.BDisplayOptions.CellUsage;
 import static de.bioviz.ui.BDisplayOptions.CellUsageCount;
@@ -186,7 +187,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		int t = getParentAssay().getCurrentTime();
-		if (getOption(Actuations)) {
+		if (getOption(ActuationSymbols)) {
 			Actuation act = field.getActuation(t);
 
 			switch (act) {

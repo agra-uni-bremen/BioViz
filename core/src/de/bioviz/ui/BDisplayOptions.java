@@ -63,6 +63,11 @@ public enum BDisplayOptions {
 	 * makes a droplet move to that cell.
 	 */
 	Actuations("Show actuations"),
+
+	/**
+	 * Option for displaying actuation symbols ('1', '0', 'X').
+	 */
+	ActuationSymbols("Show actuation symbols"),
 	/**
 	 * Option for displaying icons at the source(s) and target of a net.
 	 */
