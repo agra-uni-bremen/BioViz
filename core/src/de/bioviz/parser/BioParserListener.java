@@ -795,10 +795,6 @@ class BioParserListener extends BioBaseListener {
 
 			Rectangle target = net.getTarget();
 
-			logger.error("\nNet target={}, target.center={}\n", net
-								 .getTarget(),
-						 target);
-
 			net.getSources().forEach(src -> {
 				int dropID = src.dropletID;
 
