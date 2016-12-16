@@ -61,7 +61,7 @@ public abstract class Colors {
 	/**
 	 * Color used to indicate that we do not care about the actuation value.
 	 */
-	public static final Color ACTAUTION_DONTCARE_COLOR = new Color(0.3f, 0.3f, 0.3f, 1);
+	public static final Color ACTAUTION_DONTCARE_COLOR = new Color(0.6f, 0.6f, 0.6f, 1);
 
 
 	/**

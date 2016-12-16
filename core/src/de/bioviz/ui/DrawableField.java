@@ -185,6 +185,22 @@ public class DrawableField extends DrawableSprite {
 			fieldHUDMsg = Integer.toString(field.getUsage());
 		}
 
+		int t = getParentAssay().getCurrentTime();
+		if (getOption(Actuations)) {
+			Actuation act = field.getActuation(t);
+
+			switch (act) {
+				case ON:
+					fieldHUDMsg="1";
+					break;
+				case OFF:
+					fieldHUDMsg="0";
+					break;
+				case DONTCARE:
+					fieldHUDMsg="X";
+			}
+		}
+
 
 		return Pair.mkPair(fieldHUDMsg, texture);
 	}
@@ -344,7 +360,7 @@ public class DrawableField extends DrawableSprite {
 
 
 		/**
-		 * Here we highlight cells that are currently actuated.
+		 * Here we highlight cells based on their actuation value
 		 */
 		int t = getParentAssay().getCurrentTime();
 		if (getOption(Actuations)) {
@@ -361,7 +377,6 @@ public class DrawableField extends DrawableSprite {
 					result.add(Colors.ACTAUTION_DONTCARE_COLOR);
 			}
 			++colorOverlayCount;
-
 		}
 
 
