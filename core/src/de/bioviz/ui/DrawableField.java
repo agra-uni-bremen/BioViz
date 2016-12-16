@@ -1,7 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
+import de.bioviz.structures.Actuation;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Dispenser;
@@ -12,7 +12,6 @@ import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
 import de.bioviz.structures.Sink;
-import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -348,10 +347,21 @@ public class DrawableField extends DrawableSprite {
 		 * Here we highlight cells that are currently actuated.
 		 */
 		int t = getParentAssay().getCurrentTime();
-		if (getOption(Actuations) && field.isActuated(t)) {
+		if (getOption(Actuations)) {
+			Actuation act = field.getActuation(t);
 
-			result.add(Colors.ACTAUTED_COLOR);
+			switch (act) {
+				case ON:
+					result.add(Colors.ACTAUTION_ON_COLOR);
+					break;
+				case OFF:
+					result.add(Colors.ACTAUTION_OFF_COLOR);
+					break;
+				case DONTCARE:
+					result.add(Colors.ACTAUTION_DONTCARE_COLOR);
+			}
 			++colorOverlayCount;
+
 		}
 
 

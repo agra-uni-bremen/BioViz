@@ -49,9 +49,19 @@ public abstract class Colors {
 	public static final Color BLOCKED_COLOR = new Color(1f / 2f, 0, 0, 1);
 
 	/**
-	 * Color used to indicate that a cells has been activated.
+	 * Color used to indicate that a cell has been activated.
 	 */
-	public static final Color ACTAUTED_COLOR = new Color(1, 1, 0, 1);
+	public static final Color ACTAUTION_ON_COLOR = new Color(1, 1, 0, 1);
+
+	/**
+	 * Color used to indicate that a cell is explicitly not actuated.
+	 */
+	public static final Color ACTAUTION_OFF_COLOR = new Color(1, 0, 0, 1);
+
+	/**
+	 * Color used to indicate that we do not care about the actuation value.
+	 */
+	public static final Color ACTAUTION_DONTCARE_COLOR = new Color(0.3f, 0.3f, 0.3f, 1);
 
 
 	/**
