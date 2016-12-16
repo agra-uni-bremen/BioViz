@@ -299,11 +299,10 @@ public class BiochipField {
 			if (circ.dropletOnPosition(pos, timeStep)) {
 				act = Actuation.ON;
 			}
-		}
-
-		for (final Mixer m : mixers) {
-			if (m.position.contains(pos) && m.timing.inRange(timeStep)) {
-				act = Actuation.ON;
+			for (final Mixer m : mixers) {
+				if (m.position.contains(pos) && m.timing.inRange(timeStep)) {
+					act = Actuation.ON;
+				}
 			}
 		}
 
