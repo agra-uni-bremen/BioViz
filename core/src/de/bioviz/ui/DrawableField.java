@@ -349,6 +349,7 @@ public class DrawableField extends DrawableSprite {
 		 */
 		int t = getParentAssay().getCurrentTime();
 		if (getOption(Actuations) && field.isActuated(t)) {
+
 			result.add(Colors.ACTAUTED_COLOR);
 			++colorOverlayCount;
 		}

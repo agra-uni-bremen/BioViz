@@ -181,7 +181,7 @@ public class BiochipField {
 			resource.type != Resource.ResourceType.magnet) {
 			return null;
 		}
-		return (Magnet)resource;
+		return (Magnet) resource;
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class BiochipField {
 			resource.type != Resource.ResourceType.heater) {
 			return null;
 		}
-		return (Heater)resource;
+		return (Heater) resource;
 	}
 
 	/**
@@ -265,30 +265,27 @@ public class BiochipField {
 
 
 	/**
-	 * Checks whether the field is actuated at the specified time step.
+	 * Evaluates the actuation status of the field at the specified time step
 	 * <p>
 	 * The order in which the field is checked for its actuation is as follows:
 	 * 1. If there is a pin assignment, the actuation state of the pin is used.
 	 * 2. If there is an actuation vector assigned to this field, its value is
-	 * used. 3. If there is a droplet on top of this field, the field is
+	 * used.
+	 * 3. If there is a droplet on top of this field, the field is
 	 * regarded as being actuated.
 	 * <p>
 	 * Note that any of the above steps determined the actuation state of the
 	 * field, the other checks are not performed. This means that if the field
 	 * has an assigned pin that is never actuated, even the presence of a
 	 * droplet on top of the field does not make this field actuated.
-	 * <p>
-	 * The exception from this rule is that the presence of a mixer always sets
-	 * the status to actuated.
 	 *
 	 * @param timeStep
 	 * 		The time step to check for actuation of this field.
-	 * @return true if the field is actuated, false otherwise.
+	 * @return The actuation value for the field at the given time step
 	 */
-	public boolean isActuated(final int timeStep) {
-
+	public Actuation getActuation(final int timeStep) {
 		Biochip circ = parent;
-		Actuation act = Actuation.OFF;
+		Actuation act = Actuation.DONTCARE;
 
 		Map<Integer, ActuationVector> actVecs = circ.pinActuations;
 		if (pin != null && !actVecs.isEmpty()) {
@@ -310,7 +307,22 @@ public class BiochipField {
 			}
 		}
 
-		return act == Actuation.ON;
+		return act;
+	}
+
+	/**
+	 * Checks whether the field is actuated at the specified time step.
+	 * <p>
+	 * See {@see getActuation} for a description on how the actuation value of
+	 * the field is evaluated.
+	 *
+	 * @param timeStep
+	 * 		The time step to check for actuation of this field.
+	 * @return true if the field is actuated, false otherwise.
+	 */
+	public boolean isActuated(final int timeStep) {
+
+		return getActuation(timeStep) == Actuation.ON;
 	}
 
 	/**
