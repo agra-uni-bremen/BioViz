@@ -51,17 +51,17 @@ public abstract class Colors {
 	/**
 	 * Color used to indicate that a cell has been activated.
 	 */
-	public static final Color ACTAUTION_ON_COLOR = new Color(1, 1, 0, 1);
+	public static final Color ACTUATION_ON_COLOR = new Color(1, 1, 0, 1);
 
 	/**
 	 * Color used to indicate that a cell is explicitly not actuated.
 	 */
-	public static final Color ACTAUTION_OFF_COLOR = new Color(1, 0, 0, 1);
+	public static final Color ACTUATION_OFF_COLOR = new Color(1, 0, 0, 1);
 
 	/**
 	 * Color used to indicate that we do not care about the actuation value.
 	 */
-	public static final Color ACTAUTION_DONTCARE_COLOR = new Color(0.6f, 0.6f, 0.6f, 1);
+	public static final Color ACTUATION_DONTCARE_COLOR = new Color(0.6f, 0.6f, 0.6f, 1);
 
 
 	/**

@@ -369,13 +369,13 @@ public class DrawableField extends DrawableSprite {
 
 			switch (act) {
 				case ON:
-					result.add(Colors.ACTAUTION_ON_COLOR);
+					result.add(Colors.ACTUATION_ON_COLOR);
 					break;
 				case OFF:
-					result.add(Colors.ACTAUTION_OFF_COLOR);
+					result.add(Colors.ACTUATION_OFF_COLOR);
 					break;
 				case DONTCARE:
-					result.add(Colors.ACTAUTION_DONTCARE_COLOR);
+					result.add(Colors.ACTUATION_DONTCARE_COLOR);
 			}
 			++colorOverlayCount;
 		}
