@@ -898,7 +898,7 @@ public class DesktopLauncher extends JFrame {
 			JCheckBox exportColors = new JCheckBox("Export colors");
 			exportColors.setSelected(true);
 			JCheckBox exportInfoString = new JCheckBox("Export info tag");
-			exportInfoString.setSelected(true);
+			exportInfoString.setSelected(false);
 			JCheckBox exportSeries = new JCheckBox("Export series");
 			exportSeries.setSelected(false);
 
