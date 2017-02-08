@@ -19,7 +19,29 @@ public class ActuationVector {
 	/**
 	 * A simple ArrayList stores the actual actuation states.
 	 */
-	private final ArrayList<Actuation> vec = new ArrayList<>();
+	private ArrayList<Actuation> vec = new ArrayList<>();
+
+	/**
+	 * @brief Creates an Actuation vector of given length that contains the
+	 * specified value only.
+	 *
+	 * @param val The Actuation value
+	 * @param len The length of the ActuationVector
+	 */
+	public ActuationVector(Actuation val, int len) {
+		vec.ensureCapacity(len);
+		for (int i=0; i<len; ++i) {
+			vec.add(val);
+		}
+	}
+
+	/**
+	 * @brief Return a copy of the underlying ArrayList
+	 * @return Raw ArrayList representation of the actuation vector.
+	 */
+	public ArrayList<Actuation> getArrayList() {
+		return new ArrayList<>(vec);
+	}
 
 	/**
 	 * Creates an actuation vector from a string.
@@ -78,6 +100,11 @@ public class ActuationVector {
 			return Actuation.OFF;
 		}
 		return Actuation.DONTCARE;
+	}
+
+
+	public void set(final int pos, final Actuation act) {
+		vec.set(pos,act);
 	}
 
 	/**
