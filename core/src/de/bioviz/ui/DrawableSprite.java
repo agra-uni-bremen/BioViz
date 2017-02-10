@@ -191,6 +191,12 @@ public abstract class DrawableSprite implements Drawable {
 		this.viz = parent;
 	}
 
+	/**
+	 * @brief Initializes the sprite with a given size and texture.
+	 * @param sizeX The size of the sprite in x direction
+	 * @param sizeY The size of the sprite in y direction
+	 * @param region The texture that is being displayed
+	 */
 	private void initializeSprite(final float sizeX,
 								  final float sizeY,
 								  final TextureRegion region) {
@@ -421,10 +427,18 @@ public abstract class DrawableSprite implements Drawable {
 									  getColorTransitionDuration();
 	}
 
+	/**
+	 * @brief Returns the duration of the color transition.
+	 * @return The duration the transition between colors takes.
+	 */
 	public static int getColorTransitionDuration() {
 		return colorTransitionDuration;
 	}
 
+	/**
+	 * @brief Sets the color transition time.
+	 * @param colorTransitionDuration The new transition time for colors.
+	 */
 	public static void setColorTransitionDuration(
 			final int colorTransitionDuration) {
 		DrawableSprite.colorTransitionDuration = colorTransitionDuration;
