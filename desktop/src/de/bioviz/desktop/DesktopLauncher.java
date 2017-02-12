@@ -37,6 +37,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -77,7 +78,6 @@ public class DesktopLauncher extends JFrame {
 	 * elevate this to public as needed.
 	 */
 	private static DesktopLauncher singleton;
-
 
 
 	/**
@@ -890,6 +890,10 @@ public class DesktopLauncher extends JFrame {
 		int choice;
 
 		if (load) {
+			FileNameExtensionFilter bioGramFilter = new FileNameExtensionFilter(
+					"Biogram Files", "bio");
+			fileDialog.addChoosableFileFilter(bioGramFilter);
+			fileDialog.setFileFilter(bioGramFilter);
 			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
 		} else {
 			// add the svg export options as an accessory to the fileChooser
