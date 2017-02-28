@@ -138,7 +138,6 @@ public class Biochip {
 		fluidTypes.putAll(types);
 	}
 
-
 	/**
 	 * Adds a collection of nets to this biochip.
 	 *
@@ -466,14 +465,17 @@ public class Biochip {
 	 * @throws RuntimeException
 	 * 		if there is no field at given coordinates
 	 */
+
 	public BiochipField getFieldAt(final Point coords) {
-		if (hasFieldAt(coords)) {
-			return this.field.get(coords);
+		BiochipField f = this.field.get(coords);
+		if (f != null) {
+			return f;
 		} else {
 			throw new RuntimeException("Could not retrieve field at " +
 									   coords);
 		}
 	}
+
 
 
 	/**
