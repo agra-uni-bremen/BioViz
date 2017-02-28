@@ -83,3 +83,7 @@ tst
 ## Profiling data
 *.hprof
 classes
+
+## Generated files for Oliver's PhD
+*.cpp
+*.hpp
