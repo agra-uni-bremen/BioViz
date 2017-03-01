@@ -226,6 +226,23 @@ public class Rectangle {
 	}
 
 	/**
+	 * @brief Extends a rectangle.
+	 *
+	 * This method can be used to create neighbourhoods of rectangles.
+	 *
+	 * @param r Rectangle that is to be extended
+	 * @param size By how many positions the rectangle is to be extended
+	 * @return New Rectangle that is a bigger version of the given one
+	 */
+	public static Rectangle extend(final Rectangle r,final int size) {
+		// use <new> to create a deep copy
+		Point ll = new Point(r.lowerLeft.fst - size, r.lowerLeft.snd - size);
+		Point ur = new Point(r.upperRight.fst + size, r.upperRight.snd + size);
+
+		return new Rectangle(ll,ur);
+	}
+
+	/**
 	 * Checks two rectangles for adjacency.
 	 *
 	 * @param r1
@@ -241,6 +258,10 @@ public class Rectangle {
 			return false;
 		}
 
+		// TODO do we need the desctinction between points and real rectangles?
+		// I think that the overlapping thing works for single position
+		// rectangles as well
+
 		boolean isPoint1 = r1.isPoint();
 		boolean isPoint2 = r2.isPoint();
 
@@ -254,17 +275,12 @@ public class Rectangle {
 		whether these rectangles overlap.
 		 */
 		if (!isPoint1 && !isPoint2) {
-			// use new Point to create a deep copy
-			Point ll = new Point(r1.lowerLeft.fst - 1, r1.lowerLeft.snd - 1);
-			Point ur = new Point(r1.upperRight.fst + 1, r1.upperRight.snd + 1);
-			Rectangle biggerRect = new Rectangle(ll, ur);
-
-
+			Rectangle biggerRect = extend(r1,1);
 			return Rectangle.overlapping(biggerRect, r2);
 		}
 
 		/*
-		Now we know that at least Rectangle is a point and can act accordingly
+		Now we know that at least one  Rectangle is a point and can act accordingly
 		 */
 		Point p = r1.getPoint();
 		Rectangle rec = r2;
