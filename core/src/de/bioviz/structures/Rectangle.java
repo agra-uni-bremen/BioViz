@@ -3,7 +3,9 @@ package de.bioviz.structures;
 import de.bioviz.util.Pair;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Oliver Keszocze
@@ -189,6 +191,37 @@ public class Rectangle {
 
 
 	/**
+	 * @brief Computes the margin of a rectangle (i.e. the directly surrounding
+	 * positions).
+	 *
+	 * @warning This method can return Points that are not part of the grid
+	 * @param r Rectangle whose margin is computed
+	 * @param width Width of the margin
+	 */
+	public Set<Point> margin(final Rectangle r, final int width) {
+
+		Set<Point> marginSet = new HashSet<>();
+
+		for (int n=1;  n<=width;++n) {
+			List<Point> corners = extend(r, n).corners();
+
+			marginSet.addAll(
+					new Rectangle(corners.get(0), corners.get(1)).positions()
+			);
+			marginSet.addAll(
+					new Rectangle(corners.get(1), corners.get(2)).positions()
+			);
+			marginSet.addAll(
+					new Rectangle(corners.get(2), corners.get(3)).positions()
+			);
+			marginSet.addAll(
+					new Rectangle(corners.get(3), corners.get(0)).positions()
+			);
+		}
+		return marginSet;
+	}
+
+	/**
 	 * @return List of the points of this rectangle.
 	 */
 	public List<Point> positions() {
@@ -313,7 +346,7 @@ public class Rectangle {
 	 * or only one (the rectangle actually is a point). No extra test for
 	 * 1xn or
 	 * nx1 rectangles is performed.
-	 *
+	 *TODO
 	 * @return The corners of the rectangle.
 	 */
 	public List<Point> corners() {
