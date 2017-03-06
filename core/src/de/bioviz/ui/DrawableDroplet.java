@@ -297,8 +297,7 @@ public class DrawableDroplet extends DrawableSprite {
 					color.add(Color.BLACK).clamp();
 				}
 			}
-		}
-		else {
+		} else {
 			color.sub(Color.BLACK).clamp();
 		}
 
@@ -388,44 +387,44 @@ public class DrawableDroplet extends DrawableSprite {
 		// at this point, p is definitely not null. The getFirst/LastPosition
 		// methods would have thrown an exception
 
-			this.setTargetPosition(upperLeft.fst, upperLeft.snd);
-			this.updateCoords();
-			route.draw();
+		this.setTargetPosition(upperLeft.fst, upperLeft.snd);
+		this.updateCoords();
+		route.draw();
 
-			if (isVisible() && viz.currentAssay.getDisplayOptions().
-					getOption(BDisplayOptions.Droplets)) {
+		if (isVisible() && viz.currentAssay.getDisplayOptions().
+				getOption(BDisplayOptions.Droplets)) {
 
-				float xCoord = circ.xCoordOnScreen(
-						smoothX + (smoothWidth - 1) / 2f);
-				float yCoord = circ.yCoordOnScreen(
-						smoothY - (smoothHeight - 1) / 2f);
+			float xCoord = circ.xCoordOnScreen(
+					smoothX + (smoothWidth - 1) / 2f);
+			float yCoord = circ.yCoordOnScreen(
+					smoothY - (smoothHeight - 1) / 2f);
 
-				this.setScaleX(circ.getSmoothScale() * smoothWidth);
-				this.setScaleY(circ.getSmoothScale() * smoothHeight);
+			this.setScaleX(circ.getSmoothScale() * smoothWidth);
+			this.setScaleY(circ.getSmoothScale() * smoothHeight);
 
-				// if hidden, place below grid
-				int invisibleIndex =
-						this.parentAssay.getHiddenDroplets().indexOf(this);
-				if (invisibleIndex >= 0) {
+			// if hidden, place below grid
+			int invisibleIndex =
+					this.parentAssay.getHiddenDroplets().indexOf(this);
+			if (invisibleIndex >= 0) {
 
-					this.setScaleX(32f);
-					this.setScaleY(32f);
+				this.setScaleX(32f);
+				this.setScaleY(32f);
 
-					xCoord = Gdx.graphics.getWidth() / 2f
-							 - this.getScaleX() * (invisibleIndex + 1);
-					yCoord = Gdx.graphics.getHeight() / 2f - this.getScaleY();
-				}
-
-				this.setX(xCoord);
-				this.setY(yCoord);
-
-				String msg = getMsg();
-
-				displayText(msg);
-
-				super.draw();
+				xCoord = Gdx.graphics.getWidth() / 2f
+						 - this.getScaleX() * (invisibleIndex + 1);
+				yCoord = Gdx.graphics.getHeight() / 2f - this.getScaleY();
 			}
-		
+
+			this.setX(xCoord);
+			this.setY(yCoord);
+
+			String msg = getMsg();
+
+			displayText(msg);
+
+			super.draw();
+		}
+
 		if (!withinTimeRange) {
 			// make sure that previous numbers are removed when the droplet is
 			// removed.
