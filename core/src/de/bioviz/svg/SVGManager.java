@@ -558,9 +558,12 @@ public class SVGManager {
 			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
 
 			Color arrowColor = Color.BLACK;
-			for (final Source startPoint : startPoints) {
-				arrow += createSVGArrow(startPoint.startPosition.centerFloat(),
-										endPoint, arrowColor);
+			for (final Source startSource : startPoints) {
+				Pair<Float, Float> startPoint =
+						startSource.startPosition.centerFloat();
+				if (!startPoint.equals(endPoint)) {
+					arrow += createSVGArrow(startPoint,endPoint, arrowColor);
+				}
 			}
 		}
 
