@@ -397,10 +397,16 @@ public class DrawableDroplet extends DrawableSprite {
 
 		this.setTargetPosition(upperLeft.fst, upperLeft.snd);
 		this.updateCoords();
-		route.draw();
+
+		// only draw the route when the droplet is to be displayed normally.
+		if (!this.isHidden()) {
+			route.draw();
+		}
+
 
 		if (isVisible() && viz.currentAssay.getDisplayOptions().
 				getOption(BDisplayOptions.Droplets)) {
+
 
 			float xCoord = circ.xCoordOnScreen(
 					smoothX + (smoothWidth - 1) / 2f);
