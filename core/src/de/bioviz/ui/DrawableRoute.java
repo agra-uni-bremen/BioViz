@@ -84,6 +84,8 @@ public class DrawableRoute extends DrawableSprite {
 	 * and the transparency.
 	 */
 	public void draw() {
+
+
 		DrawableAssay circ = droplet.parentAssay;
 		int currentTime = circ.getCurrentTime();
 		int displayAt;

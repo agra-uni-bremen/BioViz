@@ -291,7 +291,7 @@ public class DrawableDroplet extends DrawableSprite {
 				color.sub(Color.BLACK).clamp();
 
 			} else {
-				if (parentAssay.getHiddenDroplets().contains(this)) {
+				if (this.isHidden()) {
 					color.a = 0.25f;
 				} else {
 					color.add(Color.BLACK).clamp();
@@ -302,6 +302,14 @@ public class DrawableDroplet extends DrawableSprite {
 		}
 
 		return color;
+	}
+
+	/**
+	 * @return True if the droplet should be hidden.b
+	 * @brief Checks whether this droplet is to be drawn or not.
+	 */
+	public boolean isHidden() {
+		return parentAssay.getHiddenDroplets().contains(this);
 	}
 
 	/**
