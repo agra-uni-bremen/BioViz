@@ -120,6 +120,7 @@ public class ActuationVector {
 		return vec.get(i);
 	}
 
+
 	/**
 	 *
 	 * @return true if the vector is empty, false otherwise

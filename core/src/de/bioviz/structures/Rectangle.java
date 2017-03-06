@@ -191,6 +191,15 @@ public class Rectangle {
 
 
 	/**
+	 * @brief Computes the margin around the rectangle.
+	 * @param width Width of the margin.
+	 * @return Set of points in the margin of the rectangle.
+	 */
+	public Set<Point> margin(final int width) {
+		return margin(this, width);
+	}
+
+	/**
 	 * @brief Computes the margin of a rectangle (i.e. the directly surrounding
 	 * positions).
 	 *
@@ -198,7 +207,7 @@ public class Rectangle {
 	 * @param r Rectangle whose margin is computed
 	 * @param width Width of the margin
 	 */
-	public Set<Point> margin(final Rectangle r, final int width) {
+	public static Set<Point> margin(final Rectangle r, final int width) {
 
 		Set<Point> marginSet = new HashSet<>();
 
