@@ -183,6 +183,11 @@ public class DrawableAssay implements Drawable {
 	private DrawableField hoveredField = null;
 
 	/**
+	 * The desired length of the displayed routes.
+	 */
+	private int displayRouteLength = 0;
+
+	/**
 	 * Creates a drawable entity based on the data given.
 	 *
 	 * @param toDraw
@@ -246,6 +251,28 @@ public class DrawableAssay implements Drawable {
 		} else {
 			throw new RuntimeException("assay parent is null");
 		}
+	}
+
+	/**
+	 * Sets the length of the routes to be displayed.
+	 *
+	 * The value is capped at 0 and the maximal length of the routes present
+	 * in the assay.
+	 *
+	 * @param length Length of the displayed routes.
+	 */
+	public void setDisplayRouteLength(final int length) {
+		if (length >= 0 && length <= getData().getMaxRouteLength()) {
+			displayRouteLength=length;
+		}
+	}
+
+	/**
+	 * Returns how long routes are to be drawn.
+	 * @return The max length routes have when being displayed.
+	 */
+	public int getDisplayRouteLength() {
+		return displayRouteLength;
 	}
 
 
