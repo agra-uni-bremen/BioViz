@@ -291,18 +291,25 @@ public class DrawableDroplet extends DrawableSprite {
 				color.sub(Color.BLACK).clamp();
 
 			} else {
-				if (parentAssay.getHiddenDroplets().contains(this)) {
+				if (this.isHidden()) {
 					color.a = 0.25f;
 				} else {
 					color.add(Color.BLACK).clamp();
 				}
 			}
-		}
-		else {
+		} else {
 			color.sub(Color.BLACK).clamp();
 		}
 
 		return color;
+	}
+
+	/**
+	 * @return True if the droplet should be hidden.b
+	 * @brief Checks whether this droplet is to be drawn or not.
+	 */
+	public boolean isHidden() {
+		return parentAssay.getHiddenDroplets().contains(this);
 	}
 
 	/**
@@ -388,44 +395,50 @@ public class DrawableDroplet extends DrawableSprite {
 		// at this point, p is definitely not null. The getFirst/LastPosition
 		// methods would have thrown an exception
 
-			this.setTargetPosition(upperLeft.fst, upperLeft.snd);
-			this.updateCoords();
+		this.setTargetPosition(upperLeft.fst, upperLeft.snd);
+		this.updateCoords();
+
+		// only draw the route when the droplet is to be displayed normally.
+		if (!this.isHidden()) {
 			route.draw();
+		}
 
-			if (isVisible() && viz.currentAssay.getDisplayOptions().
-					getOption(BDisplayOptions.Droplets)) {
 
-				float xCoord = circ.xCoordOnScreen(
-						smoothX + (smoothWidth - 1) / 2f);
-				float yCoord = circ.yCoordOnScreen(
-						smoothY - (smoothHeight - 1) / 2f);
+		if (isVisible() && viz.currentAssay.getDisplayOptions().
+				getOption(BDisplayOptions.Droplets)) {
 
-				this.setScaleX(circ.getSmoothScale() * smoothWidth);
-				this.setScaleY(circ.getSmoothScale() * smoothHeight);
 
-				// if hidden, place below grid
-				int invisibleIndex =
-						this.parentAssay.getHiddenDroplets().indexOf(this);
-				if (invisibleIndex >= 0) {
+			float xCoord = circ.xCoordOnScreen(
+					smoothX + (smoothWidth - 1) / 2f);
+			float yCoord = circ.yCoordOnScreen(
+					smoothY - (smoothHeight - 1) / 2f);
 
-					this.setScaleX(32f);
-					this.setScaleY(32f);
+			this.setScaleX(circ.getSmoothScale() * smoothWidth);
+			this.setScaleY(circ.getSmoothScale() * smoothHeight);
 
-					xCoord = Gdx.graphics.getWidth() / 2f
-							 - this.getScaleX() * (invisibleIndex + 1);
-					yCoord = Gdx.graphics.getHeight() / 2f - this.getScaleY();
-				}
+			// if hidden, place below grid
+			int invisibleIndex =
+					this.parentAssay.getHiddenDroplets().indexOf(this);
+			if (invisibleIndex >= 0) {
 
-				this.setX(xCoord);
-				this.setY(yCoord);
+				this.setScaleX(32f);
+				this.setScaleY(32f);
 
-				String msg = getMsg();
-
-				displayText(msg);
-
-				super.draw();
+				xCoord = Gdx.graphics.getWidth() / 2f
+						 - this.getScaleX() * (invisibleIndex + 1);
+				yCoord = Gdx.graphics.getHeight() / 2f - this.getScaleY();
 			}
-		
+
+			this.setX(xCoord);
+			this.setY(yCoord);
+
+			String msg = getMsg();
+
+			displayText(msg);
+
+			super.draw();
+		}
+
 		if (!withinTimeRange) {
 			// make sure that previous numbers are removed when the droplet is
 			// removed.

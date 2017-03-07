@@ -3,7 +3,9 @@ package de.bioviz.structures;
 import de.bioviz.util.Pair;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Oliver Keszocze
@@ -189,6 +191,46 @@ public class Rectangle {
 
 
 	/**
+	 * @brief Computes the margin around the rectangle.
+	 * @param width Width of the margin.
+	 * @return Set of points in the margin of the rectangle.
+	 */
+	public Set<Point> margin(final int width) {
+		return margin(this, width);
+	}
+
+	/**
+	 * @brief Computes the margin of a rectangle (i.e. the directly surrounding
+	 * positions).
+	 *
+	 * @warning This method can return Points that are not part of the grid
+	 * @param r Rectangle whose margin is computed
+	 * @param width Width of the margin
+	 */
+	public static Set<Point> margin(final Rectangle r, final int width) {
+
+		Set<Point> marginSet = new HashSet<>();
+
+		for (int n=1;  n<=width;++n) {
+			List<Point> corners = extend(r, n).corners();
+
+			marginSet.addAll(
+					new Rectangle(corners.get(0), corners.get(1)).positions()
+			);
+			marginSet.addAll(
+					new Rectangle(corners.get(1), corners.get(2)).positions()
+			);
+			marginSet.addAll(
+					new Rectangle(corners.get(2), corners.get(3)).positions()
+			);
+			marginSet.addAll(
+					new Rectangle(corners.get(3), corners.get(0)).positions()
+			);
+		}
+		return marginSet;
+	}
+
+	/**
 	 * @return List of the points of this rectangle.
 	 */
 	public List<Point> positions() {
@@ -226,6 +268,23 @@ public class Rectangle {
 	}
 
 	/**
+	 * @brief Extends a rectangle.
+	 *
+	 * This method can be used to create neighbourhoods of rectangles.
+	 *
+	 * @param r Rectangle that is to be extended
+	 * @param size By how many positions the rectangle is to be extended
+	 * @return New Rectangle that is a bigger version of the given one
+	 */
+	public static Rectangle extend(final Rectangle r,final int size) {
+		// use <new> to create a deep copy
+		Point ll = new Point(r.lowerLeft.fst - size, r.lowerLeft.snd - size);
+		Point ur = new Point(r.upperRight.fst + size, r.upperRight.snd + size);
+
+		return new Rectangle(ll,ur);
+	}
+
+	/**
 	 * Checks two rectangles for adjacency.
 	 *
 	 * @param r1
@@ -241,6 +300,10 @@ public class Rectangle {
 			return false;
 		}
 
+		// TODO do we need the desctinction between points and real rectangles?
+		// I think that the overlapping thing works for single position
+		// rectangles as well
+
 		boolean isPoint1 = r1.isPoint();
 		boolean isPoint2 = r2.isPoint();
 
@@ -254,17 +317,12 @@ public class Rectangle {
 		whether these rectangles overlap.
 		 */
 		if (!isPoint1 && !isPoint2) {
-			// use new Point to create a deep copy
-			Point ll = new Point(r1.lowerLeft.fst - 1, r1.lowerLeft.snd - 1);
-			Point ur = new Point(r1.upperRight.fst + 1, r1.upperRight.snd + 1);
-			Rectangle biggerRect = new Rectangle(ll, ur);
-
-
+			Rectangle biggerRect = extend(r1,1);
 			return Rectangle.overlapping(biggerRect, r2);
 		}
 
 		/*
-		Now we know that at least Rectangle is a point and can act accordingly
+		Now we know that at least one  Rectangle is a point and can act accordingly
 		 */
 		Point p = r1.getPoint();
 		Rectangle rec = r2;
@@ -297,7 +355,7 @@ public class Rectangle {
 	 * or only one (the rectangle actually is a point). No extra test for
 	 * 1xn or
 	 * nx1 rectangles is performed.
-	 *
+	 *TODO
 	 * @return The corners of the rectangle.
 	 */
 	public List<Point> corners() {
