@@ -452,7 +452,7 @@ public class SVGManager {
 
 		int displayAt;
 
-		int displayLength = DrawableRoute.routeDisplayLength;
+		int displayLength = assay.getDisplayRouteLength();
 
 		Biochip biochip = assay.getData();
 

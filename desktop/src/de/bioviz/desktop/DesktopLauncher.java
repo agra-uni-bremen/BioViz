@@ -429,13 +429,12 @@ public class DesktopLauncher extends JFrame {
 
 
 		displayRouteLengthSlider =
-				new JSlider(JSlider.HORIZONTAL, 0, routeLengthMax,
-							DrawableRoute.routeDisplayLength);
+				new JSlider(JSlider.HORIZONTAL, 0, routeLengthMax,0);
 		displayRouteLengthSlider.setPreferredSize(
 				new Dimension(sliderWidth, sliderHeight));
 		displayRouteLengthSlider.addChangeListener(
-				ce -> DrawableRoute.routeDisplayLength =
-						((JSlider) ce.getSource()).getValue());
+				ce -> currentViz.currentAssay.setDisplayRouteLength(
+						((JSlider) ce.getSource()).getValue()));
 
 
 		JButton nextStepButton = new JButton("->");
@@ -1479,8 +1478,10 @@ public class DesktopLauncher extends JFrame {
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
 				int oldTime = currentViz.currentAssay.getCurrentTime();
-
+				int oldRouteLength = currentViz.currentAssay.getDisplayRouteLength();
 				DesktopLauncher d = DesktopLauncher.singleton;
+
+
 
 				// altering the max/min values already invokes the timer
 				// event, thus altering the currentAssay's currenTime value.
@@ -1500,7 +1501,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMaximum(
 						currentViz.currentAssay.getData().getMaxRouteLength());
 				d.displayRouteLengthSlider.setMinimum(0);
-				d.displayRouteLengthSlider.setValue(0);
+				d.displayRouteLengthSlider.setValue(oldRouteLength);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + BioVizInfo.PROGNAME);
 

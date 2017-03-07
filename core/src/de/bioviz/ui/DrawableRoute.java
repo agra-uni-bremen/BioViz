@@ -17,11 +17,6 @@ import de.bioviz.util.Pair;
 public class DrawableRoute extends DrawableSprite {
 
 	/**
-	 * What length of the route will be displayed.
-	 */
-	public static int routeDisplayLength = 0;
-
-	/**
 	 * Class-wide logging facility.
 	 */
 //	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
@@ -92,9 +87,9 @@ public class DrawableRoute extends DrawableSprite {
 
 		disableForcedLOD();
 
-		int hoverTimesteps = 2 * routeDisplayLength + 8;
+		int hoverTimesteps = 2 * circ.getDisplayRouteLength() + 8;
 
-		int stepsToUse = routeDisplayLength;
+		int stepsToUse = circ.getDisplayRouteLength();
 		if (droplet.isHovered()) {
 			stepsToUse = hoverTimesteps;
 		}
