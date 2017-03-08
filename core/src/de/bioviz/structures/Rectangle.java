@@ -284,6 +284,36 @@ public class Rectangle {
 		return new Rectangle(ll,ur);
 	}
 
+
+	/**
+	 * Checks if a position is reachable from the given rectangle.
+	 *
+	 * This is used to show in which directions a droplet can move.
+	 * @param r
+	 * @param pos Position to check for reachability.
+	 * @return true iff the position pos can be reached from the Rectangle r.
+	 */
+	public static boolean reachable(final Rectangle r, final Point pos) {
+		Rectangle bigger =  extend(r,1);
+		List<Point> reachable = bigger.positions();
+		// we need to remove the extended as we explicitly want to ignore
+		// the diagonals
+		reachable.removeAll(bigger.corners());
+
+		return reachable.contains(pos);
+	}
+
+	/**
+	 * Checks if a position is reachable from this rectangle.
+	 *
+	 * This is used to show in which directions a droplet can move.
+	 * @param pos Position to check for reachability.
+	 * @return true iff the position pos can be reached from the Rectangle r.
+	 */
+	public boolean reachable(final Point pos) {
+		return reachable(this,pos);
+	}
+
 	/**
 	 * Checks two rectangles for adjacency.
 	 *
