@@ -30,6 +30,7 @@ import static de.bioviz.ui.BDisplayOptions.DetectorIcon;
 import static de.bioviz.ui.BDisplayOptions.HighlightAnnotatedFields;
 import static de.bioviz.ui.BDisplayOptions.InterferenceRegion;
 import static de.bioviz.ui.BDisplayOptions.LingeringInterferenceRegions;
+import static de.bioviz.ui.BDisplayOptions.MovementNeighbourhood;
 import static de.bioviz.ui.BDisplayOptions.NetColorOnFields;
 import static de.bioviz.ui.BDisplayOptions.Pins;
 import static de.bioviz.ui.BDisplayOptions.SourceTargetIDs;
@@ -192,13 +193,13 @@ public class DrawableField extends DrawableSprite {
 
 			switch (act) {
 				case ON:
-					fieldHUDMsg="1";
+					fieldHUDMsg = "1";
 					break;
 				case OFF:
-					fieldHUDMsg="0";
+					fieldHUDMsg = "0";
 					break;
 				case DONTCARE:
-					fieldHUDMsg="X";
+					fieldHUDMsg = "X";
 			}
 		}
 
@@ -359,6 +360,8 @@ public class DrawableField extends DrawableSprite {
 
 		colorOverlayCount += inteferenceRegionColoring(result);
 
+		colorOverlayCount += reachableRegionColoring(result);
+
 
 		/**
 		 * Here we highlight cells based on their actuation value
@@ -441,6 +444,30 @@ public class DrawableField extends DrawableSprite {
 				result.add(Colors.MIXER_COLOR);
 			}
 		}
+		return colorOverlayCount;
+	}
+
+
+	private int reachableRegionColoring(de.bioviz.ui.Color result) {
+		int colorOverlayCount = 0;
+		if (getOption(MovementNeighbourhood)) {
+
+
+			int t = getParentAssay().getCurrentTime();
+
+			final Set<Droplet> dropsSet =
+					getParentAssay().getData().getDroplets();
+			boolean fieldIsReachable =
+					dropsSet.stream().
+							map(d -> d.getPositionAt(t)).
+							filter(p -> p != null).
+							anyMatch(p->p.reachable(field.pos));
+			if (fieldIsReachable) {
+				result.add(Colors.ACTUATION_DONTCARE_COLOR);
+				colorOverlayCount = 1;
+			}
+		}
+
 		return colorOverlayCount;
 	}
 
