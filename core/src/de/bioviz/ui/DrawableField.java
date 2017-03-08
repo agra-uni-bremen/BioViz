@@ -463,7 +463,7 @@ public class DrawableField extends DrawableSprite {
 							filter(p -> p != null).
 							anyMatch(p->p.reachable(field.pos));
 			if (fieldIsReachable) {
-				result.add(Colors.ACTUATION_DONTCARE_COLOR);
+				result.add(Colors.REACHABLE_FIELD_COLOR);
 				colorOverlayCount = 1;
 			}
 		}
