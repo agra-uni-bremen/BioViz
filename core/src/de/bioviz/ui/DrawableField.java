@@ -480,6 +480,9 @@ public class DrawableField extends DrawableSprite {
 	 */
 	private int inteferenceRegionColoring(de.bioviz.ui.Color result) {
 		int colorOverlayCount = 0;
+
+		boolean isBlocked = getField().isBlocked(getParentAssay().getCurrentTime());
+
 		/** Colours the interference region **/
 		if (getOption(InterferenceRegion)) {
 			int amountOfInterferenceRegions = 0;
@@ -497,7 +500,7 @@ public class DrawableField extends DrawableSprite {
 					final Droplet drop2 = drops.get(j);
 					boolean sameNet =
 							getParentAssay().getData().sameNet(drop1, drop2);
-					if (!sameNet) {
+					if (!sameNet && !isBlocked) {
 						result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 						++colorOverlayCount;
 						interferenceViolation = true;
@@ -515,7 +518,7 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 
-			if (amountOfInterferenceRegions > 0) {
+			if (amountOfInterferenceRegions > 0 && !isBlocked) {
 				float scale = (float) Math.sqrt(amountOfInterferenceRegions);
 				Color c = new Color(Colors.INTERFERENCE_REGION_COLOR);
 				result.add(c.mul(scale));
