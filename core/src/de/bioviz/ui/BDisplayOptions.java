@@ -149,6 +149,11 @@ public enum BDisplayOptions {
 	LingeringInterferenceRegions("Show dynamic interference region"),
 
 	/**
+	 * Highlights cells that can be moved onto.
+	 */
+	MovementNeighbourhood("Show reachable cells"),
+
+	/**
 	 * When using autoplay, restart it after it has finished.
 	 */
 	LoopAutoplay("Loop the autoplayed animation"),
