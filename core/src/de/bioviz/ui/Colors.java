@@ -81,6 +81,14 @@ public abstract class Colors {
 			= new Color(0.75f, 0.75f, 0.5f, 1);
 
 	/**
+	 * Base color for a reachable field.
+	 *
+	 * This color is used to visualize possible droplet movements.
+	 */
+	public static final Color REACHABLE_FIELD_COLOR
+			= new Color(0.75f, 0.75f, 0.5f, 1);
+
+	/**
 	 * Base color for an interference region overlap. This color is used before
 	 * any modifications are applied.
 	 */
