@@ -1,8 +1,4 @@
-image: debian:latest
-
-services: 
-  - gradle
-  - jdk
+image: gradle:jdk
 
 desktop:
   script:
