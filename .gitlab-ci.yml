@@ -1,6 +1,15 @@
+image: ruby:2.1
+
+services: 
+  - gradle
+  - jdk
+
+before_script:
+  -bundle install
+
 desktop:
   script:
-    - ./gradlew desktop:build
+    - gradle desktop:build
 
 checkstyle:
   script:
@@ -8,6 +17,6 @@ checkstyle:
 
 sonar:
   script:
-    - ./gradlew sonar
+    - gradle sonar
   only:
       - master
