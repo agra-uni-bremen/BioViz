@@ -4,9 +4,6 @@ services:
   - gradle
   - jdk
 
-before_script:
-  -bundle install
-
 desktop:
   script:
     - gradle desktop:build
