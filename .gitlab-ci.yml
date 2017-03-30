@@ -1,14 +1,23 @@
 image: gradle:jdk
 
 desktop:
+  tags:
+    - docker
+    - linux
   script:
     - gradle desktop:build
 
 checkstyle:
+  tags:
+    - docker
+    - linux
   script:
     - ./executeCheckstyleTest.sh
 
 sonar:
+  tags:
+    - docker
+    - linux
   script:
     - gradle sonar
   only:
