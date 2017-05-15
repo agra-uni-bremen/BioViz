@@ -31,7 +31,7 @@ public final class SVGUtils {
 	/**
 	 * Converts a libGDX color to a SVG-usable format.
 	 * <p>
-	 * What it basically does is to throw away the last to characters, i.e.
+	 * What it basically does is to throw away the last two characters, i.e.
 	 * the alpha channel.
 	 *
 	 * @param c
