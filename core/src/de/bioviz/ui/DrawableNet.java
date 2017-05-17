@@ -45,6 +45,7 @@ public class DrawableNet extends DrawableSprite{
 	/**
 	 * Draws the lines if the corresponding displayOptions are selected.
 	 */
+	@Override
 	public void draw() {
 
 		if(parentAssay.getDisplayOptions()
@@ -54,7 +55,7 @@ public class DrawableNet extends DrawableSprite{
 			List<DrawableDroplet> netDroplets = new ArrayList<>();
 			parentAssay.getDroplets().stream().filter(
 					d -> net.containsDroplet(d.droplet)).
-					forEach(d -> netDroplets.add(d));
+					forEach(netDroplets::add);
 
 			if(!netDroplets.isEmpty()) {
 				for(DrawableDroplet droplet : netDroplets) {
