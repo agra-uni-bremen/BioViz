@@ -387,15 +387,9 @@ public class MessageCenter {
 							  final float x, final float y,
 							  final Color col) {
 		HUDMessage hm;
-		if (!this.hudMessages.containsKey(key)) {
-			hm = new HUDMessage(message, x, y);
-			hudMessages.put(key, hm);
-		} else {
-			hm = hudMessages.get(key);
-			hm.message = message;
-			hm.x = x;
-			hm.y = y;
-		}
+		hm = new HUDMessage(message, x, y);
+		hudMessages.put(key, hm);
+
 		if (col != null) {
 			hm.color = col;
 		}
