@@ -330,9 +330,6 @@ public class Rectangle {
 			return false;
 		}
 
-		// TODO do we need the desctinction between points and real rectangles?
-		// I think that the overlapping thing works for single position
-		// rectangles as well
 
 		boolean isPoint1 = r1.isPoint();
 		boolean isPoint2 = r2.isPoint();
@@ -385,7 +382,6 @@ public class Rectangle {
 	 * or only one (the rectangle actually is a point). No extra test for
 	 * 1xn or
 	 * nx1 rectangles is performed.
-	 *TODO
 	 * @return The corners of the rectangle.
 	 */
 	public List<Point> corners() {
