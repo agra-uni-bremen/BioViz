@@ -402,9 +402,7 @@ public class MessageCenter {
 	 * 		ID of the message to be removed.
 	 */
 	public void removeHUDMessage(final int key) {
-		if (this.hudMessages.containsKey(key)) {
-			this.hudMessages.remove(key);
-		}
+		this.hudMessages.remove(key);
 	}
 
 	/**
