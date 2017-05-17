@@ -294,6 +294,8 @@ public class MessageCenter {
 			yCoord -= spacing;
 		}
 
+
+		final float fullyTransparent = 0f;
 		for (final HUDMessage s : this.hudMessages.values()) {
 			Color targetColor = s.color.cpy();
 
@@ -307,7 +309,7 @@ public class MessageCenter {
 				float xScale = this.parent.currentAssay.getScaleX();
 
 				if (xScale < hideAt) {
-					targetColor.a = 0;
+					targetColor.a = fullyTransparent;
 				} else if (xScale < showAt) {
 					float val = xScale;
 					val = (val - hideAt) / (showAt - hideAt);
@@ -321,7 +323,7 @@ public class MessageCenter {
 
 			font.setColor(targetColor);
 
-			if (targetColor.a > 0) {
+			if (targetColor.a > fullyTransparent) {
 
 				final GlyphLayout layout = new GlyphLayout(font, s
 						.message);
