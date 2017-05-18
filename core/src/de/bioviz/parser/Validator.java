@@ -398,15 +398,14 @@ final class Validator {
 	 * Check the validity of sink positions.
 	 * <p>
 	 * A sink itself must sit outside of the regular chip positions. Its
-	 * source,
-	 * on the other hand, must be a valid chip position.
+	 * source, on the other hand, must be a valid chip position.
 	 *
 	 * @param chip
 	 * 		The biochip to check
 	 * @param sinks
 	 * 		List of sinks to check
 	 * @param removeWrongDirs
-	 * 		If true, erroneous sinkgs will be removed
+	 * 		If true, erroneous sinks will be removed
 	 * @return List of errors
 	 */
 	static ArrayList<String> checkSinkPositions(
@@ -415,23 +414,26 @@ final class Validator {
 			final boolean removeWrongDirs) {
 		ArrayList<String> errors = new ArrayList<>();
 
-		if (sinks != null && !sinks.isEmpty()) {
-			ArrayList<Pair<Point, Direction>> removeList =
-					new ArrayList<>();
-			for (final Pair<Point, Direction> sink : sinks) {
-				String msg = checkOutsidePosition(chip, "Sink", sink);
-				if (!msg.isEmpty()) {
-					if (removeWrongDirs) {
-						removeList.add(sink);
-						msg = msg + " Removed invalid sink.";
-					}
+		if (sinks != null) {
 
-					errors.add(msg);
-				}
+			Stream<Pair<Pair<Point, Direction>, String>>
+					invalidSinks = sinks.stream()
+					.map(s ->
+						 new Pair<>(s, checkOutsidePosition(chip, "Sink", s)))
+					.filter(p -> !p.snd.isEmpty());
+
+
+			List<Pair<Point, Direction>> toRemove = new ArrayList<>();
+			invalidSinks.forEach(s -> {errors.add(s.snd); toRemove.add(s.fst);});
+
+			if (removeWrongDirs) {
+				sinks.removeAll(toRemove);
 			}
-			sinks.removeAll(removeList);
 		}
 		return errors;
+
+
+
 	}
 
 	/**
