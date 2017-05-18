@@ -97,23 +97,28 @@ final class Validator {
 		for (final Droplet drop : droplets) {
 			ArrayList<Rectangle> rectPositions = drop.getPositions();
 
+
 			for (int timeStep = 0;
 				 timeStep < rectPositions.size(); timeStep++) {
+				int timestep = timeStep + drop.getSpawnTime();
 				Rectangle rectPos = rectPositions.get(timeStep);
 				ArrayList<Point> positions =
-						rectPos.positions().stream().filter(
-								pos -> chip.hasFieldAt(pos)).collect(
-								Collectors.toCollection(ArrayList::new));
+						rectPos.positions().stream().
+								filter(chip::hasFieldAt).
+								collect(Collectors.toCollection(
+										ArrayList::new));
 
-				for (final Point pos : positions) {
-					int timestep = timeStep + drop.getSpawnTime();
-					BiochipField field = chip.getFieldAt(pos);
-					if (field.isBlocked(timestep)) {
-						errors.add("Droplet " + drop.getID() +
-								   " moves into blockage at " + pos +
-								   " in time step " + timestep);
-					}
-				}
+				positions.stream().
+						filter(
+								pos -> chip.getFieldAt(pos).isBlocked(
+										timestep)).
+						forEach(
+								pos -> errors.add(
+										"Droplet " + drop.getID() +
+										" moves into blockage at " + pos +
+										" in time step " + timestep)
+						);
+
 			}
 		}
 		return errors;
