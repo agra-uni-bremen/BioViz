@@ -11,6 +11,7 @@ import de.bioviz.structures.Droplet;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
 import de.bioviz.structures.Resource;
+import de.bioviz.structures.Sink;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -219,7 +221,7 @@ final class Validator {
 	 * @param cellActuations
 	 * 		List of actuations given on the cell level (might be null)
 	 * @param pinActuations
-	 * 		List of actuations given on the pin level (might be nulll)
+	 * 		List of actuations given on the pin level (might be null)
 	 * @return List of errors
 	 */
 	static ArrayList<String> checkActuationVectorLengths(
@@ -369,23 +371,10 @@ final class Validator {
 			final String type,
 			final Pair<Point, Direction> dir) {
 		String msg = "";
-		boolean targetExists = true;
-		boolean sourceExists = true;
+		boolean targetExists = chip.hasFieldAt(dir.fst);
+
 		Point source = dir.fst.add(Point.pointFromDirection(dir.snd));
-
-
-		try {
-			chip.getFieldAt(dir.fst);
-		} catch (final RuntimeException e) {
-			targetExists = false;
-		}
-
-		try {
-			chip.getFieldAt(source);
-		} catch (final RuntimeException e) {
-			sourceExists = false;
-		}
-
+		boolean sourceExists = chip.hasFieldAt(source);
 
 		if (!targetExists) {
 			msg = msg + type + " target " + dir.fst + " does not exist! [" +
