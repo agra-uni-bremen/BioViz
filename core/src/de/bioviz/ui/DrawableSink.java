@@ -25,7 +25,7 @@ public class DrawableSink extends DrawableField {
 	 */
 	@Override
 	public Pair<String, TextureE> getMsgTexture() {
-		TextureE texture = TextureE.GridMarker;
+		TextureE texture = TextureE.GridMarkerSquare;
 		if (getOption(BDisplayOptions.SinkIcon)) {
 			texture = TextureE.Sink;
 		}

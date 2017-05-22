@@ -96,7 +96,7 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public DrawableField(
 			final BiochipField field, final DrawableAssay parent) {
-		super(TextureE.GridMarker, parent.getParent());
+		super(TextureE.GridMarkerSquare, parent.getParent());
 		this.setParentAssay(parent);
 		this.setField(field);
 		super.addLOD(PIXELIZED_ZOOM_LEVEL, TextureE.BlackPixel);
@@ -125,7 +125,7 @@ public class DrawableField extends DrawableSprite {
 	public Pair<String, TextureE> getMsgTexture() {
 
 		String fieldHUDMsg = null;
-		TextureE texture = TextureE.GridMarker;
+		TextureE texture = TextureE.GridMarkerSquare;
 
 
 

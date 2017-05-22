@@ -37,7 +37,7 @@ public class DrawableDispenser extends DrawableField {
 	@Override
 	public Pair<String, TextureE> getMsgTexture() {
 		String fieldHUDMsg = null;
-		TextureE texture = TextureE.GridMarker;
+		TextureE texture = TextureE.GridMarkerSquare;
 		if (getOption(DispenserIcon)) {
 			texture = TextureE.Dispenser;
 		}
