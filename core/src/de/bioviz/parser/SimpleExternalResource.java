@@ -2,6 +2,7 @@ package de.bioviz.parser;
 
 import de.bioviz.structures.Direction;
 import de.bioviz.structures.Point;
+import de.bioviz.util.Pair;
 
 import java.util.Optional;
 
@@ -22,27 +23,30 @@ public class SimpleExternalResource {
 		final Optional<Integer> id;
 
 
-	/**
-	 * @brief Constructor for creating a sink
-	 * @param pos Position on the grid
-	 * @param dir The direction in which the droplet is removed
-	 */
-		public SimpleExternalResource(Point pos, Direction dir) {
-			gridPosition = pos;
-			dropletDirection = dir;
-			id = Optional.empty();
-		}
 
 	/**
-	 * @brief Cosntructor for creating a dispenser
-	 * @param pos Position on the grid
-	 * @param dir The direction from which the droplet is dispensed
+	 * @brief Constructor for creating a dispenser
+	 * @param posWithDir Pair of
+	 *                  a) position to which the droplet is dispensed and
+	 *                  b) direction from which the droplet is dispensed
 	 * @param id The type of fluid that is dispensed
 	 */
-		public SimpleExternalResource(Point pos, Direction dir, Integer id) {
-			gridPosition = pos;
-			dropletDirection = dir;
-			this.id = Optional.of(id);
-		}
+	public SimpleExternalResource(Pair<Point, Direction> posWithDir, Integer id) {
+		gridPosition = posWithDir.fst;
+		dropletDirection = posWithDir.snd;
+		this.id = Optional.of(id);
+	}
+
+	/**
+	 * @brief Constructor for creating a sink
+	 * @param posWithDir Pair of
+	 *                  a) position from which the droplet is removed and
+	 *                  b) direction in which the droplet is removed
+	 */
+	public SimpleExternalResource(Pair<Point, Direction> posWithDir) {
+		gridPosition = posWithDir.fst;
+		dropletDirection = posWithDir.snd;
+		this.id = Optional.empty();
+	}
 
 }
