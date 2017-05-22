@@ -823,14 +823,14 @@ class BioParserListener extends BioBaseListener {
 		dropletIDsToFluidTypes.forEach(chip::addDropToFluid);
 
 
-		errors.addAll(Validator.checkSinkPositions(chip, sinks, true));
+		errors.addAll(Validator.checkExternalResourcePositions(chip, sinks, true));
 		sinks.forEach(sink -> {
 			Point sinkPoint = sink.resourcePosition();
 			Sink sinkField = new Sink(sinkPoint, sink.dropletDirection, chip);
 			chip.addField(sinkField);
 		});
 
-		errors.addAll(Validator.checkDispenserPositions(chip,
+		errors.addAll(Validator.checkExternalResourcePositions(chip,
 														dispensers,
 														true));
 		dispensers.forEach(dispenser -> {

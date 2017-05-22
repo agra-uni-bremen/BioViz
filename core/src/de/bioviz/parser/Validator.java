@@ -395,84 +395,39 @@ final class Validator {
 		return msg;
 	}
 
-
 	/**
-	 * Check the validity of sink positions.
-	 * <p>
-	 * A sink itself must sit outside of the regular chip positions. Its
-	 * source, on the other hand, must be a valid chip position.
-	 *
-	 * @param chip
-	 * 		The biochip to check
-	 * @param sinks
-	 * 		List of sinks to check
-	 * @param removeWrongDirs
-	 * 		If true, erroneous sinks will be removed
-	 * @return List of errors
-	 */
-	static ArrayList<String> checkSinkPositions(
-			final Biochip chip,
-			final ArrayList<SimpleExternalResource> sinks,
-			final boolean removeWrongDirs) {
-		ArrayList<String> errors = new ArrayList<>();
-
-		if (sinks != null) {
-			ArrayList<SimpleExternalResource> removeList
-					= new ArrayList<>();
-			for (final SimpleExternalResource sink : sinks) {
-				String msg = checkOutsidePosition(chip, sink);
-				if (!msg.isEmpty()) {
-					if (removeWrongDirs) {
-						removeList.add(sink);
-						msg = msg + " Removed invalid dispenser.";
-					}
-
-					errors.add(msg);
-				}
-			}
-			sinks.removeAll(removeList);
-		}
-		return errors;
-	}
-
-	/**
-	 * Check the validity of dispenser positions.
+	 * Check the validity of dispenser/sink positions.
 	 * <p>
 	 * A dispenser itself must sit outside of the regular chip positions. Its
 	 * target, on the other hand, must be a valid chip position.
 	 *
 	 * @param chip
 	 * 		The biochip to check
-	 * @param disps
-	 * 		List of dispensers to check
+	 * @param resources
+	 * 		List of resources to check
 	 * @param removeWrongDirs
-	 * 		If true, erroneous sinks will be removed
+	 * 		If true, erroneous resources will be removed
 	 * @return List of errors
 	 */
-	static ArrayList<String> checkDispenserPositions(
+	static public ArrayList<String> checkExternalResourcePositions(
 			final Biochip chip,
-			final ArrayList<SimpleExternalResource> disps,
+			final ArrayList<SimpleExternalResource> resources,
 			final boolean removeWrongDirs) {
-
 		ArrayList<String> errors = new ArrayList<>();
 
-		if (disps != null) {
 			ArrayList<SimpleExternalResource> removeList
 					= new ArrayList<>();
-			for (final SimpleExternalResource dispenser : disps) {
-				String msg = checkOutsidePosition(chip, dispenser);
+			for (final SimpleExternalResource resource : resources) {
+				String msg = checkOutsidePosition(chip, resource);
 				if (!msg.isEmpty()) {
 					if (removeWrongDirs) {
-						removeList.add(dispenser);
-						msg = msg + " Removed invalid dispenser.";
+						removeList.add(resource);
+						msg = msg + " Removed invalid resource.";
 					}
-
 					errors.add(msg);
 				}
-
 			}
-			disps.removeAll(removeList);
-		}
+		resources.removeAll(removeList);
 		return errors;
 	}
 
