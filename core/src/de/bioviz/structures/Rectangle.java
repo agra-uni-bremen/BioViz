@@ -49,10 +49,8 @@ public class Rectangle {
 	 * @param rec The rectangle that is to be copied.
 	 */
 	public Rectangle(final Rectangle rec) {
-		this(Integer.valueOf(rec.lowerLeft.fst),
-			 Integer.valueOf(rec.lowerLeft.snd),
-			 Integer.valueOf(rec.upperRight.fst),
-			 Integer.valueOf(rec.upperRight.snd));
+		this(rec.lowerLeft.fst, rec.lowerLeft.snd,
+			 rec.upperRight.fst, rec.upperRight.snd);
 	}
 
 
