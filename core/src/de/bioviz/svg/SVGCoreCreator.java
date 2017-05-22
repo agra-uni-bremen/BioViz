@@ -159,7 +159,7 @@ public class SVGCoreCreator {
 					case Detector:
 					case Start:
 					case Target:
-					case GridMarkerSquare:
+					case GridMarker:
 					case Heater:
 					case Magnet:
 						// change fillColor of the rectangle

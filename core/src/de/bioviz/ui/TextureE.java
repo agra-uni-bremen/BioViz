@@ -47,7 +47,7 @@ public enum TextureE {
 	/**
 	 * We have a texture for square shaped cells
 	 */
-	GridMarkerSquare,
+	GridMarker,
 	/**
 	 * We have a texture for indicating the path of the droplet
 	 */
