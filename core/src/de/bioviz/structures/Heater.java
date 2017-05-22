@@ -1,17 +1,18 @@
 package de.bioviz.structures;
 
 /**
- *
  * @author Oliver Keszocze
  */
 public class Heater extends Resource {
 
 	/**
 	 * Creates a new heater at the given position.
-	 * @param pos Position of the heater.
+	 *
+	 * @param pos
+	 * 		Position of the heater.
 	 */
 	public Heater(final Rectangle pos) {
-		super(pos,ResourceType.heater);
+		super(pos, ResourceType.heater);
 	}
 
 
@@ -20,7 +21,7 @@ public class Heater extends Resource {
 	 * @return String representation: 'Heater: <pos>'
 	 */
 	public String toString() {
-		return "Heater: "+ position;
+		return "Heater: " + position;
 	}
 }
 
