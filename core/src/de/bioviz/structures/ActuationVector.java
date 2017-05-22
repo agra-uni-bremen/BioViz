@@ -50,16 +50,6 @@ public class ActuationVector {
 		}
 	}
 
-	/**
-	 * @return Raw ArrayList representation of the actuation vector.
-	 * @brief Return a copy of the underlying ArrayList
-	 */
-	public ArrayList<Actuation> getArrayList() {
-		return new ArrayList<>(vec);
-	}
-
-
-
 
 	/**
 	 * Converts an Actuation into a String.
@@ -108,7 +98,7 @@ public class ActuationVector {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pos The position whose actuation is being set
 	 * @param act What actuation the position should have
 	 */
