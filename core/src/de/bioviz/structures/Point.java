@@ -42,7 +42,7 @@ public class Point extends Pair<Integer, Integer> {
 	 * 		y coordinate of the point
 	 */
 	public Point(final int x, final int y) {
-		super(new Integer(x), new Integer(y));
+		super(Integer.valueOf(x), Integer.valueOf(y));
 	}
 
 
@@ -55,7 +55,7 @@ public class Point extends Pair<Integer, Integer> {
 	 * 		It is only a real copy constructor as long as Integer(int) is.
 	 */
 	public Point(final Point p) {
-		this(new Integer(p.fst), new Integer(p.snd));
+		this(Integer.valueOf(p.fst), Integer.valueOf(p.snd));
 	}
 
 
@@ -69,6 +69,7 @@ public class Point extends Pair<Integer, Integer> {
 	public int hashCode() {
 		return (fst << 16) + snd;
 	}
+
 
 
 	/**
