@@ -57,11 +57,16 @@ public class SVGManager {
 	/**
 	 * the font size for text.
 	 */
-	private static final int FONT_SIZE = 90;
+	private static final int FONT_SIZE = 150;
 	/**
 	 * the font size for the info string.
 	 */
 	private static final int FONT_SIZE_INFO_STRING = 100;
+
+	private static final int FONT_OFFSET_Y = COORDINATE_MULTIPLIER / 2 +
+			(FONT_SIZE / 2) - 24;
+
+	private static final int FONT_OFFSET_X = COORDINATE_MULTIPLIER / 2;
 
 	/**
 	 * font color.
@@ -624,15 +629,7 @@ public class SVGManager {
 		Point dropPos = getDropletPosInSVGCoords(drawableDrop);
 		String msg = "";
 		if (drawableDrop.getMsg() != null) {
-			msg += "<text text-anchor=\"middle\" " +
-				   "x=\"" + (dropPos.fst + COORDINATE_MULTIPLIER / 2) + "\" " +
-				   "y=\"" + (dropPos.snd + COORDINATE_MULTIPLIER / 2 +
-							 (FONT_SIZE / 2)) +
-				   "\" " +
-				   "font-family=\"" + FONT + "\" font-size=\"" + FONT_SIZE +
-				   "\" " +
-				   "fill=\"#" + FONT_COLOR + "\">" + drawableDrop.getMsg() +
-				   "</text>\n";
+			msg += createMsg(dropPos.fst, dropPos.snd, drawableDrop.getMsg());
 		}
 		return msg;
 	}
@@ -652,17 +649,27 @@ public class SVGManager {
 		// use the text-anchor middle to get a centered position
 		String fieldSvg = "";
 		if (vals.getMsg() != null) {
-			fieldSvg += "<text text-anchor=\"middle\" x=\"" +
-						(fieldPos.fst + COORDINATE_MULTIPLIER / 2) + "\" " +
-						"y=\"" +
-						(fieldPos.snd + COORDINATE_MULTIPLIER / 2 +
-						 (FONT_SIZE / 2)) +
-						"\" font-family=\"" + FONT + "\" font-size=\"" +
-						FONT_SIZE +
-						"\" fill=\"#" + FONT_COLOR + "\">" + vals.getMsg() +
-						"</text>\n";
+			fieldSvg += createMsg(fieldPos.fst, fieldPos.snd, vals.getMsg());
 		}
 		return fieldSvg;
+	}
+
+	/**
+	 * Creates an svg text field at the given position with the given message.
+	 *
+	 * @param x x position of the text
+	 * @param y y position of the text
+	 * @param message the text to print
+	 * @return svg text element
+	 */
+	private String createMsg(final int x, final int y, final String message) {
+		return "<text text-anchor=\"middle\" " +
+				"x=\"" + (x + FONT_OFFSET_X) + "\" " +
+				"y=\"" + (y + FONT_OFFSET_Y) + "\" " +
+				"font-family=\"" + FONT + "\" " +
+				"font-size=\"" + FONT_SIZE + "\" " +
+				"fill=\"#" + FONT_COLOR +	"\">" + message +
+				"</text>\n";
 	}
 
 	/**
