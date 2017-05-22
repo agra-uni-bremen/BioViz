@@ -365,30 +365,31 @@ final class Validator {
 	 *
 	 * @param chip
 	 * 		Biochip to check for errors
-	 * @param type
-	 * 		What is tested (dispensers or sinks)
-	 * @param dir
-	 * 		Position and direction of the dispenser
+	 * @param resource
+	 * 		The simple resource description
 	 * @return Error message
 	 */
 
 	private static String checkOutsidePosition(
 			final Biochip chip,
-			final String type,
-			final Pair<Point, Direction> dir) {
+			final SimpleExternalResource resource) {
 		String msg = "";
-		boolean targetExists = chip.hasFieldAt(dir.fst);
+		boolean targetExists = chip.hasFieldAt(resource.gridPosition);
 
-		Point source = dir.fst.add(Point.pointFromDirection(dir.snd));
-		boolean sourceExists = chip.hasFieldAt(source);
+		Point resourcePosition = resource.resourcePosition();
+		boolean sourceExists = chip.hasFieldAt(resourcePosition);
+
+
+		// If an ID was given that ID represents what kind of fluid is to be
+		// dispensed => the resource is a dispenser
+		String type = resource.id.isPresent() ? "Dispenser" : "Sink";
+
 
 		if (!targetExists) {
-			msg = msg + type + " target " + dir.fst + " does not exist! [" +
-				  dir + "] ";
+			msg = msg + type + " target " + resource.gridPosition + " does not exist!";
 		}
 		if (sourceExists) {
-			msg = msg + type + " source " + source + " is within the chip! [" +
-				  dir + "]";
+			msg = msg + type + " source " + resourcePosition + " is within the chip!";
 		}
 
 		return msg;
@@ -418,13 +419,11 @@ final class Validator {
 		if (sinks != null) {
 			ArrayList<SimpleExternalResource> removeList
 					= new ArrayList<>();
-			for (final SimpleExternalResource dir : sinks) {
-				String msg = checkOutsidePosition(chip, "Sink",
-												  new Pair<>(dir.gridPosition,
-															 dir.dropletDirection));
+			for (final SimpleExternalResource sink : sinks) {
+				String msg = checkOutsidePosition(chip, sink);
 				if (!msg.isEmpty()) {
 					if (removeWrongDirs) {
-						removeList.add(dir);
+						removeList.add(sink);
 						msg = msg + " Removed invalid dispenser.";
 					}
 
@@ -447,7 +446,7 @@ final class Validator {
 	 * @param disps
 	 * 		List of dispensers to check
 	 * @param removeWrongDirs
-	 * 		If true, erroneous sinkgs will be removed
+	 * 		If true, erroneous sinks will be removed
 	 * @return List of errors
 	 */
 	static ArrayList<String> checkDispenserPositions(
@@ -460,12 +459,11 @@ final class Validator {
 		if (disps != null) {
 			ArrayList<SimpleExternalResource> removeList
 					= new ArrayList<>();
-			for (final SimpleExternalResource dir : disps) {
-				String msg = checkOutsidePosition(chip, "Dispenser",
-												  new Pair<>(dir.gridPosition,dir.dropletDirection));
+			for (final SimpleExternalResource dispenser : disps) {
+				String msg = checkOutsidePosition(chip, dispenser);
 				if (!msg.isEmpty()) {
 					if (removeWrongDirs) {
-						removeList.add(dir);
+						removeList.add(dispenser);
 						msg = msg + " Removed invalid dispenser.";
 					}
 
