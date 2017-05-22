@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.List;
@@ -410,30 +411,29 @@ final class Validator {
 	 */
 	static ArrayList<String> checkSinkPositions(
 			final Biochip chip,
-			final ArrayList<Pair<Point, Direction>> sinks,
+			final ArrayList<SimpleExternalResource> sinks,
 			final boolean removeWrongDirs) {
 		ArrayList<String> errors = new ArrayList<>();
 
 		if (sinks != null) {
+			ArrayList<SimpleExternalResource> removeList
+					= new ArrayList<>();
+			for (final SimpleExternalResource dir : sinks) {
+				String msg = checkOutsidePosition(chip, "Sink",
+												  new Pair<>(dir.gridPosition,
+															 dir.dropletDirection));
+				if (!msg.isEmpty()) {
+					if (removeWrongDirs) {
+						removeList.add(dir);
+						msg = msg + " Removed invalid dispenser.";
+					}
 
-			Stream<Pair<Pair<Point, Direction>, String>>
-					invalidSinks = sinks.stream()
-					.map(s ->
-						 new Pair<>(s, checkOutsidePosition(chip, "Sink", s)))
-					.filter(p -> !p.snd.isEmpty());
-
-
-			List<Pair<Point, Direction>> toRemove = new ArrayList<>();
-			invalidSinks.forEach(s -> {errors.add(s.snd); toRemove.add(s.fst);});
-
-			if (removeWrongDirs) {
-				sinks.removeAll(toRemove);
+					errors.add(msg);
+				}
 			}
+			sinks.removeAll(removeList);
 		}
 		return errors;
-
-
-
 	}
 
 	/**
@@ -452,16 +452,17 @@ final class Validator {
 	 */
 	static ArrayList<String> checkDispenserPositions(
 			final Biochip chip,
-			final ArrayList<Pair<Integer, Pair<Point, Direction>>> disps,
+			final ArrayList<SimpleExternalResource> disps,
 			final boolean removeWrongDirs) {
 
 		ArrayList<String> errors = new ArrayList<>();
 
-		if (disps != null && !disps.isEmpty()) {
-			ArrayList<Pair<Integer, Pair<Point, Direction>>> removeList
+		if (disps != null) {
+			ArrayList<SimpleExternalResource> removeList
 					= new ArrayList<>();
-			for (final Pair<Integer, Pair<Point, Direction>> dir : disps) {
-				String msg = checkOutsidePosition(chip, "Dispenser", dir.snd);
+			for (final SimpleExternalResource dir : disps) {
+				String msg = checkOutsidePosition(chip, "Dispenser",
+												  new Pair<>(dir.gridPosition,dir.dropletDirection));
 				if (!msg.isEmpty()) {
 					if (removeWrongDirs) {
 						removeList.add(dir);
@@ -613,4 +614,6 @@ final class Validator {
 
 		return errors;
 	}
+
+
 }

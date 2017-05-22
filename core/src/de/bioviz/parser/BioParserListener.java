@@ -90,13 +90,12 @@ class BioParserListener extends BioBaseListener {
 	/**
 	 * Stores all parsed sinks.
 	 */
-	private ArrayList<Pair<Point, Direction>> sinks = new ArrayList<>();
+	private ArrayList<SimpleExternalResource> sinks = new ArrayList<>();
 
 	/**
 	 * Stores all parsed dispensers.
 	 */
-	private ArrayList<Pair<Integer, Pair<Point, Direction>>> dispensers =
-			new ArrayList<>();
+	private ArrayList<SimpleExternalResource> dispensers = new ArrayList<>();
 
 	/**
 	 * Stores all parsed blockages.
@@ -274,7 +273,7 @@ class BioParserListener extends BioBaseListener {
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
 		if (dispenser != null) {
 			updateMaxDimension(dispenser.fst);
-			dispensers.add(new Pair<>(fluidID, dispenser));
+			dispensers.add(new SimpleExternalResource(dispenser,fluidID));
 		} else {
 			logger.error("Skipping definition of dispenser");
 		}
@@ -364,7 +363,7 @@ class BioParserListener extends BioBaseListener {
 		Pair<Point, Direction> sinkDef = getIOPort(ctx.ioport());
 		if (sinkDef != null) {
 			updateMaxDimension(sinkDef.fst);
-			sinks.add(sinkDef);
+			sinks.add(new SimpleExternalResource(sinkDef));
 		} else {
 			logger.error("Skipping definition of sink");
 		}
@@ -826,11 +825,8 @@ class BioParserListener extends BioBaseListener {
 
 		errors.addAll(Validator.checkSinkPositions(chip, sinks, true));
 		sinks.forEach(sink -> {
-			Point p = sink.fst;
-			Direction dir = sink.snd;
-			Point dirPoint = Point.pointFromDirection(dir);
-			Point sinkPoint = p.add(dirPoint);
-			Sink sinkField = new Sink(sinkPoint, dir, chip);
+			Point sinkPoint = sink.resourcePosition();
+			Sink sinkField = new Sink(sinkPoint, sink.dropletDirection, chip);
 			chip.addField(sinkField);
 		});
 
@@ -838,13 +834,12 @@ class BioParserListener extends BioBaseListener {
 														dispensers,
 														true));
 		dispensers.forEach(dispenser -> {
-			int fluidID = dispenser.fst;
-			Point p = dispenser.snd.fst;
-			Direction dir = dispenser.snd.snd;
-			Point dirPoint = Point.pointFromDirection(dir);
-			Point dispPoint = p.add(dirPoint);
+			Point dispPoint = dispenser.resourcePosition();
 			Dispenser dispField =
-					new Dispenser(dispPoint, fluidID, dir, chip);
+					new Dispenser(dispPoint,
+								  dispenser.id.get(),
+								  dispenser.dropletDirection,
+								  chip);
 			chip.addField( dispField);
 
 		});

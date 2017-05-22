@@ -90,6 +90,8 @@ public class Point extends Pair<Integer, Integer> {
 	/**
 	 * Creates a Point object pointing in the specified direction.
 	 *
+	 * This is a very weird way of performing some kind of typecast.
+	 *
 	 * @param dir
 	 * 		Direction that is to be translated into a point.
 	 * @return Point corresponding to the direction.

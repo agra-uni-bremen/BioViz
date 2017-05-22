@@ -16,7 +16,7 @@ import java.util.Optional;
  * This class is only necessary as Java does not have type aliases.
  * There is no real inherent semantics to this class
  */
-public class SimpleExternalResource {
+class SimpleExternalResource {
 
 		final Point gridPosition;
 		final Direction dropletDirection;
@@ -47,6 +47,16 @@ public class SimpleExternalResource {
 		gridPosition = posWithDir.fst;
 		dropletDirection = posWithDir.snd;
 		this.id = Optional.empty();
+	}
+
+	/**
+	 *
+	 * @return The position of the actual resource in grid coordinates
+	 */
+	public Point resourcePosition() {
+		Point directionAsPoint = Point.pointFromDirection(dropletDirection);
+		Point resourcePosition = gridPosition.add(directionAsPoint);
+		return resourcePosition;
 	}
 
 }
