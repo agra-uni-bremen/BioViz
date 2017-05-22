@@ -69,8 +69,6 @@ public final class Net {
 	 * 		this net's sources
 	 * @param target
 	 * 		this net's droplets' common target
-	 * @param target
-	 * 		the rectangle describing the target
 	 */
 	public Net(final List<Source> sources, final Rectangle target) {
 		this.target = target;
@@ -82,11 +80,13 @@ public final class Net {
 		long lowerLeftX = (long) target.lowerLeft.fst;
 		long lowerLeftY = (long) target.lowerLeft.snd;
 
+		final long magicNumber = 65536;
 
-		long seed = ((upperRightX % 65536) << 48) |
-					((upperRightY % 65536) << 32) |
-					((lowerLeftX % 65536) << 16) |
-					(lowerLeftY % 65536);
+
+		long seed = ((upperRightX % magicNumber) << 48) |
+					((upperRightY % magicNumber) << 32) |
+					((lowerLeftX % magicNumber) << 16) |
+					(lowerLeftY % magicNumber);
 		rnd.setSeed(seed);
 
 		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(),
