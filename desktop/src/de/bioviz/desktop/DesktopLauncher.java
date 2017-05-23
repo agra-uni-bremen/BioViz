@@ -118,37 +118,37 @@ public class DesktopLauncher extends JFrame {
 	/**
 	 * The label to display the current simulation time.
 	 */
-	JLabel timeInfo = new JLabel("1");
+	private JLabel timeInfo = new JLabel("1");
 
 	/**
 	 * Callback to be used upon time changes.
 	 */
-	TimerCallback tc;
+	private TimerCallback tc;
 
 	/**
 	 * Callback to be used when a new file is supposed to be loaded.
 	 */
-	LoadFileCallback loadCB;
+	private LoadFileCallback loadCB;
 
 	/**
 	 * Callback to be used when loading a new file is done.
 	 */
-	LoadedFileCallback loadedCB;
+	private LoadedFileCallback loadedCB;
 
 	/**
 	 * Callback to be used when the file is supposed to be saved.
 	 */
-	SaveFileCallback saveCB;
+	private SaveFileCallback saveCB;
 
 	/**
 	 * The element that is used to draw the libgdx core stuff on.
 	 */
-	LwjglAWTCanvas canvas;
+	private LwjglAWTCanvas canvas;
 
 	/**
 	 * Needed for input handling.
 	 */
-	LwjglAWTInput input;
+	private LwjglAWTInput input;
 
 	/**
 	 * The visualization instance. From the DesktopLauncher, this field is usd
@@ -157,7 +157,7 @@ public class DesktopLauncher extends JFrame {
 	 * once in tabs, there is still only one visualization which then displays
 	 * several different circuits.
 	 */
-	 BioViz currentViz;
+	 private BioViz currentViz;
 
 	/**
 	 * The infoPanel displaying the statistics.
@@ -832,10 +832,10 @@ public class DesktopLauncher extends JFrame {
 					try {
 						// Set System L&F
 						for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-							if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {   
+							if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {
 								javax.swing.UIManager.setLookAndFeel(info.getClassName());
 								break;
-							} 
+							}
 						}
 					} catch (final UnsupportedLookAndFeelException e) {
 						logger.error("System look and feel is unsupported: " +
@@ -847,8 +847,7 @@ public class DesktopLauncher extends JFrame {
 								"\n" + e.getStackTrace());
 					}
 
-					JFrame frame = new DesktopLauncher(file);
-
+					new DesktopLauncher(file);
 
 					singleton.addWindowListener(new WindowAdapter() {
 						@Override

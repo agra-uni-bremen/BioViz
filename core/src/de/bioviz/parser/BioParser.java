@@ -105,7 +105,7 @@ public final class BioParser {
 	/**
 	 * Parses the annotations in a file.
 	 * @param input an ANTLRInputStream
-	 * @channel the channel to parse
+	 * @param channel the channel to parse
 	 * @return A List of Strings containing the annotations.
 	 */
 	private static List<String> parseChannel(final ANTLRInputStream input,

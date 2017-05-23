@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -460,7 +461,7 @@ public class DrawableField extends DrawableSprite {
 			boolean fieldIsReachable =
 					dropsSet.stream().
 							map(d -> d.getPositionAt(t)).
-							filter(p -> p != null).
+							filter(Objects::nonNull).
 							anyMatch(p->p.reachable(field.pos));
 			if (fieldIsReachable) {
 				result.add(Colors.REACHABLE_FIELD_COLOR);
