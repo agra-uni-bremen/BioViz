@@ -404,9 +404,9 @@ final class Validator {
 	 * 		If true, erroneous resources will be removed
 	 * @return List of errors
 	 */
-	public static ArrayList<String> checkExternalResourcePositions(
+	public static List<String> checkExternalResourcePositions(
 			final Biochip chip,
-			final ArrayList<SimpleExternalResource> resources,
+			final List<SimpleExternalResource> resources,
 			final boolean removeWrongDirs) {
 		ArrayList<String> errors = new ArrayList<>();
 
