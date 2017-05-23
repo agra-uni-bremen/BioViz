@@ -504,19 +504,14 @@ final class Validator {
 		attached to the cell. Note that not necessarily both  (in this case the
 		pin actuation) actuations need to be specified
 		 */
-		//logger.debug("cellActuations.entrySet()={}", cellActuations.entrySet
-		// ());
 		for (final Map.Entry<Point, ActuationVector> e : cellActuations
 				.entrySet()) {
 			Point p = e.getKey();
 			ActuationVector cellActVec = e.getValue();
-			//logger.debug("Working on cell actuation {}", e);
 
 			Pin pin = chip.getFieldAt(p).pin;
-			//logger.debug("Pin for position {}: {}", p, pin);
 			if (pin != null) {
 				ActuationVector pinActVec = chip.pinActuations.get(pin.pinID);
-				//logger.debug("pin={} pinActVec={}", pin, pinActVec);
 				compatibility(pinActVec, cellActVec, errors,
 							  strongCompatibility,
 							  "field at " + p + " and pin " + pin.pinID);
@@ -532,9 +527,6 @@ final class Validator {
 		check the compatibility in both directions (cell -> pin & pin -> cells)
 		as it is possible that both inputs in the file specify different sets
 		 */
-
-		//logger.debug("pinActuations.entrySet().size()={}",pinActuations
-		// .entrySet().size());
 		for (
 				final Map.Entry<Integer, ActuationVector> e
 				: pinActuations.entrySet()) {
@@ -542,15 +534,10 @@ final class Validator {
 			ActuationVector pinActVec = e.getValue();
 			List<BiochipField> fields = chip.getFieldsForPin(pinID);
 
-			//logger.debug("Entry: {}",e);
-			//logger.debug("Working on pin actuation vector for pin {}:{}",
-			// pinID,pinActVec);
-
 			if (!fields.isEmpty()) {
 				for (final BiochipField f : fields) {
 					ActuationVector cellActVec = f.actVec;
-					//logger.debug("pin -> cell: comparing {} and {}",
-					// pinActVec,cellActVec);
+
 					compatibility(cellActVec, pinActVec, errors,
 								  strongCompatibility,
 								  "pin with ID " + pinID + " and cell at " +
