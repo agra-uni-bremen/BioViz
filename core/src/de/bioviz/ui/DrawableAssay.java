@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Dispenser;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Sink;
 import de.bioviz.util.Quadruple;
@@ -14,12 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * The DrawableAssay class collects the data of an assay that is executed on
  * a biochip.
- *
+ * <p>
  * It also provides the means to draw it using libgdx.
  *
  * @author Jannis Stoppe
@@ -146,6 +147,13 @@ public class DrawableAssay implements Drawable {
 	private ArrayList<DrawableDroplet> hiddenDroplets = new ArrayList<>();
 
 	/**
+	 * The nets that are contained within this assay.
+	 * <p>
+	 * (captain obvious to teh rescue!)
+	 */
+	private List<DrawableNet> nets = new ArrayList<>();
+
+	/**
 	 * The current displayOptions that determine drawing parameters.
 	 */
 	private DisplayOptions displayOptions = new DisplayOptions();
@@ -178,6 +186,11 @@ public class DrawableAssay implements Drawable {
 	 * careful.
 	 */
 	private DrawableField hoveredField = null;
+
+	/**
+	 * The desired length of the displayed routes.
+	 */
+	private int displayRouteLength = 0;
 
 	/**
 	 * Creates a drawable entity based on the data given.
@@ -245,6 +258,28 @@ public class DrawableAssay implements Drawable {
 		}
 	}
 
+	/**
+	 * Sets the length of the routes to be displayed.
+	 *
+	 * The value is capped at 0 and the maximal length of the routes present
+	 * in the assay.
+	 *
+	 * @param length Length of the displayed routes.
+	 */
+	public void setDisplayRouteLength(final int length) {
+		if (length >= 0 && length <= getData().getMaxRouteLength()) {
+			displayRouteLength=length;
+		}
+	}
+
+	/**
+	 * Returns how long routes are to be drawn.
+	 * @return The max length routes have when being displayed.
+	 */
+	public int getDisplayRouteLength() {
+		return displayRouteLength;
+	}
+
 
 	/**
 	 * Initializes the drawables according to the circuit stored in the data
@@ -255,8 +290,9 @@ public class DrawableAssay implements Drawable {
 		this.getFields().clear();
 		this.getDroplets().clear();
 
-		LOGGER.debug("Initializing drawables: {} fields, {} droplets", getData
-				().getAllCoordinates().size(), getData().getDroplets().size());
+		LOGGER.debug("Initializing drawables: {} fields, {} droplets",
+					 getData().getAllCoordinates().size(), getData()
+							 .getDroplets().size());
 
 		//setup fields
 		getData().getAllFields().forEach(fld -> {
@@ -281,6 +317,15 @@ public class DrawableAssay implements Drawable {
 
 		LOGGER.debug("Droplets set up.");
 
+
+		//setup nets
+		for (final Net n : getData().getNets()) {
+			DrawableNet nn = new DrawableNet(n, this);
+			this.getNets().add(nn);
+		}
+
+		LOGGER.debug("Nets set up.");
+
 		LOGGER.debug("Drawable initialization successfully done.");
 	}
 
@@ -300,10 +345,12 @@ public class DrawableAssay implements Drawable {
 			removeDisplayedCoordinates();
 		}
 
+		final long autoDelayScaling = 1000;
+		final long scaledAutoDelay =
+				(long) ((this.getAutoDelay()) * autoDelayScaling);
 		if (isAutoAdvance()) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long) ((this.getAutoDelay()) * 1000) <
-				current) {
+			if (lastAutoStepAt + scaledAutoDelay < current) {
 				lastAutoStepAt = current;
 
 				LOGGER.trace("data.getMaxT: {}\tcurrentTime: {}",
@@ -333,6 +380,10 @@ public class DrawableAssay implements Drawable {
 			d.draw();
 		}
 
+		for (final DrawableNet n : this.getNets()) {
+			n.draw();
+		}
+
 	}
 
 
@@ -350,18 +401,20 @@ public class DrawableAssay implements Drawable {
 		int maxX = minMaxVals.thd;
 		int maxY = minMaxVals.fth;
 
-		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
+		final int offset = 32;
+
+		float topYCoord = Gdx.graphics.getHeight() / 2f - offset;
 		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
 			topYCoord = this.yCoordOnScreen(maxY + 1);
 		}
-		float leftXCoord = -Gdx.graphics.getWidth() / 2f + 32;
+		float leftXCoord = -Gdx.graphics.getWidth() / 2f + offset;
 		if (leftXCoord < this.xCoordOnScreen(minX - 1)) {
 			leftXCoord = this.xCoordOnScreen(minX - 1);
 		}
 
 		// Defines when numbers should start fading and be completely hidden
-		float startFadingAtScale = 32f;
-		float endFadingAtScale = 24f;
+		final float startFadingAtScale = 32f;
+		final float endFadingAtScale = 24f;
 
 		Color col = Color.WHITE.cpy();
 		if (this.getSmoothScale() < startFadingAtScale) {
@@ -382,7 +435,7 @@ public class DrawableAssay implements Drawable {
 					this.xCoordOnScreen(i),    // x
 					topYCoord,                // y
 					col                 // message color, used for fading
-					);
+			);
 		}
 
 		for (int i = minY; i < maxY + 1; i++) {
@@ -395,7 +448,7 @@ public class DrawableAssay implements Drawable {
 					leftXCoord,                // x
 					this.yCoordOnScreen(i), // y
 					col                    // message color, used for fading
-					);
+			);
 		}
 	}
 
@@ -534,6 +587,8 @@ public class DrawableAssay implements Drawable {
 	/**
 	 * Retrieves the current x scaling factor that is used for the smooth
 	 * animated camera.
+	 *
+	 * @return The current x scaling factor.
 	 */
 	public float getSmoothScaleX() {
 		return getSmoothScale();
@@ -727,7 +782,7 @@ public class DrawableAssay implements Drawable {
 		this.autoDelay = autoDelay;
 	}
 
-	public ArrayList<DrawableField> getFields() {
+	public List<DrawableField> getFields() {
 		return fields;
 	}
 
@@ -735,7 +790,7 @@ public class DrawableAssay implements Drawable {
 		this.fields = fields;
 	}
 
-	public ArrayList<DrawableDroplet> getDroplets() {
+	public List<DrawableDroplet> getDroplets() {
 		return droplets;
 	}
 
@@ -777,13 +832,22 @@ public class DrawableAssay implements Drawable {
 		hiddenDroplets.remove(drop);
 	}
 
-	public ArrayList<DrawableDroplet> getHiddenDroplets() {
+	public List<DrawableDroplet> getHiddenDroplets() {
 		return hiddenDroplets;
 	}
 
 	public void setHiddenDroplets(final ArrayList<DrawableDroplet>
 										  hiddenDroplets) {
 		this.hiddenDroplets = hiddenDroplets;
+	}
+
+	public List<DrawableNet> getNets() {
+		return nets;
+	}
+
+	public void setNets(final List<DrawableNet> nets) {
+		this.nets.clear();
+		this.nets.addAll(nets);
 	}
 
 	public DisplayOptions getDisplayOptions() {

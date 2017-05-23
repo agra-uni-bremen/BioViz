@@ -7,14 +7,15 @@ public class Magnet extends Resource {
 
 	/**
 	 * Creates a magnet at the specified position.
-	 * @param pos Position of the magnet.
+	 *
+	 * @param pos
+	 * 		Position of the magnet.
 	 */
 	public Magnet(final Rectangle pos) {
-		super(pos,ResourceType.magnet);
+		super(pos, ResourceType.magnet);
 	}
 
 	/**
-	 *
 	 * @return The string representation of the Magnet: 'Magnet: <pos>'
 	 */
 	@Override

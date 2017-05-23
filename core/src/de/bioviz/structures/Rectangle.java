@@ -3,7 +3,9 @@ package de.bioviz.structures;
 import de.bioviz.util.Pair;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Oliver Keszocze
@@ -44,13 +46,13 @@ public class Rectangle {
 
 	/**
 	 * Copy constructur for Rectangles.
-	 * @param rec The rectangle that is to be copied.
+	 *
+	 * @param rec
+	 * 		The rectangle that is to be copied.
 	 */
 	public Rectangle(final Rectangle rec) {
-		this(new Integer(rec.lowerLeft.fst),
-			 new Integer(rec.lowerLeft.snd),
-			 new Integer(rec.upperRight.fst),
-			 new Integer(rec.upperRight.snd));
+		this(rec.lowerLeft.fst, rec.lowerLeft.snd,
+			 rec.upperRight.fst, rec.upperRight.snd);
 	}
 
 
@@ -69,7 +71,6 @@ public class Rectangle {
 	}
 
 	/**
-	 *
 	 * Creates a rectangle defined by two corners (provided by their
 	 * coordinates).
 	 *
@@ -106,8 +107,11 @@ public class Rectangle {
 
 	/**
 	 * Checks whether two rectangles are overlapping.
-	 * @param rec1 The first rectangle
-	 * @param rec2 The second rectangle
+	 *
+	 * @param rec1
+	 * 		The first rectangle
+	 * @param rec2
+	 * 		The second rectangle
 	 * @return true if and only if the two rectangles overlap.
 	 */
 	public static boolean overlapping(
@@ -129,7 +133,6 @@ public class Rectangle {
 	 * @param p
 	 * 		Point to check for
 	 * @return true if p is within the rectangle, false otherwise
-	 *
 	 */
 	public boolean contains(final Point p) {
 		return contains(p.fst, p.snd);
@@ -144,7 +147,6 @@ public class Rectangle {
 	 * @param y
 	 * 		y-coordinate of Point to check for
 	 * @return true if (x,y) is within the rectangle, false otherwise
-	 *
 	 */
 	public boolean contains(final int x, final int y) {
 
@@ -168,13 +170,14 @@ public class Rectangle {
 		return new Point(centerX, centerY);
 	}
 
-    /**
+	/**
 	 * Computes the center of the rectangle using floating point arithmetic.
+	 * <p>
+	 * The result is a pair of floats. While the result lies within the
+	 * rectangle it is not necessarily a valid integer coordinate of it.
 	 *
-	 * The result is a pair of floats. While the result lies within the rectangle
-	 * it is not necessarily a valid integer coordinate of it.
-	 *
-	 * @return Point in the center of the rectangle using floating point arithmetic.
+	 * @return Point in the center of the rectangle using floating point
+	 * arithmetic.
 	 */
 	public Pair<Float, Float> centerFloat() {
 		float centerX =
@@ -187,6 +190,58 @@ public class Rectangle {
 		return new Pair<>(centerX, centerY);
 	}
 
+
+	/**
+	 * @param width
+	 * 		Width of the margin.
+	 * @return Set of points in the margin of the rectangle.
+	 * @brief Computes the margin around the rectangle.
+	 */
+	public Set<Point> margin(final int width) {
+		return margin(this, width);
+	}
+
+	/**
+	 * @param r
+	 * 		Rectangle whose margin is computed
+	 * @param width
+	 * 		Width of the margin
+	 * @brief Computes the margin of a rectangle (i.e. the directly surrounding
+	 * positions).
+	 * @warning This method can return Points that are not part of the grid
+	 * @return Returns the margin around a given rectangle without the interior.
+	 */
+	public static Set<Point> margin(final Rectangle r, final int width) {
+
+		Set<Point> marginSet = new HashSet<>();
+
+		final int lowerLeftIdx = 0;
+		final int upperLeftIdx = 1;
+		final int upperRightIdx = 2;
+		final int lowerRightIdx = 3;
+
+		for (int n = 1; n <= width; ++n) {
+			List<Point> corners = extend(r, n).corners();
+
+			marginSet.addAll(
+					new Rectangle(corners.get(lowerLeftIdx),
+								  corners.get(upperLeftIdx)).positions()
+			);
+			marginSet.addAll(
+					new Rectangle(corners.get(upperLeftIdx),
+								  corners.get(upperRightIdx)).positions()
+			);
+			marginSet.addAll(
+					new Rectangle(corners.get(upperRightIdx),
+								  corners.get(lowerRightIdx)).positions()
+			);
+			marginSet.addAll(
+					new Rectangle(corners.get(lowerRightIdx),
+								  corners.get(lowerLeftIdx)).positions()
+			);
+		}
+		return marginSet;
+	}
 
 	/**
 	 * @return List of the points of this rectangle.
@@ -226,6 +281,58 @@ public class Rectangle {
 	}
 
 	/**
+	 * @param r
+	 * 		Rectangle that is to be extended
+	 * @param size
+	 * 		By how many positions the rectangle is to be extended
+	 * @return New Rectangle that is a bigger version of the given one
+	 * @brief Extends a rectangle.
+	 * <p>
+	 * This method can be used to create neighbourhoods of rectangles.
+	 */
+	public static Rectangle extend(final Rectangle r, final int size) {
+		// use <new> to create a deep copy
+		Point ll = new Point(r.lowerLeft.fst - size, r.lowerLeft.snd - size);
+		Point ur = new Point(r.upperRight.fst + size, r.upperRight.snd + size);
+
+		return new Rectangle(ll, ur);
+	}
+
+
+	/**
+	 * Checks if a position is reachable from the given rectangle.
+	 * <p>
+	 * This is used to show in which directions a droplet can move.
+	 *
+	 * @param r The rectangle to start from
+	 * @param pos
+	 * 		Position to check for reachability.
+	 * @return true iff the position pos can be reached from the Rectangle r.
+	 */
+	public static boolean reachable(final Rectangle r, final Point pos) {
+		Rectangle bigger = extend(r, 1);
+		List<Point> reachable = bigger.positions();
+		// we need to remove the extended as we explicitly want to ignore
+		// the diagonals
+		reachable.removeAll(bigger.corners());
+
+		return reachable.contains(pos);
+	}
+
+	/**
+	 * Checks if a position is reachable from this rectangle.
+	 * <p>
+	 * This is used to show in which directions a droplet can move.
+	 *
+	 * @param pos
+	 * 		Position to check for reachability.
+	 * @return true iff the position pos can be reached from the Rectangle r.
+	 */
+	public boolean reachable(final Point pos) {
+		return reachable(this, pos);
+	}
+
+	/**
 	 * Checks two rectangles for adjacency.
 	 *
 	 * @param r1
@@ -241,6 +348,7 @@ public class Rectangle {
 			return false;
 		}
 
+
 		boolean isPoint1 = r1.isPoint();
 		boolean isPoint2 = r2.isPoint();
 
@@ -254,17 +362,13 @@ public class Rectangle {
 		whether these rectangles overlap.
 		 */
 		if (!isPoint1 && !isPoint2) {
-			// use new Point to create a deep copy
-			Point ll = new Point(r1.lowerLeft.fst - 1, r1.lowerLeft.snd - 1);
-			Point ur = new Point(r1.upperRight.fst + 1, r1.upperRight.snd + 1);
-			Rectangle biggerRect = new Rectangle(ll, ur);
-
-
+			Rectangle biggerRect = extend(r1, 1);
 			return Rectangle.overlapping(biggerRect, r2);
 		}
 
 		/*
-		Now we know that at least Rectangle is a point and can act accordingly
+		Now we know that at least one  Rectangle is a point and can act
+		accordingly
 		 */
 		Point p = r1.getPoint();
 		Rectangle rec = r2;
@@ -317,7 +421,7 @@ public class Rectangle {
 	 * @return The upper left corner of the rectangle.
 	 */
 	public Point upperLeft() {
-		return new Point(lowerLeft.fst,upperRight.snd);
+		return new Point(lowerLeft.fst, upperRight.snd);
 	}
 
 	/**
@@ -334,13 +438,14 @@ public class Rectangle {
 	 * <p>
 	 * The check is easily done be extending the rectangle and checking whether
 	 * the point is within that rectangle.
-	 *
+	 * <p>
 	 * The parameter size determins how much the rectangle gets extended. This
 	 * is of interest when working with meda chips.
 	 *
 	 * @param p
 	 * 		The point to check for adjacency.
-	 * 	@param size The size of the adjacency to be considered.
+	 * @param size
+	 * 		The size of the adjacency to be considered.
 	 * @return True if the point is adjacent to the rectangle.
 	 */
 	public boolean adjacent(final Point p, final int size) {
@@ -355,7 +460,8 @@ public class Rectangle {
 	/**
 	 * Checks if a point is adjacent to this rectangle using a distance of 1.
 	 *
-	 * @param p The point to check for adjacency.
+	 * @param p
+	 * 		The point to check for adjacency.
 	 * @return True if the point is adjacent to the rectangle, false otherwise.
 	 */
 	public boolean adjacent(final Point p) {

@@ -33,7 +33,7 @@ public class Detector extends Resource {
 	public Detector(final Rectangle position,
 					final int completionTime,
 					final int fluidType) {
-		super(position,ResourceType.detector);
+		super(position, ResourceType.detector);
 
 		this.completionTime = completionTime;
 		this.fluidType = fluidType;

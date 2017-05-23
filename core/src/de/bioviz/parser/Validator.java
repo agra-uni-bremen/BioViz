@@ -1,26 +1,24 @@
 package de.bioviz.parser;
 
 
-import de.bioviz.structures.Biochip;
-import de.bioviz.structures.BiochipField;
-import de.bioviz.structures.Pin;
 import de.bioviz.structures.Actuation;
 import de.bioviz.structures.ActuationVector;
-import de.bioviz.structures.Direction;
+import de.bioviz.structures.Biochip;
+import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Droplet;
+import de.bioviz.structures.Pin;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
 import de.bioviz.structures.Resource;
-import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -95,23 +93,28 @@ final class Validator {
 		for (final Droplet drop : droplets) {
 			ArrayList<Rectangle> rectPositions = drop.getPositions();
 
+
 			for (int timeStep = 0;
 				 timeStep < rectPositions.size(); timeStep++) {
+				int timestep = timeStep + drop.getSpawnTime();
 				Rectangle rectPos = rectPositions.get(timeStep);
 				ArrayList<Point> positions =
-						rectPos.positions().stream().filter(
-								pos -> chip.hasFieldAt(pos)).collect(
-								Collectors.toCollection(ArrayList::new));
+						rectPos.positions().stream().
+								filter(chip::hasFieldAt).
+								collect(Collectors.toCollection(
+										ArrayList::new));
 
-				for (final Point pos : positions) {
-					int timestep = timeStep + drop.getSpawnTime();
-					BiochipField field = chip.getFieldAt(pos);
-					if (field.isBlocked(timestep)) {
-						errors.add("Droplet " + drop.getID() +
-								   " moves into blockage at " + pos +
-								   " in time step " + timestep);
-					}
-				}
+				positions.stream().
+						filter(
+								pos -> chip.getFieldAt(pos).isBlocked(
+										timestep)).
+						forEach(
+								pos -> errors.add(
+										"Droplet " + drop.getID() +
+										" moves into blockage at " + pos +
+										" in time step " + timestep)
+						);
+
 			}
 		}
 		return errors;
@@ -219,7 +222,7 @@ final class Validator {
 	 * @param cellActuations
 	 * 		List of actuations given on the cell level (might be null)
 	 * @param pinActuations
-	 * 		List of actuations given on the pin level (might be nulll)
+	 * 		List of actuations given on the pin level (might be null)
 	 * @return List of errors
 	 */
 	static ArrayList<String> checkActuationVectorLengths(
@@ -357,127 +360,69 @@ final class Validator {
 	 *
 	 * @param chip
 	 * 		Biochip to check for errors
-	 * @param type
-	 * 		What is tested (dispensers or sinks)
-	 * @param dir
-	 * 		Position and direction of the dispenser
+	 * @param resource
+	 * 		The simple resource description
 	 * @return Error message
 	 */
 
 	private static String checkOutsidePosition(
 			final Biochip chip,
-			final String type,
-			final Pair<Point, Direction> dir) {
+			final SimpleExternalResource resource) {
 		String msg = "";
-		boolean targetExists = true;
-		boolean sourceExists = true;
-		Point source = dir.fst.add(Point.pointFromDirection(dir.snd));
+		boolean targetExists = chip.hasFieldAt(resource.gridPosition);
+
+		Point resourcePosition = resource.resourcePosition();
+		boolean sourceExists = chip.hasFieldAt(resourcePosition);
 
 
-		try {
-			chip.getFieldAt(dir.fst);
-		} catch (final RuntimeException e) {
-			targetExists = false;
-		}
-
-		try {
-			chip.getFieldAt(source);
-		} catch (final RuntimeException e) {
-			sourceExists = false;
-		}
+		// If an ID was given that ID represents what kind of fluid is to be
+		// dispensed => the resource is a dispenser
+		String type = resource.id.isPresent() ? "Dispenser" : "Sink";
 
 
 		if (!targetExists) {
-			msg = msg + type + " target " + dir.fst + " does not exist! [" +
-				  dir + "] ";
+			msg = msg + type + " target " + resource.gridPosition + " does not exist!";
 		}
 		if (sourceExists) {
-			msg = msg + type + " source " + source + " is within the chip! [" +
-				  dir + "]";
+			msg = msg + type + " source " + resourcePosition + " is within the chip!";
 		}
 
 		return msg;
 	}
 
-
 	/**
-	 * Check the validity of sink positions.
-	 * <p>
-	 * A sink itself must sit outside of the regular chip positions. Its
-	 * source,
-	 * on the other hand, must be a valid chip position.
-	 *
-	 * @param chip
-	 * 		The biochip to check
-	 * @param sinks
-	 * 		List of sinks to check
-	 * @param removeWrongDirs
-	 * 		If true, erroneous sinkgs will be removed
-	 * @return List of errors
-	 */
-	static ArrayList<String> checkSinkPositions(
-			final Biochip chip,
-			final ArrayList<Pair<Point, Direction>> sinks,
-			final boolean removeWrongDirs) {
-		ArrayList<String> errors = new ArrayList<>();
-
-		if (sinks != null && !sinks.isEmpty()) {
-			ArrayList<Pair<Point, Direction>> removeList =
-					new ArrayList<>();
-			for (final Pair<Point, Direction> sink : sinks) {
-				String msg = checkOutsidePosition(chip, "Sink", sink);
-				if (!msg.isEmpty()) {
-					if (removeWrongDirs) {
-						removeList.add(sink);
-						msg = msg + " Removed invalid sink.";
-					}
-
-					errors.add(msg);
-				}
-			}
-			sinks.removeAll(removeList);
-		}
-		return errors;
-	}
-
-	/**
-	 * Check the validity of dispenser positions.
+	 * Check the validity of dispenser/sink positions.
 	 * <p>
 	 * A dispenser itself must sit outside of the regular chip positions. Its
 	 * target, on the other hand, must be a valid chip position.
 	 *
 	 * @param chip
 	 * 		The biochip to check
-	 * @param disps
-	 * 		List of dispensers to check
+	 * @param resources
+	 * 		List of resources to check
 	 * @param removeWrongDirs
-	 * 		If true, erroneous sinkgs will be removed
+	 * 		If true, erroneous resources will be removed
 	 * @return List of errors
 	 */
-	static ArrayList<String> checkDispenserPositions(
+	public static List<String> checkExternalResourcePositions(
 			final Biochip chip,
-			final ArrayList<Pair<Integer, Pair<Point, Direction>>> disps,
+			final List<SimpleExternalResource> resources,
 			final boolean removeWrongDirs) {
-
 		ArrayList<String> errors = new ArrayList<>();
 
-		if (disps != null && !disps.isEmpty()) {
-			ArrayList<Pair<Integer, Pair<Point, Direction>>> removeList
+			ArrayList<SimpleExternalResource> removeList
 					= new ArrayList<>();
-			for (final Pair<Integer, Pair<Point, Direction>> dir : disps) {
-				String msg = checkOutsidePosition(chip, "Dispenser", dir.snd);
+			for (final SimpleExternalResource resource : resources) {
+				String msg = checkOutsidePosition(chip, resource);
 				if (!msg.isEmpty()) {
 					if (removeWrongDirs) {
-						removeList.add(dir);
-						msg = msg + " Removed invalid dispenser.";
+						removeList.add(resource);
+						msg = msg + " Removed invalid resource.";
 					}
-
 					errors.add(msg);
 				}
-
 			}
-			disps.removeAll(removeList);
-		}
+		resources.removeAll(removeList);
 		return errors;
 	}
 
@@ -617,4 +562,6 @@ final class Validator {
 
 		return errors;
 	}
+
+
 }

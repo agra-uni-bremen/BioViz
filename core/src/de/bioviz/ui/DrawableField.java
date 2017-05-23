@@ -1,7 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
+import de.bioviz.structures.Actuation;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.BiochipField;
 import de.bioviz.structures.Dispenser;
@@ -12,17 +12,18 @@ import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
 import de.bioviz.structures.Sink;
-import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static de.bioviz.ui.BDisplayOptions.Actuations;
+import static de.bioviz.ui.BDisplayOptions.ActuationSymbols;
 import static de.bioviz.ui.BDisplayOptions.Adjacency;
 import static de.bioviz.ui.BDisplayOptions.CellUsage;
 import static de.bioviz.ui.BDisplayOptions.CellUsageCount;
@@ -30,7 +31,7 @@ import static de.bioviz.ui.BDisplayOptions.DetectorIcon;
 import static de.bioviz.ui.BDisplayOptions.HighlightAnnotatedFields;
 import static de.bioviz.ui.BDisplayOptions.InterferenceRegion;
 import static de.bioviz.ui.BDisplayOptions.LingeringInterferenceRegions;
-import static de.bioviz.ui.BDisplayOptions.LongNetIndicatorsOnFields;
+import static de.bioviz.ui.BDisplayOptions.MovementNeighbourhood;
 import static de.bioviz.ui.BDisplayOptions.NetColorOnFields;
 import static de.bioviz.ui.BDisplayOptions.Pins;
 import static de.bioviz.ui.BDisplayOptions.SourceTargetIDs;
@@ -75,8 +76,6 @@ public class DrawableField extends DrawableSprite {
 	 * itself.
 	 */
 	private DrawableAssay parentAssay;
-
-	private DrawableLine netIndicator = null;
 
 	/**
 	 * Creates an object that draws a given field for a biochip.
@@ -187,6 +186,22 @@ public class DrawableField extends DrawableSprite {
 
 		if (getOption(CellUsageCount)) {
 			fieldHUDMsg = Integer.toString(field.getUsage());
+		}
+
+		int t = getParentAssay().getCurrentTime();
+		if (getOption(ActuationSymbols)) {
+			Actuation act = field.getActuation(t);
+
+			switch (act) {
+				case ON:
+					fieldHUDMsg = "1";
+					break;
+				case OFF:
+					fieldHUDMsg = "0";
+					break;
+				case DONTCARE:
+					fieldHUDMsg = "X";
+			}
 		}
 
 
@@ -346,13 +361,26 @@ public class DrawableField extends DrawableSprite {
 
 		colorOverlayCount += inteferenceRegionColoring(result);
 
+		colorOverlayCount += reachableRegionColoring(result);
+
 
 		/**
-		 * Here we highlight cells that are currently actuated.
+		 * Here we highlight cells based on their actuation value
 		 */
 		int t = getParentAssay().getCurrentTime();
-		if (getOption(Actuations) && field.isActuated(t)) {
-			result.add(Colors.ACTAUTED_COLOR);
+		if (getOption(Actuations)) {
+			Actuation act = field.getActuation(t);
+
+			switch (act) {
+				case ON:
+					result.add(Colors.ACTUATION_ON_COLOR);
+					break;
+				case OFF:
+					result.add(Colors.ACTUATION_OFF_COLOR);
+					break;
+				case DONTCARE:
+					result.add(Colors.ACTUATION_DONTCARE_COLOR);
+			}
 			++colorOverlayCount;
 		}
 
@@ -420,6 +448,30 @@ public class DrawableField extends DrawableSprite {
 		return colorOverlayCount;
 	}
 
+
+	private int reachableRegionColoring(de.bioviz.ui.Color result) {
+		int colorOverlayCount = 0;
+		if (getOption(MovementNeighbourhood)) {
+
+
+			int t = getParentAssay().getCurrentTime();
+
+			final Set<Droplet> dropsSet =
+					getParentAssay().getData().getDroplets();
+			boolean fieldIsReachable =
+					dropsSet.stream().
+							map(d -> d.getPositionAt(t)).
+							filter(Objects::nonNull).
+							anyMatch(p->p.reachable(field.pos));
+			if (fieldIsReachable) {
+				result.add(Colors.REACHABLE_FIELD_COLOR);
+				colorOverlayCount = 1;
+			}
+		}
+
+		return colorOverlayCount;
+	}
+
 	/**
 	 * Colors based on the interference region.
 	 *
@@ -429,6 +481,9 @@ public class DrawableField extends DrawableSprite {
 	 */
 	private int inteferenceRegionColoring(de.bioviz.ui.Color result) {
 		int colorOverlayCount = 0;
+
+		boolean isBlocked = getField().isBlocked(getParentAssay().getCurrentTime());
+
 		/** Colours the interference region **/
 		if (getOption(InterferenceRegion)) {
 			int amountOfInterferenceRegions = 0;
@@ -446,7 +501,7 @@ public class DrawableField extends DrawableSprite {
 					final Droplet drop2 = drops.get(j);
 					boolean sameNet =
 							getParentAssay().getData().sameNet(drop1, drop2);
-					if (!sameNet) {
+					if (!sameNet && !isBlocked) {
 						result.add(Colors.INTERFERENCE_REGION_OVERLAP_COLOR);
 						++colorOverlayCount;
 						interferenceViolation = true;
@@ -464,7 +519,7 @@ public class DrawableField extends DrawableSprite {
 				}
 			}
 
-			if (amountOfInterferenceRegions > 0) {
+			if (amountOfInterferenceRegions > 0 && !isBlocked) {
 				float scale = (float) Math.sqrt(amountOfInterferenceRegions);
 				Color c = new Color(Colors.INTERFERENCE_REGION_COLOR);
 				result.add(c.mul(scale));
@@ -501,32 +556,7 @@ public class DrawableField extends DrawableSprite {
 		}
 
 		// TODO why is drawing of lines in any way tied to the actual fields?!
-		if (getOption(LongNetIndicatorsOnFields)) {
-			for (final Net net :
-					this.parentAssay.getData().getNetsOf(this.field)) {
-				for (final Source s : net.getSources()) {
-					Pair<Float, Float> targetCenter =
-							net.getTarget().centerFloat();
-					Pair<Float, Float> sourceCenter =
-							s.startPosition.centerFloat();
 
-					Vector2 target =
-							new Vector2(targetCenter.fst, targetCenter.snd);
-					Vector2 source =
-							new Vector2(sourceCenter.fst, sourceCenter.snd);
-
-					// draw to target
-					if (netIndicator == null) {
-						netIndicator = new DrawableLine(this.viz);
-					}
-					netIndicator.from = source;
-					netIndicator.to = target;
-					netIndicator.setColor(
-							Colors.LONG_NET_INDICATORS_ON_FIELD_COLOR);
-					netIndicator.draw();
-				}
-			}
-		}
 	}
 
 

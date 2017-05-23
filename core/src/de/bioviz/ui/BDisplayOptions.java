@@ -63,6 +63,11 @@ public enum BDisplayOptions {
 	 * makes a droplet move to that cell.
 	 */
 	Actuations("Show actuations"),
+
+	/**
+	 * Option for displaying actuation symbols ('1', '0', 'X').
+	 */
+	ActuationSymbols("Show actuation symbols"),
 	/**
 	 * Option for displaying icons at the source(s) and target of a net.
 	 */
@@ -142,6 +147,11 @@ public enum BDisplayOptions {
 	 * encompass all fields that are adjacent at t *and* t-1.
 	 */
 	LingeringInterferenceRegions("Show dynamic interference region"),
+
+	/**
+	 * Highlights cells that can be moved onto.
+	 */
+	MovementNeighbourhood("Show reachable cells"),
 
 	/**
 	 * When using autoplay, restart it after it has finished.

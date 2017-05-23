@@ -72,6 +72,12 @@ public class InfoPanel extends JPanel {
      * Label to show the number of fields.
      */
     private JLabel fieldNumValue = new JLabel();
+
+    /**
+     * Label to show the amount of used fields.
+     */
+    private JLabel usedFieldValue = new JLabel();
+
     /**
      * Label to show the number of nets.
      */
@@ -186,6 +192,10 @@ public class InfoPanel extends JPanel {
         fieldNumLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
         fieldNumValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
 
+        JLabel usedFieldLabel = new JLabel("u Fields: ");
+        usedFieldLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
+        usedFieldValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
+
         JLabel numNetLabel = new JLabel("# Nets: ");
         numNetLabel.setPreferredSize(new Dimension(labelWidth, labelHeight));
         numNetValue.setPreferredSize(new Dimension(valueWidth, labelHeight));
@@ -239,6 +249,8 @@ public class InfoPanel extends JPanel {
         panel.add(avgUsageValue);
         panel.add(fieldNumLabel);
         panel.add(fieldNumValue);
+        panel.add(usedFieldLabel);
+        panel.add(usedFieldValue);
         panel.add(numNetLabel);
         panel.add(numNetValue);
         panel.add(numSourcesLabel);
@@ -275,10 +287,34 @@ public class InfoPanel extends JPanel {
             updateDropletCount();
             updateUsage();
             updateFieldCount();
+            updateUsedFields();
             updateNets();
             updateFieldTypes();
             updateFluidTable();
             updateDropToFluid();
+        }
+    }
+
+
+    /**
+     * Updates the amount of used fields.
+     */
+    private void updateUsedFields() {
+
+        if (data != null) {
+            data.computeCellUsage();
+
+
+            Long cell_usage =
+                    data.getAllFields().stream().
+                            map(f -> f.getUsage()).
+                            filter(e -> e > 0).count();
+
+
+            usedFieldValue.setText(cell_usage.toString());
+        }
+        else {
+            usedFieldValue.setText("0");
         }
     }
 

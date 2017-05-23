@@ -37,6 +37,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -77,7 +78,6 @@ public class DesktopLauncher extends JFrame {
 	 * elevate this to public as needed.
 	 */
 	private static DesktopLauncher singleton;
-
 
 
 	/**
@@ -429,13 +429,12 @@ public class DesktopLauncher extends JFrame {
 
 
 		displayRouteLengthSlider =
-				new JSlider(JSlider.HORIZONTAL, 0, routeLengthMax,
-							DrawableRoute.routeDisplayLength);
+				new JSlider(JSlider.HORIZONTAL, 0, routeLengthMax,0);
 		displayRouteLengthSlider.setPreferredSize(
 				new Dimension(sliderWidth, sliderHeight));
 		displayRouteLengthSlider.addChangeListener(
-				ce -> DrawableRoute.routeDisplayLength =
-						((JSlider) ce.getSource()).getValue());
+				ce -> currentViz.currentAssay.setDisplayRouteLength(
+						((JSlider) ce.getSource()).getValue()));
 
 
 		JButton nextStepButton = new JButton("->");
@@ -889,6 +888,10 @@ public class DesktopLauncher extends JFrame {
 		int choice;
 
 		if (load) {
+			FileNameExtensionFilter bioGramFilter = new FileNameExtensionFilter(
+					"Biogram Files", "bio");
+			fileDialog.addChoosableFileFilter(bioGramFilter);
+			fileDialog.setFileFilter(bioGramFilter);
 			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
 		} else {
 			// add the svg export options as an accessory to the fileChooser
@@ -897,7 +900,7 @@ public class DesktopLauncher extends JFrame {
 			JCheckBox exportColors = new JCheckBox("Export colors");
 			exportColors.setSelected(true);
 			JCheckBox exportInfoString = new JCheckBox("Export info tag");
-			exportInfoString.setSelected(true);
+			exportInfoString.setSelected(false);
 			JCheckBox exportSeries = new JCheckBox("Export series");
 			exportSeries.setSelected(false);
 
@@ -1474,8 +1477,10 @@ public class DesktopLauncher extends JFrame {
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
 				int oldTime = currentViz.currentAssay.getCurrentTime();
-
+				int oldRouteLength = currentViz.currentAssay.getDisplayRouteLength();
 				DesktopLauncher d = DesktopLauncher.singleton;
+
+
 
 				// altering the max/min values already invokes the timer
 				// event, thus altering the currentAssay's currenTime value.
@@ -1495,7 +1500,7 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMaximum(
 						currentViz.currentAssay.getData().getMaxRouteLength());
 				d.displayRouteLengthSlider.setMinimum(0);
-				d.displayRouteLengthSlider.setValue(0);
+				d.displayRouteLengthSlider.setValue(oldRouteLength);
 
 				d.setTitle(d.currentViz.getFileName() + " - " + BioVizInfo.PROGNAME);
 

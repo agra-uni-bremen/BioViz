@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
+import de.bioviz.structures.Source;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.Colors;
 import de.bioviz.ui.DisplayValues;
@@ -314,13 +315,15 @@ public class SVGManager {
 				SVGUtils.isNotHiddenOrInvisible(drop)) {
 				sb.append(createDropletArrows(drop));
 			}
-			// append longNetIndicatorsOnFields when needed
-			if (assay.getDisplayOptions().getOption(BDisplayOptions
-															.LongNetIndicatorsOnFields)) {
-				sb.append(createSourceTargetArrow(drop));
-			}
 		}
 
+		// append longNetIndicatorsOnFields when needed
+		for (final Net net : assay.getData().getNets()) {
+			if (assay.getDisplayOptions().getOption(BDisplayOptions
+															.LongNetIndicatorsOnFields)) {
+				sb.append(createSourceTargetArrow(net));
+			}
+		}
 
 		// export msg strings for fields
 		for (final DrawableField field : assay.getFields()) {
@@ -406,10 +409,8 @@ public class SVGManager {
 
 		Point dropletPos = getDropletPosInSVGCoords(drawableDrop);
 
-		Pair<Integer, Integer> scaleFactors = SVGUtils.getScaleFactors
-				(drawableDrop,
-				 assay
-						 .getCurrentTime());
+		Pair<Integer, Integer> scaleFactors = SVGUtils.getScaleFactors(
+				drawableDrop, assay.getCurrentTime());
 
 		String scale =
 				"scale(" + scaleFactors.fst + " " + scaleFactors.snd + ")";
@@ -456,7 +457,7 @@ public class SVGManager {
 
 		int displayAt;
 
-		int displayLength = DrawableRoute.routeDisplayLength;
+		int displayLength = assay.getDisplayRouteLength();
 
 		Biochip biochip = assay.getData();
 
@@ -474,8 +475,12 @@ public class SVGManager {
 		for (int i = 0; i < nSteps; ++i) {
 
 			LOGGER.debug("i: {}", i);
+			float alpha = 1;
 
-			float alpha = 1 - (Math.abs((float) i) / ((float) displayLength));
+			if (!assay.getDisplayOptions().getOption(
+					BDisplayOptions.SolidPaths)) {
+				alpha -= Math.abs((float) i) / (float) displayLength;
+			}
 
 			displayAt = currentTime + i;
 
@@ -545,24 +550,26 @@ public class SVGManager {
 	/**
 	 * Creates svg arrows from all net sources to their net targets.
 	 *
-	 * @param drawableDrop
+	 * @param net
 	 * 		the droplet
 	 * @return svg string containing all start end arrows
 	 */
-	private String createSourceTargetArrow(final DrawableDroplet
-												   drawableDrop) {
+	private String createSourceTargetArrow(final Net net) {
 
-		Net net = drawableDrop.droplet.getNet();
 		String arrow = "";
 
 		if (net != null) {
-			Pair<Float, Float> startPoint = drawableDrop.droplet
-					.getFirstPosition()
-					.centerFloat();
+			List<Source> startPoints = net.getSources();
 			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
 
 			Color arrowColor = Color.BLACK;
-			arrow = createSVGArrow(startPoint, endPoint, arrowColor);
+			for (final Source startSource : startPoints) {
+				Pair<Float, Float> startPoint =
+						startSource.startPosition.centerFloat();
+				if (!startPoint.equals(endPoint)) {
+					arrow += createSVGArrow(startPoint, endPoint, arrowColor);
+				}
+			}
 		}
 
 		return arrow;
@@ -867,10 +874,13 @@ public class SVGManager {
 
 			svgCoreCreator.appendFieldSVG(svgs, f);
 
-			Set<Net> nets = assay.getData().getNetsOf(f.getField());
-			for (final Net n : nets) {
-				for (final GradDir dir : GradDir.values()) {
-					svgCoreCreator.appendGradSVG(svgs, n, dir);
+			if (assay.getDisplayOptions().getOption(BDisplayOptions
+					.NetColorOnFields)) {
+				Set<Net> nets = assay.getData().getNetsOf(f.getField());
+				for (final Net n : nets) {
+					for (final GradDir dir : GradDir.values()) {
+						svgCoreCreator.appendGradSVG(svgs, n, dir);
+					}
 				}
 			}
 		}

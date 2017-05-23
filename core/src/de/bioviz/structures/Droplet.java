@@ -1,7 +1,6 @@
 package de.bioviz.structures;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Class that contains everything that is necessary to describe a DMFB droplet.

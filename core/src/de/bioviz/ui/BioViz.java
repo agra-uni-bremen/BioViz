@@ -390,9 +390,9 @@ public class BioViz implements ApplicationListener {
     }
 
     void callPickColourListeners() {
-        logger.trace("Calling " + closeFileListeners.size() +
+        logger.trace("Calling " + pickColorListeners.size() +
                 " listeners for picking a colour");
-        callListeners(closeFileListeners);
+        callListeners(pickColorListeners);
 
     }
 
