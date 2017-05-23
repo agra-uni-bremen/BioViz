@@ -6,7 +6,14 @@ import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Source;
-import de.bioviz.ui.*;
+import de.bioviz.ui.BDisplayOptions;
+import de.bioviz.ui.Colors;
+import de.bioviz.ui.DisplayValues;
+import de.bioviz.ui.DrawableAssay;
+import de.bioviz.ui.DrawableDroplet;
+import de.bioviz.ui.DrawableField;
+import de.bioviz.ui.DrawableRoute;
+import de.bioviz.ui.TextureE;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -402,10 +409,8 @@ public class SVGManager {
 
 		Point dropletPos = getDropletPosInSVGCoords(drawableDrop);
 
-		Pair<Integer, Integer> scaleFactors = SVGUtils.getScaleFactors
-				(drawableDrop,
-				 assay
-						 .getCurrentTime());
+		Pair<Integer, Integer> scaleFactors = SVGUtils.getScaleFactors(
+				drawableDrop, assay.getCurrentTime());
 
 		String scale =
 				"scale(" + scaleFactors.fst + " " + scaleFactors.snd + ")";
@@ -474,7 +479,7 @@ public class SVGManager {
 
 			if (!assay.getDisplayOptions().getOption(
 					BDisplayOptions.SolidPaths)) {
-				alpha -= (Math.abs((float) i) / ((float) displayLength));
+				alpha -= Math.abs((float) i) / (float) displayLength;
 			}
 
 			displayAt = currentTime + i;
@@ -562,7 +567,7 @@ public class SVGManager {
 				Pair<Float, Float> startPoint =
 						startSource.startPosition.centerFloat();
 				if (!startPoint.equals(endPoint)) {
-					arrow += createSVGArrow(startPoint,endPoint, arrowColor);
+					arrow += createSVGArrow(startPoint, endPoint, arrowColor);
 				}
 			}
 		}
@@ -869,10 +874,13 @@ public class SVGManager {
 
 			svgCoreCreator.appendFieldSVG(svgs, f);
 
-			Set<Net> nets = assay.getData().getNetsOf(f.getField());
-			for (final Net n : nets) {
-				for (final GradDir dir : GradDir.values()) {
-					svgCoreCreator.appendGradSVG(svgs, n, dir);
+			if (assay.getDisplayOptions().getOption(BDisplayOptions
+					.NetColorOnFields)) {
+				Set<Net> nets = assay.getData().getNetsOf(f.getField());
+				for (final Net n : nets) {
+					for (final GradDir dir : GradDir.values()) {
+						svgCoreCreator.appendGradSVG(svgs, n, dir);
+					}
 				}
 			}
 		}

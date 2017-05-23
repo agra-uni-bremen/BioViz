@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * The DrawableAssay class collects the data of an assay that is executed on
  * a biochip.
- *
+ * <p>
  * It also provides the means to draw it using libgdx.
  *
  * @author Jannis Stoppe
@@ -146,6 +146,11 @@ public class DrawableAssay implements Drawable {
 	 */
 	private ArrayList<DrawableDroplet> hiddenDroplets = new ArrayList<>();
 
+	/**
+	 * The nets that are contained within this assay.
+	 * <p>
+	 * (captain obvious to teh rescue!)
+	 */
 	private List<DrawableNet> nets = new ArrayList<>();
 
 	/**
@@ -285,8 +290,9 @@ public class DrawableAssay implements Drawable {
 		this.getFields().clear();
 		this.getDroplets().clear();
 
-		LOGGER.debug("Initializing drawables: {} fields, {} droplets", getData
-				().getAllCoordinates().size(), getData().getDroplets().size());
+		LOGGER.debug("Initializing drawables: {} fields, {} droplets",
+					 getData().getAllCoordinates().size(), getData()
+							 .getDroplets().size());
 
 		//setup fields
 		getData().getAllFields().forEach(fld -> {
@@ -339,10 +345,12 @@ public class DrawableAssay implements Drawable {
 			removeDisplayedCoordinates();
 		}
 
+		final long autoDelayScaling = 1000;
+		final long scaledAutoDelay =
+				(long) ((this.getAutoDelay()) * autoDelayScaling);
 		if (isAutoAdvance()) {
 			long current = new Date().getTime();
-			if (lastAutoStepAt + (long) ((this.getAutoDelay()) * 1000) <
-				current) {
+			if (lastAutoStepAt + scaledAutoDelay < current) {
 				lastAutoStepAt = current;
 
 				LOGGER.trace("data.getMaxT: {}\tcurrentTime: {}",
@@ -393,18 +401,20 @@ public class DrawableAssay implements Drawable {
 		int maxX = minMaxVals.thd;
 		int maxY = minMaxVals.fth;
 
-		float topYCoord = Gdx.graphics.getHeight() / 2f - 32;
+		final int offset = 32;
+
+		float topYCoord = Gdx.graphics.getHeight() / 2f - offset;
 		if (topYCoord > this.yCoordOnScreen(maxY + 1)) {
 			topYCoord = this.yCoordOnScreen(maxY + 1);
 		}
-		float leftXCoord = -Gdx.graphics.getWidth() / 2f + 32;
+		float leftXCoord = -Gdx.graphics.getWidth() / 2f + offset;
 		if (leftXCoord < this.xCoordOnScreen(minX - 1)) {
 			leftXCoord = this.xCoordOnScreen(minX - 1);
 		}
 
 		// Defines when numbers should start fading and be completely hidden
-		float startFadingAtScale = 32f;
-		float endFadingAtScale = 24f;
+		final float startFadingAtScale = 32f;
+		final float endFadingAtScale = 24f;
 
 		Color col = Color.WHITE.cpy();
 		if (this.getSmoothScale() < startFadingAtScale) {
@@ -425,7 +435,7 @@ public class DrawableAssay implements Drawable {
 					this.xCoordOnScreen(i),    // x
 					topYCoord,                // y
 					col                 // message color, used for fading
-					);
+			);
 		}
 
 		for (int i = minY; i < maxY + 1; i++) {
@@ -438,7 +448,7 @@ public class DrawableAssay implements Drawable {
 					leftXCoord,                // x
 					this.yCoordOnScreen(i), // y
 					col                    // message color, used for fading
-					);
+			);
 		}
 	}
 
@@ -577,6 +587,8 @@ public class DrawableAssay implements Drawable {
 	/**
 	 * Retrieves the current x scaling factor that is used for the smooth
 	 * animated camera.
+	 *
+	 * @return The current x scaling factor.
 	 */
 	public float getSmoothScaleX() {
 		return getSmoothScale();
