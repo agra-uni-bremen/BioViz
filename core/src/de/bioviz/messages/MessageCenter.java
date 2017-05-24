@@ -266,77 +266,85 @@ public class MessageCenter {
 	 * Renders the message.
 	 */
 	public void render() {
-		if (!hidden) {
-			if (font == null || fontInvalidated) {
-				getFont();
+
+		if (hidden) {
+			return;
+		}
+		if (font == null || fontInvalidated) {
+			getFont();
+		}
+
+		Matrix4 normalProjection =
+				new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
+										   Gdx.graphics.getHeight());
+
+		int spacing = 2 + (int) getmsgTextRenderResolution();
+		int yCoord = Gdx.graphics.getHeight() - spacing;
+		for (final Message m : this.messages) {
+			if (m.color != null) {
+				messageFont.setColor(m.color);
+			} else {
+				messageFont.setColor(Color.WHITE);
 			}
+			int startX = spacing;
+			int startY = yCoord;
+			parent.batch.drawMessage(
+					messageFont, m.message, startX, startY,
+					normalProjection, DEFAULT_Z);
+			yCoord -= spacing;
+		}
 
-			Matrix4 normalProjection =
-					new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
-											   Gdx.graphics.getHeight());
 
-			int spacing = 2 + (int) getmsgTextRenderResolution();
-			int yCoord = Gdx.graphics.getHeight() - spacing;
-			for (final Message m : this.messages) {
-				if (m.color != null) {
-					messageFont.setColor(m.color);
-				} else {
-					messageFont.setColor(Color.WHITE);
-				}
-				int startX = spacing;
-				int startY = yCoord;
-				parent.batch.drawMessage(
-						messageFont, m.message, startX, startY,
-						normalProjection, DEFAULT_Z);
-				yCoord -= spacing;
-			}
+		final float fullyTransparent = 0f;
+		for (final HUDMessage s : this.hudMessages.values()) {
+			Color targetColor = s.color.cpy();
 
-			for (final HUDMessage s : this.hudMessages.values()) {
-				Color targetColor = s.color.cpy();
+			float hideAt = textRenderResolution;
+			float showAt = textRenderResolution * 2;
+			if (parent.currentAssay.getDisplayOptions().getOption(
+					BDisplayOptions.HideTextOnZoom)) {
+				// Hide when zoomed out
 
-				float hideAt = textRenderResolution;
-				float showAt = textRenderResolution * 2;
-				if (parent.currentAssay.getDisplayOptions().getOption(
-						BDisplayOptions.HideTextOnZoom)) {
-					// Hide when zoomed out
-					if (this.parent.currentAssay.getScaleX() < hideAt) {
-						targetColor.a = 0;
-					} else if (this.parent.currentAssay.getScaleX() <
-							   showAt) {
-						float val = this.parent.currentAssay.getScaleX();
-						val = (val - hideAt) / (showAt - hideAt);
-						targetColor.a = val * getDefaultTextTransparency();
-					} else {
-						targetColor.a = getDefaultTextTransparency();
-					}
+
+				float xScale = this.parent.currentAssay.getScaleX();
+
+				if (xScale < hideAt) {
+					targetColor.a = fullyTransparent;
+				} else if (xScale < showAt) {
+					float val = xScale;
+					val = (val - hideAt) / (showAt - hideAt);
+					targetColor.a = val * getDefaultTextTransparency();
 				} else {
 					targetColor.a = getDefaultTextTransparency();
 				}
-
-				font.setColor(targetColor);
-
-				if (targetColor.a > 0) {
-
-					final GlyphLayout layout = new GlyphLayout(font, s.message);
-
-					final float fontX = s.x -
-							layout.width / 2f +
-							Gdx.graphics.getWidth() / 2f;
-					final float fontY = s.y +
-							layout.height / 2f +
-							Gdx.graphics.getHeight() / 2f;
-
-					parent.batch.drawMessage(font, layout, fontX, fontY,
-							normalProjection, DEFAULT_Z);
-				}
+			} else {
+				targetColor.a = getDefaultTextTransparency();
 			}
 
-			while (
-					!this.messages.isEmpty() &&
-					this.messages.get(0).expired()
-					) {
-				this.messages.remove(0);
+			font.setColor(targetColor);
+
+			if (targetColor.a > fullyTransparent) {
+
+				final GlyphLayout layout = new GlyphLayout(font, s
+						.message);
+
+				final float fontX = s.x -
+									layout.width / 2f +
+									Gdx.graphics.getWidth() / 2f;
+				final float fontY = s.y +
+									layout.height / 2f +
+									Gdx.graphics.getHeight() / 2f;
+
+				parent.batch.drawMessage(font, layout, fontX, fontY,
+										 normalProjection, DEFAULT_Z);
 			}
+		}
+
+		while (
+				!this.messages.isEmpty() &&
+				this.messages.get(0).expired()
+				) {
+			this.messages.remove(0);
 		}
 	}
 
@@ -379,15 +387,9 @@ public class MessageCenter {
 							  final float x, final float y,
 							  final Color col) {
 		HUDMessage hm;
-		if (!this.hudMessages.containsKey(key)) {
-			hm = new HUDMessage(message, x, y);
-			hudMessages.put(key, hm);
-		} else {
-			hm = hudMessages.get(key);
-			hm.message = message;
-			hm.x = x;
-			hm.y = y;
-		}
+		hm = new HUDMessage(message, x, y);
+		hudMessages.put(key, hm);
+
 		if (col != null) {
 			hm.color = col;
 		}
@@ -400,9 +402,7 @@ public class MessageCenter {
 	 * 		ID of the message to be removed.
 	 */
 	public void removeHUDMessage(final int key) {
-		if (this.hudMessages.containsKey(key)) {
-			this.hudMessages.remove(key);
-		}
+		this.hudMessages.remove(key);
 	}
 
 	/**
@@ -528,7 +528,8 @@ public class MessageCenter {
 	 * @param defaultTextTransparency
 	 * 		the new transparency value.
 	 */
-	public void setDefaultTextTransparency(final float defaultTextTransparency) {
+	public void setDefaultTextTransparency(
+			final float  defaultTextTransparency) {
 		this.defaultTextTransparency = defaultTextTransparency;
 		logger.debug("Default font transparency is now " +
 					 this.defaultTextTransparency);

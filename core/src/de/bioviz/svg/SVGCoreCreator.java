@@ -250,23 +250,11 @@ public class SVGCoreCreator {
 									   Color
 											   color) {
 
-		int x1 = 0;
-		if (dir.hasOrientation(Point.WEST)) {
-			x1 = 1;
-		}
-		int x2 = 0;
-		if (dir.hasOrientation(Point.EAST)) {
-			x2 = 1;
-		}
+		int x1 = dir.hasOrientation(Point.WEST) ? 1 : 0;
+		int x2 = dir.hasOrientation(Point.EAST) ? 1 : 0;
 
-		int y1 = 0;
-		if (dir.hasOrientation(Point.NORTH)) {
-			y1 = 1;
-		}
-		int y2 = 0;
-		if (dir.hasOrientation(Point.SOUTH)) {
-			y2 = 1;
-		};
+		int y1 = dir.hasOrientation(Point.NORTH) ? 1 : 0;
+		int y2 = dir.hasOrientation(Point.SOUTH) ? 1 : 0;
 
 		final int colorMult = 255;
 
@@ -449,8 +437,10 @@ public class SVGCoreCreator {
 								 final Color
 										 dropColor) {
 		final Color[] colors =
-				{SVGUtils.getLighterLongNetIndicatorColor(dropColor),
-						SVGUtils.getDarkerLongNetIndicatorColor(dropColor), };
+				{
+						SVGUtils.getLighterLongNetIndicatorColor(dropColor),
+						SVGUtils.getDarkerLongNetIndicatorColor(dropColor)
+				};
 		for (final Color color : colors) {
 			final String key = SVGUtils.generateColoredID("ArrowHead", color);
 			if (!svgs.containsKey(key)) {
