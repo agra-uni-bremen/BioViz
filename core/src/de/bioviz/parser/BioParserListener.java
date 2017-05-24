@@ -830,7 +830,7 @@ class BioParserListener extends BioBaseListener {
 			Direction dir = sink.snd;
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point sinkPoint = p.add(dirPoint);
-			Sink sinkField = new Sink(sinkPoint, dir, chip);
+			Sink sinkField = new Sink(sinkPoint, chip);
 			chip.addField(sinkField);
 		});
 
