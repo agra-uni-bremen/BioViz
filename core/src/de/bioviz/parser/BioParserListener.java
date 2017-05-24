@@ -844,7 +844,7 @@ class BioParserListener extends BioBaseListener {
 			Point dirPoint = Point.pointFromDirection(dir);
 			Point dispPoint = p.add(dirPoint);
 			Dispenser dispField =
-					new Dispenser(dispPoint, fluidID, dir, chip);
+					new Dispenser(dispPoint, fluidID, chip);
 			chip.addField( dispField);
 
 		});
