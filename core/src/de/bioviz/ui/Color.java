@@ -8,6 +8,7 @@ package de.bioviz.ui;
  *
  * @author Jannis Stoppe
  */
+@SuppressWarnings("checkstyle:visibilitymodifier")
 public class Color {
 
 	/**
@@ -138,6 +139,7 @@ public class Color {
 	 * 		alpha
 	 * @return this color for chaining operations
 	 */
+	@SuppressWarnings("checkstyle:hiddenfield")
 	public Color add(final float r,
 					 final float g,
 					 final float b,

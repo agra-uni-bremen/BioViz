@@ -37,7 +37,8 @@ public class BioViz implements ApplicationListener {
     public BioVizSpriteBatch batch;
 
 	/**
-     * Handles displaying of messages during interactive exploration of biochips.
+     * Handles displaying of messages during interactive
+     * exploration of biochips.
      */
     public MessageCenter messageCenter;
     public DrawableDroplet selectedDroplet;
@@ -303,8 +304,10 @@ public class BioViz implements ApplicationListener {
                 currentAssay = new DrawableAssay(new Biochip(), this);
             }
         } catch (final Exception e) {
-            logger.error("Error when parsing {}:\n{}", bioFile, e.getMessage
-                    ());
+            logger.error(
+                    "Error when parsing {}:\n{}",
+                    bioFile,
+                    e.getMessage());
         }
 
         // clear on screen messages as they would otherwise remain visible
@@ -437,7 +440,10 @@ public class BioViz implements ApplicationListener {
      */
     public FileHandle getApplicationIcon() {
         Random rnd = new Random();
-        int r = rnd.nextInt(3);
+
+        final int nIcons = 3;
+
+        int r = rnd.nextInt(nIcons);
         FileHandle handle;
         if (r == 0) {
             handle = textures.getFileHandle(TextureE.Droplet);
