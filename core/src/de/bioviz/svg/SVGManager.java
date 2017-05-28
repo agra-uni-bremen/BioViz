@@ -86,6 +86,19 @@ public class SVGManager {
 	private static final String FONT_COLOR_INFO_STRING =
 			SVGUtils.colorToSVG(Color.BLACK);
 
+	// often used svg parts
+	/**
+	 * Text anchor middle tag.
+	 */
+	private final String TEXT_ANCHOR_STR = "text-anchor=\"middle\" ";
+	/**
+	 * Font family tag.
+	 */
+	private final String FONT_FAMILY_STR = "font-family=\"";
+	/**
+	 * Font size tag.
+	 */
+	private final String FONT_SIZE_STR = "font-size=\"";
 
 	/**
 	 * svgCoreCreator.
@@ -672,11 +685,11 @@ public class SVGManager {
 	 * @return svg text element
 	 */
 	private String createMsg(final int x, final int y, final String message) {
-		return "<text text-anchor=\"middle\" " +
+		return "<text " + TEXT_ANCHOR_STR +
 				"x=\"" + (x + FONT_OFFSET_X) + "\" " +
 				"y=\"" + (y + FONT_OFFSET_Y) + "\" " +
-				"font-family=\"" + FONT + "\" " +
-				"font-size=\"" + FONT_SIZE + "\" " +
+				FONT_FAMILY_STR + FONT + "\" " +
+				FONT_SIZE_STR + FONT_SIZE + "\" " +
 				"fill=\"#" + FONT_COLOR +	"\">" + message +
 				"</text>\n";
 	}
@@ -819,7 +832,7 @@ public class SVGManager {
 		return "<text " + coordinates + "fill=\"" + FONT_COLOR_INFO_STRING +
 			   "\"" +
 			   " " +
-			   "font-family=\"" + FONT + "\" font-size=\"" +
+			   FONT_FAMILY_STR + FONT + "\" " + FONT_SIZE_STR +
 			   FONT_SIZE_INFO_STRING +
 			   "\">" +
 			   "Filename: " + circName + " Timestep: " + timeStep +
@@ -836,12 +849,12 @@ public class SVGManager {
 		int coordSize = FONT_SIZE_INFO_STRING;
 		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
 			 ++xCoord) {
-			coords.append("<text text-anchor=\"middle\" ");
+			coords.append(TEXT_ANCHOR_STR);
 			coords.append("x=\"" + (xCoord * COORDINATE_MULTIPLIER +
 									0.5 * COORDINATE_MULTIPLIER) + "\" ");
 			coords.append("y=\"" + (coordPos.snd - coordSize) + "\" ");
 			coords.append(
-					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
+					FONT_FAMILY_STR + FONT + "\"" + FONT_SIZE_STR + coordSize +
 					"\">");
 			coords.append(xCoord);
 			coords.append("</text>\n");
@@ -849,14 +862,14 @@ public class SVGManager {
 
 		for (int yCoord = topLeftCoord.snd; yCoord <= bottomRightCoord.snd;
 			 ++yCoord) {
-			coords.append("<text text-anchor=\"middle\" ");
+			coords.append("<text " + TEXT_ANCHOR_STR);
 			coords.append("y=\"" + ((bottomRightCoord.snd - yCoord) *
 									COORDINATE_MULTIPLIER +
 									0.5 * coordSize +
 									0.5 * COORDINATE_MULTIPLIER) + "\" ");
 			coords.append("x=\"" + (coordPos.fst - coordSize) + "\" ");
 			coords.append(
-					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
+					FONT_FAMILY_STR + FONT + "\"" + FONT_SIZE_STR + coordSize +
 					"\">");
 			coords.append(yCoord);
 			coords.append("</text>\n");
