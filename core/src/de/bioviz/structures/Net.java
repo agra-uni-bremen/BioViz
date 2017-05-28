@@ -69,9 +69,8 @@ public final class Net {
 	 * 		this net's sources
 	 * @param target
 	 * 		this net's droplets' common target
-	 * @param target
-	 * 		the rectangle describing the target
 	 */
+	@SuppressWarnings("checkstyle:magicnumber")
 	public Net(final List<Source> sources, final Rectangle target) {
 		this.target = target;
 		this.sources.addAll(sources);

@@ -3,8 +3,6 @@ package de.bioviz.structures;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static de.bioviz.structures.Resource.ResourceType.detector;
-
 
 /**
  * The abstraction of a field on a biochip.
@@ -140,7 +138,7 @@ public class BiochipField {
 
 	public void setHeater(final Heater heater) { resource = heater; }
 
-	public void setMagnet(final Magnet magnet) { resource = magnet;}
+	public void setMagnet(final Magnet magnet) { resource = magnet; }
 
 	/**
 	 * Checks whether there is a resources at this field.
@@ -346,7 +344,7 @@ public class BiochipField {
 	 * 		usage.
 	 * @return The usage of this field up to time step T.
 	 */
-	int computeUsage(int maxT) {
+	int computeUsage(final int maxT) {
 		usage = 0;
 		for (int t = 1; t <= maxT; t++) {
 			if (isActuated(t)) {

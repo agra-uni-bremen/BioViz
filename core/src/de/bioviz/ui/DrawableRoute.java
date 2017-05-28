@@ -1,10 +1,8 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
-import de.bioviz.util.Pair;
 
 /**
  * Class responsible for drawing the routes that droplets may follow.
@@ -130,21 +128,25 @@ public class DrawableRoute extends DrawableSprite {
 			float xCoord;
 			float yCoord;
 
+
+			// TODO @Jannis why do we add/sub .5 here?
+			final float half = 0.5f;
+
 			if (y1 == y2 && x2 > x1) {
-				xCoord = circ.xCoordOnScreen(x1 + 0.5f);
+				xCoord = circ.xCoordOnScreen(x1 + half);
 				yCoord = circ.yCoordOnScreen(y1);
 				setRotation(0);
 			} else if (y1 == y2 && x2 < x1) {
-				xCoord = circ.xCoordOnScreen(x1 - 0.5f);
+				xCoord = circ.xCoordOnScreen(x1 - half);
 				yCoord = circ.yCoordOnScreen(y1);
 				setRotation(180);
 			} else if (x1 == x2 && y2 > y1) {
 				xCoord = circ.xCoordOnScreen(x1);
-				yCoord = circ.yCoordOnScreen(y1 + 0.5f);
+				yCoord = circ.yCoordOnScreen(y1 + half);
 				setRotation(90);
 			} else if (x1 == x2 && y2 < y1) {
 				xCoord = circ.xCoordOnScreen(x1);
-				yCoord = circ.yCoordOnScreen(y1 - 0.5f);
+				yCoord = circ.yCoordOnScreen(y1 - half);
 				setRotation(270);
 			} else {
 				continue;

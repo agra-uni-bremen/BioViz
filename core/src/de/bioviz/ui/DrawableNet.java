@@ -16,9 +16,10 @@ import static de.bioviz.ui.BDisplayOptions.LongNetIndicatorsOnFields;
  *
  * @author Maximilian Luenert
  */
-public class DrawableNet extends DrawableSprite{
+public class DrawableNet extends DrawableSprite {
 
-	//private static Logger LOGGER = LoggerFactory.getLogger(DrawableNet.class);
+	//private static Logger LOGGER = LoggerFactory.getLogger(DrawableNet
+	// .class);
 
 	/**
 	 * Stores the net.
@@ -33,8 +34,10 @@ public class DrawableNet extends DrawableSprite{
 	/**
 	 * Creates a drawableNet for a given Net.
 	 *
-	 * @param net the net
-	 * @param parent the parent
+	 * @param net
+	 * 		the net
+	 * @param parent
+	 * 		the parent
 	 */
 	DrawableNet(final Net net, final DrawableAssay parent) {
 		super(TextureE.BlackPixel, parent.getParent());
@@ -45,36 +48,40 @@ public class DrawableNet extends DrawableSprite{
 	/**
 	 * Draws the lines if the corresponding displayOptions are selected.
 	 */
+	@Override
 	public void draw() {
 
-		if(parentAssay.getDisplayOptions()
+		if (parentAssay.getDisplayOptions()
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets)) {
 
 			// Search for all Droplets that
 			List<DrawableDroplet> netDroplets = new ArrayList<>();
 			parentAssay.getDroplets().stream().filter(
 					d -> net.containsDroplet(d.droplet)).
-					forEach(d -> netDroplets.add(d));
+					forEach(netDroplets::add);
 
-			if(!netDroplets.isEmpty()) {
-				for(DrawableDroplet droplet : netDroplets) {
+			if (!netDroplets.isEmpty()) {
+				for (final DrawableDroplet droplet : netDroplets) {
 					DrawableLine toTarget = new DrawableLine(droplet.viz);
 					DrawableLine fromSource = new DrawableLine(droplet.viz);
 
 					setForcedLOD(1f);
 					final Pair<Float, Float> targetPoint =
 							droplet.droplet.getNet().getTarget().centerFloat();
-					Vector2 target = new Vector2(targetPoint.fst, targetPoint.snd);
+					Vector2 target =
+							new Vector2(targetPoint.fst, targetPoint.snd);
 
 					// calculate source point
 					final Pair<Float, Float> sourcePoint =
 							droplet.droplet.getFirstPosition().centerFloat();
-					Vector2 source = new Vector2(sourcePoint.fst, sourcePoint.snd);
+					Vector2 source =
+							new Vector2(sourcePoint.fst, sourcePoint.snd);
 
 					// calculate current position
 					Vector2 current = new Vector2(
 							droplet.smoothX + (droplet.smoothWidth - 1f) / 2f,
-							droplet.smoothY - (droplet.smoothHeight - 1f) / 2f);
+							droplet.smoothY - (droplet.smoothHeight - 1f) /
+											  2f);
 
 					// draw line from droplet to target
 					toTarget.from = current;
@@ -93,8 +100,10 @@ public class DrawableNet extends DrawableSprite{
 			}
 		}
 
-		if (parentAssay.getDisplayOptions().getOption(LongNetIndicatorsOnFields)) {
-			DrawableLine netIndicator = new DrawableLine(parentAssay.getParent());
+		if (parentAssay.getDisplayOptions().getOption(
+				LongNetIndicatorsOnFields)) {
+			DrawableLine netIndicator =
+					new DrawableLine(parentAssay.getParent());
 			for (final Source s : net.getSources()) {
 				Pair<Float, Float> targetCenter =
 						net.getTarget().centerFloat();

@@ -151,8 +151,13 @@ public class TextureManager {
 		return baseFolder + "/" + textureFolder + "/" + texture + ".png";
 	}
 
-	public void dispose() {
-		for (TextureRegion tr : this.textures.values()) {
+	/**
+	 * Disposes all TextureRegions.
+	 *
+	 * All regions that are  stored in this.textures are disposed.
+	 */
+	void dispose() {
+		for (final TextureRegion tr : this.textures.values()) {
 			tr.getTexture().dispose();
 		}
 	}

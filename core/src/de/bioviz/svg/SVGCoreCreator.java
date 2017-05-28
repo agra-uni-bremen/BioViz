@@ -437,9 +437,10 @@ public class SVGCoreCreator {
 								 final Color
 										 dropColor) {
 		final Color[] colors =
-				{SVGUtils.getLighterLongNetIndicatorColor(dropColor)
-						, SVGUtils.getDarkerLongNetIndicatorColor(dropColor)
-						,};
+				{
+						SVGUtils.getLighterLongNetIndicatorColor(dropColor),
+						SVGUtils.getDarkerLongNetIndicatorColor(dropColor)
+				};
 		for (final Color color : colors) {
 			final String key = SVGUtils.generateColoredID("ArrowHead", color);
 			if (!svgs.containsKey(key)) {

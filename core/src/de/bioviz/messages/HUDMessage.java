@@ -10,12 +10,12 @@ public class HUDMessage extends MessageBase {
 	/**
 	 * The message's x-position.
 	 */
-	public float x;
+	public final float x;
 
 	/**
 	 * The messages's y-position.
 	 */
-	public float y;
+	public final float y;
 
 
 	/**

@@ -27,23 +27,23 @@ public class Resource {
 	 */
 	public enum ResourceType {
 		/**
-		 * Detector type
+		 * Detector type.
 		 */
 		detector,
 		/**
-		 * Heater type
+		 * Heater type.
 		 */
 		heater,
 		/**
-		 * Magnet type
+		 * Magnet type.
 		 */
 		magnet,
 		/**
-		 * Mixer type
+		 * Mixer type.
 		 */
 		mixer,
 		/**
-		 * AreaAnnotation type
+		 * AreaAnnotation type.
 		 */
 		areaAnnotation
 	}

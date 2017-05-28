@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 
 class BioVizInputProcessor implements InputProcessor {
 
-	/**
-	 * The internal logger.
-	 */
+
 	static Logger logger =
 			LoggerFactory.getLogger(BioVizInputProcessor.class);
 
@@ -45,7 +43,7 @@ class BioVizInputProcessor implements InputProcessor {
 	 */
 	private boolean alt;
 
-	public BioVizInputProcessor(final BioViz parentVisualization) {
+	BioVizInputProcessor(final BioViz parentVisualization) {
 		this.parentViz = parentVisualization;
 	}
 
@@ -117,8 +115,9 @@ class BioVizInputProcessor implements InputProcessor {
 
 	void toggleOptions(final int keycode) {
 		BDisplayOptions.findOption(keycode, ctrl, shift, alt).ifPresent(
-				it -> parentViz.currentAssay.getDisplayOptions().toggleOption
-						(it));
+				it -> parentViz
+						.currentAssay
+						.getDisplayOptions().toggleOption(it));
 	}
 
 	@Override
