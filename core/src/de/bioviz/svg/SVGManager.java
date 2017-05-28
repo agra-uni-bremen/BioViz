@@ -878,16 +878,16 @@ public class SVGManager {
 
 		// create all needed svg defs for the fields
 		for (final DrawableField f : assay.getFields()) {
-
 			svgCoreCreator.appendFieldSVG(svgs, f);
+		}
 
-			if (assay.getDisplayOptions().getOption(BDisplayOptions
-					.NetColorOnFields)) {
-				Set<Net> nets = assay.getData().getNetsOf(f.getField());
-				for (final Net n : nets) {
-					for (final GradDir dir : GradDir.values()) {
-						svgCoreCreator.appendGradSVG(svgs, n, dir);
-					}
+		// create gradients for every net if netColorOnFields is selected
+		if (assay.getDisplayOptions().getOption(BDisplayOptions
+				.NetColorOnFields)) {
+			Set<Net> nets = assay.getData().getNets();
+			for (final Net n : nets) {
+				for (final GradDir dir : GradDir.values()) {
+					svgCoreCreator.appendGradSVG(svgs, n, dir);
 				}
 			}
 		}
