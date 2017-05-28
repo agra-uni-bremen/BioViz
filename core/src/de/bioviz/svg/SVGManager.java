@@ -221,8 +221,8 @@ public class SVGManager {
 		Point minCoord = assay.getData().getMinCoord();
 		Point maxCoord = assay.getData().getMaxCoord();
 
-		LOGGER.trace("Min X: " + minCoord.fst + " Min Y: " + minCoord.snd);
-		LOGGER.trace("Max X: " + maxCoord.fst + " Max Y: " + maxCoord.snd);
+		LOGGER.trace("Min X: {} Min Y: {}", minCoord.fst, minCoord.snd);
+		LOGGER.trace("Max X: {} Max Y: {}", maxCoord.fst, maxCoord.snd);
 
 		int minX = minCoord.fst;
 		int minY = minCoord.snd;
