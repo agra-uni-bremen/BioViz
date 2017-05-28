@@ -768,11 +768,11 @@ public class SVGManager {
 		float y2 = end.snd;
 
 		// move startingPoint to the center of the field
-		x1 += COORDINATE_MULTIPLIER / 2;
-		y1 += COORDINATE_MULTIPLIER / 2;
+		x1 += COORDINATE_MULTIPLIER / 2.0;
+		y1 += COORDINATE_MULTIPLIER / 2.0;
 		// move endPoint to the center of the field
-		x2 += COORDINATE_MULTIPLIER / 2;
-		y2 += COORDINATE_MULTIPLIER / 2;
+		x2 += COORDINATE_MULTIPLIER / 2.0;
+		y2 += COORDINATE_MULTIPLIER / 2.0;
 
 		double length =
 				Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
