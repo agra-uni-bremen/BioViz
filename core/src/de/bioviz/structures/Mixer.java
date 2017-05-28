@@ -6,16 +6,18 @@ package de.bioviz.structures;
  *
  * @author Oliver Keszocze
  */
-public class Mixer extends Resource{
+public class Mixer extends Resource {
 
 	/**
 	 * The unique ID of the mixer.
 	 */
+	@SuppressWarnings("checkstyle:visibilitymodifier")
 	public final int id;
 
 	/**
 	 * Stores the timing information on this mixer.
 	 */
+	@SuppressWarnings("checkstyle:visibilitymodifier")
 	public final Range timing;
 
 	/**

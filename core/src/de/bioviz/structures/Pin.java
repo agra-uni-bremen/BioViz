@@ -13,6 +13,7 @@ public class Pin {
 	/**
 	 * The ID of the pin.
 	 */
+	@SuppressWarnings("checkstyle:visibilitymodifier")
 	public final int pinID;
 
 	/**

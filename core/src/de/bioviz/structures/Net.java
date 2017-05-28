@@ -70,6 +70,7 @@ public final class Net {
 	 * @param target
 	 * 		this net's droplets' common target
 	 */
+	@SuppressWarnings("checkstyle:magicnumber")
 	public Net(final List<Source> sources, final Rectangle target) {
 		this.target = target;
 		this.sources.addAll(sources);
@@ -80,13 +81,11 @@ public final class Net {
 		long lowerLeftX = (long) target.lowerLeft.fst;
 		long lowerLeftY = (long) target.lowerLeft.snd;
 
-		final long magicNumber = 65536;
 
-
-		long seed = ((upperRightX % magicNumber) << 48) |
-					((upperRightY % magicNumber) << 32) |
-					((lowerLeftX % magicNumber) << 16) |
-					(lowerLeftY % magicNumber);
+		long seed = ((upperRightX % 65536) << 48) |
+					((upperRightY % 65536) << 32) |
+					((lowerLeftX % 65536) << 16) |
+					(lowerLeftY % 65536);
 		rnd.setSeed(seed);
 
 		color = new Color(rnd.nextFloat(), rnd.nextFloat(), rnd.nextFloat(),

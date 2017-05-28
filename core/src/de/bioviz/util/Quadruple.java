@@ -20,21 +20,25 @@ public class Quadruple<F, S, T, L> {
 	/**
 	 * First stored data.
 	 */
+	@SuppressWarnings("checkstyle:visibilitymodifier")
 	public final F fst;
 
 	/**
 	 * Second stored data.
 	 */
+	@SuppressWarnings("checkstyle:visibilitymodifier")
 	public final S snd;
 
 	/**
 	 * Third stored data.
 	 */
+	@SuppressWarnings("checkstyle:visibilitymodifier")
 	public final T thd;
 
 	/**
 	 * Fourth stored data.
 	 */
+	@SuppressWarnings("checkstyle:visibilitymodifier")
 	public final L fth;
 
 	/**

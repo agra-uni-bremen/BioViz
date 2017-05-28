@@ -58,17 +58,20 @@ public class DrawableField extends DrawableSprite {
 	 */
 	public static final float PIXELIZED_ZOOM_LEVEL = 8;
 
-	/**
-	 * The underlying structure that is drawn by this {@link DrawableField}'s
-	 * instance.
-	 */
-	protected BiochipField field;
 
 	/**
 	 * Used to log anything related to the {@link DrawableField} activities.
 	 */
 	private static Logger logger = LoggerFactory.getLogger(DrawableField
 																   .class);
+
+	/**
+	 * The underlying structure that is drawn by this {@link DrawableField}'s
+	 * instance.
+	 */
+	protected BiochipField field;
+
+
 
 	/**
 	 * The circuit this field is a part of. This again links to the drawable
@@ -200,6 +203,7 @@ public class DrawableField extends DrawableSprite {
 					fieldHUDMsg = "0";
 					break;
 				case DONTCARE:
+				default:
 					fieldHUDMsg = "X";
 			}
 		}
@@ -216,7 +220,7 @@ public class DrawableField extends DrawableSprite {
 	 * 		The color that is to be adjusted by this method.
 	 * @return 1 if cell usage was used, 0 otherwise
 	 */
-	private int cellUsageColoring(de.bioviz.ui.Color result) {
+	private int cellUsageColoring(final de.bioviz.ui.Color result) {
 		if (getOption(CellUsage)) {
 			float scalingFactor = this.parentAssay.getData().getMaxUsage();
 			int usage = field.getUsage();
@@ -284,9 +288,9 @@ public class DrawableField extends DrawableSprite {
 				boolean fieldAtRight = parent.hasFieldAt(right);
 
 
-				boolean containsTop =
-						fieldAtTop && net.containsField(parent.getFieldAt
-								(top));
+				boolean containsTop = fieldAtTop
+									  && net.containsField(
+									  		parent.getFieldAt(top));
 				boolean containsBottom = fieldAtBottom &&
 										 net.containsField(
 												 parent.getFieldAt(bottom));
@@ -379,6 +383,7 @@ public class DrawableField extends DrawableSprite {
 					result.add(Colors.ACTUATION_OFF_COLOR);
 					break;
 				case DONTCARE:
+				default:
 					result.add(Colors.ACTUATION_DONTCARE_COLOR);
 			}
 			++colorOverlayCount;
@@ -427,7 +432,10 @@ public class DrawableField extends DrawableSprite {
 	 * 		The current time step.
 	 * @return The amount of new color overlays.
 	 */
-	private int typeColoring(de.bioviz.ui.Color result, final int timeStep) {
+	private int typeColoring(
+				final de.bioviz.ui.Color result,
+				final int timeStep) {
+
 		int colorOverlayCount = 0;
 		if (field instanceof Sink) {
 			result.add(Colors.SINK_COLOR);
@@ -449,7 +457,15 @@ public class DrawableField extends DrawableSprite {
 	}
 
 
-	private int reachableRegionColoring(de.bioviz.ui.Color result) {
+	/**
+	 * Colors the field based on reachability by droplets.
+	 *
+	 * @param result Return parameter storing the color that is computed after
+	 *               applying the reachability check.
+	 * @return 1 if the field can be reached within one time step by any
+	 * droplet, 0 otherwise.
+	 */
+	private int reachableRegionColoring(final de.bioviz.ui.Color result) {
 		int colorOverlayCount = 0;
 		if (getOption(MovementNeighbourhood)) {
 
@@ -462,7 +478,7 @@ public class DrawableField extends DrawableSprite {
 					dropsSet.stream().
 							map(d -> d.getPositionAt(t)).
 							filter(Objects::nonNull).
-							anyMatch(p->p.reachable(field.pos));
+							anyMatch(p -> p.reachable(field.pos));
 			if (fieldIsReachable) {
 				result.add(Colors.REACHABLE_FIELD_COLOR);
 				colorOverlayCount = 1;
@@ -479,10 +495,11 @@ public class DrawableField extends DrawableSprite {
 	 * 		The color that results from this method call.
 	 * @return The amount of color overlays produced by this method.
 	 */
-	private int inteferenceRegionColoring(de.bioviz.ui.Color result) {
+	private int inteferenceRegionColoring(final de.bioviz.ui.Color result) {
 		int colorOverlayCount = 0;
 
-		boolean isBlocked = getField().isBlocked(getParentAssay().getCurrentTime());
+		boolean isBlocked = getField().isBlocked(getParentAssay()
+														 .getCurrentTime());
 
 		/** Colours the interference region **/
 		if (getOption(InterferenceRegion)) {
