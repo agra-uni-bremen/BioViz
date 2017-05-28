@@ -90,15 +90,15 @@ public class SVGManager {
 	/**
 	 * Text anchor middle tag.
 	 */
-	private final String TEXT_ANCHOR_STR = "text-anchor=\"middle\" ";
+	private static final String TEXT_ANCHOR_STR = "text-anchor=\"middle\" ";
 	/**
 	 * Font family tag.
 	 */
-	private final String FONT_FAMILY_STR = "font-family=\"";
+	private static final String FONT_FAMILY_STR = "font-family=\"";
 	/**
 	 * Font size tag.
 	 */
-	private final String FONT_SIZE_STR = "font-size=\"";
+	private static final String FONT_SIZE_STR = "font-size=\"";
 
 	/**
 	 * svgCoreCreator.
