@@ -2,6 +2,7 @@ package de.bioviz.svg;
 
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.StringBuilder;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
@@ -512,24 +513,27 @@ public class SVGManager {
 				String position =
 						" x=\"" + targetX + "\" y=\"" + targetY + "\" ";
 				String widthHeight = " width=\"1\" height=\"1\" ";
-				String transFormParams = getScale();
+				StringBuilder transFormParams = new StringBuilder(getScale());
 				String opacity = " opacity=\"" + alpha + "\" ";
 				boolean app = true;
 
 				if (x1 < x2 && y1 == y2) {
 					//intentionally do nothing here
 				} else if (y1 == y2 && x2 < x1) {
-					transFormParams +=
+					transFormParams.append(
 							" rotate(180 " + targetX + " " +
-							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") ";
+							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") "
+					);
 				} else if (x1 == x2 && y2 > y1) {
-					transFormParams +=
+					transFormParams.append(
 							" rotate(90 " + targetX + " " +
-							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") ";
+							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") "
+					);
 				} else if (x1 == x2 && y2 < y1) {
-					transFormParams +=
+					transFormParams.append(
 							"rotate(270 " + targetX + " " +
-							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") ";
+							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") "
+					);
 				} else {
 					app = false;
 				}
@@ -541,7 +545,7 @@ public class SVGManager {
 					sb.append("<use");
 					sb.append(position);
 					sb.append(widthHeight);
-					sb.append(getTransformation(transFormParams));
+					sb.append(getTransformation(transFormParams.toString()));
 					sb.append(opacity);
 					sb.append("xlink:href=\"#" + routeID + "\"");
 					sb.append(" />\n");
@@ -561,7 +565,7 @@ public class SVGManager {
 	 */
 	private String createSourceTargetArrow(final Net net) {
 
-		String arrow = "";
+		StringBuilder arrow = new StringBuilder();
 
 		if (net != null) {
 			List<Source> startPoints = net.getSources();
@@ -572,12 +576,12 @@ public class SVGManager {
 				Pair<Float, Float> startPoint =
 						startSource.startPosition.centerFloat();
 				if (!startPoint.equals(endPoint)) {
-					arrow += createSVGArrow(startPoint, endPoint, arrowColor);
+					arrow.append(createSVGArrow(startPoint, endPoint, arrowColor));
 				}
 			}
 		}
 
-		return arrow;
+		return arrow.toString();
 	}
 
 	/**
@@ -591,7 +595,7 @@ public class SVGManager {
 
 		Net net = drawableDrop.droplet.getNet();
 
-		String arrows = "";
+		StringBuilder arrows = new StringBuilder();
 		if (net != null) {
 
 			int time = assay.getCurrentTime();
@@ -609,18 +613,18 @@ public class SVGManager {
 				Color arrowColor =
 						SVGUtils.getLighterLongNetIndicatorColor(dropColor);
 
-				arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
+				arrows.append(createSVGArrow(startPoint, dropletPos, arrowColor));
 			}
 
 			if (dropletPos != null && endPoint != null &&
 				!dropletPos.equals(endPoint)) {
 				Color arrowColor =
 						SVGUtils.getDarkerLongNetIndicatorColor(dropColor);
-				arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
+				arrows.append(createSVGArrow(dropletPos, endPoint, arrowColor));
 			}
 		}
 
-		return arrows;
+		return arrows.toString();
 	}
 
 	/**
@@ -632,11 +636,11 @@ public class SVGManager {
 	 */
 	private String createDropletMsg(final DrawableDroplet drawableDrop) {
 		Point dropPos = getDropletPosInSVGCoords(drawableDrop);
-		String msg = "";
+		StringBuilder msg = new StringBuilder();
 		if (drawableDrop.getMsg() != null) {
-			msg += createMsg(dropPos.fst, dropPos.snd, drawableDrop.getMsg());
+			msg.append(createMsg(dropPos.fst, dropPos.snd, drawableDrop.getMsg()));
 		}
-		return msg;
+		return msg.toString();
 	}
 
 	/**
@@ -652,11 +656,11 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
-		String fieldSvg = "";
+		StringBuilder fieldSvg = new StringBuilder();
 		if (vals.getMsg() != null) {
-			fieldSvg += createMsg(fieldPos.fst, fieldPos.snd, vals.getMsg());
+			fieldSvg.append(createMsg(fieldPos.fst, fieldPos.snd, vals.getMsg()));
 		}
-		return fieldSvg;
+		return fieldSvg.toString();
 	}
 
 	/**
@@ -685,13 +689,13 @@ public class SVGManager {
 	 * @return an svg rect string
 	 */
 	private String createGradient(final DrawableField field) {
-		String gradientSvg = "";
+		StringBuilder gradientSvg = new StringBuilder();
 
 		for (final Net n : assay.getData().getNetsOf(field.getField())) {
 			GradDir dir = getGradientDirection(field, n);
 			Point fieldPos = getFieldPosInSVGCoords(field);
 			if (dir != null) {
-				gradientSvg += "<rect x=\"" + (fieldPos.fst + 24) + "\" " +
+				gradientSvg.append("<rect x=\"" + (fieldPos.fst + 24) + "\" " +
 							   "y=\"" + (fieldPos.snd + 24) +
 							   "\" rx=\"24\" ry=\"24\" " +
 							   "height=\"208\" width=\"208\" fill=\"url(#" +
@@ -700,10 +704,10 @@ public class SVGManager {
 											   "Gradient-" + dir.toString(),
 											   SVGUtils.getNetColor(n)) +
 							   ")\" " +
-							   "/>\n";
+							   "/>\n");
 			}
 		}
-		return gradientSvg;
+		return gradientSvg.toString();
 	}
 
 	/**
