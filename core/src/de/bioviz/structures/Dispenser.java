@@ -10,10 +10,7 @@ public class Dispenser extends BiochipField {
 	 */
 	public final int fluidID;
 
-	/**
-	 * The direction the liquid is dispensed from.
-	 */
-	public final Direction direction;
+
 
 	/**
 	 * Creates a Dispenser on a biochip.
@@ -23,13 +20,11 @@ public class Dispenser extends BiochipField {
 	 *
 	 * @param pos The position to which droplet are dispensed
 	 * @param fluidID The fluid ID of the liquid that is dispensed.
-	 * @param dispenseFrom The direction from which the fluid is dispensed.
 	 * @param parent The biochip this dispenser belongs to.
 	 */
 	public Dispenser(final Point pos, final int fluidID,
-					 final Direction dispenseFrom, final Biochip parent) {
+					  final Biochip parent) {
 		super(pos, parent);
 		this.fluidID = fluidID;
-		this.direction = dispenseFrom;
 	}
 }

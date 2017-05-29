@@ -882,7 +882,7 @@ class BioParserListener extends BioBaseListener {
 				Validator.checkExternalResourcePositions(chip, sinks, true));
 		sinks.forEach(sink -> {
 			Point sinkPoint = sink.resourcePosition();
-			Sink sinkField = new Sink(sinkPoint, sink.dropletDirection, chip);
+			Sink sinkField = new Sink(sinkPoint, chip);
 			chip.addField(sinkField);
 		});
 
@@ -894,7 +894,6 @@ class BioParserListener extends BioBaseListener {
 			Dispenser dispField =
 					new Dispenser(dispPoint,
 								  dispenser.id.get(),
-								  dispenser.dropletDirection,
 								  chip);
 			chip.addField(dispField);
 
