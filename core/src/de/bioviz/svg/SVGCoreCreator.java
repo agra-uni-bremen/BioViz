@@ -43,6 +43,11 @@ class SVGCoreCreator {
 			LoggerFactory.getLogger(SVGCoreCreator.class);
 
 	/**
+	 * the length of the color string without alpha.
+	 */
+	private static final int COLOR_DIGITS = 6;
+
+	/**
 	 * path of the svg core folder.
 	 */
 	private String svgCoreFolder = "";
@@ -51,11 +56,6 @@ class SVGCoreCreator {
 	 * path of the image folder.
 	 */
 	private String baseFolder = "images";
-
-	/**
-	 * the length of the color string without alpha.
-	 */
-	private static final int COLOR_DIGITS = 6;
 
 	/**
 	 * Creates a new SVGCoreCreator.

@@ -71,9 +71,15 @@ public class SVGManager {
 	 */
 	private static final int FONT_SIZE_INFO_STRING = 100;
 
+	/**
+	 * Precalculated offset for font in y direction.
+	 */
 	private static final int FONT_OFFSET_Y = COORDINATE_MULTIPLIER / 2 +
 			(FONT_SIZE / 2) - 24;
 
+	/**
+	 * Precalculated offset for fonts in x direction.
+	 */
 	private static final int FONT_OFFSET_X = COORDINATE_MULTIPLIER / 2;
 
 	/**
