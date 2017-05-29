@@ -56,7 +56,7 @@ public class BioViz implements ApplicationListener {
      */
     private TextureManager textures;
     private HashMap<String, DrawableAssay> loadedBiochips;
-    private Vector<Drawable> drawables = new Vector<>();
+    private List<Drawable> drawables = new ArrayList<>();
 
 
     private File bioFile;
