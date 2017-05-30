@@ -171,6 +171,9 @@ class BioVizInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(final int x, final int y, final int pointer) {
+
+		final float minimalZoomFactor = 0.01f;
+
 		if (isMoving) {
 			parentViz.currentAssay.setOffsetX(
 					parentViz.currentAssay.getOffsetX() +
@@ -199,13 +202,13 @@ class BioVizInputProcessor implements InputProcessor {
 					float zoomFactorX = (float) zoomX / Math.abs(oldX - oldX2);
 					parentViz.currentAssay.setScaleX(
 							parentViz.currentAssay.getScaleX()
-							* Math.max(1 - zoomFactorX, 0.01f));
+							* Math.max(1 - zoomFactorX, minimalZoomFactor));
 				}
 				if (oldY - oldY2 != 0) {
 					float zoomFactorY = (float) zoomY / Math.abs(oldY - oldY2);
 					parentViz.currentAssay.setScaleY(
 							parentViz.currentAssay.getScaleY()
-							* Math.max(1 - zoomFactorY, 0.01f));
+							* Math.max(1 - zoomFactorY, minimalZoomFactor));
 				}
 			}
 		}
@@ -213,6 +216,7 @@ class BioVizInputProcessor implements InputProcessor {
 	}
 
 	@Override
+	// TODO @Jannis comment this ^^
 	public boolean scrolled(final int amount) {
 		float mouseAtWidth = (float) oldX / Gdx.graphics.getWidth();
 		float mouseAtHeight = (float) oldY / Gdx.graphics.getHeight();
