@@ -155,15 +155,6 @@ public class Point extends Pair<Integer, Integer> {
 			   (Math.abs(p1.fst - p2.fst) <= 1);
 	}
 
-	/**
-	 * Non-static wrapper for static adjacency function.
-	 *
-	 * @param p2
-	 * 		the other point to check for adjacency
-	 * @return whether or not the points are adjacent
-	 */
-	public boolean adjacent(final Point p2) {
-		return adjacent(this, p2);
-	}
+
 
 }
