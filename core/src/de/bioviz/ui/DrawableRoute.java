@@ -7,18 +7,12 @@ import de.bioviz.structures.Rectangle;
 /**
  * Class responsible for drawing the routes that droplets may follow.
  * <p/>
- * <p/>
  * Note that there is no corresponding class in the structure package. The
  * path's positions are computed by queyring the positions of the parent droplet
  * for each time step.
  */
 public class DrawableRoute extends DrawableSprite {
 
-	/**
-	 * Class-wide logging facility.
-	 */
-//	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
-//																   .class);
 
 	/**
 	 * Non magic number version for turning off transparency.
