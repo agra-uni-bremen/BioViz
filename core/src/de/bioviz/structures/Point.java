@@ -192,6 +192,18 @@ public class Point extends Pair<Integer, Integer> {
 	}
 
 	/**
+	 * Computes the position half way between two points.
+	 * @param from The position to start from.
+	 * @param to The position to end in.
+	 * @return The position half way between the two points.
+	 */
+	public static Pair<Float, Float> halfwayBetween(
+			final Point from, final Point to
+	) {
+		return lineBetween(from,to,0.5f);
+	}
+
+	/**
 	 * Computest the angle between the line between to points and the horizon.
 	 *
 	 * @param from
