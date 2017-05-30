@@ -2,6 +2,7 @@ package de.bioviz.svg;
 
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.StringBuilder;
 import de.bioviz.structures.Biochip;
 import de.bioviz.structures.Net;
 import de.bioviz.structures.Point;
@@ -64,11 +65,22 @@ public class SVGManager {
 	/**
 	 * the font size for text.
 	 */
-	private static final int FONT_SIZE = 90;
+	private static final int FONT_SIZE = 150;
 	/**
 	 * the font size for the info string.
 	 */
 	private static final int FONT_SIZE_INFO_STRING = 100;
+
+	/**
+	 * Precalculated offset for font in y direction.
+	 */
+	private static final int FONT_OFFSET_Y = COORDINATE_MULTIPLIER / 2 +
+			(FONT_SIZE / 2) - 24;
+
+	/**
+	 * Precalculated offset for fonts in x direction.
+	 */
+	private static final int FONT_OFFSET_X = COORDINATE_MULTIPLIER / 2;
 
 	/**
 	 * font color.
@@ -80,6 +92,19 @@ public class SVGManager {
 	private static final String FONT_COLOR_INFO_STRING =
 			SVGUtils.colorToSVG(Color.BLACK);
 
+	// often used svg parts
+	/**
+	 * Text anchor middle tag.
+	 */
+	private static final String TEXT_ANCHOR_STR = "text-anchor=\"middle\" ";
+	/**
+	 * Font family tag.
+	 */
+	private static final String FONT_FAMILY_STR = "font-family=\"";
+	/**
+	 * Font size tag.
+	 */
+	private static final String FONT_SIZE_STR = "font-size=\"";
 
 	/**
 	 * svgCoreCreator.
@@ -216,8 +241,8 @@ public class SVGManager {
 		Point minCoord = assay.getData().getMinCoord();
 		Point maxCoord = assay.getData().getMaxCoord();
 
-		LOGGER.trace("Min X: " + minCoord.fst + " Min Y: " + minCoord.snd);
-		LOGGER.trace("Max X: " + maxCoord.fst + " Max Y: " + maxCoord.snd);
+		LOGGER.trace("Min X: {} Min Y: {}", minCoord.fst, minCoord.snd);
+		LOGGER.trace("Max X: {} Max Y: {}", maxCoord.fst, maxCoord.snd);
 
 		int minX = minCoord.fst;
 		int minY = minCoord.snd;
@@ -507,24 +532,27 @@ public class SVGManager {
 				String position =
 						" x=\"" + targetX + "\" y=\"" + targetY + "\" ";
 				String widthHeight = " width=\"1\" height=\"1\" ";
-				String transFormParams = getScale();
+				StringBuilder transFormParams = new StringBuilder(getScale());
 				String opacity = " opacity=\"" + alpha + "\" ";
 				boolean app = true;
 
 				if (x1 < x2 && y1 == y2) {
 					//intentionally do nothing here
 				} else if (y1 == y2 && x2 < x1) {
-					transFormParams +=
+					transFormParams.append(
 							" rotate(180 " + targetX + " " +
-							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") ";
+							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") "
+					);
 				} else if (x1 == x2 && y2 > y1) {
-					transFormParams +=
+					transFormParams.append(
 							" rotate(90 " + targetX + " " +
-							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") ";
+							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") "
+					);
 				} else if (x1 == x2 && y2 < y1) {
-					transFormParams +=
+					transFormParams.append(
 							"rotate(270 " + targetX + " " +
-							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") ";
+							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") "
+					);
 				} else {
 					app = false;
 				}
@@ -536,7 +564,7 @@ public class SVGManager {
 					sb.append("<use");
 					sb.append(position);
 					sb.append(widthHeight);
-					sb.append(getTransformation(transFormParams));
+					sb.append(getTransformation(transFormParams.toString()));
 					sb.append(opacity);
 					sb.append("xlink:href=\"#" + routeID + "\"");
 					sb.append(" />\n");
@@ -556,7 +584,7 @@ public class SVGManager {
 	 */
 	private String createSourceTargetArrow(final Net net) {
 
-		String arrow = "";
+		StringBuilder arrow = new StringBuilder();
 
 		if (net != null) {
 			List<Source> startPoints = net.getSources();
@@ -567,12 +595,12 @@ public class SVGManager {
 				Pair<Float, Float> startPoint =
 						startSource.startPosition.centerFloat();
 				if (!startPoint.equals(endPoint)) {
-					arrow += createSVGArrow(startPoint, endPoint, arrowColor);
+					arrow.append(createSVGArrow(startPoint, endPoint, arrowColor));
 				}
 			}
 		}
 
-		return arrow;
+		return arrow.toString();
 	}
 
 	/**
@@ -586,7 +614,7 @@ public class SVGManager {
 
 		Net net = drawableDrop.droplet.getNet();
 
-		String arrows = "";
+		StringBuilder arrows = new StringBuilder();
 		if (net != null) {
 
 			int time = assay.getCurrentTime();
@@ -604,18 +632,18 @@ public class SVGManager {
 				Color arrowColor =
 						SVGUtils.getLighterLongNetIndicatorColor(dropColor);
 
-				arrows += createSVGArrow(startPoint, dropletPos, arrowColor);
+				arrows.append(createSVGArrow(startPoint, dropletPos, arrowColor));
 			}
 
 			if (dropletPos != null && endPoint != null &&
 				!dropletPos.equals(endPoint)) {
 				Color arrowColor =
 						SVGUtils.getDarkerLongNetIndicatorColor(dropColor);
-				arrows += createSVGArrow(dropletPos, endPoint, arrowColor);
+				arrows.append(createSVGArrow(dropletPos, endPoint, arrowColor));
 			}
 		}
 
-		return arrows;
+		return arrows.toString();
 	}
 
 	/**
@@ -627,19 +655,11 @@ public class SVGManager {
 	 */
 	private String createDropletMsg(final DrawableDroplet drawableDrop) {
 		Point dropPos = getDropletPosInSVGCoords(drawableDrop);
-		String msg = "";
+		StringBuilder msg = new StringBuilder();
 		if (drawableDrop.getMsg() != null) {
-			msg += "<text text-anchor=\"middle\" " +
-				   "x=\"" + (dropPos.fst + COORDINATE_MULTIPLIER / 2) + "\" " +
-				   "y=\"" + (dropPos.snd + COORDINATE_MULTIPLIER / 2 +
-							 (FONT_SIZE / 2)) +
-				   "\" " +
-				   "font-family=\"" + FONT + "\" font-size=\"" + FONT_SIZE +
-				   "\" " +
-				   "fill=\"#" + FONT_COLOR + "\">" + drawableDrop.getMsg() +
-				   "</text>\n";
+			msg.append(createMsg(dropPos.fst, dropPos.snd, drawableDrop.getMsg()));
 		}
-		return msg;
+		return msg.toString();
 	}
 
 	/**
@@ -655,19 +675,29 @@ public class SVGManager {
 		DisplayValues vals = field.getDisplayValues();
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
-		String fieldSvg = "";
+		StringBuilder fieldSvg = new StringBuilder();
 		if (vals.getMsg() != null) {
-			fieldSvg += "<text text-anchor=\"middle\" x=\"" +
-						(fieldPos.fst + COORDINATE_MULTIPLIER / 2) + "\" " +
-						"y=\"" +
-						(fieldPos.snd + COORDINATE_MULTIPLIER / 2 +
-						 (FONT_SIZE / 2)) +
-						"\" font-family=\"" + FONT + "\" font-size=\"" +
-						FONT_SIZE +
-						"\" fill=\"#" + FONT_COLOR + "\">" + vals.getMsg() +
-						"</text>\n";
+			fieldSvg.append(createMsg(fieldPos.fst, fieldPos.snd, vals.getMsg()));
 		}
-		return fieldSvg;
+		return fieldSvg.toString();
+	}
+
+	/**
+	 * Creates an svg text field at the given position with the given message.
+	 *
+	 * @param x x position of the text
+	 * @param y y position of the text
+	 * @param message the text to print
+	 * @return svg text element
+	 */
+	private String createMsg(final int x, final int y, final String message) {
+		return "<text " + TEXT_ANCHOR_STR +
+				"x=\"" + (x + FONT_OFFSET_X) + "\" " +
+				"y=\"" + (y + FONT_OFFSET_Y) + "\" " +
+				FONT_FAMILY_STR + FONT + "\" " +
+				FONT_SIZE_STR + FONT_SIZE + "\" " +
+				"fill=\"#" + FONT_COLOR +	"\">" + message +
+				"</text>\n";
 	}
 
 	/**
@@ -678,13 +708,13 @@ public class SVGManager {
 	 * @return an svg rect string
 	 */
 	private String createGradient(final DrawableField field) {
-		String gradientSvg = "";
+		StringBuilder gradientSvg = new StringBuilder();
 
 		for (final Net n : assay.getData().getNetsOf(field.getField())) {
 			GradDir dir = getGradientDirection(field, n);
 			Point fieldPos = getFieldPosInSVGCoords(field);
 			if (dir != null) {
-				gradientSvg += "<rect x=\"" + (fieldPos.fst + 24) + "\" " +
+				gradientSvg.append("<rect x=\"" + (fieldPos.fst + 24) + "\" " +
 							   "y=\"" + (fieldPos.snd + 24) +
 							   "\" rx=\"24\" ry=\"24\" " +
 							   "height=\"208\" width=\"208\" fill=\"url(#" +
@@ -693,10 +723,10 @@ public class SVGManager {
 											   "Gradient-" + dir.toString(),
 											   SVGUtils.getNetColor(n)) +
 							   ")\" " +
-							   "/>\n";
+							   "/>\n");
 			}
 		}
-		return gradientSvg;
+		return gradientSvg.toString();
 	}
 
 	/**
@@ -757,11 +787,11 @@ public class SVGManager {
 		float y2 = end.snd;
 
 		// move startingPoint to the center of the field
-		x1 += COORDINATE_MULTIPLIER / 2;
-		y1 += COORDINATE_MULTIPLIER / 2;
+		x1 += COORDINATE_MULTIPLIER / 2.0;
+		y1 += COORDINATE_MULTIPLIER / 2.0;
 		// move endPoint to the center of the field
-		x2 += COORDINATE_MULTIPLIER / 2;
-		y2 += COORDINATE_MULTIPLIER / 2;
+		x2 += COORDINATE_MULTIPLIER / 2.0;
+		y2 += COORDINATE_MULTIPLIER / 2.0;
 
 		double length =
 				Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -808,7 +838,7 @@ public class SVGManager {
 		return "<text " + coordinates + "fill=\"" + FONT_COLOR_INFO_STRING +
 			   "\"" +
 			   " " +
-			   "font-family=\"" + FONT + "\" font-size=\"" +
+			   FONT_FAMILY_STR + FONT + "\" " + FONT_SIZE_STR +
 			   FONT_SIZE_INFO_STRING +
 			   "\">" +
 			   "Filename: " + circName + " Timestep: " + timeStep +
@@ -825,12 +855,12 @@ public class SVGManager {
 		int coordSize = FONT_SIZE_INFO_STRING;
 		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
 			 ++xCoord) {
-			coords.append("<text text-anchor=\"middle\" ");
+			coords.append(TEXT_ANCHOR_STR);
 			coords.append("x=\"" + (xCoord * COORDINATE_MULTIPLIER +
 									0.5 * COORDINATE_MULTIPLIER) + "\" ");
 			coords.append("y=\"" + (coordPos.snd - coordSize) + "\" ");
 			coords.append(
-					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
+					FONT_FAMILY_STR + FONT + "\"" + FONT_SIZE_STR + coordSize +
 					"\">");
 			coords.append(xCoord);
 			coords.append("</text>\n");
@@ -838,14 +868,14 @@ public class SVGManager {
 
 		for (int yCoord = topLeftCoord.snd; yCoord <= bottomRightCoord.snd;
 			 ++yCoord) {
-			coords.append("<text text-anchor=\"middle\" ");
+			coords.append("<text " + TEXT_ANCHOR_STR);
 			coords.append("y=\"" + ((bottomRightCoord.snd - yCoord) *
 									COORDINATE_MULTIPLIER +
 									0.5 * coordSize +
 									0.5 * COORDINATE_MULTIPLIER) + "\" ");
 			coords.append("x=\"" + (coordPos.fst - coordSize) + "\" ");
 			coords.append(
-					"font-family=\"" + FONT + "\" font-size=\"" + coordSize +
+					FONT_FAMILY_STR + FONT + "\"" + FONT_SIZE_STR + coordSize +
 					"\">");
 			coords.append(yCoord);
 			coords.append("</text>\n");
@@ -871,16 +901,16 @@ public class SVGManager {
 
 		// create all needed svg defs for the fields
 		for (final DrawableField f : assay.getFields()) {
-
 			svgCoreCreator.appendFieldSVG(svgs, f);
+		}
 
-			if (assay.getDisplayOptions().getOption(BDisplayOptions
-					.NetColorOnFields)) {
-				Set<Net> nets = assay.getData().getNetsOf(f.getField());
-				for (final Net n : nets) {
-					for (final GradDir dir : GradDir.values()) {
-						svgCoreCreator.appendGradSVG(svgs, n, dir);
-					}
+		// create gradients for every net if netColorOnFields is selected
+		if (assay.getDisplayOptions().getOption(BDisplayOptions
+				.NetColorOnFields)) {
+			Set<Net> nets = assay.getData().getNets();
+			for (final Net n : nets) {
+				for (final GradDir dir : GradDir.values()) {
+					svgCoreCreator.appendGradSVG(svgs, n, dir);
 				}
 			}
 		}
