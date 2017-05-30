@@ -13,7 +13,6 @@ import de.bioviz.svg.SVGExportSettings;
 import de.bioviz.ui.BDisplayOptions;
 import de.bioviz.ui.BioViz;
 import de.bioviz.ui.BioVizEvent;
-import de.bioviz.ui.DrawableRoute;
 import de.bioviz.util.BioVizInfo;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -429,7 +428,7 @@ public class DesktopLauncher extends JFrame {
 
 
 		displayRouteLengthSlider =
-				new JSlider(JSlider.HORIZONTAL, 0, routeLengthMax,0);
+				new JSlider(JSlider.HORIZONTAL, 0, routeLengthMax, 0);
 		displayRouteLengthSlider.setPreferredSize(
 				new Dimension(sliderWidth, sliderHeight));
 		displayRouteLengthSlider.addChangeListener(
@@ -447,7 +446,7 @@ public class DesktopLauncher extends JFrame {
 		JButton editorButton = new JButton("Editor");
 		editorButton.setPreferredSize(new Dimension(buttonWidth,
 				editorButton.getPreferredSize().height));
-		editorButton.addActionListener(e ->  editor.show() );
+		editorButton.addActionListener(e ->  editor.show());
 
 		JButton annotationsButton = new JButton("Annotations");
 		annotationsButton.setPreferredSize(new Dimension(buttonWidth,
@@ -831,8 +830,11 @@ public class DesktopLauncher extends JFrame {
 
 					try {
 						// Set System L&F
-						for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-							if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {
+						for (final javax.swing.UIManager.LookAndFeelInfo info :
+								javax.swing.UIManager.getInstalledLookAndFeels()) {
+							if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".
+									equals(info.getClassName())) {
+
 								javax.swing.UIManager.setLookAndFeel(info.getClassName());
 								break;
 							}
@@ -1531,7 +1533,7 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Empty constructor, does nothing.
 		 */
-		public SaveFileCallback() {
+		SaveFileCallback() {
 		}
 
 		/**
