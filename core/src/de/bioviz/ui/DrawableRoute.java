@@ -62,7 +62,7 @@ public class DrawableRoute extends DrawableSprite {
 		return c;
 	}
 
-	@Override
+
 	/**
 	 * Actually draws the route on the canvas.
 	 *
@@ -70,6 +70,7 @@ public class DrawableRoute extends DrawableSprite {
 	 * steps in time you go backwards and/or forward), the color of the route
 	 * and the transparency.
 	 */
+	@Override
 	public void draw() {
 
 
