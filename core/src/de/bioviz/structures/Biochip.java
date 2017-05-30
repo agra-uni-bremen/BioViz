@@ -622,8 +622,7 @@ public class Biochip {
 	public void addField(final BiochipField biochipField) {
 		Point coords = new Point(biochipField.x(), biochipField.y());
 		if (this.field.containsKey(coords)) {
-			logger.trace("Field added twice at " + coords +
-						 ", removed older instance");
+			logger.trace("Field added twice at {} removed older instance", coords);
 		}
 		this.field.put(coords, biochipField);
 	}

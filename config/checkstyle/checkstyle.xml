@@ -93,11 +93,14 @@
         <module name="JavadocType"/>
         <module name="JavadocVariable"/>
         <module name="JavadocStyle"/>
+				<module name="JavadocVariable">
+          <property name="tokens" value="VARIABLE_DEF"/>
+        </module>
 
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
-        <module name="ConstantName"/>
+        <!--<module name="ConstantName"/>-->
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
         <module name="MemberName"/>
@@ -203,9 +206,9 @@
 
         <!-- I quote "Rationale: Some developers find inline conditionals hard to read, so their
         employer's coding standards forbid them." :D -->
-        <module name="AvoidInlineConditionals">
+        <!--<module name="AvoidInlineConditionals">
             <property name="severity" value="warning"/>
-        </module>
+        </module>-->
         <!-- Make sure that there is an FooClass.equals(Object o) method (if equals is overridden).
         The point is that people tend to implement FooClass.equals(FooClass f) only -->
         <module name="CovariantEquals"/>

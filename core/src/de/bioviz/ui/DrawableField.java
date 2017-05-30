@@ -568,7 +568,7 @@ public class DrawableField extends DrawableSprite {
 		super.draw();
 
 		// show the first annotation for this field
-		if (isHovered() && field.areaAnnotations.size() > 0) {
+		if (isHovered() && !field.areaAnnotations.isEmpty()) {
 			displayText(field.areaAnnotations.get(0).getAnnotation());
 		}
 

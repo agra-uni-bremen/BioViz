@@ -7,18 +7,12 @@ import de.bioviz.structures.Rectangle;
 /**
  * Class responsible for drawing the routes that droplets may follow.
  * <p/>
- * <p/>
  * Note that there is no corresponding class in the structure package. The
  * path's positions are computed by queyring the positions of the parent droplet
  * for each time step.
  */
 public class DrawableRoute extends DrawableSprite {
 
-	/**
-	 * Class-wide logging facility.
-	 */
-//	private static Logger logger = LoggerFactory.getLogger(DrawableRoute
-//																   .class);
 
 	/**
 	 * Non magic number version for turning off transparency.
@@ -68,7 +62,7 @@ public class DrawableRoute extends DrawableSprite {
 		return c;
 	}
 
-	@Override
+
 	/**
 	 * Actually draws the route on the canvas.
 	 *
@@ -76,6 +70,7 @@ public class DrawableRoute extends DrawableSprite {
 	 * steps in time you go backwards and/or forward), the color of the route
 	 * and the transparency.
 	 */
+	@Override
 	public void draw() {
 
 
@@ -113,44 +108,53 @@ public class DrawableRoute extends DrawableSprite {
 
 
 			displayAt = currentTime + i;
-			Rectangle r1 = droplet.droplet.getSafePositionAt(displayAt);
-			Rectangle r2 = droplet.droplet.getSafePositionAt(displayAt + 1);
+			final Rectangle r1 = droplet.droplet.getSafePositionAt(displayAt);
+			final Rectangle r2 =
+					droplet.droplet.getSafePositionAt(displayAt + 1);
 
-			Point p1 = r1.upperLeft();
-			Point p2 = r2.upperLeft();
-
-
-			int x1 = p1.fst;
-			int x2 = p2.fst;
-			int y1 = p1.snd;
-			int y2 = p2.snd;
-
-			float xCoord;
-			float yCoord;
-
-
-			// TODO @Jannis why do we add/sub .5 here?
-			final float half = 0.5f;
-
-			if (y1 == y2 && x2 > x1) {
-				xCoord = circ.xCoordOnScreen(x1 + half);
-				yCoord = circ.yCoordOnScreen(y1);
-				setRotation(0);
-			} else if (y1 == y2 && x2 < x1) {
-				xCoord = circ.xCoordOnScreen(x1 - half);
-				yCoord = circ.yCoordOnScreen(y1);
-				setRotation(180);
-			} else if (x1 == x2 && y2 > y1) {
-				xCoord = circ.xCoordOnScreen(x1);
-				yCoord = circ.yCoordOnScreen(y1 + half);
-				setRotation(90);
-			} else if (x1 == x2 && y2 < y1) {
-				xCoord = circ.xCoordOnScreen(x1);
-				yCoord = circ.yCoordOnScreen(y1 - half);
-				setRotation(270);
-			} else {
+			/*
+			The first and last steps of the
+			 */
+			if (r1.equals(r2)) {
 				continue;
 			}
+
+			final Point p1 = r1.upperLeft();
+			final Point p2 = r2.upperLeft();
+
+			final int x1 = p1.fst;
+			final int x2 = p2.fst;
+			final int y1 = p1.snd;
+			final int y2 = p2.snd;
+
+
+
+			/*
+			The routes are drawn by placing the arrow halfway between the two
+			adjacent cells and then rotating it until it faces the correct
+			direction.
+
+			The position to place the arrow on is determined by computing the
+			line between the two centers of the cells and then halving it.
+			 */
+
+			final float halfWayX = (x1 + x2) / 2f;
+			final float halfWayY = (y1 + y2) / 2f;
+
+			final float xCoord = circ.xCoordOnScreen(halfWayX);
+			final float yCoord = circ.yCoordOnScreen(halfWayY);
+
+
+			// the angle is set according to the relative positions of the cell
+			// centers that are the source and target of the arrow.
+			int rotationAngle = 0;
+			if (y1 == y2) {
+				rotationAngle = x2 > x1 ? 0 : 180;
+
+			} else if (x1 == x2) {
+				rotationAngle = y2 > y1 ? 90 : 270;
+			}
+			setRotation(rotationAngle);
 
 			setX(xCoord);
 			setY(yCoord);
