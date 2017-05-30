@@ -1,3 +1,6 @@
+## Credentials for sonarqube
+creds.gradle
+
 ## Java
 
 *.class

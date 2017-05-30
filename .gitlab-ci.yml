@@ -14,11 +14,11 @@ checkstyle:
   script:
     - ./executeCheckstyleTest.sh
 
-sonar:
-  tags:
-    - docker
-    - linux
-  script:
-    - gradle sonar
-  only:
-      - master
+      #sonar:
+      # tags:
+      # - docker
+      # - linux
+      # script:
+      #- gradle sonar
+      #only:
+      #- master
