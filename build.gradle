@@ -14,8 +14,6 @@ buildscript {
 plugins{
   id "org.sonarqube" version "2.4"
 }
- 
-
 
 allprojects {
     apply plugin: "eclipse"
@@ -67,6 +65,8 @@ allprojects {
         property "sonar.language", "java"
         // Encoding of the source files
         property "sonar.sourceEncoding", "UTF-8"
+
+        property "sonar.host.url", "https://maxluenert.de/sonar"
       }
     }
 
@@ -74,4 +74,10 @@ allprojects {
 
 tasks.eclipse.doLast {
     delete ".project"
+}
+
+tasks.sonarqube.doFirst {
+  if(file("creds.gradle").exists()){
+    apply from: 'creds.gradle'
+  }
 }
