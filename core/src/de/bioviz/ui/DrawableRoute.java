@@ -3,6 +3,7 @@ package de.bioviz.ui;
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
+import de.bioviz.util.Pair;
 
 /**
  * Class responsible for drawing the routes that droplets may follow.
@@ -112,20 +113,13 @@ public class DrawableRoute extends DrawableSprite {
 			final Rectangle r2 =
 					droplet.droplet.getSafePositionAt(displayAt + 1);
 
-			/*
-			The first and last steps of the
-			 */
+
 			if (r1.equals(r2)) {
 				continue;
 			}
 
 			final Point p1 = r1.upperLeft();
 			final Point p2 = r2.upperLeft();
-
-			final int x1 = p1.fst;
-			final int x2 = p2.fst;
-			final int y1 = p1.snd;
-			final int y2 = p2.snd;
 
 
 
@@ -138,22 +132,14 @@ public class DrawableRoute extends DrawableSprite {
 			line between the two centers of the cells and then halving it.
 			 */
 
-			final float halfWayX = (x1 + x2) / 2f;
-			final float halfWayY = (y1 + y2) / 2f;
-
-			final float xCoord = circ.xCoordOnScreen(halfWayX);
-			final float yCoord = circ.yCoordOnScreen(halfWayY);
+			final Pair<Float, Float> halfWay = Point.halfwayBetween(p1,p2);
+			final float xCoord = circ.xCoordOnScreen(halfWay.fst);
+			final float yCoord = circ.yCoordOnScreen(halfWay.snd);
 
 
 			// the angle is set according to the relative positions of the cell
 			// centers that are the source and target of the arrow.
-			int rotationAngle = 0;
-			if (y1 == y2) {
-				rotationAngle = x2 > x1 ? 0 : 180;
-
-			} else if (x1 == x2) {
-				rotationAngle = y2 > y1 ? 90 : 270;
-			}
+			float rotationAngle = Point.angleOfLineBetween(p1,p2);
 			setRotation(rotationAngle);
 
 			setX(xCoord);
