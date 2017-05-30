@@ -231,7 +231,16 @@ public class Point extends Pair<Integer, Integer> {
 
 		final float slope = yDiff / (float) xDiff;
 
-		return (float) Math.toDegrees(Math.atan(slope));
+		float angle = (float) Math.toDegrees(Math.atan(slope));
+
+		// we only have angles between +90° and -90°, for the other cases we
+		// need to add 180°
+
+		if (xDiff < 0) {
+			angle += 180;
+		}
+
+		return angle;
 
 	}
 
