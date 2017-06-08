@@ -20,7 +20,25 @@ import de.bioviz.parser.generated.Bio.TimeConstraintContext;
 import de.bioviz.parser.generated.Bio.TimeRangeContext;
 import de.bioviz.parser.generated.Bio.TimingContext;
 import de.bioviz.parser.generated.BioBaseListener;
-import de.bioviz.structures.*;
+import de.bioviz.structures.ActuationVector;
+import de.bioviz.structures.AreaAnnotation;
+import de.bioviz.structures.Biochip;
+import de.bioviz.structures.BiochipField;
+import de.bioviz.structures.Detector;
+import de.bioviz.structures.Direction;
+import de.bioviz.structures.Dispenser;
+import de.bioviz.structures.Droplet;
+import de.bioviz.structures.FluidicConstraintViolation;
+import de.bioviz.structures.Heater;
+import de.bioviz.structures.Magnet;
+import de.bioviz.structures.Mixer;
+import de.bioviz.structures.Net;
+import de.bioviz.structures.Pin;
+import de.bioviz.structures.Point;
+import de.bioviz.structures.Range;
+import de.bioviz.structures.Rectangle;
+import de.bioviz.structures.Sink;
+import de.bioviz.structures.Source;
 import de.bioviz.util.Pair;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -182,7 +200,8 @@ class BioParserListener extends BioBaseListener {
 	/**
 	 * Parses the given TimeConstraintContext.
 	 *
-	 * @param ctx The TimeConstraintContext
+	 * @param ctx
+	 * 		The TimeConstraintContext
 	 * @return int value of the timeConstraint
 	 */
 	private int getTimeConstraint(final TimeConstraintContext ctx) {
@@ -192,7 +211,8 @@ class BioParserListener extends BioBaseListener {
 	/**
 	 * Parses a given PositionContext.
 	 *
-	 * @param ctx The positionContext
+	 * @param ctx
+	 * 		The positionContext
 	 * @return Point object for the position
 	 */
 	private Point getPosition(final PositionContext ctx) {
@@ -203,14 +223,16 @@ class BioParserListener extends BioBaseListener {
 
 	/**
 	 * This gets an ID for Droplets, Fluids, Mixers and Pins.
-	 *
+	 * <p>
 	 * The parameters should be of Type FluidIDContext, DropletIDContext,
 	 * MixerIDContext or PinIDContext, otherwise an IllegalArgumentException is
 	 * thrown.
 	 *
-	 * @param ctx the context
-	 * @throws IllegalArgumentException if the type is wrong
+	 * @param ctx
+	 * 		the context
 	 * @return the ID as int
+	 * @throws IllegalArgumentException
+	 * 		if the type is wrong
 	 */
 	private int getID(final ParserRuleContext ctx) {
 		if (ctx == null) {
@@ -273,7 +295,7 @@ class BioParserListener extends BioBaseListener {
 		Pair<Point, Direction> dispenser = getIOPort(ctx.ioport());
 		if (dispenser != null) {
 			updateMaxDimension(dispenser.fst);
-			dispensers.add(new SimpleExternalResource(dispenser,fluidID));
+			dispensers.add(new SimpleExternalResource(dispenser, fluidID));
 		} else {
 			logger.error("Skipping definition of dispenser");
 		}
@@ -428,7 +450,7 @@ class BioParserListener extends BioBaseListener {
 	 * 		The MagnetContext.
 	 */
 	@Override
-	public void enterMagnet(@NotNull final  Bio.MagnetContext ctx) {
+	public void enterMagnet(@NotNull final Bio.MagnetContext ctx) {
 		List<Bio.PositionContext> positions = ctx.position();
 
 		Rectangle position = extractRectangle(positions);
@@ -445,7 +467,7 @@ class BioParserListener extends BioBaseListener {
 	 * 		The HeaterContext.
 	 */
 	@Override
-	public void enterHeater(@NotNull final  Bio.HeaterContext ctx) {
+	public void enterHeater(@NotNull final Bio.HeaterContext ctx) {
 
 		List<Bio.PositionContext> positions = ctx.position();
 
@@ -839,7 +861,7 @@ class BioParserListener extends BioBaseListener {
 					new Dispenser(dispPoint,
 								  dispenser.id.get(),
 								  chip);
-			chip.addField( dispField);
+			chip.addField(dispField);
 
 		});
 
@@ -946,14 +968,13 @@ class BioParserListener extends BioBaseListener {
 
 		chip.areaAnnotations.addAll(this.areaAnnotations);
 		areaAnnotations.forEach(
-				a ->
-						a.position.positions().forEach(
-								pos -> {
-									logger.trace(
-											"Adding areaAnnotation {} to " +
-											"field {}", a, pos);
-									chip.getFieldAt(pos).areaAnnotations.add(a);
-								})
+				a ->a.position.positions().forEach(
+					pos -> {
+						logger.trace(
+							"Adding areaAnnotation {} to " +
+							"field {}", a, pos);
+							chip.getFieldAt(pos).areaAnnotations.add(a);
+					})
 		);
 
 		Set<FluidicConstraintViolation> badFields =

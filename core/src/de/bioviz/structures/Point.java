@@ -66,10 +66,10 @@ public class Point extends Pair<Integer, Integer> {
 	 * .com/a/26981910
 	 */
 	@Override
+	@SuppressWarnings("checkstyle:magicnumber")
 	public int hashCode() {
 		return (fst << 16) + snd;
 	}
-
 
 
 	/**
@@ -89,7 +89,7 @@ public class Point extends Pair<Integer, Integer> {
 
 	/**
 	 * Creates a Point object pointing in the specified direction.
-	 *
+	 * <p>
 	 * This is a very weird way of performing some kind of typecast.
 	 *
 	 * @param dir
@@ -155,15 +155,112 @@ public class Point extends Pair<Integer, Integer> {
 			   (Math.abs(p1.fst - p2.fst) <= 1);
 	}
 
+
 	/**
-	 * Non-static wrapper for static adjacency function.
+	 * Computes positions on the line between two points.
 	 *
-	 * @param p2
-	 * 		the other point to check for adjacency
-	 * @return whether or not the points are adjacent
+	 * The computed position is  a pair of Floats, not of Integers!
+	 *
+	 * @param from
+	 * 		The point to start from.
+	 * @param to
+	 * 		The point to move to.
+	 * @param progressPercentage
+	 * 		How much distance between the two points (in percent) has been
+	 * 		traveled. Must be between 0 and 1 (both inclusive)
+	 * @return A position on the line between the two points.
 	 */
-	public boolean adjacent(final Point p2) {
-		return adjacent(this, p2);
+	public static Pair<Float, Float> lineBetween(
+			final Point from,
+			final Point to,
+			final float progressPercentage) {
+
+
+		final int xStart = from.fst;
+		final int yStart = from.snd;
+
+		final Point direction = Point.direction(from, to);
+
+		final int xDiff = direction.fst;
+		final int yDiff = direction.snd;
+
+		final float lineX = xStart + progressPercentage * xDiff;
+		final float lineY = yStart + progressPercentage * yDiff;
+
+		return new Pair<>(lineX, lineY);
+
 	}
+
+	/**
+	 * Computes the position half way between two points.
+	 * @param from The position to start from.
+	 * @param to The position to end in.
+	 * @return The position half way between the two points.
+	 */
+	public static Pair<Float, Float> halfwayBetween(
+			final Point from, final Point to
+	) {
+		return lineBetween(from,to,0.5f);
+	}
+
+	/**
+	 * Computest the angle between the line between to points and the horizon.
+	 *
+	 * @param from
+	 * 		The point to start to draw the line from.
+	 * @param to
+	 * 		The point to end the line in.
+	 * @return The angle of the line between the two points and the horizon.
+	 */
+	@SuppressWarnings("checkstyle:magicnumber")
+	public static float angleOfLineBetween(
+			final Point from,
+			final Point to
+	) {
+
+		final Point direction = Point.direction(from, to);
+
+
+		final int xDiff = direction.fst;
+		final int yDiff = direction.snd;
+
+		// special case: vertical line
+		if (xDiff == 0) {
+			return yDiff > 0 ? 90f : 270f;
+		}
+
+		final float slope = yDiff / (float) xDiff;
+
+		float angle = (float) Math.toDegrees(Math.atan(slope));
+
+		// we only have angles between +90° and -90°, for the other cases we
+		// need to add 180°
+
+		if (xDiff < 0) {
+			angle += 180;
+		}
+
+		return angle;
+
+	}
+
+	/**
+	 * Computes the directed vector between to points.
+	 *
+	 * @param from
+	 * 		The point to start from.
+	 * @param to
+	 * 		The point to end in.
+	 * @return The directed vector between the two points.
+	 */
+	public static Point direction(final Point from, final Point to) {
+		final int xStart = from.fst;
+		final int yStart = from.snd;
+		final int xEnd = to.fst;
+		final int yEnd = to.snd;
+
+		return new Point(xEnd - xStart, yEnd - yStart);
+	}
+
 
 }

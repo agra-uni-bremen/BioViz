@@ -478,4 +478,20 @@ public class Rectangle {
 	}
 
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		Rectangle other = (Rectangle) o;
+
+		return lowerLeft.equals(other.lowerLeft) && upperRight.equals(other.upperRight);
+	}
+
+
 }
