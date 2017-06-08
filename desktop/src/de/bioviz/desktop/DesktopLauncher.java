@@ -1568,12 +1568,14 @@ public class DesktopLauncher extends JFrame {
 															  svgPosition);
 								}
 								// create a series of files
-								for (int t = 1; t <=
-												currentViz.currentAssay
-														.getData().getMaxT();
-									 t++) {
+								final int maxT = currentViz.currentAssay.getData().getMaxT();
+								final int numDigits = (int)(Math.log10(maxT)+1);
+								final String numberFormatString = "%0" + numDigits + "d";
+
+								for (int t = 1; t <= maxT; t++) {
+
 									currentViz.saveSVG(
-											pathWithoutSuffix + "_ts" + t +
+											pathWithoutSuffix + "_ts" + String.format(numberFormatString, t) +
 											".svg", t);
 								}
 								// restore time from start
