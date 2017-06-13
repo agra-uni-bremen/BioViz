@@ -1549,46 +1549,8 @@ public class DesktopLauncher extends JFrame {
 					public void run() {
 
 						File f = askForFile("saveFolder", false);
-
-						if (f != null) {
-							if (svgExportSettings.getExportSeries()) {
-
-								int oldTime = currentViz.currentAssay
-										.getCurrentTime();
-								// this is problematic if the file contains
-								// .svg inside the name
-								int svgPosition = f.getAbsolutePath().indexOf(".svg");
-								// initialize with absolute path
-								String pathWithoutSuffix = f.getAbsolutePath();
-								// check if suffix was found, if not the path
-								// is already
-								// without a suffix
-								if (svgPosition != -1) {
-									pathWithoutSuffix =
-											f.getAbsolutePath().
-													substring(0,
-															  svgPosition);
-								}
-								// create a series of files
-								final int maxT = currentViz.currentAssay.getData().getMaxT();
-								final int numDigits = (int) (Math.log10(maxT) + 1);
-								final String numberFormatString = "%0" + numDigits + "d";
-
-								for (int t = 1; t <= maxT; t++) {
-									currentViz.saveSVG(
-											pathWithoutSuffix + "_ts" +
-													String.format(numberFormatString, t) + ".svg", t);
-								}
-								// restore time from start
-								currentViz.currentAssay.setCurrentTime(
-										oldTime);
-							} else {
-								currentViz.saveSVG(f.getAbsolutePath(),
-												   currentViz
-														   .currentAssay
-														   .getCurrentTime());
-							}
-						}
+						currentViz.saveSVG(f,
+												   currentViz.currentAssay.getCurrentTime());
 					}
 				});
 			} catch (final Exception e) {

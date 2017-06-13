@@ -19,6 +19,9 @@ import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -267,6 +270,74 @@ public class SVGManager {
 	}
 
 	/**
+	 * Exports the created SVG into the given file.
+	 * Handles the creation of an SVG series export.
+	 *
+	 * @param file
+	 *					The File to store the SVG in
+	 * @param circ
+	 * 					The circuit to export
+	 * @param timeStep
+	 * 					The timestep for the export
+	 */
+	public void exportSVG(final File file,
+												 final DrawableAssay circ,
+												 final int timeStep) {
+		//check if the series export option is active
+		if (svgExportSettings.getExportSeries()) {
+			int oldTime = circ.getCurrentTime();
+			// this is problematic if the file contains
+			// .svg inside the name
+			int svgPosition = file.getAbsolutePath().indexOf(".svg");
+			// initialize with absolute path
+			String pathWithoutSuffix = file.getAbsolutePath();
+			// check if suffix was found, if not the path
+			// is already without a suffix
+			if (svgPosition != -1) {
+				pathWithoutSuffix = file.getAbsolutePath().substring(0, svgPosition);
+			}
+			final int maxT = circ.getData().getMaxT();
+			final int numDigits = (int) (Math.log10(maxT) + 1);
+			final String numberFormatString = "%0" + numDigits + "d";
+
+			// create a series of files
+			for (int t = 1; t <= maxT; t++) {
+				String filePath = pathWithoutSuffix + "_ts" +
+						String.format(numberFormatString, t) + ".svg";
+				File curFile = new File(filePath);
+				this.saveSVG(curFile, circ, t);
+			}
+			// restore time from start
+			circ.setCurrentTime(oldTime);
+		} else {
+			this.saveSVG(file, circ, timeStep);
+		}
+
+	}
+
+	/**
+	 * Saves an SVG to a given file.
+	 *
+	 * @param file
+	 * 					The File to store the svg in.
+	 * @param circ
+	 * 					The circuit to export.
+	 * @param timeStep
+	 * 					The timestep for the export.
+	 */
+	private void saveSVG(final File file, final DrawableAssay circ, final int
+			timeStep) {
+		try {
+			FileWriter fileWriter = new FileWriter(file, false);
+			fileWriter.write(this.toSVG(circ, timeStep));
+			fileWriter.close();
+		} catch (final IOException e) {
+			LOGGER.error("Failed to write file: {}", file.getAbsolutePath());
+			LOGGER.error("Exception: ", e.getMessage());
+		}
+	}
+
+	/**
 	 * Export the assay to svg.
 	 *
 	 * @param circ
@@ -275,7 +346,7 @@ public class SVGManager {
 	 * 		The timeStep for the export
 	 * @return svg string representation
 	 */
-	public String toSVG(final DrawableAssay circ, final int timeStep) {
+	private String toSVG(final DrawableAssay circ, final int timeStep) {
 
 		assay = circ;
 

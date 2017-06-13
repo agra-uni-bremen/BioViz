@@ -405,28 +405,22 @@ public class BioViz implements ApplicationListener {
         callListeners(loadedFileListeners);
     }
 
-
-	/**
+    /**
      * Exports the currently displayed biochip to a svg image file.
      *
-     * @param path The path where the image is stored.
+     * @param file The file where the svg should be stored.
      * @param timeStep The timestep of the current biochip to store.
      */
-    public void saveSVG(final String path, final int timeStep) {
+    public void saveSVG(final File file, final int timeStep) {
         spawnSVGManager();
         logger.debug("[SVG] Within saveSVG(String) method");
         logger.debug("[SVG] svgManager: {}", svgManager);
 
         try {
-            String svg = svgManager.toSVG(currentAssay, timeStep);
-            //logger.debug("[SVG] generated SVG: {}",svg);
-            FileHandle handle = Gdx.files.absolute(path);
-            logger.debug("[SVG] File handle for storing the SVG: {}", handle);
-            handle.writeString(svg, false);
-            logger.info("[SVG] Stored SVG at {}", handle.path());
+            //Export SVG file
+            svgManager.exportSVG(file, currentAssay, timeStep);
         } catch (final Exception e) {
-            logger.error("[SVG] Could not store SVG; exception message: {}",
-                    e);
+            logger.error("[SVG] Could not store SVG; exception message: {}", e);
         }
     }
 
