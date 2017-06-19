@@ -1,25 +1,27 @@
 package de.bioviz.ui;
 
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.Color;
-
 /**
- * Created by max on 6/18/17.
+ * This class implements an arrowhead that can be used e.g. for DrawableLines.
+ *
+ * @author Maximilian Luenert
  */
-public class DrawableArrowHead extends DrawableSprite{
+public class DrawableArrowHead extends DrawableSprite {
 
 	/**
 	 * This constructor checks if the given texture has been loaded before and
 	 * does so if that's not the case. A sprite is initialized accordingly.
 	 *
-	 * @param texture the texture to use
 	 * @param parent
+	 * 					the parent BioViz
 	 */
 	public DrawableArrowHead(final BioViz parent) {
 		super(TextureE.ArrowHead, parent);
 	}
 
-	public void draw(){
+	/**
+	 * Draws the arrowHead on the biochip.
+	 */
+	public void draw() {
 		super.draw();
 	}
 }
