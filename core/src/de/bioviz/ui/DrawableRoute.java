@@ -118,8 +118,8 @@ public class DrawableRoute extends DrawableSprite {
 				continue;
 			}
 
-			final Point p1 = r1.upperLeft();
-			final Point p2 = r2.upperLeft();
+			final Point p1 = r1.center();
+			final Point p2 = r2.center();
 
 
 
