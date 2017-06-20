@@ -60,8 +60,9 @@ class SVGCoreCreator {
 	/**
 	 * Creates a new SVGCoreCreator.
 	 */
-	SVGCoreCreator() {
+	SVGCoreCreator(Document doc) {
 		// default constructor
+		this.doc = doc;
 	}
 
 	/**
@@ -77,6 +78,8 @@ class SVGCoreCreator {
 	void setFolder(final String folder) {
 		svgCoreFolder = folder;
 	}
+
+	private Document doc;
 
 	/**
 	 * Return the svg core without color.
@@ -109,7 +112,7 @@ class SVGCoreCreator {
 	 * 		The stroke color.
 	 * @return String containing svg core data.
 	 */
-	String getSVGCode(final TextureE type, final Color fillColor,
+	Element getSVGCode(final TextureE type, final Color fillColor,
 							 final Color strokeColor) {
 		String uncoloredCore = getSVGCode(type);
 		String coloredCore = uncoloredCore;
@@ -117,7 +120,7 @@ class SVGCoreCreator {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		ByteArrayInputStream input;
-		Document doc;
+
 		try {
 			builder = factory.newDocumentBuilder();
 
@@ -223,16 +226,32 @@ class SVGCoreCreator {
 	 * 		the id for the arrowHead
 	 * @return a svg marker string
 	 */
-	private String getArrowHead(final String id, final Color color) {
-		return "<marker id=\"" + id + "\" " +
-			   "markerWidth=\"10\" " + "markerHeight=\"10\" " +
-			   "refX=\"7\" " + "refY=\"3\"	" +
-			   "orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path " +
-			   "d=\"M0," +
-			   "0" +
-			   " C 1,1" +
-			   " 1,5 0,6 L9,3  z\" " +
-			   "fill=\"#" + SVGUtils.colorToSVG(color) + "\" />\n</marker>\n";
+	public Element getArrowHead(final String id, final Color
+			color) {
+		Element elem = doc.createElement("marker");
+		elem.setAttribute("id", "TestNode");
+		elem.setAttribute("markerWidth", String.valueOf(10));
+		elem.setAttribute("markerHeight", String.valueOf(10));
+		elem.setAttribute("refX", String.valueOf(7));
+		elem.setAttribute("refY", String.valueOf(3));
+		elem.setAttribute("orient", "auto");
+		elem.setAttribute("markerUnits", "strokeWidth");
+		elem.appendChild(doc.createTextNode(
+				"<path d=\"M0,0 C 1,1 1,5 0,6 L9,3 z\" " +
+						"fill=\"#" + SVGUtils.colorToSVG(color) + "\"/>"
+		));
+
+		return elem;
+
+//		return "<marker id=\"" + id + "\" " +
+//			   "markerWidth=\"10\" " + "markerHeight=\"10\" " +
+//			   "refX=\"7\" " + "refY=\"3\"	" +
+//			   "orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path " +
+//			   "d=\"M0," +
+//			   "0" +
+//			   " C 1,1" +
+//			   " 1,5 0,6 L9,3  z\" " +
+//			   "fill=\"#" + SVGUtils.colorToSVG(color) + "\" />\n</marker>\n";
 	}
 
 	/**
@@ -248,7 +267,7 @@ class SVGCoreCreator {
 	 * 		first color of the resulting gradient
 	 * @return a string
 	 */
-	private String getSVGLinearGradient(final String id, final GradDir dir,
+	private Element getSVGLinearGradient(final String id, final GradDir dir,
 									   final
 									   Color
 											   color) {
@@ -261,20 +280,50 @@ class SVGCoreCreator {
 
 		final int colorMult = 255;
 
-		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
-					   "y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 +
-					   "\" >\n";
-		String offset1 = "<stop offset=\"0%\" " + "style=\"stop-color:rgb(" +
+		Element elem = doc.createElement("linearGradient");
+		elem.setAttribute("id", id);
+		elem.setAttribute("x1", String.valueOf(x1));
+		elem.setAttribute("y1", String.valueOf(y1));
+		elem.setAttribute("x2", String.valueOf(x2));
+		elem.setAttribute("y2", String.valueOf(y2));
 
-						 color.r * colorMult + "," + color.g * colorMult +
-						 "," + color.b * colorMult + ");" +
-						 "stop-opacity:0\" />\n";
-		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
-						 color.r * colorMult + "," + color.g * colorMult +
-						 "," + color.b * colorMult + ");" +
-						 "stop-opacity:0.8\" />\n";
-		String end = "</linearGradient>\n";
-		return begin + offset1 + offset2 + end;
+		Element stopElem = doc.createElement("stop");
+		stopElem.setAttribute("offset", "0%");
+		stopElem.setAttribute("style", "stop-color:rgb(" +
+													color.r * colorMult +
+		 								"," + color.g * colorMult +
+										"," + color.b * colorMult + ");"
+										);
+		stopElem.setAttribute("stop-opacity", "0");
+
+		Element stopElem2 = doc.createElement("stop");
+		stopElem2.setAttribute("offset", "100%");
+		stopElem2.setAttribute("style", "stop-color:rgb(" +
+													color.r * colorMult +
+										"," + color.g * colorMult +
+										"," + color.b * colorMult +");"
+						);
+		stopElem2.setAttribute("stop-opacity", "0.8");
+
+		elem.appendChild(stopElem);
+		elem.appendChild(stopElem2);
+
+		return elem;
+
+//		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
+//					   "y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 +
+//					   "\" >\n";
+//		String offset1 = "<stop offset=\"0%\" " + "style=\"stop-color:rgb(" +
+//
+//						 color.r * colorMult + "," + color.g * colorMult +
+//						 "," + color.b * colorMult + ");" +
+//						 "stop-opacity:0\" />\n";
+//		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
+//						 color.r * colorMult + "," + color.g * colorMult +
+//						 "," + color.b * colorMult + ");" +
+//						 "stop-opacity:0.8\" />\n";
+//		String end = "</linearGradient>\n";
+//		return begin + offset1 + offset2 + end;
 	}
 
 	/**

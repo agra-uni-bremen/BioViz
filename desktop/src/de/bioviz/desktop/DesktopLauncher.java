@@ -88,7 +88,7 @@ public class DesktopLauncher extends JFrame {
 			LoggerFactory.getLogger(DesktopLauncher.class);
 
 	/**
-	 * Stores the settings of the SVG exporter.
+	 * Stores the settings of the SVG er.
 	 */
 	private static SVGExportSettings svgExportSettings =
 			SVGExportSettings.getInstance();
@@ -896,7 +896,7 @@ public class DesktopLauncher extends JFrame {
 			fileDialog.setFileFilter(bioGramFilter);
 			choice = fileDialog.showOpenDialog(DesktopLauncher.singleton);
 		} else {
-			// add the svg export options as an accessory to the fileChooser
+			// add the svg  options as an accessory to the fileChooser
 			JPanel accessory = new JPanel(new BorderLayout());
 
 			JCheckBox exportColors = new JCheckBox("Export colors");
