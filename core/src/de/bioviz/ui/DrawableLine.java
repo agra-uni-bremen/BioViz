@@ -34,7 +34,11 @@ public class DrawableLine extends DrawableSprite {
 
 	/**
 	 * Creates a drawable line with no start/end points.
-	 * @param parent The parent BioViz instances.
+	 * @param parent
+	 * 						The parent BioViz instances.
+	 * @param showHead
+	 * 						Selects if line should have an arrowHead at the end.
+	 *
 	 */
     public DrawableLine(final BioViz parent, final boolean showHead) {
         super(TextureE.BlackPixel, parent);
@@ -61,7 +65,7 @@ public class DrawableLine extends DrawableSprite {
         setRotation(rotation);
         setColorImmediately(col);
 
-        if(showHead) {
+        if (showHead) {
 
 					arrowHead.setColorImmediately(col);
 					arrowHead.setX(assay.xCoordOnScreen(to.x));
