@@ -98,7 +98,7 @@ public class FPoint extends Pair<Float, Float> {
 	public static FPoint halfwayBetween(
 			final FPoint from, final FPoint to
 	) {
-		return lineBetween(from,to,0.5f);
+		return lineBetween(from, to, 0.5f);
 	}
 
 	/**
@@ -122,8 +122,10 @@ public class FPoint extends Pair<Float, Float> {
 		final float xDiff = direction.fst;
 		final float yDiff = direction.snd;
 
+		// threshold for float comparison
+		final float epsilon = 0.0000001f;
 		// special case: vertical line
-		if (xDiff == 0) {
+		if (Math.abs(xDiff) < epsilon) {
 			return yDiff > 0 ? 90f : 270f;
 		}
 
