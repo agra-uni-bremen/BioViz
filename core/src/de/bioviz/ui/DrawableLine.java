@@ -25,16 +25,22 @@ public class DrawableLine extends DrawableSprite {
 	/**
 	 * The arrowHead that is drawn at the end of the line.
 	 */
-	private DrawableArrowHead head;
+	private DrawableArrowHead arrowHead;
+
+	/**
+	 * Enables or disables the arrowHead.
+	 */
+	private boolean showHead;
 
 	/**
 	 * Creates a drawable line with no start/end points.
 	 * @param parent The parent BioViz instances.
 	 */
-    public DrawableLine(final BioViz parent) {
+    public DrawableLine(final BioViz parent, final boolean showHead) {
         super(TextureE.BlackPixel, parent);
         this.setZ(DisplayValues.DEFAULT_LINE_DEPTH);
-        head = new DrawableArrowHead(parent);
+        arrowHead = new DrawableArrowHead(parent);
+        this.showHead = showHead;
     }
 
 	/**
@@ -55,21 +61,20 @@ public class DrawableLine extends DrawableSprite {
         setRotation(rotation);
         setColorImmediately(col);
 
-        if(assay.getCurrentTime() > 1 &&
-        		assay.getCurrentTime() < assay.getData().getMaxT()) {
+        if(showHead) {
 
-					head.setColorImmediately(col);
-					head.setX(assay.xCoordOnScreen(to.x));
-					head.setY(assay.yCoordOnScreen(to.y));
+					arrowHead.setColorImmediately(col);
+					arrowHead.setX(assay.xCoordOnScreen(to.x));
+					arrowHead.setY(assay.yCoordOnScreen(to.y));
 
 					// the file has a 2 to 1 ratio
-					head.setScaleX(assay.getSmoothScale() * 0.6f);
-					head.setScaleY(assay.getSmoothScale() * 0.3f);
+					arrowHead.setScaleX(assay.getSmoothScale() * 0.6f);
+					arrowHead.setScaleY(assay.getSmoothScale() * 0.3f);
 
 					// the image points into the opposite direction
 					// therefore we rotate it by 180 degrees
-					head.setRotation(rotation + 180f);
-					head.draw();
+					arrowHead.setRotation(rotation + 180f);
+					arrowHead.draw();
 				}
         super.draw();
     }

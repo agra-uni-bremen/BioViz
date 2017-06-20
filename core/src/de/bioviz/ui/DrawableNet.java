@@ -54,6 +54,14 @@ public class DrawableNet extends DrawableSprite {
 		if (parentAssay.getDisplayOptions()
 				.getOption(BDisplayOptions.LongNetIndicatorsOnDroplets)) {
 
+			boolean showHead = false;
+
+			// show arrowhead only when not at start or end of the assay
+			if (parentAssay.getCurrentTime() > 1 &&
+					parentAssay.getCurrentTime() < parentAssay.getData().getMaxT()) {
+				showHead = true;
+			}
+
 			// Search for all Droplets that
 			List<DrawableDroplet> netDroplets = new ArrayList<>();
 			parentAssay.getDroplets().stream().filter(
@@ -62,8 +70,8 @@ public class DrawableNet extends DrawableSprite {
 
 			if (!netDroplets.isEmpty()) {
 				for (final DrawableDroplet droplet : netDroplets) {
-					DrawableLine toTarget = new DrawableLine(droplet.viz);
-					DrawableLine fromSource = new DrawableLine(droplet.viz);
+					DrawableLine toTarget = new DrawableLine(droplet.viz, showHead);
+					DrawableLine fromSource = new DrawableLine(droplet.viz, showHead);
 
 					setForcedLOD(1f);
 					final Pair<Float, Float> targetPoint =
@@ -103,7 +111,7 @@ public class DrawableNet extends DrawableSprite {
 		if (parentAssay.getDisplayOptions().getOption(
 				LongNetIndicatorsOnFields)) {
 			DrawableLine netIndicator =
-					new DrawableLine(parentAssay.getParent());
+					new DrawableLine(parentAssay.getParent(), true);
 			for (final Source s : net.getSources()) {
 				Pair<Float, Float> targetCenter =
 						net.getTarget().centerFloat();
