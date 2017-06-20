@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -327,10 +328,8 @@ public class SVGManager {
 	 */
 	private void saveSVG(final File file, final DrawableAssay circ, final int
 			timeStep) {
-		try {
-			FileWriter fileWriter = new FileWriter(file, false);
+		try (FileWriter fileWriter = new FileWriter(file, false)) {
 			fileWriter.write(this.toSVG(circ, timeStep));
-			fileWriter.close();
 		} catch (final IOException e) {
 			LOGGER.error("Failed to write file: {}", file.getAbsolutePath());
 			LOGGER.error("Exception: ", e.getMessage());
