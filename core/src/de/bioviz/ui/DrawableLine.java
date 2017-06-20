@@ -55,18 +55,22 @@ public class DrawableLine extends DrawableSprite {
         setRotation(rotation);
         setColorImmediately(col);
 
-				head.setColorImmediately(col);
-				head.setX(assay.xCoordOnScreen(to.x));
-				head.setY(assay.yCoordOnScreen(to.y));
+        if(assay.getCurrentTime() > 1 &&
+        		assay.getCurrentTime() < assay.getData().getMaxT()) {
 
-				// the file has a 2 to 1 ratio
-				head.setScaleX(assay.getSmoothScale() * 0.6f);
-				head.setScaleY(assay.getSmoothScale() * 0.3f);
+					head.setColorImmediately(col);
+					head.setX(assay.xCoordOnScreen(to.x));
+					head.setY(assay.yCoordOnScreen(to.y));
 
-				// the image points into the opposite direction
-				// therefore we rotate it by 180 degrees
-				head.setRotation(rotation + 180f);
-				head.draw();
+					// the file has a 2 to 1 ratio
+					head.setScaleX(assay.getSmoothScale() * 0.6f);
+					head.setScaleY(assay.getSmoothScale() * 0.3f);
+
+					// the image points into the opposite direction
+					// therefore we rotate it by 180 degrees
+					head.setRotation(rotation + 180f);
+					head.draw();
+				}
         super.draw();
     }
 }
