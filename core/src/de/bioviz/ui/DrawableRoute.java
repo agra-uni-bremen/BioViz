@@ -2,9 +2,7 @@ package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import de.bioviz.structures.FPoint;
-import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
-import de.bioviz.util.Pair;
 
 /**
  * Class responsible for drawing the routes that droplets may follow.
