@@ -179,7 +179,7 @@ public class Rectangle {
 	 * @return Point in the center of the rectangle using floating point
 	 * arithmetic.
 	 */
-	public Pair<Float, Float> centerFloat() {
+	public FPoint centerFloat() {
 		float centerX =
 				(lowerLeft.fst.floatValue() + upperRight.fst.floatValue()) /
 				2f;
@@ -187,7 +187,7 @@ public class Rectangle {
 				(lowerLeft.snd.floatValue() + upperRight.snd.floatValue()) /
 				2f;
 
-		return new Pair<>(centerX, centerY);
+		return new FPoint(centerX, centerY);
 	}
 
 
