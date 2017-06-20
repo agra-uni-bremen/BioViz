@@ -1,6 +1,7 @@
 package de.bioviz.ui;
 
 import com.badlogic.gdx.graphics.Color;
+import de.bioviz.structures.FPoint;
 import de.bioviz.structures.Point;
 import de.bioviz.structures.Rectangle;
 import de.bioviz.util.Pair;
@@ -118,8 +119,8 @@ public class DrawableRoute extends DrawableSprite {
 				continue;
 			}
 
-			final Point p1 = r1.upperLeft();
-			final Point p2 = r2.upperLeft();
+			final FPoint p1 = r1.centerFloat();
+			final FPoint p2 = r2.centerFloat();
 
 
 
@@ -132,14 +133,14 @@ public class DrawableRoute extends DrawableSprite {
 			line between the two centers of the cells and then halving it.
 			 */
 
-			final Pair<Float, Float> halfWay = Point.halfwayBetween(p1,p2);
+			final FPoint halfWay = FPoint.halfwayBetween(p1,p2);
 			final float xCoord = circ.xCoordOnScreen(halfWay.fst);
 			final float yCoord = circ.yCoordOnScreen(halfWay.snd);
 
 
 			// the angle is set according to the relative positions of the cell
 			// centers that are the source and target of the arrow.
-			float rotationAngle = Point.angleOfLineBetween(p1,p2);
+			float rotationAngle = FPoint.angleOfLineBetween(p1,p2);
 			setRotation(rotationAngle);
 
 			setX(xCoord);
