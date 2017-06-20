@@ -16,6 +16,7 @@ public class DrawableArrowHead extends DrawableSprite {
 	 */
 	public DrawableArrowHead(final BioViz parent) {
 		super(TextureE.ArrowHead, parent);
+		this.setZ(DisplayValues.DEFAULT_LINE_DEPTH);
 	}
 
 	/**
