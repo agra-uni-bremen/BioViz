@@ -42,6 +42,7 @@ public class DrawableLine extends DrawableSprite {
 	 */
     public void draw() {
         Color col = this.getColor();
+        col.a = 1f;
         Vector2 toTarget = from.cpy().sub(to);
         final float len = toTarget.len();
         final DrawableAssay assay = viz.currentAssay;
@@ -57,9 +58,11 @@ public class DrawableLine extends DrawableSprite {
 				head.setColorImmediately(col);
 				head.setX(assay.xCoordOnScreen(to.x));
 				head.setY(assay.yCoordOnScreen(to.y));
-				head.setScaleX(assay.getSmoothScale());
+
 				// the file has a 2 to 1 ratio
-				head.setScaleY(assay.getSmoothScale() * 0.5f);
+				head.setScaleX(assay.getSmoothScale() * 0.6f);
+				head.setScaleY(assay.getSmoothScale() * 0.3f);
+
 				// the image points into the opposite direction
 				// therefore we rotate it by 180 degrees
 				head.setRotation(rotation + 180f);
