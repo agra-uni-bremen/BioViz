@@ -95,6 +95,7 @@ public class FPoint extends Pair<Float, Float> {
 	 * @param to The position to end in.
 	 * @return The position half way between the two points.
 	 */
+	@SuppressWarnings("checkstyle:magicnumber")
 	public static FPoint halfwayBetween(
 			final FPoint from, final FPoint to
 	) {
