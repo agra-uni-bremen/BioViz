@@ -18,10 +18,16 @@ import de.bioviz.ui.TextureE;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -117,7 +123,7 @@ public class SVGManager {
 	/**
 	 * hashMap for uncolored svg elements.
 	 */
-	private HashMap<String, String> svgs = new HashMap<>();
+	private List<Element> svgs = new ArrayList<>();
 
 
 	/**
@@ -161,6 +167,10 @@ public class SVGManager {
 	 */
 	private DrawableAssay assay;
 
+	private Document doc;
+	private Element rootNode;
+
+
 	/**
 	 * SVGManager loading the default theme.
 	 */
@@ -179,7 +189,16 @@ public class SVGManager {
 	 * @warning The folder name must not begin or end with a slash!
 	 */
 	public SVGManager(final String folder) {
-		svgCoreCreator = new SVGCoreCreator();
+		try {
+			final DocumentBuilderFactory docFactory =
+													DocumentBuilderFactory.newInstance();
+			final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			doc = docBuilder.newDocument();
+		} catch (ParserConfigurationException e) {
+			LOGGER.error("Could not create xml document builder. " + e.getMessage());
+		}
+
+		svgCoreCreator = new SVGCoreCreator(doc);
 		svgCoreCreator.setFolder(folder);
 	}
 
@@ -373,20 +392,35 @@ public class SVGManager {
 		LOGGER.debug("[SVG] Starting to create SVG String");
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(
-				"<?xml version=\"1.1\" encoding=\"UTF-8\" " +
-				"standalone=\"yes\"?>\n" +
-				"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
-				"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
-				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-				viewBoxX + " " + viewBoxY + " " +
-				viewBoxWidth + " " + viewBoxHeight +
-				"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
-				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
+		rootNode = doc.createElement("svg");
+		rootNode.setAttribute("width", "100%");
+		rootNode.setAttribute("height", "100%");
+		rootNode.setAttribute("viewBox",
+									viewBoxX + " " + viewBoxY + " " +
+									viewBoxWidth + " " + viewBoxHeight
+									);
+		rootNode.setAttribute("version", "1.0");
+		rootNode.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+		rootNode.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+
+		doc.appendChild(rootNode);
+
+//		sb.append(
+//				"<?xml version=\"1.1\" encoding=\"UTF-8\" " +
+//				"standalone=\"yes\"?>\n" +
+//				"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
+//				"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
+//				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
+//				viewBoxX + " " + viewBoxY + " " +
+//				viewBoxWidth + " " + viewBoxHeight +
+//				"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
+//				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
 		sb.append("<defs>\n");
+		Element defs = doc.createElement("defs");
+
 
 		// create all def strings and save them in colSvgs
 		createDefCores();
