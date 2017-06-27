@@ -198,26 +198,6 @@ public class SVGManager {
 	}
 
 	/**
-	 * creates a string for an svg transform.
-	 *
-	 * @param params
-	 * 		the transformation params
-	 * @return a string for an svg transform
-	 */
-	private String getTransformation(final String params) {
-		return " transform=\"" + params + "\" ";
-	}
-
-	/**
-	 * creates a transformation with the scale factor.
-	 *
-	 * @return a string with a svg scaling transformation
-	 */
-	private String getScaleTransformation() {
-		return getTransformation(getScale());
-	}
-
-	/**
 	 * creates a svg scaling string.
 	 *
 	 * @return a string for an svg scaling operation
@@ -409,7 +389,6 @@ public class SVGManager {
 		// computation time does not really matter here.
 		Element defs = doc.createElement("defs");
 
-
 		// create all def elements and save them in svgs
 		createDefCores();
 
@@ -459,6 +438,7 @@ public class SVGManager {
 				rootNode.appendChild(fieldMsg);
 			}
 		}
+
 		// export msg strings for droplets
 		for (final DrawableDroplet drop : assay.getDroplets()) {
 			//
@@ -469,7 +449,6 @@ public class SVGManager {
 				}
 			}
 		}
-
 
 		if (svgExportSettings.getInformationString()) {
 			rootNode.appendChild(createInfoString());
