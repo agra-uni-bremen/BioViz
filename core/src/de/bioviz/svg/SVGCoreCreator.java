@@ -79,6 +79,15 @@ class SVGCoreCreator {
 		svgCoreFolder = folder;
 	}
 
+	/**
+	 * Sets the Document to use.
+	 *
+	 * @param doc The Document to use
+	 */
+	void setDocument(final Document doc) {
+		this.doc = doc;
+	}
+
 	private Document doc;
 
 	/**
