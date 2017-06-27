@@ -167,12 +167,6 @@ public class SVGManager {
 	private Document doc;
 
 	/**
-	 * The root node for the svg.
-	 */
-	private Element rootNode;
-
-
-	/**
 	 * SVGManager loading the default theme.
 	 */
 	public SVGManager() {
@@ -353,7 +347,6 @@ public class SVGManager {
 
 		doc = docBuilder.newDocument();
 		svgCoreCreator.setDocument(doc);
-		rootNode = doc.createElement("svg");
 
 		try (FileWriter fileWriter = new FileWriter(file, false)) {
 			fileWriter.write(this.toSVG(circ, timeStep));
@@ -373,6 +366,8 @@ public class SVGManager {
 	 * @return svg string representation
 	 */
 	private String toSVG(final DrawableAssay circ, final int timeStep) {
+
+		Element rootNode = doc.createElement("svg");;
 
 		assay = circ;
 
