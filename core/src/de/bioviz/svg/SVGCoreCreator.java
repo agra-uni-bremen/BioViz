@@ -249,29 +249,20 @@ class SVGCoreCreator {
 	public Element getArrowHead(final String id, final Color
 			color) {
 		Element elem = doc.createElement("marker");
-		elem.setAttribute("id", "TestNode");
+		elem.setAttribute("id", id);
 		elem.setAttribute("markerWidth", String.valueOf(10));
 		elem.setAttribute("markerHeight", String.valueOf(10));
 		elem.setAttribute("refX", String.valueOf(7));
 		elem.setAttribute("refY", String.valueOf(3));
 		elem.setAttribute("orient", "auto");
 		elem.setAttribute("markerUnits", "strokeWidth");
-		elem.appendChild(doc.createTextNode(
-				"<path d=\"M0,0 C 1,1 1,5 0,6 L9,3 z\" " +
-						"fill=\"#" + SVGUtils.colorToSVG(color) + "\"/>"
-		));
+
+		Element path = doc.createElement("path");
+		path.setAttribute("d", "M0,0 C 1,1 1,5 0,6 L9,3 z");
+		path.setAttribute("fill", "#" + SVGUtils.colorToSVG(color));
+		elem.appendChild(path);
 
 		return elem;
-
-//		return "<marker id=\"" + id + "\" " +
-//			   "markerWidth=\"10\" " + "markerHeight=\"10\" " +
-//			   "refX=\"7\" " + "refY=\"3\"	" +
-//			   "orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path " +
-//			   "d=\"M0," +
-//			   "0" +
-//			   " C 1,1" +
-//			   " 1,5 0,6 L9,3  z\" " +
-//			   "fill=\"#" + SVGUtils.colorToSVG(color) + "\" />\n</marker>\n";
 	}
 
 	/**
