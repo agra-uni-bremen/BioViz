@@ -518,7 +518,7 @@ public class SVGManager {
 	 * 		The field to export
 	 * @return svg string representation of a field
 	 */
-	private String toSVG(final DrawableField field) {
+	private List<Element> toSVG(final DrawableField field) {
 		// why would we need to acces " (-this.field.y + BioViz.singleton
 		// .currentAssay.data.field[0].length - 1)"?
 		// @jannis please check and fix
@@ -544,17 +544,26 @@ public class SVGManager {
 		String fieldID =
 				SVGUtils.generateColoredID(vals.getTexture().toString(),
 										   fieldCol);
-		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-						  getScaleTransformation() + " xlink:href=\"#" +
-						  fieldID +
-						  "\" />\n";
+
+		List<Element> fieldElems = new ArrayList<>();
+
+		Element elem = doc.createElement("use");
+		elem.setAttribute("x", String.valueOf(xCoord));
+		elem.setAttribute("y", String.valueOf(yCoord));
+		elem.setAttribute("transform",
+											"scale(" + SCALE_FACTOR + " " +
+													SCALE_FACTOR + ")"
+		);
+		elem.setAttribute("xlink:href", "#" + fieldID);
+
+		fieldElems.add(elem);
 
 		if (assay.getDisplayOptions().getOption(
 				BDisplayOptions.NetColorOnFields)) {
-			fieldSvg += createGradient(field);
+			fieldElems.addAll(createGradient(field));
 		}
 
-		return fieldSvg;
+		return fieldElems;
 	}
 
 	/**
