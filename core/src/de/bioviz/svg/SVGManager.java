@@ -123,7 +123,7 @@ public class SVGManager {
 	/**
 	 * hashMap for uncolored svg elements.
 	 */
-	private List<Element> svgs = new ArrayList<>();
+	private Map<String, Element> svgs = new HashMap<>();
 
 
 	/**
@@ -168,6 +168,7 @@ public class SVGManager {
 	private DrawableAssay assay;
 
 	private Document doc;
+	private DocumentBuilder docBuilder;
 	private Element rootNode;
 
 
@@ -192,7 +193,7 @@ public class SVGManager {
 		try {
 			final DocumentBuilderFactory docFactory =
 													DocumentBuilderFactory.newInstance();
-			final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			docBuilder = docFactory.newDocumentBuilder();
 			doc = docBuilder.newDocument();
 		} catch (ParserConfigurationException e) {
 			LOGGER.error("Could not create xml document builder. " + e.getMessage());
@@ -249,8 +250,11 @@ public class SVGManager {
 		for (final TextureE s : TextureE.values()) {
 
 			if (s != TextureE.BlackPixel) {
-				svgs.put(s.toString(), svgCoreCreator.getSVGCode(s, null,
-																 null));
+				Element elem = svgCoreCreator.getSVGCode(s, null,
+						null);
+				if (elem != null) {
+					svgs.put(s.toString(), elem);
+				}
 			}
 
 		}
@@ -346,6 +350,9 @@ public class SVGManager {
 	 */
 	private void saveSVG(final File file, final DrawableAssay circ, final int
 			timeStep) {
+		doc = docBuilder.newDocument();
+		svgCoreCreator.setDocument(doc);
+		rootNode = doc.createElement("svg");
 		try {
 			FileWriter fileWriter = new FileWriter(file, false);
 			fileWriter.write(this.toSVG(circ, timeStep));
@@ -430,7 +437,8 @@ public class SVGManager {
 			if (assay.getDisplayOptions().
 					getOption(BDisplayOptions.LongNetIndicatorsOnDroplets) &&
 				SVGUtils.isNotHiddenOrInvisible(drop)) {
-				sb.append(createDropletArrows(drop));
+				createDropletArrows(drop).forEach(arrow -> rootNode.appendChild
+				(arrow));
 			}
 		}
 
@@ -438,35 +446,69 @@ public class SVGManager {
 		for (final Net net : assay.getData().getNets()) {
 			if (assay.getDisplayOptions().getOption(BDisplayOptions
 															.LongNetIndicatorsOnFields)) {
-				sb.append(createSourceTargetArrow(net));
+				createSourceTargetArrow(net).forEach(arrow -> rootNode.appendChild
+				(arrow));
 			}
 		}
 
 		// export msg strings for fields
 		for (final DrawableField field : assay.getFields()) {
-			sb.append(createFieldMsg(field));
+			Element fieldMsg = createFieldMsg(field);
+			if (fieldMsg != null) {
+				rootNode.appendChild(fieldMsg);
+			}
 		}
 		// export msg strings for droplets
 		for (final DrawableDroplet drop : assay.getDroplets()) {
 			//
 			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
-				sb.append(createDropletMsg(drop));
+				Element dropMsg = createDropletMsg(drop);
+				if(dropMsg != null) {
+					rootNode.appendChild(dropMsg);
+				}
 			}
 		}
 
 
 		if (svgExportSettings.getInformationString()) {
-			sb.append(createInfoString());
+			rootNode.appendChild(createInfoString());
 		}
 
 		if (assay.getDisplayOptions().getOption(
 				BDisplayOptions.Coordinates)) {
-			sb.append(createCoordinates());
+			createCoordinates().forEach(coord -> rootNode.appendChild(coord));
 		}
 
-		sb.append("</svg>\n");
+		return transformXML();
+	}
 
-		return sb.toString();
+	/**
+	 * Transforms the xml document into a string that is then written.
+	 *
+	 * @return
+	 */
+	public String transformXML(){
+		StreamResult result = new StreamResult();
+		StringWriter writer = new StringWriter();
+		try {
+
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = null;
+			transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+			DOMSource source = new DOMSource(doc);
+
+			// Output to stream writer
+			result = new StreamResult(writer);
+
+			transformer.transform(source, result);
+
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		}
+		System.out.println("File saved!");
+		return writer.toString();
 	}
 
 	/**
