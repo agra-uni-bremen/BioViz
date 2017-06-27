@@ -320,21 +320,6 @@ class SVGCoreCreator {
 		elem.appendChild(stopElem2);
 
 		return elem;
-
-//		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
-//					   "y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 +
-//					   "\" >\n";
-//		String offset1 = "<stop offset=\"0%\" " + "style=\"stop-color:rgb(" +
-//
-//						 color.r * colorMult + "," + color.g * colorMult +
-//						 "," + color.b * colorMult + ");" +
-//						 "stop-opacity:0\" />\n";
-//		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
-//						 color.r * colorMult + "," + color.g * colorMult +
-//						 "," + color.b * colorMult + ");" +
-//						 "stop-opacity:0.8\" />\n";
-//		String end = "</linearGradient>\n";
-//		return begin + offset1 + offset2 + end;
 	}
 
 	/**
@@ -380,39 +365,6 @@ class SVGCoreCreator {
 				elem.setAttribute("style", styleAfter.toString());
 			}
 		}
-	}
-
-	/**
-	 * Create string from xml representation.
-	 *
-	 * @param doc
-	 * 		The xml document.
-	 * @return String representing the xml document or null if the
-	 * transformation failed.
-	 */
-	private String getGroupFromDocument(final Document doc) {
-		TransformerFactory tFactory;
-		Transformer transformer;
-		StringWriter writer;
-		try {
-			tFactory = TransformerFactory.newInstance();
-			transformer = tFactory.newTransformer();
-
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-										  "yes");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-			DOMSource source = new DOMSource(doc.getElementsByTagName("g").
-					item(0));
-			writer = new StringWriter();
-			StreamResult result = new StreamResult(writer);
-			transformer.transform(source, result);
-		} catch (final TransformerException e) {
-			LOGGER.error("[SVG] Creating string from XML failed.");
-			return null;
-		}
-
-		return writer.toString();
 	}
 
 	/**

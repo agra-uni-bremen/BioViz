@@ -390,9 +390,7 @@ public class SVGManager {
 		}
 
 		LOGGER.debug("[SVG] Starting to create SVG String");
-		StringBuilder sb = new StringBuilder();
 
-		rootNode = doc.createElement("svg");
 		rootNode.setAttribute("width", "100%");
 		rootNode.setAttribute("height", "100%");
 		rootNode.setAttribute("viewBox",
@@ -405,36 +403,25 @@ public class SVGManager {
 
 		doc.appendChild(rootNode);
 
-//		sb.append(
-//				"<?xml version=\"1.1\" encoding=\"UTF-8\" " +
-//				"standalone=\"yes\"?>\n" +
-//				"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
-//				"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
-//				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-//				viewBoxX + " " + viewBoxY + " " +
-//				viewBoxWidth + " " + viewBoxHeight +
-//				"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
-//				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
-
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
-		sb.append("<defs>\n");
 		Element defs = doc.createElement("defs");
 
 
-		// create all def strings and save them in colSvgs
+		// create all def elements and save them in svgs
 		createDefCores();
 
-		// append all cores to the svg string
-		svgs.forEach((name, svgcode) -> sb.append(svgcode));
-		sb.append("</defs>\n");
+		// append all cores to the svg
+		svgs.forEach((name, svgcode) -> defs.appendChild(svgcode));
+
+		rootNode.appendChild(defs);
 
 		for (final DrawableField field : assay.getFields()) {
-			sb.append(toSVG(field));
+			toSVG(field).forEach(fieldElem -> rootNode.appendChild(fieldElem));
 		}
 		for (final DrawableDroplet drop : assay.getDroplets()) {
 			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
-				sb.append(toSVG(drop));
+				toSVG(drop).forEach(dropElem -> rootNode.appendChild(dropElem));
 			}
 		}
 		// run over each droplet again and draw the arrows
@@ -634,13 +621,8 @@ public class SVGManager {
 				float targetX = x1 + (0.5f * COORDINATE_MULTIPLIER);
 				float targetY = y1;
 
-				String position =
-						" x=\"" + targetX + "\" y=\"" + targetY + "\" ";
-				String widthHeight = " width=\"1\" height=\"1\" ";
 				StringBuilder transFormParams = new StringBuilder(getScale());
-				String opacity = " opacity=\"" + alpha + "\" ";
-				boolean app = true;
-
+				// TODO calculate center and angle instead of if else bla
 				if (x1 < x2 && y1 == y2) {
 					//intentionally do nothing here
 				} else if (y1 == y2 && x2 < x1) {
