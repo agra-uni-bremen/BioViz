@@ -375,9 +375,8 @@ class SVGCoreCreator {
 	 * @param field
 	 * 		the field
 	 */
-	void appendFieldSVG(final Map<String, String> svgs,
-							   final DrawableField
-									   field) {
+	void appendFieldSVG(final Map<String, Element> svgs,
+							   final DrawableField field) {
 
 		final String key = SVGUtils.generateColoredID(field.getDisplayValues()
 															  .getTexture()
@@ -387,9 +386,11 @@ class SVGCoreCreator {
 																	  field));
 		// don't create the svg core code twice
 		if (!svgs.containsKey(key)) {
-			svgs.put(key,
-					 getSVGCode(field.getDisplayValues().getTexture(),
-								SVGUtils.getUnhoveredColor(field), null));
+			Element elem = getSVGCode(field.getDisplayValues().getTexture(),
+					SVGUtils.getUnhoveredColor(field), null);
+			if (elem != null) {
+				svgs.put(key, elem);
+			}
 		}
 	}
 
@@ -403,7 +404,7 @@ class SVGCoreCreator {
 	 * @param dir
 	 * 		the direction of the gradient
 	 */
-	void appendGradSVG(final Map<String, String> svgs,
+	void appendGradSVG(final Map<String, Element> svgs,
 							  final Net net, final
 							  GradDir dir) {
 		final String key =
@@ -423,7 +424,7 @@ class SVGCoreCreator {
 	 * @param drop
 	 * 		the droplet
 	 */
-	void appendDropletSVG(final Map<String, String> svgs,
+	void appendDropletSVG(final Map<String, Element> svgs,
 								 final
 								 DrawableDroplet
 										 drop) {
@@ -431,7 +432,10 @@ class SVGCoreCreator {
 				SVGUtils.generateColoredID("Droplet", drop.getColor());
 		// don't create the svg core code twice
 		if (!svgs.containsKey(key)) {
-			svgs.put(key, getSVGCode(TextureE.Droplet, drop.getColor(), null));
+			Element elem = getSVGCode(TextureE.Droplet, drop.getColor(), null);
+			if (elem != null) {
+				svgs.put(key, elem);
+			}
 		}
 	}
 
@@ -443,7 +447,7 @@ class SVGCoreCreator {
 	 * @param dropColor
 	 * 		the dropletColor
 	 */
-	void appendArrowheads(final Map<String, String> svgs,
+	void appendArrowheads(final Map<String, Element> svgs,
 								 final Color
 										 dropColor) {
 		final Color[] colors =
@@ -465,7 +469,7 @@ class SVGCoreCreator {
 	 * @param svgs
 	 * 		the map
 	 */
-	void appendSourceTargetArrowHead(final Map<String, String> svgs) {
+	void appendSourceTargetArrowHead(final Map<String, Element> svgs) {
 		final Color color = Color.BLACK;
 		final String key = SVGUtils.generateColoredID("ArrowHead", color);
 		if (!svgs.containsKey(key)) {
@@ -481,15 +485,17 @@ class SVGCoreCreator {
 	 * @param drop
 	 * 		the droplet
 	 */
-	void appendRoute(final Map<String, String> svgs,
+	void appendRoute(final Map<String, Element> svgs,
 							final DrawableDroplet
 									drop) {
 		final Color routeColor = drop.route.getColor();
 		final String key = SVGUtils.generateColoredID("StepMarker",
 													  routeColor);
 		if (!svgs.containsKey(key)) {
-			svgs.put(key,
-					 getSVGCode(TextureE.StepMarker, routeColor, null));
+			Element elem = getSVGCode(TextureE.StepMarker, routeColor, null);
+			if (elem != null) {
+				svgs.put(key, elem);
+			}
 		}
 	}
 
