@@ -622,9 +622,9 @@ public class SVGManager {
 	 * 		The route to export to svg
 	 * @return SVG code for that particular route
 	 */
-	private String toSVG(final DrawableRoute drawableRoute) {
-		StringBuilder sb = new StringBuilder();
+	private List<Element> toSVG(final DrawableRoute drawableRoute) {
 
+		List<Element> elements = new ArrayList<>();
 		DrawableDroplet droplet = drawableRoute.droplet;
 
 		int currentTime = droplet.droplet.getSpawnTime();
@@ -647,7 +647,6 @@ public class SVGManager {
 		LOGGER.debug("nSteps: {}", nSteps);
 
 		for (int i = 0; i < nSteps; ++i) {
-
 			LOGGER.debug("i: {}", i);
 			float alpha = 1;
 
@@ -697,26 +696,32 @@ public class SVGManager {
 							"rotate(270 " + targetX + " " +
 							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") "
 					);
-				} else {
-					app = false;
 				}
-				if (app) {
-					String routeID =
-							SVGUtils.generateColoredID("StepMarker",
-													   routeColor);
+				// this case is needed if the coordinates are the same
+				else {
+					continue;
+				}
 
-					sb.append("<use");
-					sb.append(position);
-					sb.append(widthHeight);
-					sb.append(getTransformation(transFormParams.toString()));
-					sb.append(opacity);
-					sb.append("xlink:href=\"#" + routeID + "\"");
-					sb.append(" />\n");
-					LOGGER.debug("[SVG] StepMarker color: {}", routeColor);
-				}
+				String routeID =
+						SVGUtils.generateColoredID("StepMarker",
+								routeColor);
+
+
+				Element route = doc.createElement("use");
+				route.setAttribute("x", String.valueOf(targetX));
+				route.setAttribute("y", String.valueOf(targetY));
+				route.setAttribute("width", "1");
+				route.setAttribute("height", "1");
+				route.setAttribute("transform", transFormParams.toString());
+				route.setAttribute("opacity", String.valueOf(alpha));
+				route.setAttribute("xlink:href", "#" + routeID);
+
+				elements.add(route);
+
+				LOGGER.debug("[SVG] StepMarker color: {}", routeColor);
 			}
 		}
-		return sb.toString();
+		return elements;
 	}
 
 	/**
