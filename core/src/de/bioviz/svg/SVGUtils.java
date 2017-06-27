@@ -150,6 +150,11 @@ public final class SVGUtils {
 			final Point point,
 			final DrawableAssay assay,
 			final int coordinateMultiplier) {
+		// The coordinate system in SVG is inverted on its
+		// y-axis. We need to first put it upside down (-point.snd) and
+		// then add the total height of the assay to have the element
+		// put back into the positive coordinate range in order to be placed
+		// on the canvas.
 		int yCoord = -point.snd + assay.getData().getMaxCoord().snd;
 		int xCoord = point.fst;
 

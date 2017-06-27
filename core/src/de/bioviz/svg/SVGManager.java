@@ -524,16 +524,6 @@ public class SVGManager {
 	 * @return svg string representation of a field
 	 */
 	private List<Element> toSVG(final DrawableField field) {
-		// why would we need to acces " (-this.field.y + BioViz.singleton
-		// .currentAssay.data.field[0].length - 1)"?
-		// @jannis please check and fix
-		// @keszocze Because the coordinate system in SVG is inverted on its
-		//		y-axis. I need to first put it upside down (-this.field.y) and
-		//		then add the total height of the assay to have the element
-		// put
-		//		back into the positive coordinate range in order to be placed
-		//		on the canvas.
-
 		Point pos = getFieldPosInSVGCoords(field);
 		int yCoord = pos.snd;
 		int xCoord = pos.fst;
