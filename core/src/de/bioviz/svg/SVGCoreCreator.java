@@ -97,7 +97,7 @@ class SVGCoreCreator {
 	 * 		The type of the core.
 	 * @return the svg code for the given type as a string
 	 */
-	private String getSVGCode(final TextureE type) {
+	private String getSVGFileAsString(final TextureE type) {
 
 		String svgCoreFile =
 				baseFolder + "/" + svgCoreFolder + "/" + type + ".plain.svg";
@@ -123,8 +123,14 @@ class SVGCoreCreator {
 	 */
 	Element getSVGCode(final TextureE type, final Color fillColor,
 							 final Color strokeColor) {
-		String uncoloredCore = getSVGCode(type);
-		String coloredCore = uncoloredCore;
+		String uncoloredCore = getSVGFileAsString(type);
+
+		if(uncoloredCore == null){
+			LOGGER.error("[SVG] Could not load SVG core file.");
+			return null;
+		}
+
+		Element coloredCore = null;
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
