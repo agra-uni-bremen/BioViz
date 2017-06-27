@@ -794,26 +794,32 @@ public class SVGManager {
 	 * 		the field
 	 * @return an svg rect string
 	 */
-	private String createGradient(final DrawableField field) {
-		StringBuilder gradientSvg = new StringBuilder();
+	private List<Element> createGradient(final DrawableField field) {
+		List<Element> gradients = new ArrayList<>();
 
 		for (final Net n : assay.getData().getNetsOf(field.getField())) {
 			GradDir dir = getGradientDirection(field, n);
 			Point fieldPos = getFieldPosInSVGCoords(field);
 			if (dir != null) {
-				gradientSvg.append("<rect x=\"" + (fieldPos.fst + 24) + "\" " +
-							   "y=\"" + (fieldPos.snd + 24) +
-							   "\" rx=\"24\" ry=\"24\" " +
-							   "height=\"208\" width=\"208\" fill=\"url(#" +
-							   SVGUtils
-									   .generateColoredID(
-											   "Gradient-" + dir.toString(),
-											   SVGUtils.getNetColor(n)) +
-							   ")\" " +
-							   "/>\n");
+
+				Element gradientSvg = doc.createElement("rect");
+				gradientSvg.setAttribute("x", String.valueOf(fieldPos.fst + 24));
+				gradientSvg.setAttribute("y", String.valueOf(fieldPos.snd + 24));
+				gradientSvg.setAttribute("rx", "24");
+				gradientSvg.setAttribute("ry", "24");
+				gradientSvg.setAttribute("height", "208");
+				gradientSvg.setAttribute("width", "208");
+
+				final String fillUrl = "url(#" +	SVGUtils.generateColoredID(
+						"Gradient-" + dir.toString(),
+						SVGUtils.getNetColor(n)) + ")";
+				gradientSvg.setAttribute("fill", fillUrl);
+
+				gradients.add(gradientSvg);
+
 			}
 		}
-		return gradientSvg.toString();
+		return gradients;
 	}
 
 	/**
