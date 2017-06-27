@@ -858,7 +858,7 @@ public class SVGManager {
 	 * 		the color for the arrow
 	 * @return svg string of an arrow
 	 */
-	private String createSVGArrow(final Pair<Float, Float> startPoint,
+	private Element createSVGArrow(final Pair<Float, Float> startPoint,
 								  final Pair<Float, Float> endPoint,
 								  final Color
 										  color) {
@@ -896,12 +896,17 @@ public class SVGManager {
 		}
 		y2 -= yDiff;
 
-		final String line = "<line x1=\"" + x1 + "\" y1=\"" + y1 +
-							"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-							"\" stroke=\"#" + SVGUtils.colorToSVG(color) +
-							"\" stroke-width=\"10\" marker-end=\"url(#" +
-							SVGUtils.generateColoredID("ArrowHead", color) +
-							")\" />\n";
+		final Element line = doc.createElement("line");
+		line.setAttribute("x1", String.valueOf(x1));
+		line.setAttribute("y1", String.valueOf(y1));
+		line.setAttribute("x2", String.valueOf(x2));
+		line.setAttribute("y2", String.valueOf(y2));
+		line.setAttribute("stroke", "#" + SVGUtils.colorToSVG(color));
+		line.setAttribute("stroke-width", "10");
+		final String markerEndUrl = "url(#" +
+				SVGUtils.generateColoredID("ArrowHead", color) +
+						")";
+		line.setAttribute("marker-end", markerEndUrl);
 
 		return line;
 	}
