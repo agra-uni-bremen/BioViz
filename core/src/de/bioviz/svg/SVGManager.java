@@ -911,25 +911,25 @@ public class SVGManager {
 	 *
 	 * @return information string
 	 */
-	private String createInfoString() {
+	private Element createInfoString() {
 
-		String coordinates =
-				"x=\"" + infoPos.fst + "\" " +
-				"y=\"" + (infoPos.snd + 1.5 *
-										FONT_SIZE_INFO_STRING) +
-				"\" ";
+		float xCoord = infoPos.fst;
+		float yCoord = infoPos.snd + 1.5f * FONT_SIZE_INFO_STRING;
 
 		String circName = assay.getParent().getFileName();
 		String timeStep = String.valueOf(assay.getCurrentTime());
+		String fileInfo = "Filename: " + circName + " Timestep: " + timeStep;
 
-		return "<text " + coordinates + "fill=\"" + FONT_COLOR_INFO_STRING +
-			   "\"" +
-			   " " +
-			   FONT_FAMILY_STR + FONT + "\" " + FONT_SIZE_STR +
-			   FONT_SIZE_INFO_STRING +
-			   "\">" +
-			   "Filename: " + circName + " Timestep: " + timeStep +
-			   "</text>\n";
+		Element textElem = doc.createElement("text");
+		textElem.setAttribute("x", String.valueOf(xCoord));
+		textElem.setAttribute("y", String.valueOf(yCoord));
+		textElem.setAttribute("fill", SVGUtils.colorToSVG(Color.BLACK));
+		textElem.setAttribute("font-family", FONT);
+		textElem.setAttribute("font-size",
+													String.valueOf(FONT_SIZE_INFO_STRING));
+		textElem.appendChild(doc.createTextNode(fileInfo));
+
+		return textElem;
 	}
 
 	/**
