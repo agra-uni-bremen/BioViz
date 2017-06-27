@@ -731,10 +731,9 @@ public class SVGManager {
 	 * 		the droplet
 	 * @return svg string containing all start end arrows
 	 */
-	private String createSourceTargetArrow(final Net net) {
+	private List<Element> createSourceTargetArrow(final Net net) {
 
-		StringBuilder arrow = new StringBuilder();
-
+		List<Element> arrows = new ArrayList<>();
 		if (net != null) {
 			List<Source> startPoints = net.getSources();
 			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
@@ -744,12 +743,12 @@ public class SVGManager {
 				Pair<Float, Float> startPoint =
 						startSource.startPosition.centerFloat();
 				if (!startPoint.equals(endPoint)) {
-					arrow.append(createSVGArrow(startPoint, endPoint, arrowColor));
+					arrows.add(createSVGArrow(startPoint, endPoint, arrowColor));
 				}
 			}
 		}
 
-		return arrow.toString();
+		return arrows;
 	}
 
 	/**
@@ -759,11 +758,13 @@ public class SVGManager {
 	 * 		the drop
 	 * @return svg string
 	 */
-	private String createDropletArrows(final DrawableDroplet drawableDrop) {
+	private List<Element> createDropletArrows(final DrawableDroplet
+	drawableDrop) {
 
 		Net net = drawableDrop.droplet.getNet();
 
-		StringBuilder arrows = new StringBuilder();
+		List<Element> arrows = new ArrayList<>();
+
 		if (net != null) {
 
 			int time = assay.getCurrentTime();
@@ -781,18 +782,18 @@ public class SVGManager {
 				Color arrowColor =
 						SVGUtils.getLighterLongNetIndicatorColor(dropColor);
 
-				arrows.append(createSVGArrow(startPoint, dropletPos, arrowColor));
+				arrows.add(createSVGArrow(startPoint, dropletPos, arrowColor));
 			}
 
 			if (dropletPos != null && endPoint != null &&
 				!dropletPos.equals(endPoint)) {
 				Color arrowColor =
 						SVGUtils.getDarkerLongNetIndicatorColor(dropColor);
-				arrows.append(createSVGArrow(dropletPos, endPoint, arrowColor));
+				arrows.add(createSVGArrow(dropletPos, endPoint, arrowColor));
 			}
 		}
 
-		return arrows.toString();
+		return arrows;
 	}
 
 	/**
@@ -803,6 +804,7 @@ public class SVGManager {
 	 * @return Svg text element
 	 */
 	private String createDropletMsg(final DrawableDroplet drawableDrop) {
+	private Element createDropletMsg(final DrawableDroplet drawableDrop) {
 		Point dropPos = getDropletPosInSVGCoords(drawableDrop);
 		StringBuilder msg = new StringBuilder();
 		if (drawableDrop.getMsg() != null) {
