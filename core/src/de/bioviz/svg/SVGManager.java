@@ -175,8 +175,19 @@ public class SVGManager {
 	 */
 	private DrawableAssay assay;
 
-	private Document doc;
+	/**
+	 * The documentBuilder to create a new document.
+	 */
 	private DocumentBuilder docBuilder;
+
+	/**
+	 * The Document used to create the svg.
+	 */
+	private Document doc;
+
+	/**
+	 * The root node for the svg.
+	 */
 	private Element rootNode;
 
 
@@ -203,7 +214,7 @@ public class SVGManager {
 													DocumentBuilderFactory.newInstance();
 			docBuilder = docFactory.newDocumentBuilder();
 			doc = docBuilder.newDocument();
-		} catch (ParserConfigurationException e) {
+		} catch (final ParserConfigurationException e) {
 			LOGGER.error("Could not create xml document builder. " + e.getMessage());
 		}
 
@@ -432,11 +443,15 @@ public class SVGManager {
 		rootNode.appendChild(defs);
 
 		for (final DrawableField field : assay.getFields()) {
-			toSVG(field).forEach(fieldElem -> rootNode.appendChild(fieldElem));
+			toSVG(field).forEach(
+					fieldElem -> rootNode.appendChild(fieldElem)
+			);
 		}
 		for (final DrawableDroplet drop : assay.getDroplets()) {
 			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
-				toSVG(drop).forEach(dropElem -> rootNode.appendChild(dropElem));
+				toSVG(drop).forEach(
+						dropElem -> rootNode.appendChild(dropElem)
+				);
 			}
 		}
 		// run over each droplet again and draw the arrows
@@ -445,8 +460,9 @@ public class SVGManager {
 			if (assay.getDisplayOptions().
 					getOption(BDisplayOptions.LongNetIndicatorsOnDroplets) &&
 				SVGUtils.isNotHiddenOrInvisible(drop)) {
-				createDropletArrows(drop).forEach(arrow -> rootNode.appendChild
-				(arrow));
+				createDropletArrows(drop).forEach(
+						arrow -> rootNode.appendChild(arrow)
+				);
 			}
 		}
 
@@ -454,8 +470,9 @@ public class SVGManager {
 		for (final Net net : assay.getData().getNets()) {
 			if (assay.getDisplayOptions().getOption(BDisplayOptions
 															.LongNetIndicatorsOnFields)) {
-				createSourceTargetArrow(net).forEach(arrow -> rootNode.appendChild
-				(arrow));
+				createSourceTargetArrow(net).forEach(
+						arrow -> rootNode.appendChild(arrow)
+				);
 			}
 		}
 
@@ -471,7 +488,7 @@ public class SVGManager {
 			//
 			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
 				Element dropMsg = createDropletMsg(drop);
-				if(dropMsg != null) {
+				if (dropMsg != null) {
 					rootNode.appendChild(dropMsg);
 				}
 			}
@@ -484,18 +501,22 @@ public class SVGManager {
 
 		if (assay.getDisplayOptions().getOption(
 				BDisplayOptions.Coordinates)) {
-			createCoordinates().forEach(coord -> rootNode.appendChild(coord));
+			createCoordinates().forEach(
+					coord -> rootNode.appendChild(coord)
+			);
 		}
 
-		return transformXML();
+		return transformXML(doc);
 	}
 
 	/**
-	 * Transforms the xml document into a string that is then written.
+	 * Transforms the given xml document into a string.
 	 *
-	 * @return
+	 * @param document
+	 * 							The document that should be transformed into a string.
+	 * @return A string representation of the XML document.
 	 */
-	public String transformXML(){
+	public String transformXML(final Document document) {
 		StreamResult result = new StreamResult();
 		StringWriter writer = new StringWriter();
 		try {
@@ -505,14 +526,14 @@ public class SVGManager {
 			transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-			DOMSource source = new DOMSource(doc);
+			DOMSource source = new DOMSource(document);
 
 			// Output to stream writer
 			result = new StreamResult(writer);
 
 			transformer.transform(source, result);
 
-		} catch (TransformerException e) {
+		} catch (final TransformerException e) {
 			e.printStackTrace();
 		}
 		System.out.println("File saved!");
@@ -686,6 +707,7 @@ public class SVGManager {
 				float targetY = y1;
 
 				StringBuilder transFormParams = new StringBuilder(getScale());
+
 				// TODO calculate center and angle instead of if else bla
 				if (x1 < x2 && y1 == y2) {
 					//intentionally do nothing here
@@ -704,9 +726,8 @@ public class SVGManager {
 							"rotate(270 " + targetX + " " +
 							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") "
 					);
-				}
-				// this case is needed if the coordinates are the same
-				else {
+				}	else {
+					// this case is needed if the coordinates are the same
 					continue;
 				}
 
@@ -1032,8 +1053,8 @@ public class SVGManager {
 
 		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
 			 ++xCoord) {
-			final String xCoordStr = String.valueOf(xCoord * COORDINATE_MULTIPLIER
-					+ 0.5f * COORDINATE_MULTIPLIER);
+			final String xCoordStr = String.valueOf(xCoord * COORDINATE_MULTIPLIER +
+																								0.5f * COORDINATE_MULTIPLIER);
 			final String yCoordStr = String.valueOf(coordPos.snd - coordSize);
 
 			Element coord = doc.createElement("text");
