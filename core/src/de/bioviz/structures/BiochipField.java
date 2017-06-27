@@ -136,9 +136,31 @@ public class BiochipField {
 		resource = det;
 	}
 
-	public void setHeater(final Heater heater) { resource = heater; }
+	/**
+	 * Sets the heater of this field.
+	 * <p>
+	 * Note that we do not check whether a heater is added to a field that is
+	 * blocked and vice versa. Also no check for other resources is performed.
+	 *
+	 * @param heater
+	 * 		The heater that is placed at this field.
+	 */
+	public void setHeater(final Heater heater) {
+		resource = heater;
+	}
 
-	public void setMagnet(final Magnet magnet) { resource = magnet; }
+	/**
+	 * Sets the magnet of this field.
+	 * <p>
+	 * Note that we do not check whether a magnet is added to a field that is
+	 * blocked and vice versa. Also no check for other resources is performed.
+	 *
+	 * @param magnet
+	 * 		The magnet that is placed at this field.
+	 */
+	public void setMagnet(final Magnet magnet) {
+		resource = magnet;
+	}
 
 	/**
 	 * Checks whether there is a resources at this field.
@@ -148,7 +170,9 @@ public class BiochipField {
 	 *
 	 * @return true if there is a resource at this field.
 	 */
-	public boolean hasResource() { return resource != null; }
+	public boolean hasResource() {
+		return resource != null;
+	}
 
 	/**
 	 * Returns the detector of this field.
