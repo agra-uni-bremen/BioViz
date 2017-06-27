@@ -103,25 +103,6 @@ public class SVGManager {
 	 * font color.
 	 */
 	private static final String FONT_COLOR = SVGUtils.colorToSVG(Color.WHITE);
-	/**
-	 * font color for the info String.
-	 */
-	private static final String FONT_COLOR_INFO_STRING =
-			SVGUtils.colorToSVG(Color.BLACK);
-
-	// often used svg parts
-	/**
-	 * Text anchor middle tag.
-	 */
-	private static final String TEXT_ANCHOR_STR = "text-anchor=\"middle\" ";
-	/**
-	 * Font family tag.
-	 */
-	private static final String FONT_FAMILY_STR = "font-family=\"";
-	/**
-	 * Font size tag.
-	 */
-	private static final String FONT_SIZE_STR = "font-size=\"";
 
 	/**
 	 * svgCoreCreator.
