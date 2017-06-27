@@ -187,11 +187,9 @@ public class BioVizEditor {
 		if (storageFile == null) {
 			throw new IllegalArgumentException("No such storageFile.");
 		}
-		try {
-			FileWriter fileWriter = new FileWriter(storageFile);
+		try (FileWriter fileWriter = new FileWriter(storageFile)) {
 			fileWriter.write(editPane.getText());
 			fileWriter.flush();
-			fileWriter.close();
 		} catch (final IOException e) {
 			logger.error("File not found or not writable " +
 					storageFile.getAbsolutePath());

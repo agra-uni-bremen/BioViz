@@ -369,13 +369,13 @@ public class SVGManager {
 	 */
 	private void saveSVG(final File file, final DrawableAssay circ, final int
 			timeStep) {
+
 		doc = docBuilder.newDocument();
 		svgCoreCreator.setDocument(doc);
 		rootNode = doc.createElement("svg");
-		try {
-			FileWriter fileWriter = new FileWriter(file, false);
+
+		try (FileWriter fileWriter = new FileWriter(file, false)) {
 			fileWriter.write(this.toSVG(circ, timeStep));
-			fileWriter.close();
 		} catch (final IOException e) {
 			LOGGER.error("Failed to write file: {}", file.getAbsolutePath());
 			LOGGER.error("Exception: ", e.getMessage());

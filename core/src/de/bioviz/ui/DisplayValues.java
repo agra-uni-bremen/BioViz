@@ -23,18 +23,18 @@ public class DisplayValues {
 	public static final float DEFAULT_FIELD_DEPTH = 0f;
 
 	/**
-	 * The default line depth.
+	 * Th default droplet depth.
 	 *
 	 * Only fields are drawn earlier.
 	 */
-	public static final float DEFAULT_LINE_DEPTH = 5f;
+	public static final float DEFAULT_DROPLET_DEPTH = 10f;
 
 	/**
-	 * Th default droplet depth.
+	 * The default line depth.
 	 *
-	 * Only routes are drawn on top.
+	 * Lines are drawn above droplets.
 	 */
-	public static final float DEFAULT_DROPLET_DEPTH = 10f;
+	public static final float DEFAULT_LINE_DEPTH = 15f;
 
 	/**
 	 * The default route depth.

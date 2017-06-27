@@ -32,5 +32,7 @@ public enum TextureE {
 
 	Heater,
 
-	Magnet
+	Magnet,
+
+	ArrowHead
 }

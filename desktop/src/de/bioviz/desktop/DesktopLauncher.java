@@ -156,7 +156,7 @@ public class DesktopLauncher extends JFrame {
 	 * once in tabs, there is still only one visualization which then displays
 	 * several different circuits.
 	 */
-	 private BioViz currentViz;
+	private BioViz currentViz;
 
 	/**
 	 * The infoPanel displaying the statistics.
@@ -234,9 +234,9 @@ public class DesktopLauncher extends JFrame {
 		canvas = new LwjglAWTCanvas(currentViz);
 		editor = new BioVizEditor(currentViz);
 		hardErrorsViewer = new ErrorViewer(currentViz, "Parser errors",
-				ErrorViewer.ERRORTYPE.HARD);
+										   ErrorViewer.ERRORTYPE.HARD);
 		softErrorsViewer = new ErrorViewer(currentViz, "Parser warnings",
-				ErrorViewer.ERRORTYPE.SOFT);
+										   ErrorViewer.ERRORTYPE.SOFT);
 		annotationViewer = new AnnotationViewer(currentViz);
 
 		currentViz.addCloseFileListener(new CloseFileCallback());
@@ -365,7 +365,7 @@ public class DesktopLauncher extends JFrame {
 		panel.setLayout(new FlowLayout());
 		panel.setPreferredSize(new Dimension(panelWidth, panelHeight));
 
-        final int buttonWidth = 112;
+		final int buttonWidth = 112;
 		final int sliderWidth = buttonWidth;
 		final int sliderHeight = new JSlider().getPreferredSize().height;
 
@@ -445,17 +445,22 @@ public class DesktopLauncher extends JFrame {
 
 		JButton editorButton = new JButton("Editor");
 		editorButton.setPreferredSize(new Dimension(buttonWidth,
-				editorButton.getPreferredSize().height));
-		editorButton.addActionListener(e ->  editor.show());
+													editorButton
+															.getPreferredSize
+																	()
+															.height));
+		editorButton.addActionListener(e -> editor.show());
 
 		JButton annotationsButton = new JButton("Annotations");
 		annotationsButton.setPreferredSize(new Dimension(buttonWidth,
-				annotationsButton.getPreferredSize().height));
+														 annotationsButton
+																 .getPreferredSize().height));
 		annotationsButton.addActionListener(e -> annotationViewer.show());
 
 		JButton warningsButton = new JButton("Warnings");
-		warningsButton.setPreferredSize(new Dimension(buttonWidth, warningsButton
-				.getPreferredSize().height));
+		warningsButton.setPreferredSize(
+				new Dimension(buttonWidth, warningsButton
+						.getPreferredSize().height));
 		warningsButton.addActionListener(e -> softErrorsViewer.show());
 
 		JButton errorsButton = new JButton("Errors");
@@ -747,7 +752,7 @@ public class DesktopLauncher extends JFrame {
 		} catch (final CmdLineException e) {
 			String argsLine = String.join(" ", args);
 			System.err.println(
-                    "Unable to parse arguments: \"" + argsLine + "\"");
+					"Unable to parse arguments: \"" + argsLine + "\"");
 			System.err.println("\nusage:");
 			parser.printUsage(System.err);
 			System.exit(1);
@@ -808,9 +813,10 @@ public class DesktopLauncher extends JFrame {
 
 		Biochip chip = BioParser.parseFile(f);
 		if (!chip.errors.isEmpty()) {
-			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath());
+			logger.error("Found errors in file \"{}\":\n", f.getAbsolutePath
+					());
 			for (final String error : chip.errors) {
-                logger.error(error);
+				logger.error(error);
 			}
 		}
 	}
@@ -831,11 +837,13 @@ public class DesktopLauncher extends JFrame {
 					try {
 						// Set System L&F
 						for (final javax.swing.UIManager.LookAndFeelInfo info :
-								javax.swing.UIManager.getInstalledLookAndFeels()) {
+								javax.swing.UIManager.getInstalledLookAndFeels
+										()) {
 							if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".
 									equals(info.getClassName())) {
 
-								javax.swing.UIManager.setLookAndFeel(info.getClassName());
+								javax.swing.UIManager.setLookAndFeel(
+										info.getClassName());
 								break;
 							}
 						}
@@ -890,7 +898,8 @@ public class DesktopLauncher extends JFrame {
 		int choice;
 
 		if (load) {
-			FileNameExtensionFilter bioGramFilter = new FileNameExtensionFilter(
+			FileNameExtensionFilter bioGramFilter = new
+					FileNameExtensionFilter(
 					"Biogram Files", "bio");
 			fileDialog.addChoosableFileFilter(bioGramFilter);
 			fileDialog.setFileFilter(bioGramFilter);
@@ -1024,7 +1033,9 @@ public class DesktopLauncher extends JFrame {
 
 	/**
 	 * Allows to disable or enable the hotkeys from outside of DesktopLauncher.
-	 * @param allow allow hotkeys or not
+	 *
+	 * @param allow
+	 * 		allow hotkeys or not
 	 */
 	static void setAllowHotkeys(final boolean allow) {
 		allowHotkeys = allow;
@@ -1479,9 +1490,9 @@ public class DesktopLauncher extends JFrame {
 				logger.trace(
 						"Desktop received loaded event, setting slider...");
 				int oldTime = currentViz.currentAssay.getCurrentTime();
-				int oldRouteLength = currentViz.currentAssay.getDisplayRouteLength();
+				int oldRouteLength =
+						currentViz.currentAssay.getDisplayRouteLength();
 				DesktopLauncher d = DesktopLauncher.singleton;
-
 
 
 				// altering the max/min values already invokes the timer
@@ -1504,7 +1515,8 @@ public class DesktopLauncher extends JFrame {
 				d.displayRouteLengthSlider.setMinimum(0);
 				d.displayRouteLengthSlider.setValue(oldRouteLength);
 
-				d.setTitle(d.currentViz.getFileName() + " - " + BioVizInfo.PROGNAME);
+				d.setTitle(d.currentViz.getFileName() + " - " +
+						   BioVizInfo.PROGNAME);
 
 				logger.debug("Initializing infoPanel.");
 				d.infoPanel.refreshPanelData();
@@ -1549,13 +1561,17 @@ public class DesktopLauncher extends JFrame {
 					public void run() {
 
 						File f = askForFile("saveFolder", false);
-						currentViz.saveSVG(f,
-												   currentViz.currentAssay.getCurrentTime());
+
+						if (f != null) {
+							int currentTime =
+									currentViz.currentAssay.getCurrentTime();
+							currentViz.saveSVG(f, currentTime);
+						}
 					}
 				});
 			} catch (final Exception e) {
 				logger.error("Could not save file: " + e.getMessage() + "\n" +
-						e.getStackTrace());
+							 e.getStackTrace());
 			}
 			allowHotkeys = true;
 		}
@@ -1607,7 +1623,8 @@ public class DesktopLauncher extends JFrame {
 				} else if (e.getID() == KeyEvent.KEY_TYPED) {
 					// That thing might not have been initiliazed yet
 					if (currentViz.getInputProcessor() != null) {
-						currentViz.getInputProcessor().keyTyped(e.getKeyChar());
+						currentViz.getInputProcessor().keyTyped(e.getKeyChar
+								());
 					}
 				}
 			}
@@ -1627,8 +1644,10 @@ public class DesktopLauncher extends JFrame {
 		/**
 		 * Constructs a new BioCheckBoxMenuItem.
 		 *
-		 * @param label the label for the new item
-		 * @param option the connected BDisplayOptions item
+		 * @param label
+		 * 		the label for the new item
+		 * @param option
+		 * 		the connected BDisplayOptions item
 		 */
 		BioCheckboxMenuItem(final String label,
 							final BDisplayOptions option) {
