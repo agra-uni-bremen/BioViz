@@ -200,7 +200,7 @@ public class Point extends Pair<Integer, Integer> {
 	public static Pair<Float, Float> halfwayBetween(
 			final Point from, final Point to
 	) {
-		return lineBetween(from,to,0.5f);
+		return lineBetween(from, to, 0.5f);
 	}
 
 	/**
