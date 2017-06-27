@@ -573,7 +573,7 @@ public class SVGManager {
 	 * 		The drawableDroplet to export
 	 * @return svg string representation of the drop
 	 */
-	private String toSVG(final DrawableDroplet drawableDrop) {
+	private List<Element> toSVG(final DrawableDroplet drawableDrop) {
 
 		Point dropletPos = getDropletPosInSVGCoords(drawableDrop);
 
@@ -590,19 +590,25 @@ public class SVGManager {
 
 		// move the object to 0,0 then scale it and move it back to its
 		// original position
-		String transformation = getTransformation(translateToZero + " " +
-												  scale + " " + translateBack);
+		String transformation = translateToZero + " " +
+												  scale + " " + translateBack;
 
-		String route = toSVG(drawableDrop.route);
+		List<Element> route = toSVG(drawableDrop.route);
 
 		String dropletID = SVGUtils.generateColoredID("Droplet", drawableDrop
 				.getColor());
 
-		String dropShape = "<use x=\"" + dropletPos.fst + "\" " + "y=\"" +
-						   dropletPos.snd + "\"" + transformation + " " +
-						   "xlink:href=\"#" + dropletID + "\" />\n";
+		Element dropShape = doc.createElement("use");
+		dropShape.setAttribute("x", String.valueOf(dropletPos.fst));
+		dropShape.setAttribute("y", String.valueOf(dropletPos.snd));
+		dropShape.setAttribute("transform", transformation);
+		dropShape.setAttribute("xlink:href", "#" + dropletID);
 
-		return route + dropShape;
+		List<Element> dropElements = new ArrayList<>();
+		dropElements.add(dropShape);
+		dropElements.addAll(route);
+
+		return dropElements;
 	}
 
 	/**
