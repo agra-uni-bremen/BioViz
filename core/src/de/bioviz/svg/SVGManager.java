@@ -937,37 +937,46 @@ public class SVGManager {
 	 *
 	 * @return String containing the svg code for the coordinates
 	 */
-	private String createCoordinates() {
-		StringBuilder coords = new StringBuilder();
+	private List<Element> createCoordinates() {
+		List<Element> coordElems = new ArrayList<>();
 		int coordSize = FONT_SIZE_INFO_STRING;
+
 		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
 			 ++xCoord) {
-			coords.append(TEXT_ANCHOR_STR);
-			coords.append("x=\"" + (xCoord * COORDINATE_MULTIPLIER +
-									0.5 * COORDINATE_MULTIPLIER) + "\" ");
-			coords.append("y=\"" + (coordPos.snd - coordSize) + "\" ");
-			coords.append(
-					FONT_FAMILY_STR + FONT + "\"" + FONT_SIZE_STR + coordSize +
-					"\">");
-			coords.append(xCoord);
-			coords.append("</text>\n");
+			final String xCoordStr = String.valueOf(xCoord * COORDINATE_MULTIPLIER
+					+ 0.5f * COORDINATE_MULTIPLIER);
+			final String yCoordStr = String.valueOf(coordPos.snd - coordSize);
+
+			Element coord = doc.createElement("text");
+			coord.setAttribute("text-anchor", "middle");
+			coord.setAttribute("x", xCoordStr);
+			coord.setAttribute("y", yCoordStr);
+			coord.setAttribute("font-family", FONT);
+			coord.setAttribute("font-size", String.valueOf(coordSize));
+			coord.appendChild(doc.createTextNode(String.valueOf(xCoord)));
+
+			coordElems.add(coord);
 		}
 
 		for (int yCoord = topLeftCoord.snd; yCoord <= bottomRightCoord.snd;
 			 ++yCoord) {
-			coords.append("<text " + TEXT_ANCHOR_STR);
-			coords.append("y=\"" + ((bottomRightCoord.snd - yCoord) *
-									COORDINATE_MULTIPLIER +
-									0.5 * coordSize +
-									0.5 * COORDINATE_MULTIPLIER) + "\" ");
-			coords.append("x=\"" + (coordPos.fst - coordSize) + "\" ");
-			coords.append(
-					FONT_FAMILY_STR + FONT + "\"" + FONT_SIZE_STR + coordSize +
-					"\">");
-			coords.append(yCoord);
-			coords.append("</text>\n");
+
+			final String xCoordStr = String.valueOf(coordPos.fst - coordSize);
+			final String yCoordStr = String.valueOf(
+					(bottomRightCoord.snd - yCoord) *	COORDINATE_MULTIPLIER +
+					0.5f * coordSize +
+					0.5f * COORDINATE_MULTIPLIER);
+
+			Element coord = doc.createElement("text");
+			coord.setAttribute("x", xCoordStr);
+			coord.setAttribute("y", yCoordStr);
+			coord.setAttribute("font-family", FONT);
+			coord.setAttribute("font-size", String.valueOf(coordSize));
+			coord.appendChild(doc.createTextNode(String.valueOf(yCoord)));
+
+			coordElems.add(coord);
 		}
-		return coords.toString();
+		return coordElems;
 	}
 
 	/**
