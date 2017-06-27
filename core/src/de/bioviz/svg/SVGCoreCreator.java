@@ -140,19 +140,19 @@ class SVGCoreCreator {
 			builder = factory.newDocumentBuilder();
 
 			input = new ByteArrayInputStream(uncoloredCore.getBytes("UTF-8"));
-			doc = builder.parse(input);
+			Document parseDoc = builder.parse(input);
 
-			doc.getDocumentElement().normalize();
+			parseDoc.getDocumentElement().normalize();
 
 			// every svg should contain a group which contains the needed
 			// elements
 			Node group = null;
-			NodeList gList = doc.getElementsByTagName("g");
+			NodeList gList = parseDoc.getElementsByTagName("g");
 			if (gList.getLength() > 0) {
 				group = gList.item(0);
 			} else {
 				LOGGER.debug("[SVG] There was no group in the svg code.");
-				return "";
+				return null;
 			}
 
 			if (fillColor != null) {
@@ -213,7 +213,7 @@ class SVGCoreCreator {
 				}
 			}
 
-			coloredCore = getGroupFromDocument(doc);
+			coloredCore = (Element) group;
 
 		} catch (final UnsupportedEncodingException e) {
 			LOGGER.error("[SVG] XML uses unknown encoding.");
@@ -229,7 +229,12 @@ class SVGCoreCreator {
 			LOGGER.error(e.getMessage());
 		}
 
-		return coloredCore;
+		// this is needed as the Node comes from a different document
+		Node cCore = coloredCore.cloneNode(true);
+		// the new document adopts the node
+		doc.adoptNode(cCore);
+
+		return (Element) cCore;
 	}
 
 	/**
