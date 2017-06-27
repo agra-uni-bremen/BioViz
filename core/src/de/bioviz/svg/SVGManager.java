@@ -471,14 +471,13 @@ public class SVGManager {
 	 * 							The document that should be transformed into a string.
 	 * @return A string representation of the XML document.
 	 */
-	public String transformXML(final Document document) {
+	private String transformXML(final Document document) {
 		StreamResult result = new StreamResult();
 		StringWriter writer = new StringWriter();
 		try {
 
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = null;
-			transformer = transformerFactory.newTransformer();
+			Transformer transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
 			DOMSource source = new DOMSource(document);
