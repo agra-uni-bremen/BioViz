@@ -803,14 +803,16 @@ public class SVGManager {
 	 * 		The droplet
 	 * @return Svg text element
 	 */
-	private String createDropletMsg(final DrawableDroplet drawableDrop) {
 	private Element createDropletMsg(final DrawableDroplet drawableDrop) {
 		Point dropPos = getDropletPosInSVGCoords(drawableDrop);
-		StringBuilder msg = new StringBuilder();
+
+		Element msg = null;
+
 		if (drawableDrop.getMsg() != null) {
-			msg.append(createMsg(dropPos.fst, dropPos.snd, drawableDrop.getMsg()));
+			msg = createMsg(dropPos.fst, dropPos.snd, drawableDrop.getMsg());
 		}
-		return msg.toString();
+
+		return msg;
 	}
 
 	/**
@@ -820,17 +822,18 @@ public class SVGManager {
 	 * 		the field
 	 * @return svg text element
 	 */
-	private String createFieldMsg(final DrawableField field) {
+	private Element createFieldMsg(final DrawableField field) {
 		Point fieldPos = getFieldPosInSVGCoords(field);
+
+		Element fieldMsg = null;
 
 		DisplayValues vals = field.getDisplayValues();
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
-		StringBuilder fieldSvg = new StringBuilder();
 		if (vals.getMsg() != null) {
-			fieldSvg.append(createMsg(fieldPos.fst, fieldPos.snd, vals.getMsg()));
+			fieldMsg = createMsg(fieldPos.fst, fieldPos.snd, vals.getMsg());
 		}
-		return fieldSvg.toString();
+		return fieldMsg;
 	}
 
 	/**
@@ -841,14 +844,17 @@ public class SVGManager {
 	 * @param message the text to print
 	 * @return svg text element
 	 */
-	private String createMsg(final int x, final int y, final String message) {
-		return "<text " + TEXT_ANCHOR_STR +
-				"x=\"" + (x + FONT_OFFSET_X) + "\" " +
-				"y=\"" + (y + FONT_OFFSET_Y) + "\" " +
-				FONT_FAMILY_STR + FONT + "\" " +
-				FONT_SIZE_STR + FONT_SIZE + "\" " +
-				"fill=\"#" + FONT_COLOR +	"\">" + message +
-				"</text>\n";
+	private Element createMsg(final int x, final int y, final String message) {
+		Element msg = doc.createElement("text");
+		msg.setAttribute("text-anchor", "middle");
+		msg.setAttribute("x", String.valueOf(x + FONT_OFFSET_X));
+		msg.setAttribute("y", String.valueOf(y + FONT_OFFSET_Y));
+		msg.setAttribute("font-family", FONT);
+		msg.setAttribute("font-size", String.valueOf(FONT_SIZE));
+		msg.setAttribute("fill", "#" + FONT_COLOR);
+		msg.appendChild(doc.createTextNode(message));
+
+		return msg;
 	}
 
 	/**
