@@ -1,6 +1,7 @@
 # BioViz #
 
-*BioViz is a software to visualize digital microfluidic biochip (DMFB) assays.*
+*BioViz is an interactive software to visualize digital microfluidic biochip 
+(DMFB) assays.*
 
 --------------------------
 
@@ -12,7 +13,7 @@ http://www.informatik.uni-bremen.de/agra/eng/bioviz.php
 This software is licensed under the GPLv2 or later. See the LICENSE.md file for details.
 
 ## Overview
-[TODO]: <> (Was ist an dieser stelle besser? HTML oder markdown?)
+[comment]: <> (Was ist an dieser stelle besser? HTML oder markdown?)
 <img src="BioViz01.png" style="width:600px;"/>
 [comment]: ![](BioViz01.png)
 
