@@ -40,6 +40,8 @@ The program starts with an example DMFB. You can load and review your own biochi
 The design can be described using the BioGram grammar. Examples can be found in the 
 `./core/assets/examples` folder. Multiple designs can be opened in different tabs.
 
+## Usage
+
 The user controls on the left of the window show
 two important sliders. The lower one lets
 the system advance through time in a simple step-through
