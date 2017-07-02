@@ -32,9 +32,13 @@ visualization engine for microfluidic biochips and BioGram, a grammar
 to interface with it.
 
 ## Build
-Because BioViz is written in Java you need a Java Runtime Environment to use it. You can compile and start the application by running the provided gradle build file by calling `./gradlew desktop:run`.
+Because BioViz is written in Java you need a Java Runtime Environment to use it. 
+You can compile and start the application by running the provided gradle build file 
+by calling `./gradlew desktop:run`.
 
-The program starts with an example DMFB. You can load and review your own biochip design. The design can be described using the BioGram grammar. The grammar is described in [Paper not yet available to download.](http://www.informatik.uni-bremen.de/agra/doc/konf/null.pdf) and examples can be found in the `./core/assets/examples` folder. Multiple designs can be opened in different tabs.
+The program starts with an example DMFB. You can load and review your own biochip design. 
+The design can be described using the BioGram grammar. Examples can be found in the 
+`./core/assets/examples` folder. Multiple designs can be opened in different tabs.
 
 The user controls on the left of the window show
 two important sliders. The lower one lets
@@ -61,19 +65,17 @@ may show potential warnings (e.g. droplet paths that are not
 physically realizable) and parsing errors. The statistics panel
 on the right can be turned off.
 
-A more complete description of the features can be found in
-[Paper not yet available to download.](http://www.informatik.uni-bremen.de/agra/doc/konf/null.pdf).
 
-## Reference
+## References
 
 If you use BioViz for your research, we would be thankful if you refer to the
 tool by citing the following publication:
 
 	@inproceedings{bioviz,
 		author = {Jannis Stoppe and Oliver Keszocze and Maximilian Luenert and Robert Wille and Rolf Drechsler},
-		title = {BioViz: An Interactive Visualization Engine for the Design of Digital Microfluidic Biochips},
-		booktitle = {???},
-		publisher = {???},
+		title = {{BioViz: An Interactive Visualization Engine for the Design of Digital Microfluidic Biochips}},
+		booktitle = {IEEE Computer Society Annual Symposium on VLSI},
+		publisher = {IEE},
 		year = {2017},
 		note = {{BioViz} is available at http://www.informatik.uni-bremen.de/agra/eng/bioviz.php}
 	}
