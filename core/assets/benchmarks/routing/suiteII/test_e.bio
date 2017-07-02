@@ -1,3 +1,21 @@
+#
+# This file is part of benchmark suite II as introduced in the publication
+#
+# Tsung-Wei Huang, Tsung-Yi Ho: "A Fast Routability- and Performance-Driven Droplet Routing Algorithm for Digital Microfluidic  Biochips",
+# IEEE International Conference on Computer Design (ICCD), 2009
+#
+# If you use this file, please cite this paper.
+#
+#
+#
+#
+# This file is has been shipped with the BioViz visualization tool. BioViz is available at http://informatik.uni-bremen.de/agra/bioviz/
+# If you use BioViz in your publication, please cite
+#
+# Jannis Stoppe, Oliver Keszocze, Maximilian Luenert, Robert Wille, Rolf Drechsler: "BioViz: An Interactive Visualization Engine for Digital Microfluidic Biochips",
+# IEEE Computer Society Annual Symposium on VLSI (ISVLSI), 2017
+#
+
 grid
 (1,1) (24,24)
 end

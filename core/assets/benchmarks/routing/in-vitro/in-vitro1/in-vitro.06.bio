@@ -1,3 +1,30 @@
+#
+# This file is part of the benchmarks used in the publication
+#
+# Fei Su, William L. Hwang, Krishnendu Chakrabarty: "Droplet routing in the synthesis of digital microfluidic biochips",
+# Design, Automation and Test in Europe (DATE), 2006
+#
+# If you use this file, please cite this paper.
+#
+#
+# The benchmarks are based on the bench-top protocol published in
+# P. Trinder:  "Determination of glucose in blood using glucose oxidase with an alternative oxygen acceptor",
+# Annals of ClinicalBiochemistry, vol. 6, pp. 24-27, 1969.
+#
+# An actual experiment using digital microfluidic biochips for this protocol was reported in Vijay Srinivasan's PhD thesis
+# Vijay Srinivasan: "A Digital Microfluidic Lab-on-a-Chip for Clinical Diagnostic Applications",
+# Ph.D. thesis, Department of Electrical and Computer Engineering, Duke University, 2005.
+#
+#
+#
+#
+# This file is has been shipped with the BioViz visualization tool. BioViz is available at http://informatik.uni-bremen.de/agra/bioviz/
+# If you use BioViz in your publication, please cite
+#
+# Jannis Stoppe, Oliver Keszocze, Maximilian Luenert, Robert Wille, Rolf Drechsler: "BioViz: An Interactive Visualization Engine for Digital Microfluidic Biochips",
+# IEEE Computer Society Annual Symposium on VLSI (ISVLSI), 2017
+#
+
 grid
 (1,1) (16,16)
 end

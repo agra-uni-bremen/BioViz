@@ -1,3 +1,25 @@
+/*
+ * BioViz, a visualization tool for digital microfluidic biochips (DMFB).
+ *
+ * Copyright (c) 2017 Oliver Keszocze, Jannis Stoppe, Maximilian Luenert
+ *
+ * This file is part of BioViz.
+ *
+ * BioViz is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * BioViz is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * See the GNU General Public License for more details. You should have
+ * received a copy of the GNU
+ * General Public License along with BioViz.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package de.bioviz.svg;
 
 import com.badlogic.gdx.Gdx;
@@ -19,15 +41,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -60,8 +75,9 @@ class SVGCoreCreator {
 	/**
 	 * Creates a new SVGCoreCreator.
 	 */
-	SVGCoreCreator() {
+	SVGCoreCreator(Document doc) {
 		// default constructor
+		this.doc = doc;
 	}
 
 	/**
@@ -79,13 +95,24 @@ class SVGCoreCreator {
 	}
 
 	/**
+	 * Sets the Document to use.
+	 *
+	 * @param doc The Document to use
+	 */
+	void setDocument(final Document doc) {
+		this.doc = doc;
+	}
+
+	private Document doc;
+
+	/**
 	 * Return the svg core without color.
 	 *
 	 * @param type
 	 * 		The type of the core.
 	 * @return the svg code for the given type as a string
 	 */
-	private String getSVGCode(final TextureE type) {
+	private String getSVGFileAsString(final TextureE type) {
 
 		String svgCoreFile =
 				baseFolder + "/" + svgCoreFolder + "/" + type + ".plain.svg";
@@ -109,32 +136,38 @@ class SVGCoreCreator {
 	 * 		The stroke color.
 	 * @return String containing svg core data.
 	 */
-	String getSVGCode(final TextureE type, final Color fillColor,
+	Element getSVGCode(final TextureE type, final Color fillColor,
 							 final Color strokeColor) {
-		String uncoloredCore = getSVGCode(type);
-		String coloredCore = uncoloredCore;
+		String uncoloredCore = getSVGFileAsString(type);
+
+		if(uncoloredCore == null){
+			LOGGER.error("[SVG] Could not load SVG core file.");
+			return null;
+		}
+
+		Element coloredCore = null;
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		ByteArrayInputStream input;
-		Document doc;
+
 		try {
 			builder = factory.newDocumentBuilder();
 
 			input = new ByteArrayInputStream(uncoloredCore.getBytes("UTF-8"));
-			doc = builder.parse(input);
+			Document parseDoc = builder.parse(input);
 
-			doc.getDocumentElement().normalize();
+			parseDoc.getDocumentElement().normalize();
 
 			// every svg should contain a group which contains the needed
 			// elements
 			Node group = null;
-			NodeList gList = doc.getElementsByTagName("g");
+			NodeList gList = parseDoc.getElementsByTagName("g");
 			if (gList.getLength() > 0) {
 				group = gList.item(0);
 			} else {
 				LOGGER.debug("[SVG] There was no group in the svg code.");
-				return "";
+				return null;
 			}
 
 			if (fillColor != null) {
@@ -195,7 +228,7 @@ class SVGCoreCreator {
 				}
 			}
 
-			coloredCore = getGroupFromDocument(doc);
+			coloredCore = (Element) group;
 
 		} catch (final UnsupportedEncodingException e) {
 			LOGGER.error("[SVG] XML uses unknown encoding.");
@@ -211,7 +244,12 @@ class SVGCoreCreator {
 			LOGGER.error(e.getMessage());
 		}
 
-		return coloredCore;
+		// this is needed as the Node comes from a different document
+		Node cCore = coloredCore.cloneNode(true);
+		// the new document adopts the node
+		doc.adoptNode(cCore);
+
+		return (Element) cCore;
 	}
 
 	/**
@@ -223,16 +261,23 @@ class SVGCoreCreator {
 	 * 		the id for the arrowHead
 	 * @return a svg marker string
 	 */
-	private String getArrowHead(final String id, final Color color) {
-		return "<marker id=\"" + id + "\" " +
-			   "markerWidth=\"10\" " + "markerHeight=\"10\" " +
-			   "refX=\"7\" " + "refY=\"3\"	" +
-			   "orient=\"auto\" markerUnits=\"strokeWidth\">\n\t<path " +
-			   "d=\"M0," +
-			   "0" +
-			   " C 1,1" +
-			   " 1,5 0,6 L9,3  z\" " +
-			   "fill=\"#" + SVGUtils.colorToSVG(color) + "\" />\n</marker>\n";
+	public Element getArrowHead(final String id, final Color
+			color) {
+		Element elem = doc.createElement("marker");
+		elem.setAttribute("id", id);
+		elem.setAttribute("markerWidth", String.valueOf(10));
+		elem.setAttribute("markerHeight", String.valueOf(10));
+		elem.setAttribute("refX", String.valueOf(7));
+		elem.setAttribute("refY", String.valueOf(3));
+		elem.setAttribute("orient", "auto");
+		elem.setAttribute("markerUnits", "strokeWidth");
+
+		Element path = doc.createElement("path");
+		path.setAttribute("d", "M0,0 C 1,1 1,5 0,6 L9,3 z");
+		path.setAttribute("fill", "#" + SVGUtils.colorToSVG(color));
+		elem.appendChild(path);
+
+		return elem;
 	}
 
 	/**
@@ -248,7 +293,7 @@ class SVGCoreCreator {
 	 * 		first color of the resulting gradient
 	 * @return a string
 	 */
-	private String getSVGLinearGradient(final String id, final GradDir dir,
+	private Element getSVGLinearGradient(final String id, final GradDir dir,
 									   final
 									   Color
 											   color) {
@@ -261,20 +306,35 @@ class SVGCoreCreator {
 
 		final int colorMult = 255;
 
-		String begin = "<linearGradient id=\"" + id + "\" x1=\"" + x1 + "\" " +
-					   "y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 +
-					   "\" >\n";
-		String offset1 = "<stop offset=\"0%\" " + "style=\"stop-color:rgb(" +
+		Element elem = doc.createElement("linearGradient");
+		elem.setAttribute("id", id);
+		elem.setAttribute("x1", String.valueOf(x1));
+		elem.setAttribute("y1", String.valueOf(y1));
+		elem.setAttribute("x2", String.valueOf(x2));
+		elem.setAttribute("y2", String.valueOf(y2));
 
-						 color.r * colorMult + "," + color.g * colorMult +
-						 "," + color.b * colorMult + ");" +
-						 "stop-opacity:0\" />\n";
-		String offset2 = "<stop offset=\"100%\" style=\"stop-color:rgb(" +
-						 color.r * colorMult + "," + color.g * colorMult +
-						 "," + color.b * colorMult + ");" +
-						 "stop-opacity:0.8\" />\n";
-		String end = "</linearGradient>\n";
-		return begin + offset1 + offset2 + end;
+		Element stopElem = doc.createElement("stop");
+		stopElem.setAttribute("offset", "0%");
+		stopElem.setAttribute("style", "stop-color:rgb(" +
+													color.r * colorMult +
+		 								"," + color.g * colorMult +
+										"," + color.b * colorMult + ");"
+										);
+		stopElem.setAttribute("stop-opacity", "0");
+
+		Element stopElem2 = doc.createElement("stop");
+		stopElem2.setAttribute("offset", "100%");
+		stopElem2.setAttribute("style", "stop-color:rgb(" +
+													color.r * colorMult +
+										"," + color.g * colorMult +
+										"," + color.b * colorMult +");"
+						);
+		stopElem2.setAttribute("stop-opacity", "0.8");
+
+		elem.appendChild(stopElem);
+		elem.appendChild(stopElem2);
+
+		return elem;
 	}
 
 	/**
@@ -323,39 +383,6 @@ class SVGCoreCreator {
 	}
 
 	/**
-	 * Create string from xml representation.
-	 *
-	 * @param doc
-	 * 		The xml document.
-	 * @return String representing the xml document or null if the
-	 * transformation failed.
-	 */
-	private String getGroupFromDocument(final Document doc) {
-		TransformerFactory tFactory;
-		Transformer transformer;
-		StringWriter writer;
-		try {
-			tFactory = TransformerFactory.newInstance();
-			transformer = tFactory.newTransformer();
-
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-										  "yes");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-			DOMSource source = new DOMSource(doc.getElementsByTagName("g").
-					item(0));
-			writer = new StringWriter();
-			StreamResult result = new StreamResult(writer);
-			transformer.transform(source, result);
-		} catch (final TransformerException e) {
-			LOGGER.error("[SVG] Creating string from XML failed.");
-			return null;
-		}
-
-		return writer.toString();
-	}
-
-	/**
 	 * Puts the svg code for a field into the given map.
 	 *
 	 * @param svgs
@@ -363,9 +390,8 @@ class SVGCoreCreator {
 	 * @param field
 	 * 		the field
 	 */
-	void appendFieldSVG(final Map<String, String> svgs,
-							   final DrawableField
-									   field) {
+	void appendFieldSVG(final Map<String, Element> svgs,
+							   final DrawableField field) {
 
 		final String key = SVGUtils.generateColoredID(field.getDisplayValues()
 															  .getTexture()
@@ -375,9 +401,11 @@ class SVGCoreCreator {
 																	  field));
 		// don't create the svg core code twice
 		if (!svgs.containsKey(key)) {
-			svgs.put(key,
-					 getSVGCode(field.getDisplayValues().getTexture(),
-								SVGUtils.getUnhoveredColor(field), null));
+			Element elem = getSVGCode(field.getDisplayValues().getTexture(),
+					SVGUtils.getUnhoveredColor(field), null);
+			if (elem != null) {
+				svgs.put(key, elem);
+			}
 		}
 	}
 
@@ -391,7 +419,7 @@ class SVGCoreCreator {
 	 * @param dir
 	 * 		the direction of the gradient
 	 */
-	void appendGradSVG(final Map<String, String> svgs,
+	void appendGradSVG(final Map<String, Element> svgs,
 							  final Net net, final
 							  GradDir dir) {
 		final String key =
@@ -411,7 +439,7 @@ class SVGCoreCreator {
 	 * @param drop
 	 * 		the droplet
 	 */
-	void appendDropletSVG(final Map<String, String> svgs,
+	void appendDropletSVG(final Map<String, Element> svgs,
 								 final
 								 DrawableDroplet
 										 drop) {
@@ -419,7 +447,10 @@ class SVGCoreCreator {
 				SVGUtils.generateColoredID("Droplet", drop.getColor());
 		// don't create the svg core code twice
 		if (!svgs.containsKey(key)) {
-			svgs.put(key, getSVGCode(TextureE.Droplet, drop.getColor(), null));
+			Element elem = getSVGCode(TextureE.Droplet, drop.getColor(), null);
+			if (elem != null) {
+				svgs.put(key, elem);
+			}
 		}
 	}
 
@@ -431,7 +462,7 @@ class SVGCoreCreator {
 	 * @param dropColor
 	 * 		the dropletColor
 	 */
-	void appendArrowheads(final Map<String, String> svgs,
+	void appendArrowheads(final Map<String, Element> svgs,
 								 final Color
 										 dropColor) {
 		final Color[] colors =
@@ -453,7 +484,7 @@ class SVGCoreCreator {
 	 * @param svgs
 	 * 		the map
 	 */
-	void appendSourceTargetArrowHead(final Map<String, String> svgs) {
+	void appendSourceTargetArrowHead(final Map<String, Element> svgs) {
 		final Color color = Color.BLACK;
 		final String key = SVGUtils.generateColoredID("ArrowHead", color);
 		if (!svgs.containsKey(key)) {
@@ -469,15 +500,17 @@ class SVGCoreCreator {
 	 * @param drop
 	 * 		the droplet
 	 */
-	void appendRoute(final Map<String, String> svgs,
+	void appendRoute(final Map<String, Element> svgs,
 							final DrawableDroplet
 									drop) {
 		final Color routeColor = drop.route.getColor();
 		final String key = SVGUtils.generateColoredID("StepMarker",
 													  routeColor);
 		if (!svgs.containsKey(key)) {
-			svgs.put(key,
-					 getSVGCode(TextureE.StepMarker, routeColor, null));
+			Element elem = getSVGCode(TextureE.StepMarker, routeColor, null);
+			if (elem != null) {
+				svgs.put(key, elem);
+			}
 		}
 	}
 

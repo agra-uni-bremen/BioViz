@@ -1,3 +1,25 @@
+/*
+ * BioViz, a visualization tool for digital microfluidic biochips (DMFB).
+ *
+ * Copyright (c) 2017 Oliver Keszocze, Jannis Stoppe, Maximilian Luenert
+ *
+ * This file is part of BioViz.
+ *
+ * BioViz is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * BioViz is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * See the GNU General Public License for more details. You should have
+ * received a copy of the GNU
+ * General Public License along with BioViz.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package de.bioviz.svg;
 
 
@@ -18,13 +40,26 @@ import de.bioviz.ui.TextureE;
 import de.bioviz.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -90,25 +125,6 @@ public class SVGManager {
 	 * font color.
 	 */
 	private static final String FONT_COLOR = SVGUtils.colorToSVG(Color.WHITE);
-	/**
-	 * font color for the info String.
-	 */
-	private static final String FONT_COLOR_INFO_STRING =
-			SVGUtils.colorToSVG(Color.BLACK);
-
-	// often used svg parts
-	/**
-	 * Text anchor middle tag.
-	 */
-	private static final String TEXT_ANCHOR_STR = "text-anchor=\"middle\" ";
-	/**
-	 * Font family tag.
-	 */
-	private static final String FONT_FAMILY_STR = "font-family=\"";
-	/**
-	 * Font size tag.
-	 */
-	private static final String FONT_SIZE_STR = "font-size=\"";
 
 	/**
 	 * svgCoreCreator.
@@ -118,7 +134,7 @@ public class SVGManager {
 	/**
 	 * hashMap for uncolored svg elements.
 	 */
-	private HashMap<String, String> svgs = new HashMap<>();
+	private Map<String, Element> svgs = new HashMap<>();
 
 
 	/**
@@ -163,6 +179,16 @@ public class SVGManager {
 	private DrawableAssay assay;
 
 	/**
+	 * The documentBuilder to create a new document.
+	 */
+	private DocumentBuilder docBuilder;
+
+	/**
+	 * The Document used to create the svg.
+	 */
+	private Document doc;
+
+	/**
 	 * SVGManager loading the default theme.
 	 */
 	public SVGManager() {
@@ -180,28 +206,17 @@ public class SVGManager {
 	 * @warning The folder name must not begin or end with a slash!
 	 */
 	public SVGManager(final String folder) {
-		svgCoreCreator = new SVGCoreCreator();
+		try {
+			final DocumentBuilderFactory docFactory =
+													DocumentBuilderFactory.newInstance();
+			docBuilder = docFactory.newDocumentBuilder();
+			doc = docBuilder.newDocument();
+		} catch (final ParserConfigurationException e) {
+			LOGGER.error("Could not create xml document builder. " + e.getMessage());
+		}
+
+		svgCoreCreator = new SVGCoreCreator(doc);
 		svgCoreCreator.setFolder(folder);
-	}
-
-	/**
-	 * creates a string for an svg transform.
-	 *
-	 * @param params
-	 * 		the transformation params
-	 * @return a string for an svg transform
-	 */
-	private String getTransformation(final String params) {
-		return " transform=\"" + params + "\" ";
-	}
-
-	/**
-	 * creates a transformation with the scale factor.
-	 *
-	 * @return a string with a svg scaling transformation
-	 */
-	private String getScaleTransformation() {
-		return getTransformation(getScale());
 	}
 
 	/**
@@ -231,8 +246,11 @@ public class SVGManager {
 		for (final TextureE s : TextureE.values()) {
 
 			if (s != TextureE.BlackPixel) {
-				svgs.put(s.toString(), svgCoreCreator.getSVGCode(s, null,
-																 null));
+				Element elem = svgCoreCreator.getSVGCode(s, null,
+						null);
+				if (elem != null) {
+					svgs.put(s.toString(), elem);
+				}
 			}
 
 		}
@@ -328,6 +346,10 @@ public class SVGManager {
 	 */
 	private void saveSVG(final File file, final DrawableAssay circ, final int
 			timeStep) {
+
+		doc = docBuilder.newDocument();
+		svgCoreCreator.setDocument(doc);
+
 		try (FileWriter fileWriter = new FileWriter(file, false)) {
 			fileWriter.write(this.toSVG(circ, timeStep));
 		} catch (final IOException e) {
@@ -346,6 +368,8 @@ public class SVGManager {
 	 * @return svg string representation
 	 */
 	private String toSVG(final DrawableAssay circ, final int timeStep) {
+
+		Element rootNode = doc.createElement("svg");;
 
 		assay = circ;
 
@@ -370,36 +394,41 @@ public class SVGManager {
 		}
 
 		LOGGER.debug("[SVG] Starting to create SVG String");
-		StringBuilder sb = new StringBuilder();
 
-		sb.append(
-				"<?xml version=\"1.1\" encoding=\"UTF-8\" " +
-				"standalone=\"yes\"?>\n" +
-				"<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
-				"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" +
-				"<svg width=\"100%\" height=\"100%\" viewBox=\"" +
-				viewBoxX + " " + viewBoxY + " " +
-				viewBoxWidth + " " + viewBoxHeight +
-				"\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
-				"xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
+		rootNode.setAttribute("width", "100%");
+		rootNode.setAttribute("height", "100%");
+		rootNode.setAttribute("viewBox",
+									viewBoxX + " " + viewBoxY + " " +
+									viewBoxWidth + " " + viewBoxHeight
+									);
+		rootNode.setAttribute("version", "1.0");
+		rootNode.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+		rootNode.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+
+		doc.appendChild(rootNode);
 
 		// simply always put every definition in the file. File size and/or
 		// computation time does not really matter here.
-		sb.append("<defs>\n");
+		Element defs = doc.createElement("defs");
 
-		// create all def strings and save them in colSvgs
+		// create all def elements and save them in svgs
 		createDefCores();
 
-		// append all cores to the svg string
-		svgs.forEach((name, svgcode) -> sb.append(svgcode));
-		sb.append("</defs>\n");
+		// append all cores to the svg
+		svgs.forEach((name, svgcode) -> defs.appendChild(svgcode));
+
+		rootNode.appendChild(defs);
 
 		for (final DrawableField field : assay.getFields()) {
-			sb.append(toSVG(field));
+			toSVG(field).forEach(
+					fieldElem -> rootNode.appendChild(fieldElem)
+			);
 		}
 		for (final DrawableDroplet drop : assay.getDroplets()) {
 			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
-				sb.append(toSVG(drop));
+				toSVG(drop).forEach(
+						dropElem -> rootNode.appendChild(dropElem)
+				);
 			}
 		}
 		// run over each droplet again and draw the arrows
@@ -408,7 +437,9 @@ public class SVGManager {
 			if (assay.getDisplayOptions().
 					getOption(BDisplayOptions.LongNetIndicatorsOnDroplets) &&
 				SVGUtils.isNotHiddenOrInvisible(drop)) {
-				sb.append(createDropletArrows(drop));
+				createDropletArrows(drop).forEach(
+						arrow -> rootNode.appendChild(arrow)
+				);
 			}
 		}
 
@@ -416,35 +447,73 @@ public class SVGManager {
 		for (final Net net : assay.getData().getNets()) {
 			if (assay.getDisplayOptions().getOption(BDisplayOptions
 															.LongNetIndicatorsOnFields)) {
-				sb.append(createSourceTargetArrow(net));
+				createSourceTargetArrow(net).forEach(
+						arrow -> rootNode.appendChild(arrow)
+				);
 			}
 		}
 
 		// export msg strings for fields
 		for (final DrawableField field : assay.getFields()) {
-			sb.append(createFieldMsg(field));
+			Element fieldMsg = createFieldMsg(field);
+			if (fieldMsg != null) {
+				rootNode.appendChild(fieldMsg);
+			}
 		}
+
 		// export msg strings for droplets
 		for (final DrawableDroplet drop : assay.getDroplets()) {
 			//
 			if (SVGUtils.isNotHiddenOrInvisible(drop)) {
-				sb.append(createDropletMsg(drop));
+				Element dropMsg = createDropletMsg(drop);
+				if (dropMsg != null) {
+					rootNode.appendChild(dropMsg);
+				}
 			}
 		}
 
-
 		if (svgExportSettings.getInformationString()) {
-			sb.append(createInfoString());
+			rootNode.appendChild(createInfoString());
 		}
 
 		if (assay.getDisplayOptions().getOption(
 				BDisplayOptions.Coordinates)) {
-			sb.append(createCoordinates());
+			createCoordinates().forEach(
+					coord -> rootNode.appendChild(coord)
+			);
 		}
 
-		sb.append("</svg>\n");
+		return transformXML(doc);
+	}
 
-		return sb.toString();
+	/**
+	 * Transforms the given xml document into a string.
+	 *
+	 * @param document
+	 * 							The document that should be transformed into a string.
+	 * @return A string representation of the XML document.
+	 */
+	private String transformXML(final Document document) {
+		StreamResult result = new StreamResult();
+		StringWriter writer = new StringWriter();
+		try {
+
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+			DOMSource source = new DOMSource(document);
+
+			// Output to stream writer
+			result = new StreamResult(writer);
+
+			transformer.transform(source, result);
+
+		} catch (final TransformerException e) {
+			e.printStackTrace();
+		}
+		System.out.println("File saved!");
+		return writer.toString();
 	}
 
 	/**
@@ -454,17 +523,7 @@ public class SVGManager {
 	 * 		The field to export
 	 * @return svg string representation of a field
 	 */
-	private String toSVG(final DrawableField field) {
-		// why would we need to acces " (-this.field.y + BioViz.singleton
-		// .currentAssay.data.field[0].length - 1)"?
-		// @jannis please check and fix
-		// @keszocze Because the coordinate system in SVG is inverted on its
-		//		y-axis. I need to first put it upside down (-this.field.y) and
-		//		then add the total height of the assay to have the element
-		// put
-		//		back into the positive coordinate range in order to be placed
-		//		on the canvas.
-
+	private List<Element> toSVG(final DrawableField field) {
 		Point pos = getFieldPosInSVGCoords(field);
 		int yCoord = pos.snd;
 		int xCoord = pos.fst;
@@ -480,17 +539,26 @@ public class SVGManager {
 		String fieldID =
 				SVGUtils.generateColoredID(vals.getTexture().toString(),
 										   fieldCol);
-		String fieldSvg = "<use x=\"" + xCoord + "\" y=\"" + yCoord + "\"" +
-						  getScaleTransformation() + " xlink:href=\"#" +
-						  fieldID +
-						  "\" />\n";
+
+		List<Element> fieldElems = new ArrayList<>();
+
+		Element elem = doc.createElement("use");
+		elem.setAttribute("x", String.valueOf(xCoord));
+		elem.setAttribute("y", String.valueOf(yCoord));
+		elem.setAttribute("transform",
+											"scale(" + SCALE_FACTOR + " " +
+													SCALE_FACTOR + ")"
+		);
+		elem.setAttribute("xlink:href", "#" + fieldID);
+
+		fieldElems.add(elem);
 
 		if (assay.getDisplayOptions().getOption(
 				BDisplayOptions.NetColorOnFields)) {
-			fieldSvg += createGradient(field);
+			fieldElems.addAll(createGradient(field));
 		}
 
-		return fieldSvg;
+		return fieldElems;
 	}
 
 	/**
@@ -500,7 +568,7 @@ public class SVGManager {
 	 * 		The drawableDroplet to export
 	 * @return svg string representation of the drop
 	 */
-	private String toSVG(final DrawableDroplet drawableDrop) {
+	private List<Element> toSVG(final DrawableDroplet drawableDrop) {
 
 		Point dropletPos = getDropletPosInSVGCoords(drawableDrop);
 
@@ -517,19 +585,25 @@ public class SVGManager {
 
 		// move the object to 0,0 then scale it and move it back to its
 		// original position
-		String transformation = getTransformation(translateToZero + " " +
-												  scale + " " + translateBack);
+		String transformation = translateToZero + " " +
+												  scale + " " + translateBack;
 
-		String route = toSVG(drawableDrop.route);
+		List<Element> route = toSVG(drawableDrop.route);
 
 		String dropletID = SVGUtils.generateColoredID("Droplet", drawableDrop
 				.getColor());
 
-		String dropShape = "<use x=\"" + dropletPos.fst + "\" " + "y=\"" +
-						   dropletPos.snd + "\"" + transformation + " " +
-						   "xlink:href=\"#" + dropletID + "\" />\n";
+		Element dropShape = doc.createElement("use");
+		dropShape.setAttribute("x", String.valueOf(dropletPos.fst));
+		dropShape.setAttribute("y", String.valueOf(dropletPos.snd));
+		dropShape.setAttribute("transform", transformation);
+		dropShape.setAttribute("xlink:href", "#" + dropletID);
 
-		return route + dropShape;
+		List<Element> dropElements = new ArrayList<>();
+		dropElements.add(dropShape);
+		dropElements.addAll(route);
+
+		return dropElements;
 	}
 
 	/**
@@ -543,9 +617,9 @@ public class SVGManager {
 	 * 		The route to export to svg
 	 * @return SVG code for that particular route
 	 */
-	private String toSVG(final DrawableRoute drawableRoute) {
-		StringBuilder sb = new StringBuilder();
+	private List<Element> toSVG(final DrawableRoute drawableRoute) {
 
+		List<Element> elements = new ArrayList<>();
 		DrawableDroplet droplet = drawableRoute.droplet;
 
 		int currentTime = droplet.droplet.getSpawnTime();
@@ -568,7 +642,6 @@ public class SVGManager {
 		LOGGER.debug("nSteps: {}", nSteps);
 
 		for (int i = 0; i < nSteps; ++i) {
-
 			LOGGER.debug("i: {}", i);
 			float alpha = 1;
 
@@ -599,13 +672,9 @@ public class SVGManager {
 				float targetX = x1 + (0.5f * COORDINATE_MULTIPLIER);
 				float targetY = y1;
 
-				String position =
-						" x=\"" + targetX + "\" y=\"" + targetY + "\" ";
-				String widthHeight = " width=\"1\" height=\"1\" ";
 				StringBuilder transFormParams = new StringBuilder(getScale());
-				String opacity = " opacity=\"" + alpha + "\" ";
-				boolean app = true;
 
+				// TODO calculate center and angle instead of if else bla
 				if (x1 < x2 && y1 == y2) {
 					//intentionally do nothing here
 				} else if (y1 == y2 && x2 < x1) {
@@ -623,26 +692,31 @@ public class SVGManager {
 							"rotate(270 " + targetX + " " +
 							(targetY + 0.5f * COORDINATE_MULTIPLIER) + ") "
 					);
-				} else {
-					app = false;
+				}	else {
+					// this case is needed if the coordinates are the same
+					continue;
 				}
-				if (app) {
-					String routeID =
-							SVGUtils.generateColoredID("StepMarker",
-													   routeColor);
 
-					sb.append("<use");
-					sb.append(position);
-					sb.append(widthHeight);
-					sb.append(getTransformation(transFormParams.toString()));
-					sb.append(opacity);
-					sb.append("xlink:href=\"#" + routeID + "\"");
-					sb.append(" />\n");
-					LOGGER.debug("[SVG] StepMarker color: {}", routeColor);
-				}
+				String routeID =
+						SVGUtils.generateColoredID("StepMarker",
+								routeColor);
+
+
+				Element route = doc.createElement("use");
+				route.setAttribute("x", String.valueOf(targetX));
+				route.setAttribute("y", String.valueOf(targetY));
+				route.setAttribute("width", "1");
+				route.setAttribute("height", "1");
+				route.setAttribute("transform", transFormParams.toString());
+				route.setAttribute("opacity", String.valueOf(alpha));
+				route.setAttribute("xlink:href", "#" + routeID);
+
+				elements.add(route);
+
+				LOGGER.debug("[SVG] StepMarker color: {}", routeColor);
 			}
 		}
-		return sb.toString();
+		return elements;
 	}
 
 	/**
@@ -652,10 +726,9 @@ public class SVGManager {
 	 * 		the droplet
 	 * @return svg string containing all start end arrows
 	 */
-	private String createSourceTargetArrow(final Net net) {
+	private List<Element> createSourceTargetArrow(final Net net) {
 
-		StringBuilder arrow = new StringBuilder();
-
+		List<Element> arrows = new ArrayList<>();
 		if (net != null) {
 			List<Source> startPoints = net.getSources();
 			Pair<Float, Float> endPoint = net.getTarget().centerFloat();
@@ -665,12 +738,12 @@ public class SVGManager {
 				Pair<Float, Float> startPoint =
 						startSource.startPosition.centerFloat();
 				if (!startPoint.equals(endPoint)) {
-					arrow.append(createSVGArrow(startPoint, endPoint, arrowColor));
+					arrows.add(createSVGArrow(startPoint, endPoint, arrowColor));
 				}
 			}
 		}
 
-		return arrow.toString();
+		return arrows;
 	}
 
 	/**
@@ -680,11 +753,13 @@ public class SVGManager {
 	 * 		the drop
 	 * @return svg string
 	 */
-	private String createDropletArrows(final DrawableDroplet drawableDrop) {
+	private List<Element> createDropletArrows(final DrawableDroplet
+	drawableDrop) {
 
 		Net net = drawableDrop.droplet.getNet();
 
-		StringBuilder arrows = new StringBuilder();
+		List<Element> arrows = new ArrayList<>();
+
 		if (net != null) {
 
 			int time = assay.getCurrentTime();
@@ -702,18 +777,18 @@ public class SVGManager {
 				Color arrowColor =
 						SVGUtils.getLighterLongNetIndicatorColor(dropColor);
 
-				arrows.append(createSVGArrow(startPoint, dropletPos, arrowColor));
+				arrows.add(createSVGArrow(startPoint, dropletPos, arrowColor));
 			}
 
 			if (dropletPos != null && endPoint != null &&
 				!dropletPos.equals(endPoint)) {
 				Color arrowColor =
 						SVGUtils.getDarkerLongNetIndicatorColor(dropColor);
-				arrows.append(createSVGArrow(dropletPos, endPoint, arrowColor));
+				arrows.add(createSVGArrow(dropletPos, endPoint, arrowColor));
 			}
 		}
 
-		return arrows.toString();
+		return arrows;
 	}
 
 	/**
@@ -723,13 +798,16 @@ public class SVGManager {
 	 * 		The droplet
 	 * @return Svg text element
 	 */
-	private String createDropletMsg(final DrawableDroplet drawableDrop) {
+	private Element createDropletMsg(final DrawableDroplet drawableDrop) {
 		Point dropPos = getDropletPosInSVGCoords(drawableDrop);
-		StringBuilder msg = new StringBuilder();
+
+		Element msg = null;
+
 		if (drawableDrop.getMsg() != null) {
-			msg.append(createMsg(dropPos.fst, dropPos.snd, drawableDrop.getMsg()));
+			msg = createMsg(dropPos.fst, dropPos.snd, drawableDrop.getMsg());
 		}
-		return msg.toString();
+
+		return msg;
 	}
 
 	/**
@@ -739,17 +817,18 @@ public class SVGManager {
 	 * 		the field
 	 * @return svg text element
 	 */
-	private String createFieldMsg(final DrawableField field) {
+	private Element createFieldMsg(final DrawableField field) {
 		Point fieldPos = getFieldPosInSVGCoords(field);
+
+		Element fieldMsg = null;
 
 		DisplayValues vals = field.getDisplayValues();
 		// create the msg text for the svg
 		// use the text-anchor middle to get a centered position
-		StringBuilder fieldSvg = new StringBuilder();
 		if (vals.getMsg() != null) {
-			fieldSvg.append(createMsg(fieldPos.fst, fieldPos.snd, vals.getMsg()));
+			fieldMsg = createMsg(fieldPos.fst, fieldPos.snd, vals.getMsg());
 		}
-		return fieldSvg.toString();
+		return fieldMsg;
 	}
 
 	/**
@@ -760,14 +839,17 @@ public class SVGManager {
 	 * @param message the text to print
 	 * @return svg text element
 	 */
-	private String createMsg(final int x, final int y, final String message) {
-		return "<text " + TEXT_ANCHOR_STR +
-				"x=\"" + (x + FONT_OFFSET_X) + "\" " +
-				"y=\"" + (y + FONT_OFFSET_Y) + "\" " +
-				FONT_FAMILY_STR + FONT + "\" " +
-				FONT_SIZE_STR + FONT_SIZE + "\" " +
-				"fill=\"#" + FONT_COLOR +	"\">" + message +
-				"</text>\n";
+	private Element createMsg(final int x, final int y, final String message) {
+		Element msg = doc.createElement("text");
+		msg.setAttribute("text-anchor", "middle");
+		msg.setAttribute("x", String.valueOf(x + FONT_OFFSET_X));
+		msg.setAttribute("y", String.valueOf(y + FONT_OFFSET_Y));
+		msg.setAttribute("font-family", FONT);
+		msg.setAttribute("font-size", String.valueOf(FONT_SIZE));
+		msg.setAttribute("fill", "#" + FONT_COLOR);
+		msg.appendChild(doc.createTextNode(message));
+
+		return msg;
 	}
 
 	/**
@@ -777,26 +859,32 @@ public class SVGManager {
 	 * 		the field
 	 * @return an svg rect string
 	 */
-	private String createGradient(final DrawableField field) {
-		StringBuilder gradientSvg = new StringBuilder();
+	private List<Element> createGradient(final DrawableField field) {
+		List<Element> gradients = new ArrayList<>();
 
 		for (final Net n : assay.getData().getNetsOf(field.getField())) {
 			GradDir dir = getGradientDirection(field, n);
 			Point fieldPos = getFieldPosInSVGCoords(field);
 			if (dir != null) {
-				gradientSvg.append("<rect x=\"" + (fieldPos.fst + 24) + "\" " +
-							   "y=\"" + (fieldPos.snd + 24) +
-							   "\" rx=\"24\" ry=\"24\" " +
-							   "height=\"208\" width=\"208\" fill=\"url(#" +
-							   SVGUtils
-									   .generateColoredID(
-											   "Gradient-" + dir.toString(),
-											   SVGUtils.getNetColor(n)) +
-							   ")\" " +
-							   "/>\n");
+
+				Element gradientSvg = doc.createElement("rect");
+				gradientSvg.setAttribute("x", String.valueOf(fieldPos.fst + 24));
+				gradientSvg.setAttribute("y", String.valueOf(fieldPos.snd + 24));
+				gradientSvg.setAttribute("rx", "24");
+				gradientSvg.setAttribute("ry", "24");
+				gradientSvg.setAttribute("height", "208");
+				gradientSvg.setAttribute("width", "208");
+
+				final String fillUrl = "url(#" +	SVGUtils.generateColoredID(
+						"Gradient-" + dir.toString(),
+						SVGUtils.getNetColor(n)) + ")";
+				gradientSvg.setAttribute("fill", fillUrl);
+
+				gradients.add(gradientSvg);
+
 			}
 		}
-		return gradientSvg.toString();
+		return gradients;
 	}
 
 	/**
@@ -841,7 +929,7 @@ public class SVGManager {
 	 * 		the color for the arrow
 	 * @return svg string of an arrow
 	 */
-	private String createSVGArrow(final Pair<Float, Float> startPoint,
+	private Element createSVGArrow(final Pair<Float, Float> startPoint,
 								  final Pair<Float, Float> endPoint,
 								  final Color
 										  color) {
@@ -879,12 +967,17 @@ public class SVGManager {
 		}
 		y2 -= yDiff;
 
-		final String line = "<line x1=\"" + x1 + "\" y1=\"" + y1 +
-							"\" x2=\"" + x2 + "\" " + "y2=\"" + y2 +
-							"\" stroke=\"#" + SVGUtils.colorToSVG(color) +
-							"\" stroke-width=\"10\" marker-end=\"url(#" +
-							SVGUtils.generateColoredID("ArrowHead", color) +
-							")\" />\n";
+		final Element line = doc.createElement("line");
+		line.setAttribute("x1", String.valueOf(x1));
+		line.setAttribute("y1", String.valueOf(y1));
+		line.setAttribute("x2", String.valueOf(x2));
+		line.setAttribute("y2", String.valueOf(y2));
+		line.setAttribute("stroke", "#" + SVGUtils.colorToSVG(color));
+		line.setAttribute("stroke-width", "10");
+		final String markerEndUrl = "url(#" +
+				SVGUtils.generateColoredID("ArrowHead", color) +
+						")";
+		line.setAttribute("marker-end", markerEndUrl);
 
 		return line;
 	}
@@ -894,25 +987,25 @@ public class SVGManager {
 	 *
 	 * @return information string
 	 */
-	private String createInfoString() {
+	private Element createInfoString() {
 
-		String coordinates =
-				"x=\"" + infoPos.fst + "\" " +
-				"y=\"" + (infoPos.snd + 1.5 *
-										FONT_SIZE_INFO_STRING) +
-				"\" ";
+		float xCoord = infoPos.fst;
+		float yCoord = infoPos.snd + 1.5f * FONT_SIZE_INFO_STRING;
 
 		String circName = assay.getParent().getFileName();
 		String timeStep = String.valueOf(assay.getCurrentTime());
+		String fileInfo = "Filename: " + circName + " Timestep: " + timeStep;
 
-		return "<text " + coordinates + "fill=\"" + FONT_COLOR_INFO_STRING +
-			   "\"" +
-			   " " +
-			   FONT_FAMILY_STR + FONT + "\" " + FONT_SIZE_STR +
-			   FONT_SIZE_INFO_STRING +
-			   "\">" +
-			   "Filename: " + circName + " Timestep: " + timeStep +
-			   "</text>\n";
+		Element textElem = doc.createElement("text");
+		textElem.setAttribute("x", String.valueOf(xCoord));
+		textElem.setAttribute("y", String.valueOf(yCoord));
+		textElem.setAttribute("fill", SVGUtils.colorToSVG(Color.BLACK));
+		textElem.setAttribute("font-family", FONT);
+		textElem.setAttribute("font-size",
+													String.valueOf(FONT_SIZE_INFO_STRING));
+		textElem.appendChild(doc.createTextNode(fileInfo));
+
+		return textElem;
 	}
 
 	/**
@@ -920,37 +1013,46 @@ public class SVGManager {
 	 *
 	 * @return String containing the svg code for the coordinates
 	 */
-	private String createCoordinates() {
-		StringBuilder coords = new StringBuilder();
+	private List<Element> createCoordinates() {
+		List<Element> coordElems = new ArrayList<>();
 		int coordSize = FONT_SIZE_INFO_STRING;
+
 		for (int xCoord = topLeftCoord.fst; xCoord <= bottomRightCoord.fst;
 			 ++xCoord) {
-			coords.append(TEXT_ANCHOR_STR);
-			coords.append("x=\"" + (xCoord * COORDINATE_MULTIPLIER +
-									0.5 * COORDINATE_MULTIPLIER) + "\" ");
-			coords.append("y=\"" + (coordPos.snd - coordSize) + "\" ");
-			coords.append(
-					FONT_FAMILY_STR + FONT + "\"" + FONT_SIZE_STR + coordSize +
-					"\">");
-			coords.append(xCoord);
-			coords.append("</text>\n");
+			final String xCoordStr = String.valueOf(xCoord * COORDINATE_MULTIPLIER +
+																								0.5f * COORDINATE_MULTIPLIER);
+			final String yCoordStr = String.valueOf(coordPos.snd - coordSize);
+
+			Element coord = doc.createElement("text");
+			coord.setAttribute("text-anchor", "middle");
+			coord.setAttribute("x", xCoordStr);
+			coord.setAttribute("y", yCoordStr);
+			coord.setAttribute("font-family", FONT);
+			coord.setAttribute("font-size", String.valueOf(coordSize));
+			coord.appendChild(doc.createTextNode(String.valueOf(xCoord)));
+
+			coordElems.add(coord);
 		}
 
 		for (int yCoord = topLeftCoord.snd; yCoord <= bottomRightCoord.snd;
 			 ++yCoord) {
-			coords.append("<text " + TEXT_ANCHOR_STR);
-			coords.append("y=\"" + ((bottomRightCoord.snd - yCoord) *
-									COORDINATE_MULTIPLIER +
-									0.5 * coordSize +
-									0.5 * COORDINATE_MULTIPLIER) + "\" ");
-			coords.append("x=\"" + (coordPos.fst - coordSize) + "\" ");
-			coords.append(
-					FONT_FAMILY_STR + FONT + "\"" + FONT_SIZE_STR + coordSize +
-					"\">");
-			coords.append(yCoord);
-			coords.append("</text>\n");
+
+			final String xCoordStr = String.valueOf(coordPos.fst - coordSize);
+			final String yCoordStr = String.valueOf(
+					(bottomRightCoord.snd - yCoord) *	COORDINATE_MULTIPLIER +
+					0.5f * coordSize +
+					0.5f * COORDINATE_MULTIPLIER);
+
+			Element coord = doc.createElement("text");
+			coord.setAttribute("x", xCoordStr);
+			coord.setAttribute("y", yCoordStr);
+			coord.setAttribute("font-family", FONT);
+			coord.setAttribute("font-size", String.valueOf(coordSize));
+			coord.appendChild(doc.createTextNode(String.valueOf(yCoord)));
+
+			coordElems.add(coord);
 		}
-		return coords.toString();
+		return coordElems;
 	}
 
 	/**
