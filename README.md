@@ -10,7 +10,7 @@ University of Bremen, Germany
 
 http://www.informatik.uni-bremen.de/agra/eng/bioviz.php
 
-This software is licensed under the GPLv2 or later. See the LICENSE.md file for details.
+This software is licensed under the GPLv2 or later. See the [this file](gnu-gpl-v2.0.md) for details.
 
 ## Overview
 <img src="BioViz01.png" style="width:600px;"/>
