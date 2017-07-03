@@ -77,7 +77,7 @@ tool by citing the following publication:
 		author = {Jannis Stoppe and Oliver Keszocze and Maximilian Luenert and Robert Wille and Rolf Drechsler},
 		title = {{BioViz: An Interactive Visualization Engine for the Design of Digital Microfluidic Biochips}},
 		booktitle = {IEEE Computer Society Annual Symposium on VLSI},
-		publisher = {IEE},
+		publisher = {IEEE},
 		year = {2017},
 		note = {{BioViz} is available at http://www.informatik.uni-bremen.de/agra/eng/bioviz.php}
 	}
